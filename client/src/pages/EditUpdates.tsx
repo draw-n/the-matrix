@@ -1,6 +1,8 @@
 import { Button, Space, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 
+import EditModal from "../components/EditModal";
+
 interface DataType {
     key: string;
     name: string;
@@ -49,8 +51,12 @@ const columns: TableProps<DataType>["columns"] = [
     {
         title: "Action",
         key: "action",
-        render: () => (
+        render: (_, update) => (
             <Space size="middle">
+                <EditModal
+                    defaultDescription={update.name}
+                    defaultType={update.address}
+                />
                 <Button>Edit</Button>
                 <Button>Delete</Button>
             </Space>

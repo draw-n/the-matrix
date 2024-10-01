@@ -1,7 +1,4 @@
-import {
-    DesktopOutlined,
-    PieChartOutlined,
-} from "@ant-design/icons";
+import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
 
 import React, { useState } from "react";
 
@@ -9,7 +6,7 @@ import type { MenuProps } from "antd";
 import { Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -52,31 +49,27 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Sider
-                collapsible
-                collapsed={collapsed}
-                onCollapse={(value) => setCollapsed(value)}
-            >
-                <div className="demo-logo-vertical" />
-                <Menu
-                    theme="dark"
-                    selectedKeys={[location.pathname]}
-                    defaultSelectedKeys={[location.pathname]}
-                    mode="inline"
-                    items={(true) ? adminItems: items}
-                    onClick={({ key }) => {
-                        navigate(key);
-                    }}
-                />
-            </Sider>
+            <Header style={{ color: "white" }}>Digital Fabrication Lab</Header>
+
             <Layout>
-                <Header style={{ color: "white" }}>
-                    Digital Fabrication Lab
-                </Header>
+                <Sider
+                    collapsible
+                    collapsed={collapsed}
+                    onCollapse={(value) => setCollapsed(value)}
+                >
+                    <div className="demo-logo-vertical" />
+                    <Menu
+                        theme="dark"
+                        selectedKeys={[location.pathname]}
+                        defaultSelectedKeys={[location.pathname]}
+                        mode="inline"
+                        items={true ? adminItems : items}
+                        onClick={({ key }) => {
+                            navigate(key);
+                        }}
+                    />
+                </Sider>
                 <Content style={{ margin: "16px" }}>{children}</Content>
-                <Footer style={{ textAlign: "center" }}>
-                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
-                </Footer>
             </Layout>
         </Layout>
     );
