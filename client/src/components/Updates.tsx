@@ -9,10 +9,10 @@ const contentStyle: React.CSSProperties = {
     background: "#364d79",
 };
 
-interface UpdatesProps {
+/*interface UpdatesProps {
     height?: string | number | undefined;
     width?: string | number | undefined;
-}
+}*/
 
 const Updates = ({}) => {
     const onChange = (currentSlide: number) => {
