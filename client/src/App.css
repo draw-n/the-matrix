@@ -1,0 +1,23 @@
+.login-background {
+    background: -webkit-linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url("./assets/DF-Banner-2.png");
+    background: rgba(0,0,0,.5), url("./assets/DF-Banner-2.png");
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-banner {
+    text-align: center;
+    padding: 20vh;
+    background: black;
+    width: auto;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 10px;
+}

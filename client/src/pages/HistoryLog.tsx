@@ -1,5 +1,9 @@
 const HistoryLog: React.FC = () => {
-    return <></>;
+    return (
+        <>
+            <h1>HISTORY LOG</h1>
+        </>
+    );
 };
 
 export default HistoryLog;

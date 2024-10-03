@@ -13,8 +13,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(defaultType);
     const [description, setDescription] = useState(defaultDescription);
-    setType(defaultType); // TODO: delete
-    setDescription(defaultDescription);
+    
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -46,9 +45,6 @@ const EditModal: React.FC<EditModalProps> = ({
                         <Input value={description} />
                     </Form.Item>
                 </Form>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
             </Modal>
         </>
     );

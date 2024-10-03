@@ -1,14 +1,17 @@
 import { Flex, Button } from "antd";
 import Updates from "../components/Updates";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/AuthContext";
 
 const Announcements: React.FC = () => {
+    const {user} = useAuth();
     const navigate = useNavigate();
 
     return (
         <>
+            {user?.firstName}
             <Flex justify={"space-between"} align={"center"}>
-                <h1>Announcements</h1>
+                <h1>ANNOUNCEMENTS</h1>
                 <Flex gap="small">
                     <Button onClick={() => navigate("/edit")} type="primary">
                         EDIT

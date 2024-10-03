@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const connectDB = require("./config/database.js");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
@@ -12,7 +12,8 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
-app.use("/updates", require("./routes/updates.router.js"));
+//pp.use("/updates", require("./routes/updates.router.js"));
+app.use("/users", require("./routes/users.router.js"));
 
 app.get("/", (req, res) => {
     res.send("Ello :o");

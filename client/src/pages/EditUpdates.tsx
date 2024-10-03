@@ -2,6 +2,9 @@ import { Button, Space, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 
 import EditModal from "../components/EditModal";
+import { useAuth } from "../hooks/AuthContext";
+
+import NoAccess from "../components/NoAccess";
 
 interface DataType {
     key: string;
@@ -51,13 +54,9 @@ const columns: TableProps<DataType>["columns"] = [
     {
         title: "Action",
         key: "action",
-        render: (_, update) => (
+        render: (_, { name, address }) => (
             <Space size="middle">
-                <EditModal
-                    defaultDescription={update.name}
-                    defaultType={update.address}
-                />
-                <Button>Edit</Button>
+                <EditModal defaultDescription={name} defaultType={address} />
                 <Button>Delete</Button>
             </Space>
         ),
@@ -89,9 +88,18 @@ const data: DataType[] = [
 ];
 
 const EditUpdates: React.FC = () => {
+    const { user } = useAuth();
+
     return (
         <>
-            <Table<DataType> columns={columns} dataSource={data} />
+            {user?.access == "admin" || user?.access == "edit" ? (
+                <>
+                    <h1>EDIT UPDATES</h1>
+                    <Table<DataType> columns={columns} dataSource={data} />
+                </>
+            ) : (
+                <NoAccess />
+            )}
         </>
     );
 };

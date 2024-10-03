@@ -1,16 +1,15 @@
 import { Input, Button, Form, Flex } from "antd";
 import type { FormProps } from "antd";
+import axios from "axios";
 
 type FieldType = {
-    name?: string;
-    vuEmail?: string;
-    status?: string;
     issueDesc?: string;
 };
 
 const { TextArea } = Input;
 
 const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    
     console.log("Success:", values);
 };
 

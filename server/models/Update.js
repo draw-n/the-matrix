@@ -4,29 +4,24 @@ const { ObjectId } = Schema.Types;
 
 const UpdateSchema = new Schema({
     _id: {
-        type: String,
+        type: ObjectId,
         required: true,
     },
-
     type: {
         type: String,
         required: true,
-        enum: ["issue", "general", "students", "other"],
-    },
-    issueEquipment: {
-        name: { type: String },
-        type: { type: String },
+        enum: ["issue", "event", "classes", "other"],
     },
     status: {
         type: String,
-        enum: ["open", "in progress", "resolved"],
+        enum: ["posted", "archived"],
     },
     description: {
         type: String,
         required: true
     },
     createdBy: {
-        type: ObjectId,
+        type: String,
         required: true,
     },
     dateCreated: {
@@ -34,7 +29,7 @@ const UpdateSchema = new Schema({
         required: true,
     },
     lastUpdatedBy: {
-        type: ObjectId,
+        type: String,
         required: true,
     },
     dateLastUpdated: {

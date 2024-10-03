@@ -3,8 +3,10 @@ import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 
 import type { MenuProps } from "antd";
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import { googleLogout } from "@react-oauth/google";
+import { useAuth } from "../hooks/AuthContext";
 
 const { Header, Content, Sider } = Layout;
 
@@ -34,8 +36,8 @@ const adminItems: MenuItem[] = [
     getItem("Announcements", "/", <PieChartOutlined />),
     getItem("Edit Updates", "/edit"),
     getItem("History Log", "/history"),
-
     getItem("Report an Issue", "/report", <DesktopOutlined />),
+    getItem("User Directory", "/directory"),
 ];
 
 interface ShellProps {
@@ -47,9 +49,18 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const { user, logout } = useAuth();
+
+    const logOut = () => {
+        googleLogout();
+        logout();
+    };
+
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header style={{ color: "white" }}>Digital Fabrication Lab</Header>
+            <Header style={{ color: "white" }}>
+                <h1>DIGITAL FABRICATION LAB</h1>
+            </Header>
 
             <Layout>
                 <Sider
@@ -63,11 +74,14 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
                         selectedKeys={[location.pathname]}
                         defaultSelectedKeys={[location.pathname]}
                         mode="inline"
-                        items={true ? adminItems : items}
+                        items={user?.access == "admin" ? adminItems : items}
                         onClick={({ key }) => {
                             navigate(key);
                         }}
                     />
+                    <Button style={{ width: "100%" }} onClick={logOut}>
+                        Log Out
+                    </Button>
                 </Sider>
                 <Content style={{ margin: "16px" }}>{children}</Content>
             </Layout>
