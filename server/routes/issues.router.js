@@ -11,7 +11,7 @@ const {
 
 router.post("/", createIssue);
 router.put("/:id", editIssue);
-router.get("/:id", getIssue);
+router.get("/", getIssue);
 router.delete("/:id", deleteIssue);
 
 module.exports = router;
