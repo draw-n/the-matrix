@@ -10,8 +10,8 @@ const {
 } = require("../controllers/updates.controllers.js");
 
 router.post("/", createUpdate);
-router.put("/", editUpdate);
-router.get("/:updateId", getUpdate);
-router.delete("/", deleteUpdate);
+router.put("/:id", editUpdate);
+router.get("/", getUpdate);
+router.delete("/:id", deleteUpdate);
 
 module.exports = router;

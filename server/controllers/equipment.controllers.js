@@ -1,28 +1,25 @@
-const Update = require("../models/Update.js");
-var mongoose = require('mongoose');
+const Equipment = require("../models/Equipment.js");
+var mongoose = require("mongoose");
 
-const createUpdate = async (req, res) => {
-    const { type, description, createdBy, dateCreated } = req.body;
+const createEquipment = async (req, res) => {
+    const { name, type, description } = req.body;
 
     try {
-        if (type && description && createdBy && dateCreated) {
-            let update = new Update({
+        if (name && type && description) {
+            let equipment = new Equipment({
                 _id: new mongoose.Types.ObjectId(),
+                name: name,
                 type: type,
-                status: "posted",
                 description: description,
-                createdBy: createdBy,
-                dateCreated: dateCreated,
-                lastUpdatedBy: createdBy,
-                dateLastUpdated: dateCreated,
+                status: "working",
             });
-            console.log(update);
-            await update.save();
-            return res.status(200).json(update);
+            console.log(equipment);
+            await equipment.save();
+            return res.status(200).json(equipment);
         } else {
             return res
                 .status(400)
-                .send({ message: "Missing Update Information." });
+                .send({ message: "Missing Equipment Information." });
         }
     } catch (err) {
         console.error(err.message);
@@ -30,12 +27,12 @@ const createUpdate = async (req, res) => {
     }
 };
 
-const deleteUpdate = async (req, res) => {
+const deleteEquipment = async (req, res) => {
     const id = req.params.id;
 
     try {
         if (id) {
-            Update.findByIdAndDelete(id)
+            Equipment.findByIdAndDelete(id)
                 .then(function () {
                     return res
                         .status(200)
@@ -45,7 +42,7 @@ const deleteUpdate = async (req, res) => {
                     return res.status(400).send({ message: error });
                 });
         } else {
-            return res.status(400).send({ message: "Missing Update ID" });
+            return res.status(400).send({ message: "Missing Equipment ID" });
         }
     } catch (err) {
         console.log(err.message);
@@ -53,21 +50,21 @@ const deleteUpdate = async (req, res) => {
     }
 };
 
-const editUpdate = async (req, res) => {
+const editEquipment = async (req, res) => {
     const id = req.params?.id;
     try {
         if (id) {
-            const update = Update.findByIdAndUpdate(id, req.body)
+            const equipment = Equipment.findByIdAndUpdate(id, req.body)
                 .then(function () {
-                    console.log(update);
-                    res.status(200).json(update);
+                    console.log(equipment);
+                    res.status(200).json(equipment);
                 })
                 .catch(function (error) {
                     console.log(error);
                     res.status(400).send({ message: error });
                 });
         } else {
-            res.status(400).send({ message: "Missing Update ID" });
+            res.status(400).send({ message: "Missing Equipment ID" });
         }
     } catch (err) {
         console.log(err.message);
@@ -75,33 +72,32 @@ const editUpdate = async (req, res) => {
     }
 };
 
-const getUpdate = async (req, res) => {
+const getEquipment = async (req, res) => {
     const id = req.query?.id;
     if (id) {
         try {
-            const update = await Update.findById(update);
-            if (!update) {
-                return res.status(404).send("Update not found");
+            const equipment = await Equipment.findById(id);
+            if (!equipment) {
+                return res.status(404).send("Equipment not found");
             }
-            return res.status(200).json(update);
+            return res.status(200).json(equipment);
         } catch (error) {
             console.error("Error fetching issue:", error);
             return res.status(500).send("Internal server error");
         }
     }
-    console.log("no id detected");
 
     try {
-        const update = await Update.find();
-        return res.status(200).json(update);
+        const equipment = await Equipment.find();
+        return res.status(200).json(equipment);
     } catch (err) {
         return res.status(500).send({ message: err.message });
     }
 };
 
 module.exports = {
-    createUpdate,
-    deleteUpdate,
-    editUpdate,
-    getUpdate,
+    createEquipment,
+    deleteEquipment,
+    editEquipment,
+    getEquipment,
 };

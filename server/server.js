@@ -12,8 +12,10 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
-//pp.use("/updates", require("./routes/updates.router.js"));
+app.use("/issues", require("./routes/issues.router.js"));
+app.use("/updates", require("./routes/updates.router.js"));
 app.use("/users", require("./routes/users.router.js"));
+app.use("/equipment", require("./routes/equipment.router.js"))
 
 app.get("/", (req, res) => {
     res.send("Ello :o");

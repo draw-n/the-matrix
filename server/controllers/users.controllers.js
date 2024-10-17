@@ -58,7 +58,8 @@ const updateUser = async (req, res) => {
         if (userId) {
             const user = User.findByIdAndUpdate(userId, req.body)
                 .then(function () {
-                    console.log(user);
+                    console.log(req.body);
+                    console.log(userId)
                     res.status(200).json(user);
                 })
                 .catch(function (error) {
@@ -75,7 +76,7 @@ const updateUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params?.id;
     if (userId) {
         try {
             const user = await User.findById(userId);

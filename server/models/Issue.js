@@ -8,19 +8,8 @@ const IssueSchema = new Schema({
         required: true,
     },
     equipment: {
-        name: { type: String, required: true },
-        type: {
-            type: String,
-            required: true,
-            enum: [
-                "filament printer",
-                "resin printer",
-                "powder printer",
-                "subtractive manufacturing",
-                "computer",
-                "other",
-            ],
-        },
+        type: ObjectId,
+        required: true,
     },
     status: {
         type: String,

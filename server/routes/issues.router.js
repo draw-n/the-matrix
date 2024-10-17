@@ -6,12 +6,12 @@ const {
     createIssue,
     deleteIssue,
     editIssue,
-    getIssue
+    getIssue,
 } = require("../controllers/issues.controllers.js");
 
 router.post("/", createIssue);
 router.put("/:id", editIssue);
-router.get("/:id", getUpdate);
-router.delete("/:id", deleteUpdate);
+router.get("/:id", getIssue);
+router.delete("/:id", deleteIssue);
 
 module.exports = router;
