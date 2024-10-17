@@ -12,6 +12,7 @@ const ProfileDropdown: React.FC = () => {
     const logOut = () => {
         googleLogout();
         logout();
+        navigate("/login");
     };
 
     const items: MenuProps["items"] = [
