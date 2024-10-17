@@ -13,3 +13,16 @@ h1 {
     font-family: Montserrat;
     src: url("./assets/fonts/Montserrat-VariableFont_wght.ttf");
 }
+
+:root {
+    --shell-header-bg-color: #000000;
+    --shell-header-text-color: #FFFFFF;
+
+    --navbar-bg-color: #AAAAAA;
+    --navbar-active-color: #FF5555;
+    --navbar-text-color: #000000;
+
+    --primary-color: #FF5555;
+    --secondary-color: #77AAFF;
+
+}

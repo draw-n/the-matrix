@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 export interface User {
-    id: string;
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -31,11 +31,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        // Check local storage for user data on app load
-        const storedUser = window.localStorage.getItem("user");
-        if (storedUser) {
+        /*const fetchData = async (storedUserID: string) => {
             try {
-                const userData: User = JSON.parse(storedUser);
+                const response = await axios.get<User>(
+                    `${import.meta.env.VITE_BACKEND_URL}/users/${storedUserID}`
+                );
+                setUser(response.data);
+            } catch (error) {
+                console.error("Failure to fetch user id", error);
+            }
+        };*/
+
+        // Check local storage for user data on app load
+        const storedUserID = window.localStorage.getItem("user");
+        if (storedUserID) {
+            try {
+                //fetchData(storedUserID);
+                const userData: User = JSON.parse(storedUserID);
                 setUser(userData);
                 console.log("parsed data: ", userData.firstName);
             } catch (error) {
@@ -46,19 +58,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = (credentialResponse: any) => {
         const newUser = {
-            id: credentialResponse._id,
+            _id: credentialResponse._id,
             firstName: credentialResponse.firstName,
             email: credentialResponse.email,
             lastName: credentialResponse.lastName,
             access: credentialResponse.access,
         };
         setUser(newUser);
-        window.localStorage.setItem("user", JSON.stringify(newUser));
+        window.localStorage.setItem("userID", JSON.stringify(newUser._id));
     };
 
     const logout = () => {
         setUser(null);
-        window.localStorage.removeItem("user");
+        window.localStorage.removeItem("userID");
     };
 
     return (
@@ -75,4 +87,3 @@ export const useAuth = (): AuthContextType => {
     }
     return context;
 };
-

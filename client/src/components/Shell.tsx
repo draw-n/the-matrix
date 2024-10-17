@@ -1,43 +1,43 @@
-import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
-
 import React, { useState } from "react";
 
-import type { MenuProps } from "antd";
-import { Button, Layout, Menu } from "antd";
+import { Flex, Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { googleLogout } from "@react-oauth/google";
 import { useAuth } from "../hooks/AuthContext";
+import ProfileDropdown from "../pages/profile/ProfileDropdown";
+import NoAccess from "./NoAccess";
+import { IconEdit } from "@tabler/icons-react";
 
 const { Header, Content, Sider } = Layout;
 
-type MenuItem = Required<MenuProps>["items"][number];
-
-function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[]
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-    } as MenuItem;
+interface MenuItem {
+    label: React.ReactNode;
+    key: React.Key;
+    access: string[];
+    icon?: React.ReactNode;
+    children?: MenuItem[];
 }
 
-const items: MenuItem[] = [
-    getItem("Announcements", "/", <PieChartOutlined />),
-    getItem("History Log", "/history"),
-    getItem("Report an Issue", "/report", <DesktopOutlined />),
-];
+const allPages: MenuItem[] = [
+    { key: "/", label: "Announcements", access: ["view", "edit", "admin"] },
 
-const adminItems: MenuItem[] = [
-    getItem("Announcements", "/", <PieChartOutlined />),
-    getItem("Edit Updates", "/edit"),
-    getItem("History Log", "/history"),
-    getItem("Report an Issue", "/report", <DesktopOutlined />),
-    getItem("User Directory", "/directory"),
+    {
+        key: "/report",
+        label: "Report an Issue",
+        access: ["view", "edit", "admin"],
+    },
+    {
+        key: "/edit",
+        label: "Edit Updates",
+        access: ["edit", "admin"],
+    },
+    { key: "/equipment", label: "Manage Equipment", access: ["admin"] },
+
+    { key: "/directory", label: "User Directory", access: ["admin"] },
+    {
+        key: "/profile",
+        label: "User Profile",
+        access: ["view", "edit", "admin"],
+    },
 ];
 
 interface ShellProps {
@@ -49,41 +49,52 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { user, logout } = useAuth();
-
-    const logOut = () => {
-        googleLogout();
-        logout();
-    };
+    const { user } = useAuth();
+    const accessPages: MenuItem[] = allPages.filter((item) =>
+        item.access.some((access) => user?.access == access)
+    );
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header style={{ color: "white" }}>
-                <h1>DIGITAL FABRICATION LAB</h1>
+            <Header className="shell-header">
+                <Flex
+                    style={{ width: "100%" }}
+                    justify="space-between"
+                    align="center"
+                >
+                    <h1>DIGITAL FABRICATION LAB</h1>
+                    <ProfileDropdown />
+                </Flex>
             </Header>
 
             <Layout>
                 <Sider
+                    className="shell-sider"
                     collapsible
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}
                 >
-                    <div className="demo-logo-vertical" />
                     <Menu
                         theme="dark"
+                        className="shell-navbar"
                         selectedKeys={[location.pathname]}
                         defaultSelectedKeys={[location.pathname]}
                         mode="inline"
-                        items={user?.access == "admin" ? adminItems : items}
+                        items={accessPages}
                         onClick={({ key }) => {
                             navigate(key);
                         }}
                     />
-                    <Button style={{ width: "100%" }} onClick={logOut}>
-                        Log Out
-                    </Button>
                 </Sider>
-                <Content style={{ margin: "16px" }}>{children}</Content>
+                <Content style={{ margin: "16px" }}>
+                    {allPages
+                        .find((item) => item.key == location.pathname)
+                        ?.access.includes(String(user?.access)) ? (
+                        <>{children}</>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </Content>
             </Layout>
         </Layout>
     );

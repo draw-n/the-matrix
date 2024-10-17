@@ -1,22 +1,20 @@
 import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import "./App.css";
-import { ReactNode } from "react";
-import { useAuth } from "./hooks/AuthContext";
 
 import Shell from "./components/Shell";
 import PrivateRoute from "./components/PrivateRoute";
 
 import Announcements from "./pages/Announcements";
 import Kiosk from "./pages/Kiosk";
-import ReportAnIssue from "./pages/ReportAnIssue";
-import EditUpdates from "./pages/EditUpdates";
+import ReportAnIssue from "./pages/reportIssues/ReportAnIssue";
+import EditUpdates from "./pages/editUpdates/EditUpdates";
 import HistoryLog from "./pages/HistoryLog";
 import Login from "./pages/Login";
-import UserDirectory from "./pages/UserDirectory";
+import UserDirectory from "./pages/userDirectory/UserDirectory";
+import Profile from "./pages/profile/Profile";
+import ManageEquipment from "./pages/manageEquipment/ManageEquipment";
 
 const App: React.FC = () => {
-    const { user } = useAuth();
-
     return (
         <>
             <BrowserRouter>
@@ -27,6 +25,24 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute
                                 element={<Shell children={<Announcements />} />}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/profile"
+                        element={
+                            <PrivateRoute
+                                element={<Shell children={<Profile />} />}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/equipment"
+                        element={
+                            <PrivateRoute
+                                element={
+                                    <Shell children={<ManageEquipment />} />
+                                }
                             />
                         }
                     />

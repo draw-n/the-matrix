@@ -10,12 +10,25 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = ["https://localhost", "https://df-updates.vercel.app"];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true); // Allow the origin
+        } else {
+            callback(new Error("Not allowed by CORS")); // Reject the origin
+        }
+    },
+    optionsSuccessStatus: 200, // For legacy browser support
+};
+
+app.use(cors(corsOptions));
 
 app.use("/issues", require("./routes/issues.router.js"));
 app.use("/updates", require("./routes/updates.router.js"));
 app.use("/users", require("./routes/users.router.js"));
-app.use("/equipment", require("./routes/equipment.router.js"))
+app.use("/equipment", require("./routes/equipment.router.js"));
 
 app.get("/", (req, res) => {
     res.send("Ello :D");

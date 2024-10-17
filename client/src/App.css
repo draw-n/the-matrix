@@ -1,6 +1,22 @@
+.shell-header {
+    background-color: var(--shell-header-bg-color);
+    color: var(--shell-header-text-color);
+}
+
+/*.shell-sider {
+    background-color: var(--navbar-bg-color);
+    color: var(--navbar-text-color);
+}
+
+.shell-navbar {
+    background-color: var(--navbar-bg-color);
+    color: var(--navbar-text-color);
+}*/
+
 .login-background {
-    background: -webkit-linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url("./assets/DF-Banner-2.png");
-    background: rgba(0,0,0,.5), url("./assets/DF-Banner-2.png");
+    background: -webkit-linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("./assets/DF-Banner-2.png");
+    background: rgba(0, 0, 0, 0.5), url("./assets/DF-Banner-2.png");
     height: 100vh;
     background-repeat: no-repeat;
     background-position: center;
