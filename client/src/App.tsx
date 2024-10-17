@@ -14,11 +14,14 @@ import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
 import ManageEquipment from "./pages/manageEquipment/ManageEquipment";
 
+import NotFound from "./components/NotFound";
+
 const App: React.FC = () => {
     return (
         <>
             <BrowserRouter>
                 <Routes>
+                    <Route element={<NotFound />} />
                     <Route path="/login" element={<Login />} />
                     <Route
                         path="/"
