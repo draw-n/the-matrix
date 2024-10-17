@@ -18,7 +18,7 @@ app.use("/users", require("./routes/users.router.js"));
 app.use("/equipment", require("./routes/equipment.router.js"))
 
 app.get("/", (req, res) => {
-    res.send("Ello :o");
+    res.send("Ello :D");
 });
 
 app.listen(PORT, () => {
