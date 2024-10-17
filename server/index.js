@@ -10,7 +10,7 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-const allowedOrigins = ["https://localhost", "https://df-updates.vercel.app"];
+/*const allowedOrigins = ["https://localhost", "https://df-updates.vercel.app"];
 
 const corsOptions = {
     origin: (origin, callback) => {
@@ -21,9 +21,9 @@ const corsOptions = {
         }
     },
     optionsSuccessStatus: 200, // For legacy browser support
-};
+};*/
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use("/issues", require("./routes/issues.router.js"));
 app.use("/updates", require("./routes/updates.router.js"));
