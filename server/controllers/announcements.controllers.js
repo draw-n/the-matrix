@@ -1,12 +1,12 @@
-const Update = require("../models/Update.js");
-var mongoose = require('mongoose');
+const Announcement = require("../models/Announcement.js");
+const mongoose = require('mongoose');
 
-const createUpdate = async (req, res) => {
+const createAnnouncement= async (req, res) => {
     const { type, description, createdBy, dateCreated } = req.body;
 
     try {
         if (type && description && createdBy && dateCreated) {
-            let update = new Update({
+            let update = new Announcement({
                 _id: new mongoose.Types.ObjectId(),
                 type: type,
                 status: "posted",
@@ -16,13 +16,12 @@ const createUpdate = async (req, res) => {
                 lastUpdatedBy: createdBy,
                 dateLastUpdated: dateCreated,
             });
-            console.log(update);
             await update.save();
             return res.status(200).json(update);
         } else {
             return res
                 .status(400)
-                .send({ message: "Missing Update Information." });
+                .send({ message: "Missing Announcement Information." });
         }
     } catch (err) {
         console.error(err.message);
@@ -30,12 +29,12 @@ const createUpdate = async (req, res) => {
     }
 };
 
-const deleteUpdate = async (req, res) => {
+const deleteAnnouncement = async (req, res) => {
     const id = req.params.id;
 
     try {
         if (id) {
-            Update.findByIdAndDelete(id)
+            Announcement.findByIdAndDelete(id)
                 .then(function () {
                     return res
                         .status(200)
@@ -45,7 +44,7 @@ const deleteUpdate = async (req, res) => {
                     return res.status(400).send({ message: error });
                 });
         } else {
-            return res.status(400).send({ message: "Missing Update ID" });
+            return res.status(400).send({ message: "Missing Announcement ID" });
         }
     } catch (err) {
         console.log(err.message);
@@ -53,11 +52,11 @@ const deleteUpdate = async (req, res) => {
     }
 };
 
-const editUpdate = async (req, res) => {
+const editAnnouncement = async (req, res) => {
     const id = req.params?.id;
     try {
         if (id) {
-            const update = Update.findByIdAndUpdate(id, req.body)
+            const update = Announcement.findByIdAndUpdate(id, req.body)
                 .then(function () {
                     console.log(update);
                     res.status(200).json(update);
@@ -67,7 +66,7 @@ const editUpdate = async (req, res) => {
                     res.status(400).send({ message: error });
                 });
         } else {
-            res.status(400).send({ message: "Missing Update ID" });
+            res.status(400).send({ message: "MissingAnnouncement ID" });
         }
     } catch (err) {
         console.log(err.message);
@@ -75,33 +74,32 @@ const editUpdate = async (req, res) => {
     }
 };
 
-const getUpdate = async (req, res) => {
+const getAnnouncement = async (req, res) => {
     const id = req.query?.id;
     if (id) {
         try {
-            const update = await Update.findById(update);
-            if (!update) {
-                return res.status(404).send("Update not found");
+            const announcement = await Announcement.findById(id);
+            if (!announcement) {
+                return res.status(404).send("Announcement not found");
             }
-            return res.status(200).json(update);
+            return res.status(200).json(announcement);
         } catch (error) {
             console.error("Error fetching issue:", error);
             return res.status(500).send("Internal server error");
         }
     }
-    console.log("no id detected");
 
     try {
-        const update = await Update.find();
-        return res.status(200).json(update);
+        const announcement = await Announcement.find();
+        return res.status(200).json(announcement);
     } catch (err) {
         return res.status(500).send({ message: err.message });
     }
 };
 
 module.exports = {
-    createUpdate,
-    deleteUpdate,
-    editUpdate,
-    getUpdate,
+    createAnnouncement,
+    deleteAnnouncement,
+    editAnnouncement,
+    getAnnouncement,
 };

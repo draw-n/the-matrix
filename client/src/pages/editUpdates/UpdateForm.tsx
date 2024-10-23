@@ -3,7 +3,7 @@ import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
-import { IconPlus } from "@tabler/icons-react";
+import { PlusOutlined } from "@ant-design/icons";
 
 
 interface UpdateFormProps {
@@ -37,7 +37,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ onUpdate }) => {
                 dateCreated: Date(),
             };
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/updates`,
+                `${import.meta.env.VITE_BACKEND_URL}/announcements`,
                 newUpdate
             );
             onUpdate();
@@ -54,7 +54,7 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ onUpdate }) => {
     return (
         <>
             <Button type="primary" onClick={showModal}>
-                <IconPlus />
+                <PlusOutlined />
             </Button>
             <Modal
                 title="Create a New Announcement"

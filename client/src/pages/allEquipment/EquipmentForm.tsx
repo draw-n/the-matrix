@@ -3,7 +3,7 @@ import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
-import { IconPlus } from "@tabler/icons-react";
+import { PlusOutlined } from "@ant-design/icons";
 
 interface EquipmentFormProps {
     onUpdate: () => void;
@@ -36,7 +36,6 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                 name: name,
                 type: type,
                 description: description,
-                
             };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
@@ -56,7 +55,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     return (
         <>
             <Button type="primary" onClick={showModal}>
-                <IconPlus />
+                <PlusOutlined />
             </Button>
             <Modal
                 title="Add New Equipment"

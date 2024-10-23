@@ -3,7 +3,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 import { googleLogout } from "@react-oauth/google";
-import { IconUser, IconLogout } from "@tabler/icons-react";
 
 const ProfileDropdown: React.FC = () => {
     const navigate = useNavigate();
@@ -26,7 +25,6 @@ const ProfileDropdown: React.FC = () => {
                     align="center"
                     onClick={() => navigate("/profile")}
                 >
-                    <IconUser />
                     Profile
                 </Flex>
             ),
@@ -42,7 +40,6 @@ const ProfileDropdown: React.FC = () => {
                     align="center"
                     onClick={logOut}
                 >
-                    <IconLogout />
                     Logout
                 </Flex>
             ),

@@ -26,7 +26,7 @@ const corsOptions = {
 app.use(cors());
 
 app.use("/issues", require("./routes/issues.router.js"));
-app.use("/updates", require("./routes/updates.router.js"));
+app.use("/announcements", require("./routes/announcements.router.js"));
 app.use("/users", require("./routes/users.router.js"));
 app.use("/equipment", require("./routes/equipment.router.js"));
 

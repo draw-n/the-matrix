@@ -1,0 +1,11 @@
+.equipment-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensures cards fill the column height */
+}
+
+.equipment-card h2 {
+    margin: 0;
+    padding: 0;
+}

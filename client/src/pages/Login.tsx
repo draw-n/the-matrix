@@ -1,5 +1,5 @@
 import { useGoogleLogin, TokenResponse } from "@react-oauth/google";
-import { Button } from "antd";
+import { Button, Flex } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,21 +32,23 @@ const Login: React.FC = () => {
     };
 
     useEffect(() => {
-        if (user) {
+        /*if (user) {
             navigate(location.state?.from || "/");
-        }
+        }*/
     });
 
     return (
         <>
-            <div className="login-background">
-                <div className="login-banner">
-                    <h1>Login</h1>
+            <Flex style={{ width: "100vw", height: "100vh" }}>
+                <div className="login-background" style={{width: "50%"}} />
+           
+                <Flex gap="10px" vertical justify="center" style={{padding: "10px"}}>
+                    <h1>LOGIN</h1>
                     <Button type="primary" onClick={() => loginWithGoogle()}>
                         Sign in with Google
                     </Button>
-                </div>
-            </div>
+                </Flex>
+            </Flex>
         </>
     );
 };

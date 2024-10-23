@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
-import { Flex, Layout, Menu } from "antd";
+import { Button, Flex, Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./NoAccess";
-import { IconEdit } from "@tabler/icons-react";
+import NotFound from "./NotFound";
+import { MenuOutlined } from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
 
@@ -17,9 +18,19 @@ interface MenuItem {
     children?: MenuItem[];
 }
 
+const siderStyle: React.CSSProperties = {
+    overflow: 'auto',
+    height: '100vh',
+    position: 'fixed',
+    insetInlineStart: 0,
+    top: 0,
+    bottom: 0,
+    scrollbarWidth: 'thin',
+    scrollbarGutter: 'stable',
+  };
+
 const allPages: MenuItem[] = [
     { key: "/", label: "Announcements", access: ["view", "edit", "admin"] },
-
     {
         key: "/report",
         label: "Report an Issue",
@@ -30,7 +41,7 @@ const allPages: MenuItem[] = [
         label: "Edit Updates",
         access: ["edit", "admin"],
     },
-    { key: "/equipment", label: "Manage Equipment", access: ["admin"] },
+    { key: "/equipment", label: "All Equipment", access: ["view", "edit", "admin"] },
 
     { key: "/directory", label: "User Directory", access: ["admin"] },
     {
@@ -41,10 +52,14 @@ const allPages: MenuItem[] = [
 ];
 
 interface ShellProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
+    contentAccess: string[];
 }
 
-const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
+const Shell: React.FC<ShellProps> = ({
+    children,
+    contentAccess,
+}: ShellProps) => {
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,6 +69,19 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
         item.access.some((access) => user?.access == access)
     );
 
+    const getSelectedKeys = (): string[] => {
+        const currentPath = location.pathname;
+
+        // Get keys that match the beginning of the current path
+        let selectedPages = accessPages
+            .filter((item) => currentPath.startsWith(String(item.key)))
+            .map((item) => item.key as string); // Ensure the key is treated as a string
+        if (selectedPages.length > 1) {
+            selectedPages = selectedPages.filter((item) => item !== "/");
+        }
+        return selectedPages;
+    };
+
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Header className="shell-header">
@@ -62,6 +90,21 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
                     justify="space-between"
                     align="center"
                 >
+                    <Button
+                        type="text"
+                        icon={
+                            <MenuOutlined />
+                            /*collapsed ? (
+                                <MenuUnfoldOutlined />
+                            ) : (
+                                <MenuFoldOutlined />
+                            )*/
+                        }
+                        onClick={() => setCollapsed(!collapsed)}
+                        style={{
+                            background: "white",
+                        }}
+                    />
                     <h1>DIGITAL FABRICATION LAB</h1>
                     <ProfileDropdown />
                 </Flex>
@@ -70,14 +113,16 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
             <Layout>
                 <Sider
                     className="shell-sider"
+                    breakpoint="lg"
+                    collapsedWidth="0"
+                    trigger={null}
                     collapsible
                     collapsed={collapsed}
-                    onCollapse={(value) => setCollapsed(value)}
                 >
                     <Menu
                         theme="dark"
                         className="shell-navbar"
-                        selectedKeys={[location.pathname]}
+                        selectedKeys={getSelectedKeys()}
                         defaultSelectedKeys={[location.pathname]}
                         mode="inline"
                         items={accessPages}
@@ -87,9 +132,8 @@ const Shell: React.FC<ShellProps> = ({ children }: ShellProps) => {
                     />
                 </Sider>
                 <Content style={{ margin: "16px" }}>
-                    {allPages
-                        .find((item) => item.key == location.pathname)
-                        ?.access.includes(String(user?.access)) ? (
+                    {contentAccess.includes(String(user?.access)) ||
+                    user == null ? (
                         <>{children}</>
                     ) : (
                         <NoAccess />

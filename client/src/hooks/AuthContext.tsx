@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };*/
 
         // Check local storage for user data on app load
-        const storedUserID = window.localStorage.getItem("user");
+        const storedUserID = window.localStorage.getItem("userID");
         if (storedUserID) {
             try {
                 //fetchData(storedUserID);
@@ -65,7 +65,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             access: credentialResponse.access,
         };
         setUser(newUser);
-        window.localStorage.setItem("userID", JSON.stringify(newUser._id));
+        window.localStorage.setItem("userID", JSON.stringify(newUser));
+
+        //window.localStorage.setItem("userID", JSON.stringify(newUser._id));
     };
 
     const logout = () => {

@@ -1,0 +1,14 @@
+.select-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensures cards fill the column height */
+}
+
+.select-radio .ant-radio {
+    display: none; /* Hide the checked state */
+}
+
+.select-active {
+    border: 2px solid black;
+}

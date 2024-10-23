@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-const UpdateSchema = new Schema({
+const AnnouncementSchema = new Schema({
     _id: {
         type: ObjectId,
         required: true,
@@ -38,4 +38,4 @@ const UpdateSchema = new Schema({
     },
 });
 
-module.exports = Update = mongoose.model("update", UpdateSchema);
+module.exports = Announcement = mongoose.model("announcement", AnnouncementSchema);

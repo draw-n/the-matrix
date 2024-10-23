@@ -1,32 +1,21 @@
 const Issue = require("../models/Issue.js");
+const mongoose = require("mongoose");
 
 const createIssue = async (req, res) => {
-    const {
-        equipmentName,
-        equipmentType,
-        description,
-        createdBy,
-        dateCreated,
-    } = req.body;
+    const { equipment, description, createdBy, dateCreated } = req.body;
 
     try {
-        if (
-            equipmentName &&
-            equipmentType &&
-            description &&
-            createdBy &&
-            dateCreated
-        ) {
+        if (equipment && description && createdBy && dateCreated) {
             let issue = new Issue({
-                id: 0,
-                equipment: { name: equipmentName, type: equipmentType },
+                _id: new mongoose.Types.ObjectId(),
+                equipment: equipment,
                 status: "open",
                 description: description,
                 createdBy: createdBy,
                 dateCreated: dateCreated,
                 assignedTo: "",
             });
-
+            console.log(issue)
             await issue.save();
             return res.status(200).json(issue);
         } else {

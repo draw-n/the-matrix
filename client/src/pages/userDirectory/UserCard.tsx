@@ -1,4 +1,4 @@
-import { Button, Card, Select } from "antd";
+import { Button, Card, Flex, Select, Space } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { useState } from "react";
 import axios from "axios";
@@ -10,6 +10,8 @@ interface UserCardProps {
 const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editAccess, setEditAccess] = useState<string>(cardUser.access);
+    
+    
     const { user } = useAuth();
 
     const handleClick = () => {
@@ -50,11 +52,13 @@ const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
                 }
                 bordered={false}
             >
-                <p>Email: {cardUser.email}</p>
-                {editMode ? (
-                    <>
+                <Space direction="vertical" size="small">
+                    <p>Email: {cardUser.email}</p>
+                    <Space>
                         <p>Access:</p>
                         <Select
+                            size="small"
+                            disabled={!editMode}
                             value={editAccess}
                             onChange={setEditAccess}
                             options={[
@@ -63,10 +67,8 @@ const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
                                 { value: "admin", label: "Admin" },
                             ]}
                         />
-                    </>
-                ) : (
-                    <p>Access: {editAccess}</p>
-                )}
+                    </Space>
+                </Space>
             </Card>
         </>
     );

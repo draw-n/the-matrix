@@ -1,167 +1,102 @@
-import { Button, Form, Select, Steps, Input, Result } from "antd";
+import {
+    Button,
+    Form,
+    Select,
+    Steps,
+    Input,
+    Result,
+    Flex,
+    Space,
+    message,
+} from "antd";
 import { useState } from "react";
 import SelectEquipment from "./SelectEquipment";
+import { useAuth } from "../../hooks/AuthContext";
+import "./issues.css";
+import axios from "axios";
 
 const { TextArea } = Input;
 
 const IssueForm: React.FC = () => {
-    const [current, setCurrent] = useState(0);
-
     const [equipmentID, setEquipmentID] = useState<string>("");
-    const [type, setType] = useState<string>("");
+    const [type, setType] = useState<string | null>(null);
+    const [initialDescription, setInitialDescription] = useState<string | null>(null);
     const [description, setDescription] = useState<string>("");
+    const [submitted, setSubmitted] = useState<boolean>(false);
 
-    const steps = [
-        {
-            title: "General",
-            content: (
-                <Form.Item
-                    style={{ width: "100%" }}
-                    label="Types of Equipment"
-                    name="equipmentType"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please select a type of equipment.",
-                        },
-                    ]}
-                >
-                    <Select
-                        onChange={(e) => setType(e.target.value)}
-                        options={[
-                            {
-                                value: "filament",
-                                label: "Filament Printers",
-                            },
-                            { value: "resin", label: "Resin Printers" },
-                            { value: "powder", label: "Powder Printers" },
-                            {
-                                value: "subtractive",
-                                label: "Subtractive/Traditional Manufacturing",
-                            },
-                            {
-                                value: "computer",
-                                label: "Desktops/TV Monitor",
-                            },
-                            { value: "wiring", label: "Wiring Tools" },
-                            { value: "other", label: "Other" },
-                        ]}
-                    />
-                </Form.Item>
-            ),
-        },
-        {
-            title: "Select Equipment",
-            content: (
-                <Form.Item
-                    style={{ width: "100%" }}
-                    label="Select the Equipment with the Issue."
-                    name="description"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please add a description for the issue.",
-                        },
-                    ]}
-                >
-                    <SelectEquipment setID={setEquipmentID} type={type} />
-                </Form.Item>
-            ),
-        },
-        {
-            title: "More Details",
-            content: (
-                <>
-                    <Form.Item
-                        style={{ width: "100%" }}
-                        label="What is the issue? Select the one that is the most applicable."
-                        name="description"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a description for the issue.",
-                            },
-                        ]}
-                    >
-                        <Select
-                            onChange={(e) => setType(e.target.value)}
-                            options={[
-                                {
-                                    value: "filament",
-                                    label: "Filament Printers",
-                                },
-                                { value: "resin", label: "Resin Printers" },
-                                { value: "powder", label: "Powder Printers" },
-                                {
-                                    value: "subtractive",
-                                    label: "Subtractive/Traditional Manufacturing",
-                                },
-                                {
-                                    value: "computer",
-                                    label: "Desktops/TV Monitor",
-                                },
-                                { value: "wiring", label: "Wiring Tools" },
-                                { value: "other", label: "Other" },
-                            ]}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        style={{ width: "100%" }}
-                        label="Please Provide More Details About the Issue"
-                        name="description"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a description for the issue.",
-                            },
-                        ]}
-                    >
-                        <TextArea rows={6} />
-                    </Form.Item>
-                </>
-            ),
-        },
-    ];
-
-    const items = steps.map((item) => ({ key: item.title, title: item.title }));
-
-    const next = () => {
-        setCurrent(current + 1);
-    };
-
-    const prev = () => {
-        setCurrent(current - 1);
-    };
+    const { user } = useAuth();
 
     const handleSubmit = async () => {
-        next();
-        /*try {
+        try {
             const newIssue = {
-                type: type,
-                description: description,
+                equipment: equipmentID,
+                createdBy: user?._id,
+                dateCreated: new Date(),
+                description: `${initialDescription}\n${description}`,
             };
-                    makeAnnouncement();
-
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/issues`,
+                newIssue
+            );
+            makeAnnouncement();
+            updateEquipment(response.data._id);
         } catch (error) {
             console.error("issue submitting an issue:", error);
-        }*/
+        }
 
-        setType("");
-        setDescription("");
-        setEquipmentID("");
     };
 
-    const makeAnnouncement = () => {};
+    const makeAnnouncement = async () => {
+        try {
+            const newAnnouncement = {
+                type: "issue",
+                createdBy: user?._id,
+                dateCreated: new Date(),
+                description: `${initialDescription}\n${description}`,
+            };
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/announcements`,
+                newAnnouncement
+            );
+        } catch (error) {
+            console.error("issue submitting a new announcement", error);
+        }
+    };
+
+    const updateEquipment = async (issueID: string) => {
+        try {
+            const updateEquipment = {
+                issues: [issueID],
+            };
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentID}`,
+                updateEquipment
+            );
+        } catch (error) {
+            console.error("issue updating equipment", error);
+        }
+    };
 
     const refreshForm = () => {
-        setCurrent(0);
+        setEquipmentID("");
+        setType(null);
+        setDescription("");
+        setInitialDescription(null);
+        setSubmitted(false);
+    };
+
+    const onFinishFailed = () => {
+        message.error("Missing one or more fields.");
+    };
+
+    const onFinish = () => {
+        setSubmitted(true);
+        handleSubmit();
     };
 
     return (
         <>
-            {current >= steps.length ? (
+            {submitted ? (
                 <Result
                     status="success"
                     title="Successfully Submitted an Issue!"
@@ -177,32 +112,164 @@ const IssueForm: React.FC = () => {
                     ]}
                 />
             ) : (
-                <>
-                    <Steps current={current} items={items} />
-                    <div>
-                        <Form layout="vertical">{steps[current].content}</Form>
-                    </div>
-                    <div style={{ marginTop: 24 }}>
-                        {current < steps.length - 1 && (
-                            <Button type="primary" onClick={() => next()}>
-                                Next
-                            </Button>
-                        )}
-                        {current === steps.length - 1 && (
-                            <Button type="primary" onClick={handleSubmit}>
-                                Done
-                            </Button>
-                        )}
-                        {current > 0 && (
-                            <Button
-                                style={{ margin: "0 8px" }}
-                                onClick={() => prev()}
+                <Form
+                    layout="vertical"
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                >
+                    <Space
+                        style={{ width: "100%" }}
+                        direction="vertical"
+                        size="middle"
+                    >
+                        <Flex style={{ width: "100%" }} justify="space-between">
+                            <Form.Item required label="First Name">
+                                <Input disabled value={user?.firstName} />
+                            </Form.Item>
+                            <Form.Item required label="Last Name">
+                                <Input disabled value={user?.lastName} />
+                            </Form.Item>
+                            <Form.Item
+                                style={{ width: "40%" }}
+                                required
+                                label="Email"
                             >
-                                Previous
-                            </Button>
+                                <Input disabled value={user?.email} />
+                            </Form.Item>
+                        </Flex>
+                        <Form.Item
+                            style={{ width: "100%" }}
+                            label="Type of Equipment"
+                            name="equipmentType"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please select a type of equipment.",
+                                },
+                            ]}
+                        >
+                            <Select
+                                value={type}
+                                onChange={setType}
+                                options={[
+                                    {
+                                        value: "filament",
+                                        label: "Filament Printers",
+                                    },
+                                    { value: "resin", label: "Resin Printers" },
+                                    {
+                                        value: "powder",
+                                        label: "Powder Printers",
+                                    },
+                                    {
+                                        value: "subtractive",
+                                        label: "Subtractive/Traditional Manufacturing",
+                                    },
+                                    {
+                                        value: "computer",
+                                        label: "Desktops/TV Monitor",
+                                    },
+                                    { value: "wiring", label: "Wiring Tools" },
+                                    { value: "other", label: "Other" },
+                                ]}
+                            />
+                        </Form.Item>
+                        {type !== null && (
+                            <Form.Item
+                                style={{ width: "100%" }}
+                                label="Select the Equipment with the Issue"
+                                name="equipment"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message:
+                                            "Please select the equipment experiencing the issue.",
+                                    },
+                                ]}
+                            >
+                                <SelectEquipment
+                                    id={equipmentID}
+                                    setID={setEquipmentID}
+                                    type={String(type)}
+                                />
+                            </Form.Item>
                         )}
-                    </div>
-                </>
+
+                        <Form.Item
+                            style={{ width: "100%" }}
+                            label="What is the issue? Select the one that is the most applicable."
+                            name="initialDescription"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please add a description for the issue.",
+                                },
+                            ]}
+                        >
+                            <Select
+                                value={initialDescription}
+                                onChange={setInitialDescription}
+                                options={[
+                                    {
+                                        value: "There is no filament coming out of the nozzle or the nozzle is jammed.",
+                                        label: "There is no filament coming out of the nozzle or the nozzle is jammed.",
+                                    },
+                                    {
+                                        value: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
+                                        label: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
+                                    },
+
+                                    {
+                                        value: "The printer is having problems accepting GCode files.",
+                                        label: "The printer is having problems accepting GCode files.",
+                                    },
+                                    {
+                                        value: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
+                                        label: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
+                                    },
+                                    {
+                                        value: "The printer is making weird noises or emitting a strange smell.",
+                                        label: "The printer is making weird noises or emitting a strange smell.",
+                                    },
+                                    {
+                                        value: "There is another issue not explained by the other options. Please describe it in the next field.",
+                                        label: "There is another issue not explained by the other options. Please describe it in the next field.",
+                                    },
+                                ]}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            style={{ width: "100%" }}
+                            label="Please Provide More Details About the Issue"
+                            name="description"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please add a description for the issue.",
+                                },
+                            ]}
+                        >
+                            <TextArea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} />
+                        </Form.Item>
+                        <Flex
+                            justify="end"
+                            style={{ width: "100%" }}
+                            gap="10px"
+                        >
+                            <Form.Item>
+                                <Button onClick={refreshForm}>Clear All</Button>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button htmlType="submit" type="primary">
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Flex>
+                    </Space>
+                </Form>
             )}
         </>
     );

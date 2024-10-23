@@ -2,49 +2,49 @@ import React, { useState } from "react";
 import { Button, Modal, Form, Input, Select } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
-import type { Announcement } from "../../types/Announcement";
+import { Equipment } from "../../types/Equipment";
 
-interface EditModalProps {
-    announcement: Announcement;
+interface EditEquipmentProps {
+    equipment: Equipment;
     onUpdate: () => void;
 }
 
 const { TextArea } = Input;
 
-const EditModal: React.FC<EditModalProps> = ({
-    announcement,
+const EditEquipment: React.FC<EditEquipmentProps> = ({
+    equipment,
     onUpdate
-}: EditModalProps) => {
+}: EditEquipmentProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [type, setType] = useState(announcement.type);
-    const [description, setDescription] = useState(announcement.description);
+    const [type, setType] = useState(equipment.type);
+    const [description, setDescription] = useState(equipment.description);
 
     const { user } = useAuth();
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const handleOk = async () => {
+    /*const handleOk = async () => {
         try {
-            const editedAnnouncement = {
-                id: announcement._id,
+            const editedUpdate = {
+                id: equipment._id,
                 description: description,
-                createdBy: announcement.createdBy,
-                dateCreated: announcement.dateCreated,
+                createdBy: equipment.createdBy,
+                dateCreated: equipment.dateCreated,
                 type: type,
                 lastUpdatedBy: user?._id,
                 dateLastUpdated: Date(),
             };
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements/${announcement._id}`,
-                editedAnnouncement
+                `${import.meta.env.VITE_BACKEND_URL}/announcements/${id}`,
+                editedUpdate
             );
             onUpdate();
         } catch (error) {
             console.error("Issue editing update", error);
         }
         setIsModalOpen(false);
-    };
+    };*/
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -58,7 +58,7 @@ const EditModal: React.FC<EditModalProps> = ({
             <Modal
                 title="Edit Update"
                 open={isModalOpen}
-                onOk={handleOk}
+                //onOk={handleOk}
                 onCancel={handleCancel}
             >
                 <Form layout="vertical">
@@ -86,4 +86,4 @@ const EditModal: React.FC<EditModalProps> = ({
     );
 };
 
-export default EditModal;
+export default EditEquipment;

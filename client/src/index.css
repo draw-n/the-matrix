@@ -14,6 +14,10 @@ h1 {
     src: url("./assets/fonts/Montserrat-VariableFont_wght.ttf");
 }
 
+p {
+    margin: 0;
+}
+
 :root {
     --shell-header-bg-color: #000000;
     --shell-header-text-color: #FFFFFF;

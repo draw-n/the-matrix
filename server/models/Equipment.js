@@ -8,6 +8,7 @@ const EquipmentSchema = new Schema({
         required: true,
     },
     name: { type: String, required: true },
+    routePath: { type: String, required: true },
     type: {
         type: String,
         required: true,
@@ -21,9 +22,13 @@ const EquipmentSchema = new Schema({
             "other",
         ],
     },
+    properties: {
+        nozzle: { type: Number },
+        materials: [{ type: String }],
+    },
     status: {
         type: String,
-        enum: ["working", "jammed", "fixing", "updating"],
+        enum: ["working", "broken", "fixing", "updating"],
         required: true,
     },
     description: {
