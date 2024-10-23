@@ -72,7 +72,7 @@ const UserDirectory: React.FC = () => {
                 {isLoading ? (
                     <Loading />
                 ) : (
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         {users?.map((user: User) => {
                             return (
                                 <Col span={8}>
@@ -80,7 +80,8 @@ const UserDirectory: React.FC = () => {
                                 </Col>
                             );
                         })}
-                        {users?.length == 0 &&   <Flex
+                        {users?.length == 0 && (
+                            <Flex
                                 align="center"
                                 justify="center"
                                 style={{
@@ -95,7 +96,8 @@ const UserDirectory: React.FC = () => {
                                         </Typography.Text>
                                     }
                                 />
-                            </Flex>}
+                            </Flex>
+                        )}
                     </Row>
                 )}
             </Space>

@@ -109,7 +109,7 @@ const App: React.FC = () => {
                             <PrivateRoute
                                 element={
                                     <Shell
-                                        contentAccess={["admin"]}
+                                        contentAccess={["view", "edit", "admin"]}
                                         children={<AllEquipment />}
                                     />
                                 }
