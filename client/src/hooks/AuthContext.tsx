@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        /*const fetchData = async (storedUserID: string) => {
+        const fetchData = async (storedUserID: string) => {
             try {
                 const response = await axios.get<User>(
                     `${import.meta.env.VITE_BACKEND_URL}/users/${storedUserID}`
@@ -40,16 +40,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             } catch (error) {
                 console.error("Failure to fetch user id", error);
             }
-        };*/
+        };
 
         // Check local storage for user data on app load
         const storedUserID = window.localStorage.getItem("userID");
         if (storedUserID) {
             try {
-                //fetchData(storedUserID);
-                const userData: User = JSON.parse(storedUserID);
-                setUser(userData);
-                console.log("parsed data: ", userData.firstName);
+                fetchData(storedUserID);
+                //const userData: User = JSON.parse(storedUserID);
+                //setUser(userData);
+                console.log("parsed data: ", user?.firstName);
             } catch (error) {
                 console.error("Can't parse user data from local:", error);
             }
@@ -65,9 +65,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             access: credentialResponse.access,
         };
         setUser(newUser);
-        window.localStorage.setItem("userID", JSON.stringify(newUser));
+        //window.localStorage.setItem("userID", JSON.stringify(newUser));
 
-        //window.localStorage.setItem("userID", JSON.stringify(newUser._id));
+        window.localStorage.setItem("userID", JSON.stringify(newUser._id));
     };
 
     const logout = () => {
