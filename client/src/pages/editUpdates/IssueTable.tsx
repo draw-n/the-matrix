@@ -24,11 +24,13 @@ interface EquipmentInfo {
 }
 
 interface IssueTableProps {
-    refresh: number;
-    setRefresh: (numValue: number) => void;
+    equipmentFilter?: string;
+    refresh?: number;
+    setRefresh?: (numValue: number) => void;
 }
 
 const IssueTable: React.FC<IssueTableProps> = ({
+    equipmentFilter,
     refresh,
     setRefresh,
 }: IssueTableProps) => {
@@ -40,7 +42,9 @@ const IssueTable: React.FC<IssueTableProps> = ({
 
     const deleteIssue = async (_id: string) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/issues/${_id}`);
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${_id}`
+            );
             // Update the state to remove the deleted equipment
             setIssues(issues.filter((issue) => issue._id !== _id));
         } catch (error) {
@@ -57,10 +61,16 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/issues`
                 );
 
-                const formattedData = response.data.map((item) => ({
+                let formattedData = response.data.map((item) => ({
                     ...item,
                     key: item._id,
                 }));
+
+                if (equipmentFilter) {
+                    formattedData = formattedData.filter(
+                        (equipment) => equipment.equipment === equipmentFilter
+                    );
+                }
                 setIssues(formattedData);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);

@@ -18,9 +18,12 @@ import axios from "axios";
 const { TextArea } = Input;
 
 const IssueForm: React.FC = () => {
+    const [form] = Form.useForm();
     const [equipmentID, setEquipmentID] = useState<string>("");
     const [type, setType] = useState<string | null>(null);
-    const [initialDescription, setInitialDescription] = useState<string | null>(null);
+    const [initialDescription, setInitialDescription] = useState<string | null>(
+        null
+    );
     const [description, setDescription] = useState<string>("");
     const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -43,7 +46,6 @@ const IssueForm: React.FC = () => {
         } catch (error) {
             console.error("issue submitting an issue:", error);
         }
-
     };
 
     const makeAnnouncement = async () => {
@@ -113,6 +115,7 @@ const IssueForm: React.FC = () => {
                 />
             ) : (
                 <Form
+                    form={form}
                     layout="vertical"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -120,7 +123,7 @@ const IssueForm: React.FC = () => {
                     <Space
                         style={{ width: "100%" }}
                         direction="vertical"
-                        size="middle"
+                        size="small"
                     >
                         <Flex style={{ width: "100%" }} justify="space-between">
                             <Form.Item required label="First Name">
@@ -179,7 +182,7 @@ const IssueForm: React.FC = () => {
                             <Form.Item
                                 style={{ width: "100%" }}
                                 label="Select the Equipment with the Issue"
-                                name="equipment"
+                                name="equipmentID"
                                 rules={[
                                     {
                                         required: true,
@@ -189,9 +192,14 @@ const IssueForm: React.FC = () => {
                                 ]}
                             >
                                 <SelectEquipment
-                                    id={equipmentID}
-                                    setID={setEquipmentID}
-                                    type={String(type)}
+                                    value={equipmentID}
+                                    setValue={(value) => {
+                                        setEquipmentID(value);
+                                        form.setFieldsValue({
+                                            equipmentID: value,
+                                        }); // Update the form's value
+                                    }}
+                                    type={type}
                                 />
                             </Form.Item>
                         )}
@@ -252,7 +260,11 @@ const IssueForm: React.FC = () => {
                                 },
                             ]}
                         >
-                            <TextArea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} />
+                            <TextArea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={6}
+                            />
                         </Form.Item>
                         <Flex
                             justify="end"

@@ -7,15 +7,15 @@ import type { Equipment } from "../../types/Equipment";
 const { Paragraph } = Typography;
 
 interface SelectEquipmentProps {
-    type: string;
-    id: string;
-    setID: (newValue: string) => void;
+    type: string | null;
+    value: string;
+    setValue: (newValue: string) => void;
 }
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
     type,
-    id,
-    setID,
+    value,
+    setValue,
 }: SelectEquipmentProps) => {
     const [showEquipment, setShowEquipment] = useState<Equipment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -35,7 +35,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                 console.error("Fetching updates or issues failed:", error);
             }
         };
-        setID("");
+        setValue("");
         fetchData();
     }, [type]);
 
@@ -65,7 +65,8 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                     )}
                     <Radio.Group
                         className="select-radio"
-                        onChange={(e) => setID(e.target.value)}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
                     >
                         <Row gutter={[16, 16]}>
                             {showEquipment.map((equipment: Equipment) => {
@@ -82,7 +83,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                                         >
                                             <Card
                                                 className={`select-card ${
-                                                    equipment._id == id &&
+                                                    equipment._id === value &&
                                                     "select-active"
                                                 }`}
                                                 style={{ width: 300 }}
