@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUserID = window.localStorage.getItem("userID");
         if (storedUserID) {
             try {
-                fetchData(storedUserID);
+                fetchData(JSON.parse(storedUserID));
                 //const userData: User = JSON.parse(storedUserID);
                 //setUser(userData);
                 console.log("parsed data: ", user?.firstName);

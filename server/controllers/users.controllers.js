@@ -89,8 +89,9 @@ const getUser = async (req, res) => {
             return res.status(500).send("Internal server error");
         }
     }
-    console.log("no id detected");
+};
 
+const getUsers = async (req, res) => {
     try {
         const user = await User.find();
         return res.status(200).json(user);
@@ -104,4 +105,5 @@ module.exports = {
     deleteUser,
     updateUser,
     getUser,
+    getUsers
 };
