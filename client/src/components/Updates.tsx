@@ -39,7 +39,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
         }, 10000); // Change slide every 10 seconds
 
         return () => clearInterval(interval); // Cleanup on unmount
-    }, [announcements]);
+    }, [announcements, currentSlide]);
 
     useEffect(() => {
         if (carouselRef.current) {
@@ -54,6 +54,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
             setCurrentSlide(nextIndex);
         }
     };
+
     return (
         <>
             <Carousel
