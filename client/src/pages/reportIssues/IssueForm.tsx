@@ -14,12 +14,13 @@ import SelectEquipment from "./SelectEquipment";
 import { useAuth } from "../../hooks/AuthContext";
 import "./issues.css";
 import axios from "axios";
+import { Equipment } from "../../types/Equipment";
 
 const { TextArea } = Input;
 
 const IssueForm: React.FC = () => {
     const [form] = Form.useForm();
-    const [equipmentID, setEquipmentID] = useState<string>("");
+    const [equipment, setEquipment] = useState<Equipment | null>(null);
     const [type, setType] = useState<string | null>(null);
     const [initialDescription, setInitialDescription] = useState<string | null>(
         null
@@ -32,7 +33,7 @@ const IssueForm: React.FC = () => {
     const handleSubmit = async () => {
         try {
             const newIssue = {
-                equipment: equipmentID,
+                equipment: equipment?._id,
                 createdBy: user?._id,
                 dateCreated: new Date(),
                 description: `${initialDescription}\n${description}`,
@@ -52,9 +53,10 @@ const IssueForm: React.FC = () => {
         try {
             const newAnnouncement = {
                 type: "issue",
+                title: equipment?.name,
                 createdBy: user?._id,
                 dateCreated: new Date(),
-                description: `${initialDescription}\n${description}`,
+                description: `${initialDescription}`,
             };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements`,
@@ -70,17 +72,21 @@ const IssueForm: React.FC = () => {
             const updateEquipment = {
                 issues: [issueID],
             };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentID}`,
-                updateEquipment
-            );
+            if (equipment) {
+                const response = await axios.put(
+                    `${import.meta.env.VITE_BACKEND_URL}/equipment/${
+                        equipment?._id
+                    }`,
+                    updateEquipment
+                );
+            }
         } catch (error) {
             console.error("issue updating equipment", error);
         }
     };
 
     const refreshForm = () => {
-        setEquipmentID("");
+        setEquipment(null);
         setType(null);
         setDescription("");
         setInitialDescription(null);
@@ -192,9 +198,9 @@ const IssueForm: React.FC = () => {
                                 ]}
                             >
                                 <SelectEquipment
-                                    value={equipmentID}
+                                    value={equipment}
                                     setValue={(value) => {
-                                        setEquipmentID(value);
+                                        setEquipment(value);
                                         form.setFieldsValue({
                                             equipmentID: value,
                                         }); // Update the form's value

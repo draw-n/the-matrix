@@ -1,12 +1,13 @@
 const Announcement = require("../models/Announcement.js");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const createAnnouncement= async (req, res) => {
+const createAnnouncement = async (req, res) => {
     const { type, description, createdBy, dateCreated } = req.body;
+    const title = req.query?.title;
 
     try {
         if (type && description && createdBy && dateCreated) {
-            let update = new Announcement({
+            let announcementObj = {
                 _id: new mongoose.Types.ObjectId(),
                 type: type,
                 status: "posted",
@@ -15,9 +16,16 @@ const createAnnouncement= async (req, res) => {
                 dateCreated: dateCreated,
                 lastUpdatedBy: createdBy,
                 dateLastUpdated: dateCreated,
-            });
-            await update.save();
-            return res.status(200).json(update);
+            };
+
+            if (title) {
+                announcementObj = { ...announcementObj, title: title };
+            }
+
+            const announcement = new Announcement(announcementObj);
+
+            await announcement.save();
+            return res.status(200).json(announcement);
         } else {
             return res
                 .status(400)

@@ -6,7 +6,7 @@ import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 
 
-interface UpdateFormProps {
+interface AnnouncementFormProps {
     onUpdate: () => void;
 }
 
@@ -17,7 +17,7 @@ interface FieldType {
 
 const { TextArea } = Input;
 
-const UpdateForm: React.FC<UpdateFormProps> = ({ onUpdate }) => {
+const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
     const { user } = useAuth();
     const [type, setType] = useState("");
     const [description, setDescription] = useState("");
@@ -113,4 +113,4 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ onUpdate }) => {
     );
 };
 
-export default UpdateForm;
+export default AnnouncementForm;

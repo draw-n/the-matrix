@@ -7,6 +7,9 @@ const AnnouncementSchema = new Schema({
         type: ObjectId,
         required: true,
     },
+    title: {
+        type: String,
+    },
     type: {
         type: String,
         required: true,
@@ -18,7 +21,7 @@ const AnnouncementSchema = new Schema({
     },
     description: {
         type: String,
-        required: true
+        required: true,
     },
     createdBy: {
         type: String,
@@ -38,4 +41,7 @@ const AnnouncementSchema = new Schema({
     },
 });
 
-module.exports = Announcement = mongoose.model("announcement", AnnouncementSchema);
+module.exports = Announcement = mongoose.model(
+    "announcement",
+    AnnouncementSchema
+);

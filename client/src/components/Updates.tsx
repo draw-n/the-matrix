@@ -1,28 +1,14 @@
-import { Carousel, Empty, Flex, Typography } from "antd";
+import { Carousel, Empty, Flex, Tag, Typography } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "./Loading";
-const contentStyle: React.CSSProperties = {
-    margin: 0,
-    height: "100vh",
-    color: "#fff",
-    lineHeight: "160px",
-    textAlign: "center",
-    background: "#364d79",
-};
+import type { Announcement } from "../types/Announcement";
 
-interface Announcement {
-    dateCreated: Date;
-    type: string;
-    description: string;
+interface UpdatesProps {
+    kioskMode?: boolean;
 }
 
-/*interface UpdatesProps {
-    height?: string | number | undefined;
-    width?: string | number | undefined;
-}*/
-
-const Updates: React.FC = ({}) => {
+const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
     const [announcements, setAnnouncements] = useState<Announcement[]>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -40,13 +26,21 @@ const Updates: React.FC = ({}) => {
         };
 
         fetchData();
+        if (kioskMode) {
+            const interval = setInterval(() => {
+                window.location.reload();
+            }, 3600000); // 20 seconds in milliseconds
+
+            // Cleanup the interval on component unmount
+            return () => clearInterval(interval);
+        }
     }, []);
     return (
         <>
-            <Carousel autoplay arrows>
+            <Carousel arrows>
                 {isLoading ? (
                     <div style={{ padding: 0 }}>
-                        <div style={contentStyle}>
+                        <div className="updates-carousel">
                             <Flex
                                 style={{ width: "100%", height: "100%" }}
                                 justify="center"
@@ -59,23 +53,46 @@ const Updates: React.FC = ({}) => {
                 ) : (
                     announcements?.map((announcement: Announcement) => {
                         return (
-                            <div style={{ padding: 0 }}>
-                                <div style={contentStyle}>
-                                    <p>{announcement.type}</p>
-                                    <p>
-                                        {new Date(
-                                            announcement.dateCreated
-                                        ).toLocaleString()}
-                                    </p>
-                                    <p>{announcement.description}</p>
-                                </div>
+                            <div
+                                className={`updates-carousel ${
+                                    kioskMode && "updates-kiosk-mode"
+                                }`}
+                            >
+                                <Flex
+                                    className="updates-slide"
+                                    vertical
+                                    gap="5rem"
+                                    justify="space-between"
+                                >
+                                    <div>
+                                        <h2>{announcement.title}</h2>
+                                        <p className="updates-description">
+                                            {announcement.description}
+                                        </p>
+                                    </div>
+
+                                    <Flex>
+                                        <Tag
+                                            style={{
+                                                textTransform: "uppercase",
+                                            }}
+                                        >
+                                            {announcement.type}
+                                        </Tag>
+                                        <p>
+                                            {new Date(
+                                                announcement.dateCreated
+                                            ).toLocaleString()}
+                                        </p>
+                                    </Flex>
+                                </Flex>
                             </div>
                         );
                     })
                 )}
                 {announcements?.length == 0 && (
                     <div style={{ padding: 0 }}>
-                        <div style={contentStyle}>
+                        <div className="updates-carousel">
                             <Flex
                                 align="center"
                                 justify="center"
@@ -86,7 +103,7 @@ const Updates: React.FC = ({}) => {
                             >
                                 <Empty
                                     description={
-                                        <Typography.Text>
+                                        <Typography.Text className="updates-description">
                                             There are no announcements.
                                         </Typography.Text>
                                     }

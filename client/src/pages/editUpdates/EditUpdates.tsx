@@ -1,22 +1,14 @@
-import { Button, Flex, Space, Table, Tag } from "antd";
-import type { TableProps } from "antd";
+import { Flex } from "antd";
 
-import EditModal from "./EditModal";
-import { useAuth } from "../../hooks/AuthContext";
+import { useState } from "react";
 
-import NoAccess from "../../components/NoAccess";
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-import UpdateForm from "./UpdateForm";
+import AnnouncementForm from "./AnnouncementForm";
 import AnnouncementTable from "./AnnouncementTable";
 import IssueTable from "./IssueTable";
 
 const EditUpdates: React.FC = () => {
     const [refreshUpdates, setRefreshUpdates] = useState<number>(0); // State for refresh count
     const [refreshIssues, setRefreshIssues] = useState<number>(0); // State for refresh count
-
-    const { user } = useAuth();
 
     return (
         <>
@@ -29,7 +21,7 @@ const EditUpdates: React.FC = () => {
             >
                 <h2>Announcements</h2>
 
-                <UpdateForm
+                <AnnouncementForm
                     onUpdate={() => setRefreshUpdates((prev) => prev + 1)}
                 />
             </Flex>

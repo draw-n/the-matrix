@@ -8,8 +8,8 @@ const { Paragraph } = Typography;
 
 interface SelectEquipmentProps {
     type: string | null;
-    value: string;
-    setValue: (newValue: string) => void;
+    value: Equipment | null;
+    setValue: (newValue: Equipment | null) => void;
 }
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
@@ -35,7 +35,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                 console.error("Fetching updates or issues failed:", error);
             }
         };
-        setValue("");
+        setValue(null);
         fetchData();
     }, [type]);
 
@@ -83,7 +83,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                                         >
                                             <Card
                                                 className={`select-card ${
-                                                    equipment._id === value &&
+                                                    equipment._id === value?._id &&
                                                     "select-active"
                                                 }`}
                                                 style={{ width: 300 }}
