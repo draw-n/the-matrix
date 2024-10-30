@@ -1,6 +1,8 @@
 import { Carousel, Empty, Flex, Tag, Typography } from "antd";
+import { CarouselRef } from "antd/es/carousel";
+
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, createRef } from "react";
 import Loading from "./Loading";
 import type { Announcement } from "../types/Announcement";
 
@@ -11,6 +13,9 @@ interface UpdatesProps {
 const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
     const [announcements, setAnnouncements] = useState<Announcement[]>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const carouselRef = useRef<CarouselRef | null>(null); // Ref for the Carousel component
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,18 +31,35 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
         };
 
         fetchData();
-        if (kioskMode) {
-            const interval = setInterval(() => {
-                window.location.reload();
-            }, 3600000); // 20 seconds in milliseconds
-
-            // Cleanup the interval on component unmount
-            return () => clearInterval(interval);
-        }
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            nextSlide(); // Update the slide every 10 seconds
+        }, 10000); // Change slide every 10 seconds
+
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, [announcements]);
+
+    useEffect(() => {
+        if (carouselRef.current) {
+          carouselRef.current.goTo(currentSlide); // Move the carousel to the current slide
+        }
+      }, [currentSlide]); // Update the carousel when currentSlide changes
+
+    const nextSlide = () => {
+        const length = announcements?.length;
+        if (length) {
+            const nextIndex = (currentSlide + 1) % length; // Loop back to the first slide
+            setCurrentSlide(nextIndex);
+        }
+    };
     return (
         <>
-            <Carousel arrows>
+            <Carousel
+                arrows
+                ref={carouselRef}
+            >
                 {isLoading ? (
                     <div style={{ padding: 0 }}>
                         <div className="updates-carousel">
