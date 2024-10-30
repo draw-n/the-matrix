@@ -84,7 +84,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                                 <Flex
                                     className="updates-slide"
                                     vertical
-                                    gap="5rem"
+                                    gap="8rem"
                                     justify="flex-end"
                                 >
                                     <div>
