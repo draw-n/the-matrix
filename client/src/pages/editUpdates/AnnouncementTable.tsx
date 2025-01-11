@@ -99,6 +99,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     fullName: "",
                     email: "",
                 };
+                console.log(record)
                 return <a href={`mailto:${email}`}>{fullName}</a>;
             },
         },
@@ -163,6 +164,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                         />
                         {/*<Button>Archive</Button> */}
                         <Button
+                        className="secondary-button-outlined"
                             onClick={() => deleteAnnouncement(announcement._id)}
                         >
                             Delete

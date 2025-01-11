@@ -20,6 +20,7 @@ const Announcements: React.FC = () => {
                             <Button
                                 onClick={() => navigate("/edit")}
                                 type="primary"
+                                className="primary-button-filled"
                             >
                                 EDIT
                             </Button>
@@ -28,6 +29,7 @@ const Announcements: React.FC = () => {
                         <Button
                             onClick={() => navigate("/kiosk")}
                             type="primary"
+                            className="secondary-button-filled"
                         >
                             KIOSK MODE
                         </Button>

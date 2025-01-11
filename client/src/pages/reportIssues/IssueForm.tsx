@@ -227,7 +227,7 @@ const IssueForm: React.FC = () => {
                                 onChange={setInitialDescription}
                                 options={[
                                     {
-                                        value: "There is no filament coming out of the nozzle or the nozzle is jammed.",
+                                        value: `There is no filament coming out of the nozzle or the nozzle is jammed.`,
                                         label: "There is no filament coming out of the nozzle or the nozzle is jammed.",
                                     },
                                     {

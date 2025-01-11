@@ -1,17 +1,39 @@
 .shell-header {
-    background-color: var(--shell-header-bg-color);
-    color: var(--shell-header-text-color);
+    background-color: var(--header-bg-color);
+    color: var(--header-text-color);
 }
 
-/*.shell-sider {
-    background-color: var(--navbar-bg-color);
-    color: var(--navbar-text-color);
+.header-title {
+    color: var(--header-text-color);
 }
 
-.shell-navbar {
-    background-color: var(--navbar-bg-color);
-    color: var(--navbar-text-color);
-}*/
+.shell-sidebar {
+    background-color: var(--sidebar-bg-color);
+    color: var(--sidebar-text-color);
+}
+
+.sidebar-button {
+    color: var(--header-text-color);
+}
+
+.sidebar-button:hover {
+    color: var(--header-hover-color) !important;
+}
+
+.ant-menu-item-selected {
+    background-color: var(
+        --sidebar-active-bg-color
+    ) !important; /* Change background color */
+    color: var(--sidebar-border-color) !important; /* Change text color */
+}
+
+/* Optionally change the hover state for the selected menu item */
+.ant-menu-item-selected:hover {
+    background-color: var(
+        --sidebar-accent-color
+    ) !important; /* Keep same background on hover */
+    color: var(--sidebar-text-color) !important; /* Keep white text on hover */
+}
 
 .login-background {
     background: -webkit-linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -38,10 +60,69 @@
     border-radius: 10px;
 }
 
+.primary-button-filled {
+    border: none;
+    background-color: var(--primary-color) !important;
+    color: var(--neutral-light) !important;
+}
+
+.primary-button-filled:hover {
+    border: none;
+
+    background-color: var(--primary-color-hover) !important;
+    color: var(--neutral-light) !important;
+}
+
+.primary-button-outlined {
+    border: none;
+
+    color: var(--neutral-medium) !important;
+    border: 2px solid var(--text-primary) !important;
+    background-color: transparent !important;
+}
+
+.primary-button-outlined:hover {
+    border: none;
+
+    background-color: transparent !important;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+.secondary-button-filled {
+    border: none;
+
+    background-color: var(--secondary-color) !important;
+    color: var(--neutral-light) !important;
+}
+
+.secondary-button-filled:hover {
+    border: none;
+
+    background-color: var(--secondary-color-hover) !important;
+    color: var(--neutral-light) !important;
+}
+
+.secondary-button-outlined {
+    border: none;
+
+    color: var(--text-primary);
+    border: 1px solid var(--neutral-medium);
+    background-color: transparent;
+}
+
+.secondary-button-outlined:hover {
+    border: none;
+
+    background-color: transparent !important;
+    color: var(--secondary-color) !important;
+    border: 1px solid var(--secondary-color) !important;
+}
+
 .updates-carousel {
     margin: 0;
     color: #fff;
-    background: #364d79;
+    background: var(--neutral-medium);
     text-align: center;
     overflow: hidden;
 }

@@ -17,7 +17,7 @@ export interface User {
 
 interface AuthContextType {
     user: User | null;
-    login: (credentialResponse: any) => void;
+    login: (email: string, password: string) => void;
     logout: () => void;
 }
 
@@ -31,48 +31,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const fetchData = async (storedUserID: string) => {
-            try {
-                const response = await axios.get<User>(
-                    `${import.meta.env.VITE_BACKEND_URL}/users/${storedUserID}`
-                );
-                setUser(response.data);
-            } catch (error) {
-                console.error("Failure to fetch user id", error);
-            }
-        };
+        const storedID = localStorage.getItem("userID");
+        if (storedID) {
+            const fetchUser = async () => {
+                try {
+                    const response = await axios.get(
+                        `${import.meta.env.VITE_BACKEND_URL}/users/${storedID}`
+                    );
+                    if (response.data.user) {
+                        setUser(response.data.user); // Set user in context state
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch user details", error);
+                }
+            };
 
-        // Check local storage for user data on app load
-        const storedUserID = window.localStorage.getItem("userID");
-        if (storedUserID) {
-            try {
-                fetchData(JSON.parse(storedUserID));
-                //const userData: User = JSON.parse(storedUserID);
-                //setUser(userData);
-                console.log("parsed data: ", user?.firstName);
-            } catch (error) {
-                console.error("Can't parse user data from local:", error);
-            }
+            fetchUser();
         }
     }, []);
 
-    const login = (credentialResponse: any) => {
-        const newUser = {
-            _id: credentialResponse._id,
-            firstName: credentialResponse.firstName,
-            email: credentialResponse.email,
-            lastName: credentialResponse.lastName,
-            access: credentialResponse.access,
-        };
-        setUser(newUser);
-        //window.localStorage.setItem("userID", JSON.stringify(newUser));
-
-        window.localStorage.setItem("userID", JSON.stringify(newUser._id));
+    const login = async (email: string, password: string) => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/users/login`,
+                { email, password }
+            );
+            if (response.data.user) {
+                localStorage.setItem("userID", response.data.user._id);
+                setUser(response.data.user);
+            }
+        } catch (error) {
+            console.error("Login failed", error);
+        }
     };
 
     const logout = () => {
+        localStorage.removeItem("userID");
         setUser(null);
-        window.localStorage.removeItem("userID");
     };
 
     return (

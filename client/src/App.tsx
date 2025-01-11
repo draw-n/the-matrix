@@ -19,6 +19,8 @@ import NotFound from "./components/NotFound";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Equipment } from "./types/Equipment";
+import Signup from "./pages/Signup";
+import RemotePrint from "./pages/remotePrint/RemotePrint";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -69,6 +71,8 @@ const App: React.FC = () => {
                         );
                     })}
                     <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+
                     <Route
                         path="/"
                         element={
@@ -81,6 +85,24 @@ const App: React.FC = () => {
                                             "admin",
                                         ]}
                                         children={<Announcements />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+
+<Route
+                        path="/upload"
+                        element={
+                            <PrivateRoute
+                                element={
+                                    <Shell
+                                        contentAccess={[
+                                            "view",
+                                            "edit",
+                                            "admin",
+                                        ]}
+                                        children={<RemotePrint/>}
                                     />
                                 }
                             />

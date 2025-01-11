@@ -52,7 +52,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
+            <Button className="primary-button-filled" onClick={showModal}>
                 Edit
             </Button>
             <Modal

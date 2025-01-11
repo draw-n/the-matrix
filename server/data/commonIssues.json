@@ -1,0 +1,33 @@
+{
+    "filament": [
+        {
+            "announcement": "Extrusion problem happening with this printer.",
+            "issue": "Filament is not extruding or the nozzle is jammed."
+        },
+        {
+            "announcement": "This printer is having problems with uploading files.",
+            "issue": "The printer is not accepting a .gcode file or the network is not accessible."
+        },
+        {
+            "announcement": ""
+        }
+    ],
+    "resin": [
+
+    ],
+    "powder": [
+
+    ],
+    "subtractive": [
+
+    ],
+    "computer": [
+
+    ],
+    "wiring": [
+
+    ],
+    "other": [
+
+    ]
+}

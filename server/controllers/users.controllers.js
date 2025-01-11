@@ -1,28 +1,27 @@
 const User = require("../models/User.js");
-const axios = require("axios");
+
 const createUser = async (req, res) => {
-    const { token } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     try {
-        const userInfoResponse = await axios.get(
-            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`
-        );
-        const userInfo = userInfoResponse.data;
+        let user = await User.findOne({ email: email });
+        if (user)
+            return res.status(400).json({ message: "User already exists." });
 
-        let user = await User.findOne({ _id: userInfo.id });
-        if (!user) {
-            user = new User({
-                _id: userInfo.id,
-                firstName: userInfo.given_name,
-                lastName: userInfo.family_name,
-                email: userInfo.email,
-                access: "view",
-            });
-            console.log(user);
-            await user.save();
-        }
+        user = new User({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            access: "view",
+        });
+        console.log(user);
 
-        return res.status(200).json(user);
+        await user.save();
+
+        return res
+            .status(200)
+            .json({ message: "User registered successfully."});
     } catch (err) {
         console.error(err.message);
         return res.status(500).send({ message: err.message });
@@ -59,7 +58,7 @@ const updateUser = async (req, res) => {
             const user = User.findByIdAndUpdate(userId, req.body)
                 .then(function () {
                     console.log(req.body);
-                    console.log(userId)
+                    console.log(userId);
                     res.status(200).json(user);
                 })
                 .catch(function (error) {
@@ -76,14 +75,15 @@ const updateUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    const userId = req.params?.id;
-    if (userId) {
+    const id = req.params?.id;
+    if (id) {
         try {
-            const user = await User.findById(userId);
+            const user = await User.findById(id);
             if (!user) {
                 return res.status(404).send("User not found");
             }
-            return res.status(200).json(user);
+
+            return res.status(200).json({user});
         } catch (error) {
             console.error("Error fetching user:", error);
             return res.status(500).send("Internal server error");
@@ -105,5 +105,5 @@ module.exports = {
     deleteUser,
     updateUser,
     getUser,
-    getUsers
+    getUsers,
 };

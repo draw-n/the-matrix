@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./NoAccess";
 import NotFound from "./NotFound";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 
 const { Header, Content, Sider } = Layout;
 
@@ -17,17 +17,6 @@ interface MenuItem {
     icon?: React.ReactNode;
     children?: MenuItem[];
 }
-
-const siderStyle: React.CSSProperties = {
-    overflow: 'auto',
-    height: '100vh',
-    position: 'fixed',
-    insetInlineStart: 0,
-    top: 0,
-    bottom: 0,
-    scrollbarWidth: 'thin',
-    scrollbarGutter: 'stable',
-  };
 
 const allPages: MenuItem[] = [
     { key: "/", label: "Announcements", access: ["view", "edit", "admin"] },
@@ -41,12 +30,21 @@ const allPages: MenuItem[] = [
         label: "Edit Updates",
         access: ["edit", "admin"],
     },
-    { key: "/equipment", label: "All Equipment", access: ["view", "edit", "admin"] },
+    {
+        key: "/equipment",
+        label: "All Equipment",
+        access: ["view", "edit", "admin"],
+    },
 
     { key: "/directory", label: "User Directory", access: ["admin"] },
     {
         key: "/profile",
         label: "User Profile",
+        access: ["view", "edit", "admin"],
+    },
+    {
+        key: "/upload",
+        label: "Remote Print",
         access: ["view", "edit", "admin"],
     },
 ];
@@ -92,27 +90,18 @@ const Shell: React.FC<ShellProps> = ({
                 >
                     <Button
                         type="text"
-                        icon={
-                            <MenuOutlined />
-                            /*collapsed ? (
-                                <MenuUnfoldOutlined />
-                            ) : (
-                                <MenuFoldOutlined />
-                            )*/
-                        }
+                        icon={collapsed ? <MenuOutlined /> : <CloseOutlined />}
+                        className="sidebar-button"
                         onClick={() => setCollapsed(!collapsed)}
-                        style={{
-                            background: "white",
-                        }}
                     />
-                    <h1>DIGITAL FABRICATION LAB</h1>
+                    <h1 className="header-title">DIGITAL FABRICATION LAB</h1>
                     <ProfileDropdown />
                 </Flex>
             </Header>
 
             <Layout>
                 <Sider
-                    className="shell-sider"
+                    className="shell-sidebar"
                     breakpoint="lg"
                     collapsedWidth="0"
                     trigger={null}
@@ -121,7 +110,7 @@ const Shell: React.FC<ShellProps> = ({
                 >
                     <Menu
                         theme="dark"
-                        className="shell-navbar"
+                        className="shell-sidebar"
                         selectedKeys={getSelectedKeys()}
                         defaultSelectedKeys={[location.pathname]}
                         mode="inline"

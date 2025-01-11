@@ -2,14 +2,12 @@ import { Dropdown, Tooltip, Button, MenuProps, Flex } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
-import { googleLogout } from "@react-oauth/google";
 
 const ProfileDropdown: React.FC = () => {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
 
     const logOut = () => {
-        googleLogout();
         logout();
         navigate("/login");
     };
