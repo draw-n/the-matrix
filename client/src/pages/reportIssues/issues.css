@@ -1,8 +1,13 @@
 .select-card {
     display: flex;
+    padding: 20px;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     height: 100%; /* Ensures cards fill the column height */
+    background-color: white !important;
+    border: 1px solid var(--neutral-medium);
+    text-align: center;
+    border-radius: 5px;
 }
 
 .select-radio .ant-radio {
@@ -10,5 +15,11 @@
 }
 
 .select-active {
-    border: 2px solid black;
+    border: 1px solid var(--neutral-dark);
+    background-color: var(--neutral-light) !important;
+}
+
+.select-card:hover {
+    border: 1px solid var(--neutral-dark);
+    background-color: var(--neutral-medium) !important;
 }

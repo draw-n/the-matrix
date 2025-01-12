@@ -74,7 +74,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 );
 
                 setUsers(usersMap);
-                console.log(users);
             } catch (error) {
                 console.error("importing users failed:", error);
             }
@@ -99,7 +98,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     fullName: "",
                     email: "",
                 };
-                console.log(record)
                 return <a href={`mailto:${email}`}>{fullName}</a>;
             },
         },

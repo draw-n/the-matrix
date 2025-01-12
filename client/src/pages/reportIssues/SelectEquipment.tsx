@@ -1,4 +1,4 @@
-import { Card, Radio, Space, Row, Col, Typography, Flex, Empty } from "antd";
+import { Card, Space, Row, Col, Typography, Flex, Empty } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
@@ -63,42 +63,24 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                             />
                         </Flex>
                     )}
-                    <Radio.Group
-                        className="select-radio"
-                        value={value}
-                        onChange={(e) => setValue(e.target.value)}
-                    >
-                        <Row gutter={[16, 16]}>
-                            {showEquipment.map((equipment: Equipment) => {
-                                return (
-                                    <Col
-                                        key={equipment._id}
-                                        span={8}
-                                        className="select-card"
+
+                    <Row gutter={[20, 20]}>
+                        {showEquipment.map((equipment: Equipment) => {
+                            return (
+                                <Col key={equipment._id} span={8}>
+                                    <div
+                                        className={`select-card ${
+                                            equipment._id === value?._id &&
+                                            "select-active"
+                                        }`}
+                                        onClick={() => setValue(equipment)}
                                     >
-                                        <Radio
-                                            className="select-card"
-                                            key={equipment._id}
-                                            value={equipment._id}
-                                        >
-                                            <Card
-                                                className={`select-card ${
-                                                    equipment._id === value?._id &&
-                                                    "select-active"
-                                                }`}
-                                                style={{ width: 300 }}
-                                                hoverable
-                                            >
-                                                <Paragraph>
-                                                    <h2>{equipment.name}</h2>
-                                                </Paragraph>
-                                            </Card>
-                                        </Radio>
-                                    </Col>
-                                );
-                            })}
-                        </Row>
-                    </Radio.Group>
+                                            <p>{equipment.name}</p>
+                                    </div>
+                                </Col>
+                            );
+                        })}
+                    </Row>
                 </>
             )}
         </>

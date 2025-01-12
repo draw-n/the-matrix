@@ -1,5 +1,7 @@
 import { Button, Steps, message } from "antd";
 import UploadFile from "./UploadFile";
+import SelectMaterial from "./SelectMaterial";
+import MoreSettings from "./MoreSettings";
 import { useState } from "react";
 
 const steps = [
@@ -9,11 +11,11 @@ const steps = [
     },
     {
         title: "Select Material",
-        content: "Second-content",
+        content: <SelectMaterial />,
     },
     {
         title: "More Settings",
-        content: "Last-content",
+        content: <MoreSettings />,
     },
     {
         title: "Review",

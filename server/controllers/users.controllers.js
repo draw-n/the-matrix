@@ -1,13 +1,20 @@
 const User = require("../models/User.js");
 
 const createUser = async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, accessCode } = req.body;
 
     try {
         let user = await User.findOne({ email: email });
         if (user)
             return res.status(400).json({ message: "User already exists." });
-
+        if (accessCode != process.env.ACCESS_CODE) {
+            return res
+                .status(401)
+                .json({
+                    message:
+                        "Doesn't match the access code in the Digital Fabrication Lab.",
+                });
+        }
         user = new User({
             firstName: firstName,
             lastName: lastName,
@@ -15,13 +22,12 @@ const createUser = async (req, res) => {
             password: password,
             access: "view",
         });
-        console.log(user);
 
         await user.save();
 
         return res
             .status(200)
-            .json({ message: "User registered successfully."});
+            .json({ message: "User registered successfully." });
     } catch (err) {
         console.error(err.message);
         return res.status(500).send({ message: err.message });
@@ -46,7 +52,7 @@ const deleteUser = async (req, res) => {
             return res.status(400).send({ message: "Missing User ID" });
         }
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         return res.status(500).send({ message: err.message });
     }
 };
@@ -57,19 +63,18 @@ const updateUser = async (req, res) => {
         if (userId) {
             const user = User.findByIdAndUpdate(userId, req.body)
                 .then(function () {
-                    console.log(req.body);
-                    console.log(userId);
+                    
                     res.status(200).json(user);
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.error(error);
                     res.status(400).send({ message: error });
                 });
         } else {
             res.status(400).send({ message: "Missing User ID" });
         }
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(500).send({ message: err.message });
     }
 };
@@ -83,7 +88,7 @@ const getUser = async (req, res) => {
                 return res.status(404).send("User not found");
             }
 
-            return res.status(200).json({user});
+            return res.status(200).json({ user });
         } catch (error) {
             console.error("Error fetching user:", error);
             return res.status(500).send("Internal server error");

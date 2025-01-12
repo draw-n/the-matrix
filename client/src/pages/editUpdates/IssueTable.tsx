@@ -2,7 +2,6 @@ import { Button, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import EditModal from "./EditModal";
-import { Update } from "vite/types/hmrPayload.js";
 import type { Issue } from "../../types/Issue";
 import { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";

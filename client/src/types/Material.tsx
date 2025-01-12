@@ -5,4 +5,5 @@ export interface Material {
     type: string;
     properties: string[];
     description: string;
+    remotePrintAvailable: boolean;
 }

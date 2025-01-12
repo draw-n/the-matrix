@@ -50,12 +50,8 @@ app.use("/issues", require("./routes/issues.router.js"));
 app.use("/announcements", require("./routes/announcements.router.js"));
 app.use("/users", require("./routes/users.router.js"));
 app.use("/equipment", require("./routes/equipment.router.js"));
-app.get("/test-session", (req, res) => {
-    if (!req.session.test) {
-        req.session.test = "Session created!";
-    }
-    res.json({ session: req.session });
-});
+app.use("/materials", require("./routes/materials.router.js"));
+
 
 app.get("/", (req, res) => {
     res.send("Ello :D");

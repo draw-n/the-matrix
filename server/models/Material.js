@@ -2,29 +2,32 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-
 const MaterialSchema = new Schema({
     _id: {
-        type: ObjectId, 
+        type: ObjectId,
         required: true,
     },
     name: {
         type: String,
-        required: true
+        required: true,
     },
     shortName: {
         type: String,
-        required: true
+        required: true,
     },
     type: {
         type: String,
-        required: true
+        required: true,
     },
     properties: {
         type: [{ type: String }],
     },
     description: {
-        type: String
+        type: String,
+    },
+    remotePrintAvailable: {
+        type: Boolean,
+        required: true,
     },
     //image: {
     //TODO: revisit adding an image feature to mongodb

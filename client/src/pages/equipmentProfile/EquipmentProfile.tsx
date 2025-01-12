@@ -36,7 +36,6 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
                 <p>Type: {equipment.type}</p>
                 <p>Status: {equipment.status}</p>
-                <p>Issues: {equipment.issues}</p>
                 <Button onClick={() => console.log(equipment)}>
                     show equipment
                 </Button>

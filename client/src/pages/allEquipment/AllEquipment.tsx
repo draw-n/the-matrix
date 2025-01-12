@@ -7,10 +7,13 @@ import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
 import "./equipment.css";
+import MaterialForm from "./MaterialForm";
+import MaterialTable from "./MaterialTable";
 
 const AllEquipment: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [refreshMaterials, setRefreshMaterials] = useState<number>(0); // State for refresh count
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,6 +55,14 @@ const AllEquipment: React.FC = () => {
                             );
                         })}
                     </Row>
+                    <h2>Manage Materials</h2>
+                    <MaterialForm
+                        onUpdate={() => setRefreshMaterials((prev) => prev + 1)}
+                    />
+                    <MaterialTable
+                        refresh={refreshMaterials}
+                        setRefresh={setRefreshMaterials}
+                    />
                 </>
             )}
         </>

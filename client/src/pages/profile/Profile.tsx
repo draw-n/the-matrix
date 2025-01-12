@@ -8,7 +8,7 @@ const Profile: React.FC = () => {
             <Space direction="vertical" size="middle">
                 <h1>PROFILE</h1>
                 <Alert
-                    message="To have your access changed, contact Dr. David Florian by email. All other profile information is tied to your Vanderbilt Google Account, so changes to those need to be requested to Vanderbilt University."
+                    message="To have your access role or personal details changed, contact Dr. David Florian by email."
                     type="info"
                 />
 

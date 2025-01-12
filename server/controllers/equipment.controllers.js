@@ -61,7 +61,6 @@ const editEquipment = async (req, res) => {
         status,
         description,
         imageSrc,
-        issues,
     } = req.body;
 
     // Prepare update object
@@ -76,10 +75,7 @@ const editEquipment = async (req, res) => {
     if (description) updateData.description = description;
     if (imageSrc) updateData.imageSrc = imageSrc;
 
-    // Push new issues if provided
-    if (issues && issues.length) {
-        updateData.$addToSet = { issues: { $each: issues } }; // Use $addToSet to avoid duplicates
-    }
+
 
     try {
         if (id) {

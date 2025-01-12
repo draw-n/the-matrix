@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Form, Input } from "antd";
+import { Button, Checkbox, Divider, Flex, Form, Input, Switch } from "antd";
 import axios from "axios";
 import { GoogleOutlined } from "@ant-design/icons";
 import { useAuth } from "../hooks/AuthContext";
@@ -11,6 +11,7 @@ interface FieldType {
     firstName: string;
     lastName: string;
     accessCode: string;
+    remember: boolean;
 }
 
 const Signup: React.FC = () => {
@@ -22,12 +23,14 @@ const Signup: React.FC = () => {
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [accessCode, setAccessCode] = useState("");
+    const [remember, setRemember] = useState(true);
 
     const handleRegisterUser = async () => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/users/register`,
-                { email: email, password: password, firstName: firstName, lastName: lastName }
+                { email, password, firstName, lastName, accessCode }
             );
             console.log(response.data);
             login(email, password);
@@ -49,7 +52,7 @@ const Signup: React.FC = () => {
                 <div className="login-background" style={{ width: "50%" }} />
 
                 <Flex
-                    gap="10px"
+                    gap="5px"
                     flex="1"
                     vertical
                     justify="center"
@@ -63,8 +66,8 @@ const Signup: React.FC = () => {
                         autoComplete="off"
                         preserve={false}
                     >
-                        <Flex gap="10px">
-                            <Form.Item
+                        <Flex gap="20px">
+                            <Form.Item<FieldType>
                                 style={{ width: "50%" }}
                                 label="First Name"
                                 name="firstName"
@@ -81,7 +84,7 @@ const Signup: React.FC = () => {
                                     }
                                 />
                             </Form.Item>
-                            <Form.Item
+                            <Form.Item<FieldType>
                                 style={{ width: "50%" }}
                                 label="Last Name"
                                 name="lastName"
@@ -100,19 +103,26 @@ const Signup: React.FC = () => {
                             </Form.Item>
                         </Flex>
 
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Email"
                             name="email"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please add your email.",
+                                    message:
+                                        "Please enter your Vanderbilt email address.",
+                                },
+                                {
+                                    pattern:
+                                        /^[a-zA-Z0-9._%+-]+@vanderbilt\.edu$/,
+                                    message:
+                                        "Please enter a valid Vanderbilt email address!",
                                 },
                             ]}
                         >
                             <Input onChange={(e) => setEmail(e.target.value)} />
                         </Form.Item>
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Password"
                             name="password"
                             rules={[
@@ -126,8 +136,7 @@ const Signup: React.FC = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </Form.Item>
-                        <Form.Item
-                            style={{ width: "100%" }}
+                        <Form.Item<FieldType>
                             label="Access Code"
                             name="accessCode"
                             rules={[
@@ -138,18 +147,45 @@ const Signup: React.FC = () => {
                                 },
                             ]}
                         >
-                            <Input />{" "}
-                            {
-                                // TODO: need to implement the access code logic
-                            }
+                            <Input
+                                onChange={(e) => setAccessCode(e.target.value)}
+                            />
                         </Form.Item>
+                        <Flex
+                            align="center"
+                            style={{ width: "100%" }}
+                            justify="space-between"
+                        >
+                            <Form.Item<FieldType>
+                                name="remember"
+                                valuePropName="checked"
+                                label={null}
+                            >
+                                <Flex gap="20px">
+                                    <p>Remember Me</p>
+
+                                    <Switch
+                                        value={remember}
+                                        onChange={setRemember}
+                                    />
+                                </Flex>
+                            </Form.Item>
+
+                            <Form.Item label={null}>
+                                <Button
+                                    className="primary-button-filled"
+                                    onClick={handleRegisterUser}
+                                    type="primary"
+                                    htmlType="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Flex>
                     </Form>
 
-                    <Button type="primary" onClick={handleRegisterUser}>
-                        Submit
-                    </Button>
                     <p style={{ textAlign: "center" }}>
-                        Already a user?{" "}
+                        Already a user?{"  "}
                         <a onClick={() => navigate("/login")}>Login</a>
                     </p>
                 </Flex>

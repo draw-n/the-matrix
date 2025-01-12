@@ -8,10 +8,12 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
     const { user } = useAuth();
-
-    /*if (!user) {
-        return <Navigate to="/login" />;
-    }*/
+    setTimeout(() => {
+        if (!user) {
+            return <Navigate to="/login" />;
+        }
+    }, 1000);
+   
 
     return <>{element}</>;
 };

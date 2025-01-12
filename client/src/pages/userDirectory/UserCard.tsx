@@ -10,8 +10,7 @@ interface UserCardProps {
 const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editAccess, setEditAccess] = useState<string>(cardUser.access);
-    
-    
+
     const { user } = useAuth();
 
     const handleClick = () => {
@@ -45,19 +44,27 @@ const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
                 title={cardUser.firstName + " " + cardUser.lastName}
                 extra={
                     user?._id != cardUser._id && (
-                        <Button onClick={handleClick}>
+                        <Button
+                            onClick={handleClick}
+                            className="primary-button-outlined"
+                        >
                             {editMode ? "Save" : "Edit"}
                         </Button>
                     )
                 }
                 bordered={false}
             >
-                <Space direction="vertical" size="small">
+                <Space
+                    direction="vertical"
+                    size="small"
+                    style={{ width: "100%" }}
+                >
                     <p>Email: {cardUser.email}</p>
-                    <Space>
+                    <Space style={{ width: "100%" }}>
                         <p>Access:</p>
                         <Select
                             size="small"
+                            style={{ width: "100%" }}
                             disabled={!editMode}
                             value={editAccess}
                             onChange={setEditAccess}

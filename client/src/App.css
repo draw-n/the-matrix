@@ -76,8 +76,8 @@
 .primary-button-outlined {
     border: none;
 
-    color: var(--neutral-medium) !important;
-    border: 2px solid var(--text-primary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--neutral-medium) !important;
     background-color: transparent !important;
 }
 
@@ -86,7 +86,7 @@
 
     background-color: transparent !important;
     color: var(--primary-color) !important;
-    border: 2px solid var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
 }
 
 .secondary-button-filled {

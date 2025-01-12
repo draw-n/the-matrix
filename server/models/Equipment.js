@@ -35,9 +35,7 @@ const EquipmentSchema = new Schema({
         type: String,
         required: true,
     },
-    issues: {
-        type: [{ type: ObjectId }],
-    },
+
     imageSrc: {
         type: String,
     },

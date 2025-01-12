@@ -1,10 +1,9 @@
-import { Input, Form, Flex, Button, Select, Modal } from "antd";
+import { Input, Form, Flex, Button, Select, Modal, Tooltip } from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
-
 
 interface AnnouncementFormProps {
     onUpdate: () => void;
@@ -53,9 +52,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
-                <PlusOutlined />
-            </Button>
+            <Tooltip title="Make a New Announcement">
+                <Button
+                    type="primary"
+                    className="primary-button-filled"
+                    icon={<PlusOutlined />}
+                    onClick={showModal}
+                />
+            </Tooltip>
             <Modal
                 title="Create a New Announcement"
                 open={isModalOpen}

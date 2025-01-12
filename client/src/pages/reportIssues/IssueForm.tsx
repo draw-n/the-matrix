@@ -2,7 +2,6 @@ import {
     Button,
     Form,
     Select,
-    Steps,
     Input,
     Result,
     Flex,
@@ -27,7 +26,6 @@ const IssueForm: React.FC = () => {
     );
     const [description, setDescription] = useState<string>("");
     const [submitted, setSubmitted] = useState<boolean>(false);
-
     const { user } = useAuth();
 
     const handleSubmit = async () => {
@@ -126,6 +124,7 @@ const IssueForm: React.FC = () => {
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
+                    {type}
                     <Space
                         style={{ width: "100%" }}
                         direction="vertical"
