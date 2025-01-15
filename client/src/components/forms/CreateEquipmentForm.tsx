@@ -1,25 +1,29 @@
 import { Input, Form, Flex, Button, Select, Modal, Tooltip } from "antd";
-import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 
-interface AnnouncementFormProps {
+interface CreateEquipmentFormProps {
     onUpdate: () => void;
 }
 
 interface FieldType {
+    name: string;
     type: string;
     description: string;
+    routePath: string;
 }
 
 const { TextArea } = Input;
 
-const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
-    const { user } = useAuth();
+const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
+    onUpdate,
+}: CreateEquipmentFormProps) => {
+    const [name, setName] = useState("");
     const [type, setType] = useState("");
     const [description, setDescription] = useState("");
+    const [routePath, setRoutePath] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -29,16 +33,15 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
 
     const handleOk = async () => {
         try {
-            const newUpdate = {
+            const newEquipment = {
+                name: name,
                 type: type,
                 description: description,
-                createdBy: user?._id,
-                dateCreated: Date(),
-                status: "posted"
+                routePath,
             };
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements`,
-                newUpdate
+                `${import.meta.env.VITE_BACKEND_URL}/equipment`,
+                newEquipment
             );
             onUpdate();
         } catch (error) {
@@ -53,7 +56,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
 
     return (
         <>
-            <Tooltip title="Make a New Announcement">
+            <Tooltip title="Add New Equipment">
                 <Button
                     type="primary"
                     className="primary-button-filled"
@@ -61,8 +64,9 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
                     onClick={showModal}
                 />
             </Tooltip>
+
             <Modal
-                title="Create a New Announcement"
+                title="Add New Equipment"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -77,7 +81,35 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
                 >
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
-                        label="Type of Update"
+                        label="Name"
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please add a description to the announcement.",
+                            },
+                        ]}
+                    >
+                        <Input onChange={(e) => setName(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        style={{ width: "100%" }}
+                        label="Route Path"
+                        name="routePath"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please add a route path (ex. voron-1).",
+                            },
+                        ]}
+                    >
+                        <Input onChange={(e) => setRoutePath(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        style={{ width: "100%" }}
+                        label="Type of Equipment"
                         name="type"
                         rules={[
                             {
@@ -89,8 +121,21 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
                         <Select
                             onChange={setType}
                             options={[
-                                { value: "event", label: "Event" },
-                                { value: "classes", label: "Classes" },
+                                {
+                                    value: "filament",
+                                    label: "Filament Printers",
+                                },
+                                { value: "resin", label: "Resin Printers" },
+                                { value: "powder", label: "Powder Printers" },
+                                {
+                                    value: "subtractive",
+                                    label: "Subtractive/Traditional Manufacturing",
+                                },
+                                {
+                                    value: "computer",
+                                    label: "Desktops/TV Monitor",
+                                },
+                                { value: "wiring", label: "Wiring Tools" },
                                 { value: "other", label: "Other" },
                             ]}
                         />
@@ -103,7 +148,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
                             {
                                 required: true,
                                 message:
-                                    "Please add a description to the announcement.",
+                                    "Please add a description to the equipment.",
                             },
                         ]}
                     >
@@ -118,4 +163,4 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
     );
 };
 
-export default AnnouncementForm;
+export default CreateEquipmentForm;

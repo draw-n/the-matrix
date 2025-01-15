@@ -1,7 +1,6 @@
 import { Space } from "antd";
 import NotFound from "../../components/NotFound";
-import IssueForm from "./IssueForm";
-import "./issues.css";
+import CreateIssueForm from "../../components/forms/CreateIssueForm";
 const ReportAnIssue: React.FC = () => {
     return (
         <>
@@ -13,7 +12,7 @@ const ReportAnIssue: React.FC = () => {
                     Lab. For any other inquiries, please contact Dr. David
                     Florian directly.
                 </p>
-                <IssueForm />
+                <CreateIssueForm />
             </Space>
         </>
     );

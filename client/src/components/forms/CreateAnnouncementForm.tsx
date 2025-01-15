@@ -1,30 +1,26 @@
-import { Input, Form, Flex, Button, Select, Modal, Tooltip } from "antd";
-import { FormProps } from "antd";
+import { Input, Form, Button, Select, Modal, Tooltip } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 
-interface EquipmentFormProps {
+interface CreateAnnouncementFormProps {
     onUpdate: () => void;
 }
 
 interface FieldType {
-    name: string;
     type: string;
     description: string;
-    routePath: string;
 }
 
 const { TextArea } = Input;
 
-const EquipmentForm: React.FC<EquipmentFormProps> = ({
+const CreateAnnouncementForm: React.FC<CreateAnnouncementFormProps> = ({
     onUpdate,
-}: EquipmentFormProps) => {
-    const [name, setName] = useState("");
+}: CreateAnnouncementFormProps) => {
+    const { user } = useAuth();
     const [type, setType] = useState("");
     const [description, setDescription] = useState("");
-    const [routePath, setRoutePath] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,15 +30,16 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
 
     const handleOk = async () => {
         try {
-            const newEquipment = {
-                name: name,
+            const newUpdate = {
                 type: type,
                 description: description,
-                routePath,
+                createdBy: user?._id,
+                dateCreated: Date(),
+                status: "posted",
             };
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-                newEquipment
+                `${import.meta.env.VITE_BACKEND_URL}/announcements`,
+                newUpdate
             );
             onUpdate();
         } catch (error) {
@@ -57,7 +54,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
 
     return (
         <>
-            <Tooltip title="Add New Equipment">
+            <Tooltip title="Make a New Announcement">
                 <Button
                     type="primary"
                     className="primary-button-filled"
@@ -65,9 +62,8 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                     onClick={showModal}
                 />
             </Tooltip>
-
             <Modal
-                title="Add New Equipment"
+                title="Create a New Announcement"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -82,35 +78,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                 >
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
-                        label="Name"
-                        name="name"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a description to the announcement.",
-                            },
-                        ]}
-                    >
-                        <Input onChange={(e) => setName(e.target.value)} />
-                    </Form.Item>
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="Route Path"
-                        name="routePath"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a route path (ex. voron-1).",
-                            },
-                        ]}
-                    >
-                        <Input onChange={(e) => setRoutePath(e.target.value)} />
-                    </Form.Item>
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="Type of Equipment"
+                        label="Type of Update"
                         name="type"
                         rules={[
                             {
@@ -122,21 +90,8 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                         <Select
                             onChange={setType}
                             options={[
-                                {
-                                    value: "filament",
-                                    label: "Filament Printers",
-                                },
-                                { value: "resin", label: "Resin Printers" },
-                                { value: "powder", label: "Powder Printers" },
-                                {
-                                    value: "subtractive",
-                                    label: "Subtractive/Traditional Manufacturing",
-                                },
-                                {
-                                    value: "computer",
-                                    label: "Desktops/TV Monitor",
-                                },
-                                { value: "wiring", label: "Wiring Tools" },
+                                { value: "event", label: "Event" },
+                                { value: "classes", label: "Classes" },
                                 { value: "other", label: "Other" },
                             ]}
                         />
@@ -149,7 +104,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                             {
                                 required: true,
                                 message:
-                                    "Please add a description to the equipment.",
+                                    "Please add a description to the announcement.",
                             },
                         ]}
                     >
@@ -164,4 +119,4 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     );
 };
 
-export default EquipmentForm;
+export default CreateAnnouncementForm;

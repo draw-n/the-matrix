@@ -1,7 +1,7 @@
 import { Button, Space, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import EditModal from "./EditModal";
+import EditAnnouncementForm from "../forms/EditAnnouncementForm";
 import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
 
@@ -175,7 +175,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
             render: (announcement) =>
                 announcement._id && (
                     <Space>
-                        <EditModal
+                        <EditAnnouncementForm
                             onUpdate={() => setRefresh(refresh + 1)}
                             announcement={announcement}
                         />

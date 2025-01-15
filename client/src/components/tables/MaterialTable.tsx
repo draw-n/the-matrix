@@ -1,16 +1,11 @@
 import { Button, Space, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import type { User } from "../../hooks/AuthContext";
 import type { Material } from "../../types/Material";
+import EditMaterialForm from "../forms/EditMaterialForm";
 
 interface TableMaterial extends Material {
     key: string;
-}
-
-interface UserInfo {
-    fullName: string;
-    email: string;
 }
 
 interface MaterialTableProps {
@@ -111,6 +106,10 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             render: (material) =>
                 material._id && (
                     <Space>
+                        <EditMaterialForm
+                            onUpdate={() => setRefresh(refresh + 1)}
+                            material={material}
+                        />
                         <Button
                             className="secondary-button-outlined"
                             onClick={() => deleteMaterial(material._id)}

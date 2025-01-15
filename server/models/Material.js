@@ -29,6 +29,16 @@ const MaterialSchema = new Schema({
         type: Boolean,
         required: true,
     },
+    temperatures: {
+        extruder: {
+            firstLayer: { type: Number },
+            otherLayers: { type: Number },
+        },
+        bed: {
+            firstLayer: { type: Number },
+            otherLayers: { type: Number },
+        },
+    },
     //image: {
     //TODO: revisit adding an image feature to mongodb
     //}

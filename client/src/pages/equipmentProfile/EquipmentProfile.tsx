@@ -1,6 +1,6 @@
 import { Button, Card, Col, Flex, Input, Row, Space, Typography } from "antd";
 import { Equipment } from "../../types/Equipment";
-import IssueTable from "../editUpdates/IssueTable";
+import IssueTable from "../../components/tables/IssueTable";
 import { useState } from "react";
 import axios from "axios";
 
@@ -15,7 +15,7 @@ const { TextArea } = Input;
 
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
-    setRefreshEquipment
+    setRefreshEquipment,
 }: EquipmentProfileProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
 

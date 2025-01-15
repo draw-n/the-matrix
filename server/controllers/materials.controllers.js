@@ -83,7 +83,7 @@ const editMaterial = async (req, res) => {
 
     // Populate update object with fields to update
     if (name) updateData.name = name;
-    if (routePath) updateData.routePath = routePath;
+    if (shortName) updateData.shortName = shortName;
     if (type) updateData.type = type;
     if (description) updateData.description = description;
     if (remotePrintAvailable)

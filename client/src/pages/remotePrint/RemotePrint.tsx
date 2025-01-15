@@ -3,7 +3,7 @@ import UploadFile from "./UploadFile";
 import SelectMaterial from "./SelectMaterial";
 import MoreSettings from "./MoreSettings";
 import Review from "./Review";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
 
@@ -32,6 +32,22 @@ const RemotePrint: React.FC = () => {
             perimeters: 3,
         },
     });
+
+    useEffect(() => {
+        setSettingDetails({
+            ...settingDetails,
+            temperatures: material?.temperatures || {
+                extruder: {
+                    firstLayer: 240,
+                    otherLayers: 240,
+                },
+                bed: {
+                    firstLayer: 65,
+                    otherLayers: 65,
+                },
+            },
+        });
+    }, [material]);
 
     const next = () => {
         setCurrent(current + 1);
@@ -62,6 +78,7 @@ const RemotePrint: React.FC = () => {
                 <MoreSettings
                     next={next}
                     prev={prev}
+                    material={material}
                     settingDetails={settingDetails}
                     setSettingDetails={setSettingDetails}
                 />

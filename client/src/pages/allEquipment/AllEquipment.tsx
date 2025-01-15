@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import EquipmentForm from "./EquipmentForm";
+import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
 import { Col, Flex, Row } from "antd";
 import EquipmentCard from "./EquipmentCard";
 import axios from "axios";
@@ -7,8 +7,8 @@ import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
 import "./equipment.css";
-import MaterialForm from "./MaterialForm";
-import MaterialTable from "./MaterialTable";
+import MaterialForm from "../../components/forms/CreateMaterialForm";
+import MaterialTable from "../../components/tables/MaterialTable";
 
 interface AllEquipmentProps {
     refreshEquipment: number;
@@ -52,7 +52,7 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                         align="center"
                     >
                         <h2>All Makerspace Equipment</h2>
-                        <EquipmentForm
+                        <CreateEquipmentForm
                             onUpdate={() =>
                                 setRefreshEquipment(refreshEquipment + 1)
                             }

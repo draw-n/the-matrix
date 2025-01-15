@@ -20,10 +20,12 @@ import {
 } from "@ant-design/icons";
 import AdvancedSettings from "./components/AdvancedSettings";
 import { FilamentMoreSettings } from "../../types/Equipment";
+import { Material } from "../../types/Material";
 
 interface MoreSettingsProps {
     prev: () => void;
     next: () => void;
+    material: Material | null;
     settingDetails: FilamentMoreSettings;
     setSettingDetails: (item: FilamentMoreSettings) => void;
 }

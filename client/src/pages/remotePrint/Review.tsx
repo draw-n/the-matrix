@@ -8,6 +8,7 @@ import {
     Flex,
     Row,
     Space,
+    Table,
 } from "antd";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
@@ -28,7 +29,7 @@ const Review: React.FC<ReviewProps> = ({
             key: "1",
             label: "Advanced Settings",
             children: (
-                <Row>
+                <Row gutter={[16, 16]}>
                     <Col span={8}>
                         <h3>Supports</h3>
                         <p>{settingDetails?.supports}</p>
@@ -52,6 +53,43 @@ const Review: React.FC<ReviewProps> = ({
                                 {`${settingDetails?.horizontalShell.bottomLayers}`}
                             </p>
                         </Flex>
+                    </Col>
+                    <Col span={24}>
+                        <h3>Temperatures</h3>
+                        <Table
+                            pagination={false}
+                            dataSource={[
+                                {
+                                    key: "1",
+                                    category: "Extruder",
+                                    firstLayer: `${settingDetails?.temperatures.extruder.firstLayer} °C`,
+                                    otherLayers: `${settingDetails?.temperatures.extruder.otherLayers} °C`,
+                                },
+                                {
+                                    key: "2",
+                                    category: "Bed",
+                                    firstLayer: `${settingDetails?.temperatures.bed.firstLayer} °C`,
+                                    otherLayers: `${settingDetails?.temperatures.bed.otherLayers} °C`,
+                                },
+                            ]}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "category",
+                                    key: "category",
+                                },
+                                {
+                                    title: "First Layer",
+                                    dataIndex: "firstLayer",
+                                    key: "firstLayer",
+                                },
+                                {
+                                    title: "Other Layers",
+                                    dataIndex: "otherLayers",
+                                    key: "otherLayers",
+                                },
+                            ]}
+                        />
                     </Col>
                 </Row>
             ),

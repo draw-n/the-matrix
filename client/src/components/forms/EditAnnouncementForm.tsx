@@ -4,17 +4,17 @@ import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import type { Announcement } from "../../types/Announcement";
 
-interface EditModalProps {
+interface EditAnnouncementFormProps {
     announcement: Announcement;
     onUpdate: () => void;
 }
 
 const { TextArea } = Input;
 
-const EditModal: React.FC<EditModalProps> = ({
+const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
     announcement,
-    onUpdate
-}: EditModalProps) => {
+    onUpdate,
+}: EditAnnouncementFormProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(announcement.type);
     const [description, setDescription] = useState(announcement.description);
@@ -34,10 +34,12 @@ const EditModal: React.FC<EditModalProps> = ({
                 type: type,
                 lastUpdatedBy: user?._id,
                 dateLastUpdated: Date(),
-                status: announcement.status
+                status: announcement.status,
             };
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements/${announcement._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/announcements/${
+                    announcement._id
+                }`,
                 editedAnnouncement
             );
             onUpdate();
@@ -87,4 +89,4 @@ const EditModal: React.FC<EditModalProps> = ({
     );
 };
 
-export default EditModal;
+export default EditAnnouncementForm;

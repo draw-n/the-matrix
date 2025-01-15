@@ -4,17 +4,17 @@ import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { Equipment } from "../../types/Equipment";
 
-interface EditEquipmentProps {
+interface EditEquipmentFormProps {
     equipment: Equipment;
     onUpdate: () => void;
 }
 
 const { TextArea } = Input;
 
-const EditEquipment: React.FC<EditEquipmentProps> = ({
+const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({
     equipment,
     onUpdate
-}: EditEquipmentProps) => {
+}: EditEquipmentFormProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(equipment.type);
     const [description, setDescription] = useState(equipment.description);
@@ -86,4 +86,4 @@ const EditEquipment: React.FC<EditEquipmentProps> = ({
     );
 };
 
-export default EditEquipment;
+export default EditEquipmentForm;

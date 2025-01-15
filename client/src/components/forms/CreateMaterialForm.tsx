@@ -31,7 +31,7 @@ interface FieldType {
 const { Option } = Select;
 const { TextArea } = Input;
 
-const MaterialForm: React.FC<MaterialFormProps> = ({
+const CreateMaterialForm: React.FC<MaterialFormProps> = ({
     onUpdate,
 }: MaterialFormProps) => {
     const [name, setName] = useState("");
@@ -237,11 +237,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         ]}
                     >
                         <Flex gap="10px" align="center">
+                            <p>Will it be available for remote printing?</p>
+
                             <Switch
                                 value={remotePrintAvailable}
                                 onChange={setRemotePrintAvailable}
                             />
-                            <p>Will it be available for remote printing?</p>
                         </Flex>
                     </Form.Item>
                 </Form>
@@ -250,4 +251,4 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     );
 };
 
-export default MaterialForm;
+export default CreateMaterialForm;

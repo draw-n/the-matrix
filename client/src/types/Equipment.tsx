@@ -1,3 +1,5 @@
+import { FilamentTemperatures } from "./Material";
+
 export interface Equipment {
     _id: string;
     name: string;
@@ -13,16 +15,7 @@ export interface FilamentMoreSettings {
     infill: number;
     layerHeight: number;
     supports: string;
-    temperatures: {
-        extruder: {
-            firstLayer: number;
-            otherLayers: number;
-        };
-        bed: {
-            firstLayer: number;
-            otherLayers: number;
-        };
-    };
+    temperatures: FilamentTemperatures;
     horizontalShell: {
         topLayers: number;
         bottomLayers: number;

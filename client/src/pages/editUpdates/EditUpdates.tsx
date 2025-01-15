@@ -1,10 +1,9 @@
 import { Flex } from "antd";
-
 import { useState } from "react";
 
-import AnnouncementForm from "./AnnouncementForm";
-import AnnouncementTable from "./AnnouncementTable";
-import IssueTable from "./IssueTable";
+import CreateAnnouncementForm from "../../components/forms/CreateAnnouncementForm";
+import AnnouncementTable from "../../components/tables/AnnouncementTable";
+import IssueTable from "../../components/tables/IssueTable";
 
 const EditUpdates: React.FC = () => {
     const [refreshUpdates, setRefreshUpdates] = useState<number>(0); // State for refresh count
@@ -21,7 +20,7 @@ const EditUpdates: React.FC = () => {
             >
                 <h2>Announcements</h2>
 
-                <AnnouncementForm
+                <CreateAnnouncementForm
                     onUpdate={() => setRefreshUpdates((prev) => prev + 1)}
                 />
             </Flex>

@@ -1,7 +1,6 @@
 import { Button, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import EditModal from "./EditModal";
 import type { Issue } from "../../types/Issue";
 import { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";

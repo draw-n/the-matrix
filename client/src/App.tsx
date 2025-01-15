@@ -8,7 +8,6 @@ import Announcements from "./pages/Announcements";
 import Kiosk from "./pages/Kiosk";
 import ReportAnIssue from "./pages/reportIssues/ReportAnIssue";
 import EditUpdates from "./pages/editUpdates/EditUpdates";
-import HistoryLog from "./pages/HistoryLog";
 import Login from "./pages/Login";
 import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
@@ -171,19 +170,6 @@ const App: React.FC = () => {
                         }
                     />
 
-                    <Route
-                        path="/history"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={["edit", "admin"]}
-                                        children={<HistoryLog />}
-                                    />
-                                }
-                            />
-                        }
-                    />
                     <Route
                         path="/report"
                         element={

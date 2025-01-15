@@ -6,4 +6,16 @@ export interface Material {
     properties: string[];
     description: string;
     remotePrintAvailable: boolean;
+    temperatures?: FilamentTemperatures;
+}
+
+export interface FilamentTemperatures {
+    extruder: {
+        firstLayer: number;
+        otherLayers: number;
+    };
+    bed: {
+        firstLayer: number;
+        otherLayers: number;
+    };
 }

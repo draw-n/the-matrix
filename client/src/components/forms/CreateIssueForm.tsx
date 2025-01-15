@@ -17,7 +17,7 @@ import { Equipment } from "../../types/Equipment";
 
 const { TextArea } = Input;
 
-const IssueForm: React.FC = () => {
+const CreateIssueForm: React.FC = () => {
     const [form] = Form.useForm();
     const [equipment, setEquipment] = useState<Equipment | null>(null);
     const [type, setType] = useState<string | null>(null);
@@ -282,4 +282,4 @@ const IssueForm: React.FC = () => {
     );
 };
 
-export default IssueForm;
+export default CreateIssueForm;
