@@ -15,7 +15,6 @@ const createIssue = async (req, res) => {
                 dateCreated: dateCreated,
                 assignedTo: "",
             });
-            console.log(issue)
             await issue.save();
             return res.status(200).json(issue);
         } else {
@@ -58,7 +57,6 @@ const editIssue = async (req, res) => {
         if (id) {
             const issue = Issue.findByIdAndUpdate(id, req.body)
                 .then(function () {
-                    console.log(issue);
                     res.status(200).json(issue);
                 })
                 .catch(function (error) {
@@ -88,7 +86,6 @@ const getIssue = async (req, res) => {
             return res.status(500).send("Internal server error");
         }
     }
-    console.log("no id detected");
 
     try {
         const issue = await Issue.find();

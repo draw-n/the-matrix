@@ -34,6 +34,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ onUpdate }) => {
                 description: description,
                 createdBy: user?._id,
                 dateCreated: Date(),
+                status: "posted"
             };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements`,

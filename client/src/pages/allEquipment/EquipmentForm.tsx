@@ -1,4 +1,4 @@
-import { Input, Form, Flex, Button, Select, Modal } from "antd";
+import { Input, Form, Flex, Button, Select, Modal, Tooltip } from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
@@ -13,6 +13,7 @@ interface FieldType {
     name: string;
     type: string;
     description: string;
+    routePath: string;
 }
 
 const { TextArea } = Input;
@@ -23,6 +24,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
     const [name, setName] = useState("");
     const [type, setType] = useState("");
     const [description, setDescription] = useState("");
+    const [routePath, setRoutePath] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -36,6 +38,7 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                 name: name,
                 type: type,
                 description: description,
+                routePath,
             };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
@@ -54,9 +57,15 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
-                <PlusOutlined />
-            </Button>
+            <Tooltip title="Add New Equipment">
+                <Button
+                    type="primary"
+                    className="primary-button-filled"
+                    icon={<PlusOutlined />}
+                    onClick={showModal}
+                />
+            </Tooltip>
+
             <Modal
                 title="Add New Equipment"
                 open={isModalOpen}
@@ -84,6 +93,20 @@ const EquipmentForm: React.FC<EquipmentFormProps> = ({
                         ]}
                     >
                         <Input onChange={(e) => setName(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        style={{ width: "100%" }}
+                        label="Route Path"
+                        name="routePath"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please add a route path (ex. voron-1).",
+                            },
+                        ]}
+                    >
+                        <Input onChange={(e) => setRoutePath(e.target.value)} />
                     </Form.Item>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}

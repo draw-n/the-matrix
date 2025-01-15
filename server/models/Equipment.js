@@ -35,10 +35,6 @@ const EquipmentSchema = new Schema({
         type: String,
         required: true,
     },
-
-    imageSrc: {
-        type: String,
-    },
 });
 
 module.exports = Equipment = mongoose.model("equipment", EquipmentSchema);

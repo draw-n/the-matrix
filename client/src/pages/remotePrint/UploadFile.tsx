@@ -1,11 +1,20 @@
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, message, Space, Upload, UploadProps } from "antd";
+import {
+    CaretRightOutlined,
+    InboxOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
+import { Button, Flex, message, Space, Upload, UploadProps } from "antd";
 import { useState } from "react";
 const { Dragger } = Upload;
 
+interface UploadFileProps {
+    next: () => void;
+}
 
-const UploadFile: React.FC = () => {
-    const [uploadedFile, setUploadedFile] = useState<File | null | undefined>(null);
+const UploadFile: React.FC<UploadFileProps> = ({ next }: UploadFileProps) => {
+    const [uploadedFile, setUploadedFile] = useState<File | null | undefined>(
+        null
+    );
 
     const props: UploadProps = {
         name: "file",
@@ -25,9 +34,10 @@ const UploadFile: React.FC = () => {
                 console.log(info.file, info.fileList);
             }
             if (status === "done") {
-                message.success(`${info.file.name} file uploaded successfully.`);
+                message.success(
+                    `${info.file.name} file uploaded successfully.`
+                );
                 setUploadedFile(info.file.originFileObj); // Store file in state
-
             } else if (status === "error") {
                 message.error(`${info.file.name} file upload failed.`);
             }
@@ -37,19 +47,29 @@ const UploadFile: React.FC = () => {
         },
     };
 
-
     return (
         <>
-            <Space direction="vertical" style={{ width: "100%" }} size="large">
-                <Dragger {...props}>
+            <Flex vertical style={{ width: "100%" }} gap="large">
+                <h2>Upload File</h2>
+                <Dragger {...props} style={{ width: "100%" }}>
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                     </p>
                     <p className="ant-upload-text">
                         Click or drag file to this area to upload
-                    </p>{" "}
+                    </p>
                 </Dragger>
-            </Space>
+                <Flex justify="center" style={{ width: "100%" }}>
+                    <Button
+                        type="primary"
+                        icon={<CaretRightOutlined />}
+                        iconPosition="end"
+                        onClick={next}
+                    >
+                        Select Material
+                    </Button>
+                </Flex>
+            </Flex>
         </>
     );
 };

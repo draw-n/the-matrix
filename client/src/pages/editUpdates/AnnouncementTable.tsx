@@ -40,6 +40,23 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         }
     };
 
+    const archiveAnnouncement = async (announcement: Announcement) => {
+        try {
+            const editedAnnouncement = { ...announcement, status: "archived" };
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/announcements/${
+                    announcement._id
+                }`,
+                editedAnnouncement
+            );
+            setAnnouncements(
+                announcements.filter((item) => item._id !== announcement._id)
+            );
+        } catch (error) {
+            console.error("Issue archiving announcement", error);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -47,10 +64,12 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/announcements`
                 );
 
-                const formattedData = responseUpdates.data.map((item) => ({
-                    ...item,
-                    key: item._id, // or item.id if you have a unique identifier
-                }));
+                const formattedData = responseUpdates.data
+                    .filter((item) => item.status != "archived")
+                    .map((item) => ({
+                        ...item,
+                        key: item._id, // or item.id if you have a unique identifier
+                    }));
                 setAnnouncements(formattedData);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);
@@ -160,9 +179,13 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                             onUpdate={() => setRefresh(refresh + 1)}
                             announcement={announcement}
                         />
-                        {/*<Button>Archive</Button> */}
                         <Button
-                        className="secondary-button-outlined"
+                            onClick={() => archiveAnnouncement(announcement)}
+                        >
+                            Archive
+                        </Button>
+                        <Button
+                            className="secondary-button-outlined"
                             onClick={() => deleteAnnouncement(announcement._id)}
                         >
                             Delete

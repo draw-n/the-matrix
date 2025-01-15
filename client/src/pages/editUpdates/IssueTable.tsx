@@ -51,6 +51,26 @@ const IssueTable: React.FC<IssueTableProps> = ({
         }
     };
 
+    const changeIssueStatus = async (issue: Issue, status: string) => {
+        try {
+            const editedIssue = { ...issue, status };
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${
+                    issue._id
+                }`,
+                editedIssue
+            );
+            setIssues(
+                issues.filter(
+                    (item) =>
+                        item._id !== issue._id && item.status != "archived"
+                )
+            );
+        } catch (error) {
+            console.error("Issue archiving issue", error);
+        }
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,10 +80,12 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/issues`
                 );
 
-                let formattedData = response.data.map((item) => ({
-                    ...item,
-                    key: item._id,
-                }));
+                let formattedData = response.data
+                    .filter((item) => item.status != "archived")
+                    .map((item) => ({
+                        ...item,
+                        key: item._id, // or item.id if you have a unique identifier
+                    }));
 
                 if (equipmentFilter) {
                     formattedData = formattedData.filter(
@@ -213,8 +235,15 @@ const IssueTable: React.FC<IssueTableProps> = ({
         {
             title: "Actions",
             key: "action",
-            render: (__, item) => (
-                <Button onClick={() => deleteIssue(item._id)}>Delete</Button>
+            render: (item: Issue) => (
+                <>
+                    <Button onClick={() => changeIssueStatus(item, "archived")}>
+                        Archive
+                    </Button>
+                    <Button onClick={() => deleteIssue(item._id)}>
+                        Delete
+                    </Button>
+                </>
             ),
         },
     ];

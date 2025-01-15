@@ -8,3 +8,26 @@ export interface Equipment {
     description: string;
     imgSrc?: string;
 }
+
+export interface FilamentMoreSettings {
+    infill: number;
+    layerHeight: number;
+    supports: string;
+    temperatures: {
+        extruder: {
+            firstLayer: number;
+            otherLayers: number;
+        };
+        bed: {
+            firstLayer: number;
+            otherLayers: number;
+        };
+    };
+    horizontalShell: {
+        topLayers: number;
+        bottomLayers: number;
+    };
+    verticalShell: {
+        perimeters: number;
+    };
+}

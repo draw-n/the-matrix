@@ -32,7 +32,6 @@ const Signup: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/users/register`,
                 { email, password, firstName, lastName, accessCode }
             );
-            console.log(response.data);
             login(email, password);
             navigate(location.state?.from || "/");
         } catch (error) {

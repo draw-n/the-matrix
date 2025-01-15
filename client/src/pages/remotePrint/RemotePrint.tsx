@@ -1,31 +1,38 @@
-import { Button, Steps, message } from "antd";
+import { Button, Space, Steps, message } from "antd";
 import UploadFile from "./UploadFile";
 import SelectMaterial from "./SelectMaterial";
 import MoreSettings from "./MoreSettings";
+import Review from "./Review";
 import { useState } from "react";
-
-const steps = [
-    {
-        title: "Upload File",
-        content: <UploadFile />,
-    },
-    {
-        title: "Select Material",
-        content: <SelectMaterial />,
-    },
-    {
-        title: "More Settings",
-        content: <MoreSettings />,
-    },
-    {
-        title: "Review",
-        content: "dfd",
-    },
-];
+import { Material } from "../../types/Material";
+import { FilamentMoreSettings } from "../../types/Equipment";
 
 const RemotePrint: React.FC = () => {
     const [current, setCurrent] = useState(0);
-    const [material, setMaterial] = useState("");
+    const [material, setMaterial] = useState<Material | null>(null);
+    const [settingDetails, setSettingDetails] = useState<FilamentMoreSettings>({
+        infill: 20,
+        layerHeight: 0.1,
+        supports: "everywhere",
+        temperatures: {
+            extruder: {
+                firstLayer: 240,
+                otherLayers: 240,
+            },
+            bed: {
+                firstLayer: 65,
+                otherLayers: 65,
+            },
+        },
+        horizontalShell: {
+            topLayers: 3,
+            bottomLayers: 3,
+        },
+        verticalShell: {
+            perimeters: 3,
+        },
+    });
+
     const next = () => {
         setCurrent(current + 1);
     };
@@ -34,32 +41,54 @@ const RemotePrint: React.FC = () => {
         setCurrent(current - 1);
     };
 
+    const steps = [
+        {
+            title: "Upload File",
+            content: <UploadFile next={next} />,
+        },
+        {
+            title: "Select Material",
+            content: (
+                <SelectMaterial
+                    next={next}
+                    prev={prev}
+                    setMaterial={setMaterial}
+                />
+            ),
+        },
+        {
+            title: "More Settings",
+            content: (
+                <MoreSettings
+                    next={next}
+                    prev={prev}
+                    settingDetails={settingDetails}
+                    setSettingDetails={setSettingDetails}
+                />
+            ),
+        },
+        {
+            title: "Review",
+            content: (
+                <Review
+                    prev={prev}
+                    settingDetails={settingDetails}
+                    material={material}
+                />
+            ),
+        },
+    ];
+
     const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
     return (
         <>
-            <Steps current={current} items={items} />
-            <div>{steps[current].content}</div>
-            <div style={{ marginTop: 24 }}>
-                {current < steps.length - 1 && (
-                    <Button type="primary" onClick={() => next()}>
-                        Next
-                    </Button>
-                )}
-                {current === steps.length - 1 && (
-                    <Button
-                        type="primary"
-                        onClick={() => message.success("Processing complete!")}
-                    >
-                        Done
-                    </Button>
-                )}
-                {current > 0 && (
-                    <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
-                        Previous
-                    </Button>
-                )}
-            </div>
+            <h1>Remote Printing</h1>
+            {`${JSON.stringify(settingDetails)}`}
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                <Steps current={current} items={items} />
+                <div style={{ width: "100%" }}>{steps[current].content}</div>
+            </Space>
         </>
     );
 };

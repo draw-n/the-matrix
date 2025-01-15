@@ -2,7 +2,7 @@ const Announcement = require("../models/Announcement.js");
 const mongoose = require("mongoose");
 
 const createAnnouncement = async (req, res) => {
-    const { type, description, createdBy, dateCreated } = req.body;
+    const { type, description, createdBy, dateCreated, status } = req.body;
     const title = req.query?.title;
 
     try {
@@ -10,7 +10,7 @@ const createAnnouncement = async (req, res) => {
             let announcementObj = {
                 _id: new mongoose.Types.ObjectId(),
                 type: type,
-                status: "posted",
+                status: status,
                 description: description,
                 createdBy: createdBy,
                 dateCreated: dateCreated,
@@ -66,7 +66,6 @@ const editAnnouncement = async (req, res) => {
         if (id) {
             const update = Announcement.findByIdAndUpdate(id, req.body)
                 .then(function () {
-                    console.log(update);
                     res.status(200).json(update);
                 })
                 .catch(function (error) {

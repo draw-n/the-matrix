@@ -125,167 +125,157 @@ const IssueForm: React.FC = () => {
                     onFinishFailed={onFinishFailed}
                 >
                     {type}
-                    <Space
+
+                    <Flex style={{ width: "100%" }} justify="space-between">
+                        <Form.Item required label="First Name">
+                            <Input disabled value={user?.firstName} />
+                        </Form.Item>
+                        <Form.Item required label="Last Name">
+                            <Input disabled value={user?.lastName} />
+                        </Form.Item>
+                        <Form.Item
+                            style={{ width: "40%" }}
+                            required
+                            label="Email"
+                        >
+                            <Input disabled value={user?.email} />
+                        </Form.Item>
+                    </Flex>
+                    <Form.Item
                         style={{ width: "100%" }}
-                        direction="vertical"
-                        size="small"
+                        label="Type of Equipment"
+                        name="equipmentType"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select a type of equipment.",
+                            },
+                        ]}
                     >
-                        <Flex style={{ width: "100%" }} justify="space-between">
-                            <Form.Item required label="First Name">
-                                <Input disabled value={user?.firstName} />
-                            </Form.Item>
-                            <Form.Item required label="Last Name">
-                                <Input disabled value={user?.lastName} />
-                            </Form.Item>
-                            <Form.Item
-                                style={{ width: "40%" }}
-                                required
-                                label="Email"
-                            >
-                                <Input disabled value={user?.email} />
-                            </Form.Item>
-                        </Flex>
+                        <Select
+                            value={type}
+                            onChange={setType}
+                            options={[
+                                {
+                                    value: "filament",
+                                    label: "Filament Printers",
+                                },
+                                { value: "resin", label: "Resin Printers" },
+                                {
+                                    value: "powder",
+                                    label: "Powder Printers",
+                                },
+                                {
+                                    value: "subtractive",
+                                    label: "Subtractive/Traditional Manufacturing",
+                                },
+                                {
+                                    value: "computer",
+                                    label: "Desktops/TV Monitor",
+                                },
+                                { value: "wiring", label: "Wiring Tools" },
+                                { value: "other", label: "Other" },
+                            ]}
+                        />
+                    </Form.Item>
+                    {type !== null && (
                         <Form.Item
                             style={{ width: "100%" }}
-                            label="Type of Equipment"
-                            name="equipmentType"
+                            label="Select the Equipment with the Issue"
+                            name="equipmentID"
                             rules={[
                                 {
                                     required: true,
                                     message:
-                                        "Please select a type of equipment.",
+                                        "Please select the equipment experiencing the issue.",
                                 },
                             ]}
                         >
-                            <Select
-                                value={type}
-                                onChange={setType}
-                                options={[
-                                    {
-                                        value: "filament",
-                                        label: "Filament Printers",
-                                    },
-                                    { value: "resin", label: "Resin Printers" },
-                                    {
-                                        value: "powder",
-                                        label: "Powder Printers",
-                                    },
-                                    {
-                                        value: "subtractive",
-                                        label: "Subtractive/Traditional Manufacturing",
-                                    },
-                                    {
-                                        value: "computer",
-                                        label: "Desktops/TV Monitor",
-                                    },
-                                    { value: "wiring", label: "Wiring Tools" },
-                                    { value: "other", label: "Other" },
-                                ]}
+                            <SelectEquipment
+                                value={equipment}
+                                setValue={(value) => {
+                                    setEquipment(value);
+                                    form.setFieldsValue({
+                                        equipmentID: value,
+                                    }); // Update the form's value
+                                }}
+                                type={type}
                             />
                         </Form.Item>
-                        {type !== null && (
-                            <Form.Item
-                                style={{ width: "100%" }}
-                                label="Select the Equipment with the Issue"
-                                name="equipmentID"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message:
-                                            "Please select the equipment experiencing the issue.",
-                                    },
-                                ]}
-                            >
-                                <SelectEquipment
-                                    value={equipment}
-                                    setValue={(value) => {
-                                        setEquipment(value);
-                                        form.setFieldsValue({
-                                            equipmentID: value,
-                                        }); // Update the form's value
-                                    }}
-                                    type={type}
-                                />
-                            </Form.Item>
-                        )}
+                    )}
 
-                        <Form.Item
-                            style={{ width: "100%" }}
-                            label="What is the issue? Select the one that is the most applicable."
-                            name="initialDescription"
-                            rules={[
+                    <Form.Item
+                        style={{ width: "100%" }}
+                        label="What is the issue? Select the one that is the most applicable."
+                        name="initialDescription"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please add a description for the issue.",
+                            },
+                        ]}
+                    >
+                        <Select
+                            value={initialDescription}
+                            onChange={setInitialDescription}
+                            options={[
                                 {
-                                    required: true,
-                                    message:
-                                        "Please add a description for the issue.",
+                                    value: `There is no filament coming out of the nozzle or the nozzle is jammed.`,
+                                    label: "There is no filament coming out of the nozzle or the nozzle is jammed.",
                                 },
-                            ]}
-                        >
-                            <Select
-                                value={initialDescription}
-                                onChange={setInitialDescription}
-                                options={[
-                                    {
-                                        value: `There is no filament coming out of the nozzle or the nozzle is jammed.`,
-                                        label: "There is no filament coming out of the nozzle or the nozzle is jammed.",
-                                    },
-                                    {
-                                        value: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
-                                        label: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
-                                    },
+                                {
+                                    value: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
+                                    label: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
+                                },
 
-                                    {
-                                        value: "The printer is having problems accepting GCode files.",
-                                        label: "The printer is having problems accepting GCode files.",
-                                    },
-                                    {
-                                        value: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
-                                        label: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
-                                    },
-                                    {
-                                        value: "The printer is making weird noises or emitting a strange smell.",
-                                        label: "The printer is making weird noises or emitting a strange smell.",
-                                    },
-                                    {
-                                        value: "There is another issue not explained by the other options. Please describe it in the next field.",
-                                        label: "There is another issue not explained by the other options. Please describe it in the next field.",
-                                    },
-                                ]}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            style={{ width: "100%" }}
-                            label="Please Provide More Details About the Issue"
-                            name="description"
-                            rules={[
                                 {
-                                    required: true,
-                                    message:
-                                        "Please add a description for the issue.",
+                                    value: "The printer is having problems accepting GCode files.",
+                                    label: "The printer is having problems accepting GCode files.",
+                                },
+                                {
+                                    value: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
+                                    label: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
+                                },
+                                {
+                                    value: "The printer is making weird noises or emitting a strange smell.",
+                                    label: "The printer is making weird noises or emitting a strange smell.",
+                                },
+                                {
+                                    value: "There is another issue not explained by the other options. Please describe it in the next field.",
+                                    label: "There is another issue not explained by the other options. Please describe it in the next field.",
                                 },
                             ]}
-                        >
-                            <TextArea
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={6}
-                            />
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        style={{ width: "100%" }}
+                        label="Please Provide More Details About the Issue"
+                        name="description"
+                        rules={[
+                            {
+                                required: true,
+                                message:
+                                    "Please add a description for the issue.",
+                            },
+                        ]}
+                    >
+                        <TextArea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={6}
+                        />
+                    </Form.Item>
+                    <Flex justify="end" style={{ width: "100%" }} gap="10px">
+                        <Form.Item>
+                            <Button onClick={refreshForm}>Clear All</Button>
                         </Form.Item>
-                        <Flex
-                            justify="end"
-                            style={{ width: "100%" }}
-                            gap="10px"
-                        >
-                            <Form.Item>
-                                <Button onClick={refreshForm}>Clear All</Button>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button htmlType="submit" type="primary">
-                                    Submit
-                                </Button>
-                            </Form.Item>
-                        </Flex>
-                    </Space>
+                        <Form.Item>
+                            <Button htmlType="submit" type="primary">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Flex>
                 </Form>
             )}
         </>

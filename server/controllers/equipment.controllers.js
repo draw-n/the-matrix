@@ -3,18 +3,18 @@ var mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types; // Import ObjectId
 
 const createEquipment = async (req, res) => {
-    const { name, type, description } = req.body;
+    const { name, type, description, routePath } = req.body;
 
     try {
-        if (name && type && description) {
+        if (name && type && description && routePath) {
             let equipment = new Equipment({
                 _id: new mongoose.Types.ObjectId(),
                 name: name,
                 type: type,
+                routePath: routePath,
                 description: description,
                 status: "working",
             });
-            console.log(equipment);
             await equipment.save();
             return res.status(200).json(equipment);
         } else {
@@ -53,15 +53,8 @@ const deleteEquipment = async (req, res) => {
 
 const editEquipment = async (req, res) => {
     const id = req.params?.id;
-    const {
-        name,
-        routePath,
-        type,
-        properties,
-        status,
-        description,
-        imageSrc,
-    } = req.body;
+    const { name, routePath, type, properties, status, description, imageSrc } =
+        req.body;
 
     // Prepare update object
     const updateData = {};
@@ -74,8 +67,6 @@ const editEquipment = async (req, res) => {
     if (status) updateData.status = status;
     if (description) updateData.description = description;
     if (imageSrc) updateData.imageSrc = imageSrc;
-
-
 
     try {
         if (id) {

@@ -120,7 +120,7 @@ const Shell: React.FC<ShellProps> = ({
                         }}
                     />
                 </Sider>
-                <Content style={{ margin: "16px" }}>
+                <Content style={{ margin: "25px 50px" }}>
                     {contentAccess.includes(String(user?.access)) ||
                     user == null ? (
                         <>{children}</>

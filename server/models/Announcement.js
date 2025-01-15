@@ -17,7 +17,8 @@ const AnnouncementSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["posted", "archived"],
+        enum: ["scheduled", "posted", "archived"],
+        required: true,
     },
     description: {
         type: String,

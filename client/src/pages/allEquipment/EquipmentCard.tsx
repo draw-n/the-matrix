@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Flex, Input, Select, Tag } from "antd";
+import { Badge, Button, Card, Flex, Input, Select, Space, Tag } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { Switch, Typography } from "antd";
 
@@ -77,41 +77,53 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
 
     return (
         <>
-            <Card
-                className="equipment-card"
-                title={
-                    <Flex justify="space-between" align="center">
+            <Card className="equipment-card" bordered={false}>
+                <Flex vertical justify="start" align="start">
+                    <Space
+                        direction="vertical"
+                        style={{ width: "100%" }}
+                        size="small"
+                    >
                         <Tag style={{ textTransform: "uppercase" }}>
                             {editType}
                         </Tag>
-                        <Flex
-                            justify="center"
-                            style={{ textTransform: "capitalize" }}
-                            align="center"
-                            gap="10px"
-                        >
-                            {showStatus()}
-                            {equipment.status}
-                        </Flex>
-                    </Flex>
-                }
-                bordered={false}
-            >
-                <Flex vertical justify="start" align="start" gap="5px">
-                    <h2>
-                        <Paragraph>{editName} </Paragraph>
-                    </h2>
 
-                    <Flex justify="center" style={{ width: "100%" }}>
-                        <Button
-                            type="primary"
-                            onClick={() =>
-                                navigate(`/equipment/${equipment.routePath}`)
-                            }
-                        >
-                            More Details
-                        </Button>
-                    </Flex>
+                        <h3>
+                            <Paragraph
+                                style={{
+                                    font: "inherit",
+                                    fontFamily: "inherit",
+                                    fontSize: "inherit",
+                                    margin: 0,
+                                }}
+                            >
+                                {editName}
+                            </Paragraph>
+                        </h3>
+
+                        <Flex justify="space-between" style={{ width: "100%" }}>
+                            <Flex
+                                justify="center"
+                                style={{ textTransform: "capitalize" }}
+                                align="center"
+                                gap="10px"
+                            >
+                                {showStatus()}
+                                {equipment.status}
+                            </Flex>
+                            <Button
+                                type="primary"
+                                size="small"
+                                onClick={() =>
+                                    navigate(
+                                        `/equipment/${equipment.routePath}`
+                                    )
+                                }
+                            >
+                                More Details
+                            </Button>
+                        </Flex>
+                    </Space>
                 </Flex>
             </Card>
         </>

@@ -24,6 +24,7 @@ import RemotePrint from "./pages/remotePrint/RemotePrint";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
+    const [refreshEquipment, setRefreshEquipment] = useState<number>(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,14 +32,13 @@ const App: React.FC = () => {
                 const response = await axios.get<Equipment[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/equipment`
                 );
-                console.log(response.data);
                 setEquipments(response.data);
             } catch (error) {
                 console.error("Error fetching routes:", error);
             }
         };
         fetchData();
-    }, []);
+    }, [refreshEquipment]);
 
     return (
         <>
@@ -61,6 +61,12 @@ const App: React.FC = () => {
                                                 children={
                                                     <EquipmentProfile
                                                         equipment={equipment}
+                                                        setRefreshEquipment={() =>
+                                                            setRefreshEquipment(
+                                                                refreshEquipment +
+                                                                    1
+                                                            )
+                                                        }
                                                     />
                                                 }
                                             />
@@ -91,7 +97,7 @@ const App: React.FC = () => {
                         }
                     />
 
-<Route
+                    <Route
                         path="/upload"
                         element={
                             <PrivateRoute
@@ -102,7 +108,7 @@ const App: React.FC = () => {
                                             "edit",
                                             "admin",
                                         ]}
-                                        children={<RemotePrint/>}
+                                        children={<RemotePrint />}
                                     />
                                 }
                             />
@@ -131,8 +137,21 @@ const App: React.FC = () => {
                             <PrivateRoute
                                 element={
                                     <Shell
-                                        contentAccess={["view", "edit", "admin"]}
-                                        children={<AllEquipment />}
+                                        contentAccess={[
+                                            "view",
+                                            "edit",
+                                            "admin",
+                                        ]}
+                                        children={
+                                            <AllEquipment
+                                                refreshEquipment={
+                                                    refreshEquipment
+                                                }
+                                                setRefreshEquipment={
+                                                    setRefreshEquipment
+                                                }
+                                            />
+                                        }
                                     />
                                 }
                             />

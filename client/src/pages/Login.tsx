@@ -30,10 +30,7 @@ const Login: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/users/login`,
                 { email, password }
             );
-            console.log(response.data);
             login(email, password);
-            console.log("user", user);
-
             navigate(location.state?.from || "/");
         } catch (error) {
             console.error("Login failed", error);

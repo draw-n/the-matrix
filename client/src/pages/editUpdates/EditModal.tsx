@@ -34,6 +34,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 type: type,
                 lastUpdatedBy: user?._id,
                 dateLastUpdated: Date(),
+                status: announcement.status
             };
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements/${announcement._id}`,

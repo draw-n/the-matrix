@@ -1,4 +1,14 @@
-import { Input, Form, Flex, Button, Select, Modal, Switch, Tag } from "antd";
+import {
+    Input,
+    Form,
+    Flex,
+    Button,
+    Select,
+    Modal,
+    Switch,
+    Tag,
+    Tooltip,
+} from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
@@ -86,9 +96,15 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
-                <PlusOutlined />
-            </Button>
+            <Tooltip title="Add New Materials">
+                <Button
+                    type="primary"
+                    className="primary-button-filled"
+                    icon={<PlusOutlined />}
+                    onClick={showModal}
+                />
+            </Tooltip>
+
             <Modal
                 title="Add New Materials"
                 open={isModalOpen}

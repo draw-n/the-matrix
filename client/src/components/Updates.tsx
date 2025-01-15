@@ -23,7 +23,13 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                 const response = await axios.get<Announcement[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/announcements`
                 );
-                setAnnouncements(response.data);
+                const formattedData = response.data
+                    .filter((item) => item.status != "archived")
+                    .map((item) => ({
+                        ...item,
+                        key: item._id, // or item.id if you have a unique identifier
+                    }));
+                setAnnouncements(formattedData);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);
@@ -43,9 +49,9 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
 
     useEffect(() => {
         if (carouselRef.current) {
-          carouselRef.current.goTo(currentSlide); // Move the carousel to the current slide
+            carouselRef.current.goTo(currentSlide); // Move the carousel to the current slide
         }
-      }, [currentSlide]); // Update the carousel when currentSlide changes
+    }, [currentSlide]); // Update the carousel when currentSlide changes
 
     const nextSlide = () => {
         const length = announcements?.length;
@@ -57,10 +63,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
 
     return (
         <>
-            <Carousel
-                arrows
-                ref={carouselRef}
-            >
+            <Carousel arrows ref={carouselRef}>
                 {isLoading ? (
                     <div style={{ padding: 0 }}>
                         <div className="updates-carousel">

@@ -1,23 +1,139 @@
-import { Alert, Space } from "antd";
+import { Alert, Button, Card, Col, Flex, Input, Row, Space } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
+import { useState } from "react";
+import axios from "axios";
 
 const Profile: React.FC = () => {
     const { user } = useAuth();
+    const [editMode, setEditMode] = useState<boolean>(false);
+
+    const [firstName, setFirstName] = useState(user?.firstName);
+    const [lastName, setLastName] = useState(user?.lastName);
+    const [password, setPassword] = useState("");
+
+    /*    if (!firstName) {
+        setFirstName(user?.firstName);
+    }
+
+    if (!lastName) {
+        setLastName(user?.lastName);
+    }
+        TODO: keeps rerendering too many times
+*/
+
+    let role = user?.access;
+    switch (role) {
+        case "view":
+            role = "Viewer";
+            break;
+        case "edit":
+            role = "Editor";
+            break;
+        case "admin":
+            role = "Admin";
+            break;
+        default:
+            break;
+    }
+
+    const handleClick = () => {
+        if (editMode) {
+            saveUserChanges();
+        }
+        setEditMode((prev) => !prev);
+    };
+
+    const saveUserChanges = async () => {
+        try {
+            const editedUser = {
+                _id: user?._id,
+                firstName: firstName,
+                lastName: lastName,
+                email: user?.email,
+                access: user?.access,
+            };
+            await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/users/${user?._id}`,
+                editedUser
+            );
+        } catch (error) {
+            console.error("Issue updating user", error);
+        }
+    };
+
     return (
         <>
-            <Space direction="vertical" size="middle">
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
                 <h1>PROFILE</h1>
-                <Alert
-                    message="To have your access role or personal details changed, contact Dr. David Florian by email."
-                    type="info"
-                />
 
-                <Space>
-                    <p>First Name: {user?.firstName}</p>
-                    <p>Last Name: {user?.lastName}</p>
-                    <p>Email: {user?.email}</p>
-                    <p>Access: {user?.access}</p>
-                </Space>
+                <Card>
+                    <h2>{`${user?.firstName} ${user?.lastName}`}</h2>
+                    <p>{role}</p>
+                    <p>Vanderbilt University</p>
+                </Card>
+                <Alert
+                    message="To have your access role changed, contact Dr. David Florian by email directly."
+                    type="info"
+                    style={{ width: "100%", textAlign: "center" }}
+                />
+                <Card>
+                    <Space
+                        style={{ width: "100%" }}
+                        direction="vertical"
+                        size="large"
+                    >
+                        <Flex justify="space-between" style={{ width: "100%" }}>
+                            <h2>Personal Information</h2>
+                            <Button onClick={handleClick}>
+                                {editMode ? "Save" : "Edit"}
+                            </Button>
+                        </Flex>
+                        <Flex style={{ width: "100%" }} justify="space-between">
+                            <Space direction="vertical">
+                                <h3>First Name</h3>
+                                {editMode ? (
+                                    <Input
+                                        value={firstName}
+                                        onChange={(e) =>
+                                            setFirstName(e.target.value)
+                                        }
+                                    />
+                                ) : (
+                                    <p>
+                                        {firstName
+                                            ? firstName
+                                            : user?.firstName}
+                                    </p>
+                                )}
+                            </Space>
+
+                            <Space direction="vertical">
+                                <h3>Last Name</h3>
+                                {editMode ? (
+                                    <Input
+                                        value={lastName}
+                                        onChange={(e) =>
+                                            setLastName(e.target.value)
+                                        }
+                                    />
+                                ) : (
+                                    <p>
+                                        {lastName ? lastName : user?.lastName}
+                                    </p>
+                                )}
+                            </Space>
+                            <Space direction="vertical">
+                                <h3>Email</h3>
+                                <p>{user?.email}</p>
+                            </Space>
+
+                            <Space direction="vertical">
+                                <h3>Access Role</h3>
+                                <p>{role}</p>
+                            </Space>
+                        </Flex>
+                    </Space>
+                </Card>
             </Space>
         </>
     );
