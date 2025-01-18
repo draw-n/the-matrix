@@ -58,11 +58,11 @@ const Shell: React.FC<ShellProps> = ({
     children,
     contentAccess,
 }: ShellProps) => {
-    const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-
     const { user } = useAuth();
+    const [collapsed, setCollapsed] = useState<boolean>(false);
+
     const accessPages: MenuItem[] = allPages.filter((item) =>
         item.access.some((access) => user?.access == access)
     );

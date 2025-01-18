@@ -1,6 +1,5 @@
-import { Button, Divider, Flex, Form, Input } from "antd";
+import { Button, Divider, Flex, Form, FormProps, Input } from "antd";
 import axios from "axios";
-import { GoogleOutlined } from "@ant-design/icons";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { useEffect, useState } from "react";
 interface FieldType {
     email: string;
     accessCode: string;
+    password: string;
 }
 
 const Login: React.FC = () => {
@@ -15,22 +15,19 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
     useEffect(() => {
         if (user) {
             navigate(location.state?.from || "/");
         }
     });
 
-    const handleLoginUser = async () => {
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/users/login`,
-                { email, password }
+                values
             );
-            login(email, password);
+            login(values.email, values.password);
             navigate(location.state?.from || "/");
         } catch (error) {
             console.error("Login failed", error);
@@ -55,20 +52,28 @@ const Login: React.FC = () => {
                         layout="vertical"
                         autoComplete="off"
                         preserve={false}
+                        onFinish={onFinish}
                     >
-                        <Form.Item
+                        <Form.Item<FieldType>
                             label="Email"
                             name="email"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please add your email.",
+                                    message:
+                                        "Please type in your Vanderbilt University email address.",
+                                },
+                                {
+                                    pattern:
+                                        /^[a-zA-Z0-9._%+-]+@vanderbilt\.edu$/i,
+                                    message:
+                                        "Please enter a valid Vanderbilt email address!",
                                 },
                             ]}
                         >
-                            <Input onChange={(e) => setEmail(e.target.value)} />
+                            <Input />
                         </Form.Item>
-                        <Form.Item
+                        <Form.Item<FieldType>
                             style={{ width: "100%" }}
                             label="Password"
                             name="password"
@@ -79,19 +84,22 @@ const Login: React.FC = () => {
                                 },
                             ]}
                         >
-                            <Input.Password
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <Input.Password />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                htmlType="submit"
+                                style={{
+                                    marginTop: "10px",
+                                    marginBottom: "10px",
+                                }}
+                                type="primary"
+                            >
+                                Submit
+                            </Button>
                         </Form.Item>
                     </Form>
 
-                    <Button
-                        style={{ marginTop: "10px", marginBottom: "10px" }}
-                        type="primary"
-                        onClick={handleLoginUser}
-                    >
-                        Submit
-                    </Button>
                     <p style={{ textAlign: "center" }}>
                         First time user?{" "}
                         <a onClick={() => navigate("/signup")}>Signup</a>

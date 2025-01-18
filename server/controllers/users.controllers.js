@@ -4,7 +4,7 @@ const createUser = async (req, res) => {
     const { firstName, lastName, email, password, accessCode } = req.body;
 
     try {
-        let user = await User.findOne({ email: email });
+        let user = await User.findOne({ email: email.toLowerCase() });
         if (user)
             return res.status(400).json({ message: "User already exists." });
         if (accessCode != process.env.ACCESS_CODE) {
@@ -18,7 +18,7 @@ const createUser = async (req, res) => {
         user = new User({
             firstName: firstName,
             lastName: lastName,
-            email: email,
+            email: email.toLowerCase(),
             password: password,
             access: "view",
         });

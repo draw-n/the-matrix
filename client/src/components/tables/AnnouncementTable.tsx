@@ -28,10 +28,10 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
 
     const deleteAnnouncement = async (_id: string) => {
         try {
-            await axios.delete(
+            const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements/${_id}`
-            );
-            // Update the state to remove the deleted equipment
+            ); //TODO: add success vs. failed
+            // Update the state to remove the deleted announcement
             setAnnouncements(
                 announcements.filter((announcement) => announcement._id !== _id)
             );
@@ -46,7 +46,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements/${
                     announcement._id
-                }`,
+                }`, //TODO: may remove this option
                 editedAnnouncement
             );
             setAnnouncements(
@@ -78,10 +78,10 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
 
         const fetchUserData = async () => {
             try {
-                const responseUsers = await axios.get<User[]>(
+                const response = await axios.get<User[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/users`
                 );
-                const usersMap = responseUsers.data.reduce(
+                const usersMap = response.data.reduce(
                     (acc: Record<string, UserInfo>, user: User) => {
                         acc[user._id] = {
                             fullName: `${user.firstName} ${user.lastName}`,
@@ -111,7 +111,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     a.userInfo.fullName.localeCompare(b.userInfo.fullName),
                 multiple: 2,
             },
-            render: (__, record) => {
+            render: (record) => {
                 const { userInfo } = record;
                 const { fullName, email } = userInfo || {
                     fullName: "",
@@ -194,17 +194,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 ),
         },
     ];
-    const numRows = 5;
-    /*
-    const emptyUpdate: Update = {
-        _id: "",
-        createdBy: "",
-        dateCreated: new Date(0),
-        type: "",
-        description: "",
-        key: -1,
-        // other properties with default values...
-    };*/
 
     const finalData = announcements.map((row) => {
         const userInfo = users[row.createdBy] || {
@@ -217,18 +206,11 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         };
     });
 
-    /*const fillInData = [
-        ...finalData,
-        ...Array.from(
-            { length: numRows - (updates.length % numRows) },
-            (_, index) => ({ ...emptyUpdate, key: `empty-${index}` })
-        ),
-    ];*/
     return (
         <>
             <Table
                 pagination={{
-                    pageSize: numRows, // Set the number of rows per page
+                    pageSize: 5,
                 }}
                 columns={updateColumns}
                 dataSource={finalData}

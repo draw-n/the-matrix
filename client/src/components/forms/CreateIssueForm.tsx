@@ -5,7 +5,6 @@ import {
     Input,
     Result,
     Flex,
-    Space,
     message,
 } from "antd";
 import { useState } from "react";

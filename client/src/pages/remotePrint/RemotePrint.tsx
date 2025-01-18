@@ -9,6 +9,7 @@ import { FilamentMoreSettings } from "../../types/Equipment";
 
 const RemotePrint: React.FC = () => {
     const [current, setCurrent] = useState(0);
+    const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
     const [material, setMaterial] = useState<Material | null>(null);
     const [settingDetails, setSettingDetails] = useState<FilamentMoreSettings>({
         infill: 20,
@@ -60,7 +61,13 @@ const RemotePrint: React.FC = () => {
     const steps = [
         {
             title: "Upload File",
-            content: <UploadFile next={next} />,
+            content: (
+                <UploadFile
+                    uploadedFile={uploadedFile}
+                    setUploadedFile={setUploadedFile}
+                    next={next}
+                />
+            ),
         },
         {
             title: "Select Material",
@@ -88,9 +95,11 @@ const RemotePrint: React.FC = () => {
             title: "Review",
             content: (
                 <Review
+
                     prev={prev}
                     settingDetails={settingDetails}
                     material={material}
+                    uploadedFile={uploadedFile}
                 />
             ),
         },

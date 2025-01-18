@@ -3,12 +3,21 @@ import { useNavigate } from "react-router-dom";
 
 const NoAccess: React.FC = () => {
     const navigate = useNavigate();
+    
     return (
         <Result
             status="403"
             title="403"
             subTitle="Sorry, you are not authorized to access this page."
-            extra={<Button type="primary" className="primary-button" onClick={() => navigate("/")}>To Announcements</Button>}
+            extra={
+                <Button
+                    type="primary"
+                    className="primary-button"
+                    onClick={() => navigate("/")}
+                >
+                    To Announcements
+                </Button>
+            }
         />
     );
 };

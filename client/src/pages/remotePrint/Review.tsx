@@ -9,12 +9,15 @@ import {
     Row,
     Space,
     Table,
+    Upload,
+    UploadFile,
 } from "antd";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
 
 interface ReviewProps {
     prev: () => void;
+    uploadedFile: UploadFile[];
     material: Material | null;
     settingDetails: FilamentMoreSettings | null;
 }
@@ -22,6 +25,7 @@ interface ReviewProps {
 const Review: React.FC<ReviewProps> = ({
     prev,
     material,
+    uploadedFile,
     settingDetails,
 }: ReviewProps) => {
     const items: CollapseProps["items"] = [
@@ -129,6 +133,19 @@ const Review: React.FC<ReviewProps> = ({
                     <Col style={{ height: "100%" }} span={12}>
                         <Card style={{ height: "100%" }}>
                             <h3>File to be printed</h3>
+                            <Upload
+                                fileList={uploadedFile}
+                                showUploadList={{
+                                    showRemoveIcon: false,
+                                    showPreviewIcon: true,
+                                }}
+                                customRequest={({ file, onSuccess }) => {
+                                    // Simulating file upload
+                                    console.log(file);
+                                }}
+                            >
+                                {/* The button won't be visible, and the upload list will still be shown */}
+                            </Upload>
                         </Card>
                     </Col>
                     <Col span={12}>

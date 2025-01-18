@@ -1,14 +1,18 @@
-import { Col, Flex, InputNumber, Row, Select, Space } from "antd";
+import { Button, Col, Flex, InputNumber, Row, Select, Space } from "antd";
 import { FilamentMoreSettings } from "../../../types/Equipment";
+import { Material } from "../../../types/Material";
+import { RedoOutlined } from "@ant-design/icons";
 
 interface AdvancedSettingsProps {
     settingDetails: FilamentMoreSettings;
     setSettingDetails: (item: FilamentMoreSettings) => void;
+    material: Material | null;
 }
 
 const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
     settingDetails,
     setSettingDetails,
+    material,
 }: AdvancedSettingsProps) => {
     return (
         <>
@@ -52,6 +56,14 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                             <Flex gap="10px" justify="end">
                                 <p>First layer:</p>
                                 <InputNumber
+                                    min={
+                                        (material?.temperatures?.extruder
+                                            .firstLayer || 210) - 10
+                                    }
+                                    max={
+                                        (material?.temperatures?.extruder
+                                            .firstLayer || 210) + 10
+                                    }
                                     value={
                                         settingDetails.temperatures.extruder
                                             .firstLayer
@@ -82,12 +94,43 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                         })
                                     }
                                 />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            temperatures: {
+                                                ...settingDetails.temperatures,
+                                                extruder: {
+                                                    ...settingDetails
+                                                        .temperatures.extruder,
+                                                    firstLayer:
+                                                        material?.temperatures
+                                                            ?.extruder
+                                                            .firstLayer ||
+                                                        settingDetails
+                                                            .temperatures
+                                                            .extruder
+                                                            .firstLayer,
+                                                },
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
+                                />
                             </Flex>
                         </Col>
                         <Col span={8}>
                             <Flex gap="10px" justify="end">
                                 <p>Other layers:</p>
                                 <InputNumber
+                                    min={
+                                        (material?.temperatures?.extruder
+                                            .otherLayers || 210) - 10
+                                    }
+                                    max={
+                                        (material?.temperatures?.extruder
+                                            .otherLayers || 210) + 10
+                                    }
                                     value={
                                         settingDetails.temperatures.extruder
                                             .otherLayers
@@ -117,6 +160,29 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             },
                                         })
                                     }
+                                />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            temperatures: {
+                                                ...settingDetails.temperatures,
+                                                extruder: {
+                                                    ...settingDetails
+                                                        .temperatures.extruder,
+                                                    otherLayers:
+                                                        material?.temperatures
+                                                            ?.extruder
+                                                            .otherLayers ||
+                                                        settingDetails
+                                                            .temperatures
+                                                            .extruder
+                                                            .otherLayers,
+                                                },
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
                                 />
                             </Flex>
                         </Col>
@@ -124,9 +190,17 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                             <p>Bed</p>
                         </Col>
                         <Col span={8}>
-                            <Flex gap="10px" justify="end">
+                            <Flex gap="10px" justify="end" align="center">
                                 <p>First layer:</p>
                                 <InputNumber
+                                    min={
+                                        (material?.temperatures?.bed
+                                            .firstLayer || 65) - 10
+                                    }
+                                    max={
+                                        (material?.temperatures?.bed
+                                            .firstLayer || 65) + 10
+                                    }
                                     value={
                                         settingDetails.temperatures.bed
                                             .firstLayer
@@ -156,12 +230,41 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                         })
                                     }
                                 />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            temperatures: {
+                                                ...settingDetails.temperatures,
+                                                bed: {
+                                                    ...settingDetails
+                                                        .temperatures.bed,
+                                                    firstLayer:
+                                                        material?.temperatures
+                                                            ?.bed.firstLayer ||
+                                                        settingDetails
+                                                            .temperatures.bed
+                                                            .firstLayer,
+                                                },
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
+                                />
                             </Flex>
                         </Col>
                         <Col span={8}>
-                            <Flex gap="10px" justify="end">
+                            <Flex gap="10px" justify="end" align="center">
                                 <p>Other layers:</p>
                                 <InputNumber
+                                    min={
+                                        (material?.temperatures?.bed
+                                            .otherLayers || 65) - 10
+                                    }
+                                    max={
+                                        (material?.temperatures?.bed
+                                            .otherLayers || 65) + 10
+                                    }
                                     value={
                                         settingDetails.temperatures.bed
                                             .otherLayers
@@ -190,6 +293,27 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             },
                                         })
                                     }
+                                />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            temperatures: {
+                                                ...settingDetails.temperatures,
+                                                bed: {
+                                                    ...settingDetails
+                                                        .temperatures.bed,
+                                                    otherLayers:
+                                                        material?.temperatures
+                                                            ?.bed.otherLayers ||
+                                                        settingDetails
+                                                            .temperatures.bed
+                                                            .otherLayers,
+                                                },
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
                                 />
                             </Flex>
                         </Col>
@@ -226,6 +350,18 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                         })
                                     }
                                 />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            horizontalShell: {
+                                                ...settingDetails.horizontalShell,
+                                                topLayers: 3,
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
+                                />
                             </Flex>
                         </Col>
                         <Col span={8}>
@@ -249,6 +385,18 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             },
                                         })
                                     }
+                                />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            horizontalShell: {
+                                                ...settingDetails.horizontalShell,
+                                                bottomLayers: 3,
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
                                 />
                             </Flex>
                         </Col>
@@ -275,6 +423,18 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             },
                                         })
                                     }
+                                />
+                                <Button
+                                    onClick={() =>
+                                        setSettingDetails({
+                                            ...settingDetails,
+                                            verticalShell: {
+                                                ...settingDetails.horizontalShell,
+                                                perimeters: 3,
+                                            },
+                                        })
+                                    }
+                                    icon={<RedoOutlined />}
                                 />
                             </Flex>
                         </Col>

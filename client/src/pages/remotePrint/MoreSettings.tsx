@@ -33,6 +33,7 @@ interface MoreSettingsProps {
 const MoreSettings: React.FC<MoreSettingsProps> = ({
     prev,
     next,
+    material,
     settingDetails,
     setSettingDetails,
 }: MoreSettingsProps) => {
@@ -49,6 +50,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
             label: "Advanced Settings",
             children: (
                 <AdvancedSettings
+                    material={material}
                     settingDetails={settingDetails}
                     setSettingDetails={setSettingDetails}
                 />

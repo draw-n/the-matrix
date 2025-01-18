@@ -4,6 +4,8 @@ import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 
+const { TextArea } = Input;
+
 interface CreateAnnouncementFormProps {
     onUpdate: () => void;
 }
@@ -13,16 +15,14 @@ interface FieldType {
     description: string;
 }
 
-const { TextArea } = Input;
-
 const CreateAnnouncementForm: React.FC<CreateAnnouncementFormProps> = ({
     onUpdate,
 }: CreateAnnouncementFormProps) => {
     const { user } = useAuth();
-    const [type, setType] = useState("");
-    const [description, setDescription] = useState("");
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [type, setType] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -40,12 +40,12 @@ const CreateAnnouncementForm: React.FC<CreateAnnouncementFormProps> = ({
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements`,
                 newUpdate
-            );
+            ); //TODO: add a success vs error and relay that information
             onUpdate();
+            setIsModalOpen(false);
         } catch (error) {
             console.error("Error creating new update:", error);
         }
-        setIsModalOpen(false);
     };
 
     const handleCancel = () => {

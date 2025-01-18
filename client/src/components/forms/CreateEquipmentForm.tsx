@@ -1,8 +1,9 @@
-import { Input, Form, Flex, Button, Select, Modal, Tooltip } from "antd";
+import { Input, Form, Button, Select, Modal, Tooltip } from "antd";
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
+
+const { TextArea } = Input;
 
 interface CreateEquipmentFormProps {
     onUpdate: () => void;
@@ -15,17 +16,15 @@ interface FieldType {
     routePath: string;
 }
 
-const { TextArea } = Input;
-
 const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
     onUpdate,
 }: CreateEquipmentFormProps) => {
-    const [name, setName] = useState("");
-    const [type, setType] = useState("");
-    const [description, setDescription] = useState("");
-    const [routePath, setRoutePath] = useState("");
+    const [name, setName] = useState<string>("");
+    const [type, setType] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [routePath, setRoutePath] = useState<string>("");
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -42,12 +41,12 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
                 newEquipment
-            );
+            ); // TODO add success vs. failed
             onUpdate();
+            setIsModalOpen(false);
         } catch (error) {
             console.error("Error creating new update:", error);
         }
-        setIsModalOpen(false);
     };
 
     const handleCancel = () => {

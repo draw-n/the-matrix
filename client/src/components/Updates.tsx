@@ -2,7 +2,7 @@ import { Carousel, Empty, Flex, Tag, Typography } from "antd";
 import { CarouselRef } from "antd/es/carousel";
 
 import axios from "axios";
-import { useEffect, useRef, useState, createRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loading from "./Loading";
 import type { Announcement } from "../types/Announcement";
 
@@ -13,7 +13,7 @@ interface UpdatesProps {
 const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
     const [announcements, setAnnouncements] = useState<Announcement[]>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const [currentSlide, setCurrentSlide] = useState<number>(0);
 
     const carouselRef = useRef<CarouselRef | null>(null); // Ref for the Carousel component
 

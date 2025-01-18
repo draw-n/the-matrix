@@ -1,5 +1,5 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 
 interface PrivateRouteProps {
@@ -8,12 +8,15 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
     const { user } = useAuth();
-    setTimeout(() => {
-        if (!user) {
-            return <Navigate to="/login" />;
-        }
-    }, 1000);
-   
+    const navigate = useNavigate();
+    
+    /*useEffect(() => {
+        setTimeout(() => {
+            if (!user) {
+                navigate("/login");
+            }
+        }, 1000);
+    });*/
 
     return <>{element}</>;
 };

@@ -3,47 +3,71 @@ import {
     InboxOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Flex, message, Space, Upload, UploadProps } from "antd";
+import { Button, Flex, Form, message, Space, Upload, UploadProps } from "antd";
+import type { UploadFile } from "antd";
+import axios, { AxiosRequestConfig } from "axios";
 import { useState } from "react";
 const { Dragger } = Upload;
 
 interface UploadFileProps {
     next: () => void;
+    uploadedFile: UploadFile[];
+    setUploadedFile: (item: UploadFile[]) => void;
 }
 
-const UploadFile: React.FC<UploadFileProps> = ({ next }: UploadFileProps) => {
-    const [uploadedFile, setUploadedFile] = useState<File | null | undefined>(
-        null
-    );
-
+const UploadFile: React.FC<UploadFileProps> = ({
+    next,
+    uploadedFile,
+    setUploadedFile,
+}: UploadFileProps) => {
     const props: UploadProps = {
+        action: `${import.meta.env.VITE_BACKEND_URL}/upload`,
         name: "file",
         headers: {
             authorization: "authorization-text",
         },
         beforeUpload: (file: any) => {
-            const isPNG = file.type === "model/3mf" || "model/stl";
-            if (!isPNG) {
+            const isFile = file.type === "model/3mf" || "model/stl";
+            if (!isFile) {
                 message.error(`${file.name} is not a STL or 3MF file.`);
             }
-            return isPNG || Upload.LIST_IGNORE;
+            return isFile || Upload.LIST_IGNORE;
         },
-        onChange(info) {
-            const { status } = info.file;
-            if (status !== "uploading") {
-                console.log(info.file, info.fileList);
-            }
-            if (status === "done") {
-                message.success(
-                    `${info.file.name} file uploaded successfully.`
-                );
-                setUploadedFile(info.file.originFileObj); // Store file in state
-            } else if (status === "error") {
-                message.error(`${info.file.name} file upload failed.`);
-            }
+        onChange: (info) => {
+            let newFileList = [...info.fileList];
+
+            // Limit the number of uploaded files
+            newFileList = newFileList.slice(-1);
+            newFileList = newFileList.map((file) => {
+                if (file.response) {
+                    // Component will show file.url as link
+                    file.url = file.response.url;
+                }
+                return file;
+            });
+            setUploadedFile(newFileList);
         },
         onDrop(e) {
             console.log("Dropped files", e.dataTransfer.files);
+        },
+        customRequest: (options: any) => {
+            const data = new FormData();
+            data.append("file", options.file);
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            };
+
+            axios
+                .post(options.action, data, config)
+                .then((response: any) => {
+                    message.success(response.data.message);
+                    options.onSuccess(response.data, options.file);
+                })
+                .catch((err: Error) => {
+                    console.log(err);
+                });
         },
     };
 
@@ -51,7 +75,11 @@ const UploadFile: React.FC<UploadFileProps> = ({ next }: UploadFileProps) => {
         <>
             <Flex vertical style={{ width: "100%" }} gap="large">
                 <h2>Upload File</h2>
-                <Dragger {...props} style={{ width: "100%" }}>
+                <Dragger
+                    {...props}
+                    fileList={uploadedFile}
+                    style={{ width: "100%" }}
+                >
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                     </p>

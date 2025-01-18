@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
-const { Paragraph } = Typography;
-
 interface SelectEquipmentProps {
     type: string | null;
     value: Equipment | null;
@@ -75,7 +73,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                                         }`}
                                         onClick={() => setValue(equipment)}
                                     >
-                                            <p>{equipment.name}</p>
+                                        <p>{equipment.name}</p>
                                     </div>
                                 </Col>
                             );

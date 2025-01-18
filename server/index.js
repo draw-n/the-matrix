@@ -73,7 +73,7 @@ const upload = multer({ storage: storage });
 const fileUpload = upload.fields([{ name: "file", maxCount: 1 }]);
 
 app.post("/upload", fileUpload, (req, res) => {
-    res.json({ message: "image successfully uploaded" });
+    res.json({ message: "Model successfully uploaded!" });
 });
 
 app.use("/issues", require("./routes/issues.router.js"));
