@@ -2,12 +2,17 @@ import { Button, Card, Flex, Select, Space } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { useState } from "react";
 import axios from "axios";
+import { UserSwitchOutlined } from "@ant-design/icons";
 
 interface UserCardProps {
     cardUser: User;
+    deleteUser: (id: string) => void;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
+const UserCard: React.FC<UserCardProps> = ({
+    cardUser,
+    deleteUser,
+}: UserCardProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editAccess, setEditAccess] = useState<string>(cardUser.access);
 
@@ -43,14 +48,21 @@ const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
             <Card
                 title={cardUser.firstName + " " + cardUser.lastName}
                 extra={
-                    user?._id != cardUser._id && (
-                        <Button
-                            onClick={handleClick}
-                            className="primary-button-outlined"
-                        >
-                            {editMode ? "Save" : "Edit"}
-                        </Button>
-                    )
+                    <Flex gap="5px">
+                        {editMode && (
+                            <Button onClick={() => deleteUser(cardUser._id)}>
+                                Delete
+                            </Button>
+                        )}
+                        {user?._id != cardUser._id && (
+                            <Button
+                                onClick={handleClick}
+                                className="primary-button-outlined"
+                            >
+                                {editMode ? "Save" : "Edit"}
+                            </Button>
+                        )}
+                    </Flex>
                 }
                 bordered={false}
             >
@@ -69,8 +81,10 @@ const UserCard: React.FC<UserCardProps> = ({ cardUser }: UserCardProps) => {
                             value={editAccess}
                             onChange={setEditAccess}
                             options={[
-                                { value: "view", label: "View" },
-                                { value: "edit", label: "Edit" },
+                                { value: "novice", label: "Novice" },
+                                { value: "proficient", label: "Proficient" },
+                                { value: "expert", label: "Expert" },
+                                { value: "moderator", label: "Moderator" },
                                 { value: "admin", label: "Admin" },
                             ]}
                         />

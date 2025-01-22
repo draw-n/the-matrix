@@ -19,33 +19,37 @@ interface MenuItem {
 }
 
 const allPages: MenuItem[] = [
-    { key: "/", label: "Announcements", access: ["view", "edit", "admin"] },
+    {
+        key: "/",
+        label: "Announcements",
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
+    },
     {
         key: "/report",
         label: "Report an Issue",
-        access: ["view", "edit", "admin"],
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
     },
     {
         key: "/edit",
         label: "Edit Updates",
-        access: ["edit", "admin"],
+        access: ["moderator", "admin"],
     },
     {
         key: "/equipment",
         label: "All Equipment",
-        access: ["view", "edit", "admin"],
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
     },
 
     { key: "/directory", label: "User Directory", access: ["admin"] },
     {
         key: "/profile",
         label: "User Profile",
-        access: ["view", "edit", "admin"],
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
     },
     {
         key: "/upload",
         label: "Remote Print",
-        access: ["view", "edit", "admin"],
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
     },
 ];
 

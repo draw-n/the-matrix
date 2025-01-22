@@ -21,6 +21,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
     const [name, setName] = useState(equipment.name);
     const [type, setType] = useState(equipment.type);
+    const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
 
@@ -37,6 +38,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 _id: equipment._id,
                 name: name,
                 type: type,
+                headline: headline,
                 properties: properties,
                 description: description,
                 status: equipment.status,
@@ -84,6 +86,72 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Card>
+                            <Row>
+                                <Col span={8}>
+                                    <Flex
+                                        style={{ width: "100%" }}
+                                        align="center"
+                                        vertical
+                                    >
+                                        <h3>Headline</h3>
+                                        {editMode ? (
+                                            <Input
+                                                onChange={(e) =>
+                                                    setHeadline(e.target.value)
+                                                }
+                                                value={headline}
+                                            />
+                                        ) : (
+                                            <p>{headline}</p>
+                                        )}
+                                    </Flex>
+                                </Col>
+                                <Col span={8}>
+                                    <Flex
+                                        style={{ width: "100%" }}
+                                        align="center"
+                                        vertical
+                                    >
+                                        <h3>Type</h3>
+                                        {editMode ? (
+                                            <Input
+                                                onChange={(e) =>
+                                                    setType(e.target.value)
+                                                }
+                                                value={type}
+                                            />
+                                        ) : (
+                                            <p
+                                                style={{
+                                                    textTransform: "capitalize",
+                                                }}
+                                            >
+                                                {type}
+                                            </p>
+                                        )}
+                                    </Flex>
+                                </Col>
+                                <Col span={8}>
+                                    <Flex
+                                        style={{ width: "100%" }}
+                                        align="center"
+                                        vertical
+                                    >
+                                        <h3>Status</h3>
+                                        <p
+                                            style={{
+                                                textTransform: "capitalize",
+                                            }}
+                                        >
+                                            {equipment.status}
+                                        </p>
+                                    </Flex>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                    <Col span={24}>
+                        <Card>
                             <h3>Description</h3>
                             {editMode ? (
                                 <TextArea
@@ -107,9 +175,6 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                         </Card>
                     </Col>
                 </Row>
-
-                <p>Type: {equipment.type}</p>
-                <p>Status: {equipment.status}</p>
             </Space>
         </>
     );

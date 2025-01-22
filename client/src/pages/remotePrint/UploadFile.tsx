@@ -20,6 +20,15 @@ const UploadFile: React.FC<UploadFileProps> = ({
     uploadedFile,
     setUploadedFile,
 }: UploadFileProps) => {
+
+    const handleSubmit = () => {
+        if (uploadedFile.length === 0) {
+            message.error("You must upload a file!");
+        } else {
+            next();
+        }
+    }
+
     const props: UploadProps = {
         action: `${import.meta.env.VITE_BACKEND_URL}/upload`,
         name: "file",
@@ -92,7 +101,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                         type="primary"
                         icon={<CaretRightOutlined />}
                         iconPosition="end"
-                        onClick={next}
+                        onClick={handleSubmit}
                     >
                         Select Material
                     </Button>

@@ -22,20 +22,7 @@ const { Paragraph } = Typography;
 const EquipmentCard: React.FC<EquipmentCardProps> = ({
     equipment,
 }: EquipmentCardProps) => {
-    const [editMode, setEditMode] = useState<boolean>(false);
-    const [editName, setEditName] = useState<string>(equipment.name);
-    const [editType, setEditType] = useState<string>(equipment.type);
-    const [editDescription, setEditDescription] = useState<string>(
-        equipment.description
-    );
-
     const navigate = useNavigate();
-    const handleClick = () => {
-        if (editMode) {
-            changeEquipment();
-        }
-        setEditMode((prev) => !prev);
-    };
 
     const showStatus = () => {
         switch (equipment.status) {
@@ -57,35 +44,27 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
         }
     };
 
-    const changeEquipment = async () => {
-        try {
-            const editedEquipment = {
-                _id: equipment._id,
-                name: editName,
-                type: editType,
-                description: editDescription,
-                status: equipment.status,
-            };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${equipment._id}`,
-                editedEquipment
-            );
-        } catch (error) {
-            console.error("Issue updating user", error);
-        }
-    };
-
     return (
         <>
-            <Card className="equipment-card" bordered={false}>
-                <Flex vertical justify="start" align="start">
+            <Card
+                className="equipment-card"
+                bordered={false}
+                style={{ height: "100%" }}
+            >
+                <Flex
+                    vertical
+                    justify="space-between"
+                    align="start"
+                    style={{ height: "100%", width: "100%" }}
+                    gap="10px"
+                >
                     <Space
                         direction="vertical"
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", flexGrow: 1 }}
                         size="small"
                     >
                         <Tag style={{ textTransform: "uppercase" }}>
-                            {editType}
+                            {equipment.type}
                         </Tag>
 
                         <h3>
@@ -97,33 +76,31 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                     margin: 0,
                                 }}
                             >
-                                {editName}
+                                {equipment.name}
                             </Paragraph>
                         </h3>
-
-                        <Flex justify="space-between" style={{ width: "100%" }}>
-                            <Flex
-                                justify="center"
-                                style={{ textTransform: "capitalize" }}
-                                align="center"
-                                gap="10px"
-                            >
-                                {showStatus()}
-                                {equipment.status}
-                            </Flex>
-                            <Button
-                                type="primary"
-                                size="small"
-                                onClick={() =>
-                                    navigate(
-                                        `/equipment/${equipment.routePath}`
-                                    )
-                                }
-                            >
-                                More Details
-                            </Button>
-                        </Flex>
+                        <p>{equipment.headline}</p>
                     </Space>
+                    <Flex justify="space-between" style={{ width: "100%" }}>
+                        <Flex
+                            justify="center"
+                            style={{ textTransform: "capitalize" }}
+                            align="center"
+                            gap="10px"
+                        >
+                            {showStatus()}
+                            {equipment.status}
+                        </Flex>
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={() =>
+                                navigate(`/equipment/${equipment.routePath}`)
+                            }
+                        >
+                            More Details
+                        </Button>
+                    </Flex>
                 </Flex>
             </Card>
         </>

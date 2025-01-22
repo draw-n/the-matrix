@@ -22,4 +22,5 @@
 .select-card:hover {
     border: 1px solid var(--neutral-dark);
     background-color: var(--neutral-medium) !important;
+    cursor: pointer;
 }

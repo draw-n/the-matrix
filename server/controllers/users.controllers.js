@@ -8,19 +8,17 @@ const createUser = async (req, res) => {
         if (user)
             return res.status(400).json({ message: "User already exists." });
         if (accessCode != process.env.ACCESS_CODE) {
-            return res
-                .status(401)
-                .json({
-                    message:
-                        "Doesn't match the access code in the Digital Fabrication Lab.",
-                });
+            return res.status(401).json({
+                message:
+                    "Doesn't match the access code in the Digital Fabrication Lab.",
+            });
         }
         user = new User({
             firstName: firstName,
             lastName: lastName,
             email: email.toLowerCase(),
             password: password,
-            access: "view",
+            access: "novice",
         });
 
         await user.save();
@@ -63,7 +61,6 @@ const updateUser = async (req, res) => {
         if (userId) {
             const user = User.findByIdAndUpdate(userId, req.body)
                 .then(function () {
-                    
                     res.status(200).json(user);
                 })
                 .catch(function (error) {

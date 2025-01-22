@@ -1,26 +1,11 @@
-import {
-    Button,
-    Col,
-    Collapse,
-    Flex,
-    InputNumber,
-    Popover,
-    Row,
-    Select,
-    Slider,
-    Space,
-} from "antd";
+import { Button, Collapse, Flex, Slider, Space } from "antd";
 import type { CollapseProps, InputNumberProps } from "antd";
-import { useState } from "react";
 import InfillSlider from "./components/InfillSlider";
-import {
-    CaretLeftOutlined,
-    CaretRightOutlined,
-    QuestionOutlined,
-} from "@ant-design/icons";
+import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 import AdvancedSettings from "./components/AdvancedSettings";
 import { FilamentMoreSettings } from "../../types/Equipment";
 import { Material } from "../../types/Material";
+import { useAuth } from "../../hooks/AuthContext";
 
 interface MoreSettingsProps {
     prev: () => void;
@@ -37,6 +22,8 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
     settingDetails,
     setSettingDetails,
 }: MoreSettingsProps) => {
+    const { user } = useAuth();
+
     const onChange: InputNumberProps["onChange"] = (value) => {
         if (Number.isNaN(value)) {
             return;
@@ -105,7 +92,9 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         step={0.1}
                     />
                 </Space>
-                <Collapse items={items} defaultActiveKey={["1"]} />
+                {user?.access != "novice" && (
+                    <Collapse items={items} defaultActiveKey={["1"]} />
+                )}
                 <Flex gap="10px" style={{ width: "100%" }} justify="center">
                     <Button
                         onClick={prev}

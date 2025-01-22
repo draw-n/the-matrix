@@ -15,7 +15,7 @@ const Announcements: React.FC = () => {
                 <Flex justify={"space-between"} align={"center"}>
                     <h1>ANNOUNCEMENTS</h1>
                     <Flex gap="small">
-                        {(user?.access == "edit" ||
+                        {(user?.access == "moderator" ||
                             user?.access == "admin") && (
                             <Button
                                 onClick={() => navigate("/edit")}

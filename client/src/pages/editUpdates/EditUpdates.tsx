@@ -1,4 +1,4 @@
-import { Flex } from "antd";
+import { Flex, Space } from "antd";
 import { useState } from "react";
 
 import CreateAnnouncementForm from "../../components/forms/CreateAnnouncementForm";
@@ -11,25 +11,30 @@ const EditUpdates: React.FC = () => {
 
     return (
         <>
-            <h1>EDIT UPDATES</h1>
+            <Space direction="vertical" size="middle" style={{width: "100%"}}>
+                <h1>EDIT UPDATES</h1>
 
-            <Flex
-                align="center"
-                justify="space-between"
-                style={{ width: "100%" }}
-            >
-                <h2>Announcements</h2>
+                <Flex
+                    align="center"
+                    justify="space-between"
+                    style={{ width: "100%" }}
+                >
+                    <h2>Announcements</h2>
 
-                <CreateAnnouncementForm
-                    onUpdate={() => setRefreshUpdates((prev) => prev + 1)}
+                    <CreateAnnouncementForm
+                        onUpdate={() => setRefreshUpdates((prev) => prev + 1)}
+                    />
+                </Flex>
+                <AnnouncementTable
+                    refresh={refreshUpdates}
+                    setRefresh={setRefreshUpdates}
                 />
-            </Flex>
-            <AnnouncementTable
-                refresh={refreshUpdates}
-                setRefresh={setRefreshUpdates}
-            />
-            <h2>Equipment Issues</h2>
-            <IssueTable refresh={refreshIssues} setRefresh={setRefreshIssues} />
+                <h2>Equipment Issues</h2>
+                <IssueTable
+                    refresh={refreshIssues}
+                    setRefresh={setRefreshIssues}
+                />
+            </Space>
         </>
     );
 };

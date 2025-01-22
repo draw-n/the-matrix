@@ -21,21 +21,6 @@ const Profile: React.FC = () => {
         TODO: keeps rerendering too many times
 */
 
-    let role = user?.access;
-    switch (role) {
-        case "view":
-            role = "Viewer";
-            break;
-        case "edit":
-            role = "Editor";
-            break;
-        case "admin":
-            role = "Admin";
-            break;
-        default:
-            break;
-    }
-
     const handleClick = () => {
         if (editMode) {
             saveUserChanges();
@@ -68,7 +53,9 @@ const Profile: React.FC = () => {
 
                 <Card>
                     <h2>{`${user?.firstName} ${user?.lastName}`}</h2>
-                    <p>{role}</p>
+                    <p style={{ textTransform: "capitalize" }}>
+                        {user?.access}
+                    </p>
                     <p>Vanderbilt University</p>
                 </Card>
                 <Alert
@@ -129,7 +116,9 @@ const Profile: React.FC = () => {
 
                             <Space direction="vertical">
                                 <h3>Access Role</h3>
-                                <p>{role}</p>
+                                <p style={{ textTransform: "capitalize" }}>
+                                    {user?.access}
+                                </p>
                             </Space>
                         </Flex>
                     </Space>

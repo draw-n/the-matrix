@@ -1,12 +1,4 @@
-import {
-    Button,
-    Form,
-    Select,
-    Input,
-    Result,
-    Flex,
-    message,
-} from "antd";
+import { Button, Form, Select, Input, Result, Flex, message } from "antd";
 import { useState } from "react";
 import SelectEquipment from "./SelectEquipment";
 import { useAuth } from "../../hooks/AuthContext";
@@ -54,6 +46,7 @@ const CreateIssueForm: React.FC = () => {
                 createdBy: user?._id,
                 dateCreated: new Date(),
                 description: `${initialDescription}`,
+                status: "posted",
             };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements`,

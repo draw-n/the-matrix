@@ -22,7 +22,16 @@ const UserDirectory: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>("");
 
-    const handleSearch = () => {};
+    const deleteUser = async (id: string) => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/users/${id}`
+            );
+            setUsers(users.filter((user) => user._id != id));
+        } catch (error) {
+            console.error("Deleting user failed: ", error);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,38 +52,6 @@ const UserDirectory: React.FC = () => {
         fetchData();
     }, [filter]);
 
-    let timeout: ReturnType<typeof setTimeout> | null;
-    let currentValue: string;
-
-    /*const fetch = (
-        value: string,
-        callback: (data: { value: string; text: string }[]) => void
-    ) => {
-        if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-        currentValue = value;
-
-        const fake = () => {
-            (d: any) => {
-                if (currentValue === value) {
-                    const { result } = d;
-                    const data = result.map((item: any) => ({
-                        value: item[0],
-                        text: item[0],
-                    }));
-                    callback(data);
-                }
-            };
-        };
-        if (value) {
-            timeout = setTimeout(fake, 300);
-        } else {
-            callback([]);
-        }
-    };*/
-
     return (
         <>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
@@ -91,8 +68,14 @@ const UserDirectory: React.FC = () => {
                             buttonStyle="solid"
                         >
                             <Radio.Button value="">All</Radio.Button>
-                            <Radio.Button value="view">View</Radio.Button>
-                            <Radio.Button value="edit">Edit</Radio.Button>
+                            <Radio.Button value="novice">Novice</Radio.Button>
+                            <Radio.Button value="proficient">
+                                Proficient
+                            </Radio.Button>
+                            <Radio.Button value="expert">Expert</Radio.Button>
+                            <Radio.Button value="moderator">
+                                Moderator
+                            </Radio.Button>
                             <Radio.Button value="admin">Admin</Radio.Button>
                         </Radio.Group>
                         {/*
@@ -123,7 +106,10 @@ const UserDirectory: React.FC = () => {
                         {users?.map((user: User) => {
                             return (
                                 <Col span={8}>
-                                    <UserCard cardUser={user} />
+                                    <UserCard
+                                        deleteUser={deleteUser}
+                                        cardUser={user}
+                                    />
                                 </Col>
                             );
                         })}

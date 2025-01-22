@@ -112,9 +112,9 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 multiple: 2,
             },
             render: (record) => {
-                const { userInfo } = record;
+                const userInfo = users[record];
                 const { fullName, email } = userInfo || {
-                    fullName: "",
+                    fullName: "Loading...",
                     email: "",
                 };
                 return <a href={`mailto:${email}`}>{fullName}</a>;

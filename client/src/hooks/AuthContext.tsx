@@ -13,6 +13,8 @@ export interface User {
     lastName: string;
     email: string;
     access: string;
+    status: string;
+    graduationDate?: Date;
 }
 
 interface AuthContextType {

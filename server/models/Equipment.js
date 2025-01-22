@@ -9,6 +9,7 @@ const EquipmentSchema = new Schema({
     },
     name: { type: String, required: true },
     routePath: { type: String, required: true },
+    headline: { type: String },
     type: {
         type: String,
         required: true,
@@ -28,7 +29,7 @@ const EquipmentSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["working", "broken", "fixing", "updating"],
+        enum: ["available", "paused", "busy", "error", "offline"],
         required: true,
     },
     description: {

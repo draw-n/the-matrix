@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
-import { Col, Flex, Radio, Row } from "antd";
+import { Col, Flex, Radio, Row, Space } from "antd";
 import EquipmentCard from "./EquipmentCard";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -47,7 +47,7 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
     }, [refreshEquipment, filter]);
 
     return (
-        <>
+        <Space direction="vertical" size="middle">
             <h1>ALL EQUIPMENT</h1>
             {isLoading ? (
                 <Loading />
@@ -109,7 +109,7 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                     />
                 </>
             )}
-        </>
+        </Space>
     );
 };
 

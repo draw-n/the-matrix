@@ -1,8 +1,8 @@
-import { Button, Flex, Form, FormProps, Input } from "antd";
+import { Button, DatePicker, Flex, Form, FormProps, Input, Select } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface FieldType {
     email: string;
@@ -10,12 +10,16 @@ interface FieldType {
     firstName: string;
     lastName: string;
     accessCode: string;
+    status: string;
+    graduationDate?: Date;
 }
 
 const Signup: React.FC = () => {
     const { user, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [showGradDate, setShowGradDate] = useState<boolean>(false);
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
@@ -40,7 +44,6 @@ const Signup: React.FC = () => {
         <>
             <Flex style={{ width: "100vw", height: "100vh" }}>
                 <div className="login-background" style={{ width: "50%" }} />
-
                 <Flex
                     gap="5px"
                     flex="1"
@@ -117,29 +120,80 @@ const Signup: React.FC = () => {
                         >
                             <Input.Password />
                         </Form.Item>
-                        <Form.Item<FieldType>
-                            label="Access Code"
-                            name="accessCode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please add the access code provided in the Digital Fabrication Lab.",
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item label={null}>
-                            <Button
-                                className="primary-button-filled"
-                                type="primary"
-                                htmlType="submit"
+                        <Flex justify="space-between" gap="20px" style={{width: "100%"}}>
+                            <Form.Item<FieldType>
+                                style={{ width: "100%" }}
+                                label="Status"
+                                name="status"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please select a status.",
+                                    },
+                                ]}
                             >
-                                Submit
-                            </Button>
-                        </Form.Item>
+                                <Select
+                                    onChange={(value) =>
+                                        setShowGradDate(
+                                            value === "undergraduate"
+                                        )
+                                    }
+                                    options={[
+                                        {
+                                            value: "undergraduate",
+                                            label: "Undergraduate Student",
+                                        },
+                                        {
+                                            value: "graduate",
+                                            label: "Graduate Student",
+                                        },
+                                        { value: "faculty", label: "Faculty" },
+                                    ]}
+                                />
+                            </Form.Item>
+                            {showGradDate && (
+                                <Form.Item<FieldType>
+                                    style={{width: "100%"}}
+                                    label="Graduation Date"
+                                    name="graduationDate"
+                                    rules={[
+                                        {
+                                            required: showGradDate,
+                                            message:
+                                                "Please choose a graduation date.",
+                                        },
+                                    ]}
+                                >
+                                    <DatePicker picker="month" />
+                                </Form.Item>
+                            )}
+                        </Flex>
+
+                        <Flex align="end" justify="space-between">
+                            <Form.Item<FieldType>
+                                label="Access Code"
+                                name="accessCode"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message:
+                                            "Please add the access code provided in the Digital Fabrication Lab.",
+                                    },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label={null}>
+                                <Button
+                                    className="primary-button-filled"
+                                    type="primary"
+                                    htmlType="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Flex>
                     </Form>
 
                     <p style={{ textAlign: "center" }}>

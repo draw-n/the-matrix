@@ -53,8 +53,10 @@ const App: React.FC = () => {
                                         element={
                                             <Shell
                                                 contentAccess={[
-                                                    "view",
-                                                    "edit",
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
                                                     "admin",
                                                 ]}
                                                 children={
@@ -85,8 +87,10 @@ const App: React.FC = () => {
                                 element={
                                     <Shell
                                         contentAccess={[
-                                            "view",
-                                            "edit",
+                                            "novice",
+                                            "proficient",
+                                            "expert",
+                                            "moderator",
                                             "admin",
                                         ]}
                                         children={<Announcements />}
@@ -103,8 +107,10 @@ const App: React.FC = () => {
                                 element={
                                     <Shell
                                         contentAccess={[
-                                            "view",
-                                            "edit",
+                                            "novice",
+                                            "proficient",
+                                            "expert",
+                                            "moderator",
                                             "admin",
                                         ]}
                                         children={<RemotePrint />}
@@ -120,8 +126,10 @@ const App: React.FC = () => {
                                 element={
                                     <Shell
                                         contentAccess={[
-                                            "view",
-                                            "edit",
+                                            "novice",
+                                            "proficient",
+                                            "expert",
+                                            "moderator",
                                             "admin",
                                         ]}
                                         children={<Profile />}
@@ -137,8 +145,10 @@ const App: React.FC = () => {
                                 element={
                                     <Shell
                                         contentAccess={[
-                                            "view",
-                                            "edit",
+                                            "novice",
+                                            "proficient",
+                                            "expert",
+                                            "moderator",
                                             "admin",
                                         ]}
                                         children={
@@ -162,7 +172,7 @@ const App: React.FC = () => {
                             <PrivateRoute
                                 element={
                                     <Shell
-                                        contentAccess={["edit", "admin"]}
+                                        contentAccess={["moderator", "admin"]}
                                         children={<EditUpdates />}
                                     />
                                 }
@@ -177,8 +187,10 @@ const App: React.FC = () => {
                                 element={
                                     <Shell
                                         contentAccess={[
-                                            "view",
-                                            "edit",
+                                            "novice",
+                                            "proficient",
+                                            "expert",
+                                            "moderator",
                                             "admin",
                                         ]}
                                         children={<ReportAnIssue />}
