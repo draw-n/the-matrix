@@ -11,7 +11,7 @@ const createMaterial = async (req, res) => {
         description,
         remotePrintAvailable,
     } = req.body;
-
+    console.log(req.body);
     try {
         if (
             name &&
@@ -19,11 +19,10 @@ const createMaterial = async (req, res) => {
             type &&
             properties &&
             description &&
-            remotePrintAvailable
+            remotePrintAvailable != null
         ) {
             let material = new Material({
                 _id: new mongoose.Types.ObjectId(),
-
                 name,
                 shortName,
                 type,

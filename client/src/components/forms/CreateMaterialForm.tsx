@@ -6,14 +6,14 @@ import {
     Select,
     Modal,
     Switch,
-    Tag,
     Tooltip,
+    message,
 } from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
+import MultiType from "./MultiType";
 
 interface MaterialFormProps {
     onUpdate: () => void;
@@ -28,20 +28,13 @@ interface FieldType {
     remotePrintAvailable: boolean;
 }
 
-const { Option } = Select;
 const { TextArea } = Input;
 
 const CreateMaterialForm: React.FC<MaterialFormProps> = ({
     onUpdate,
 }: MaterialFormProps) => {
-    const [name, setName] = useState("");
-    const [shortName, setShortName] = useState("");
-    const [type, setType] = useState("");
-    const [properties, setProperties] = useState<string[]>([]);
-    const [description, setDescription] = useState("");
-    const [remotePrintAvailable, setRemotePrintAvailable] = useState(false);
+    const [form] = Form.useForm();
 
-    const [inputValue, setInputValue] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -49,49 +42,32 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
     };
 
     const handleOk = async () => {
+        form.submit();
+    };
+
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const newMaterial = {
-                name: name,
-                type: type,
-                shortName: shortName,
-                description: description,
-                properties: properties,
-                remotePrintAvailable: remotePrintAvailable,
-            };
+            console.log(values.remotePrintAvailable);
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/materials`,
-                newMaterial
+                values
             );
             onUpdate();
+            message.success("Material successfully created!");
+            form.resetFields();
+            setIsModalOpen(false);
         } catch (error) {
-            console.error("Error creating new update:", error);
+            console.error("Problem creating new material: ", error);
         }
-        setIsModalOpen(false);
+    };
+
+    const onFinishFailed = () => {
+        message.error("Missing one or more fields.");
     };
 
     const handleCancel = () => {
+        form.resetFields();
         setIsModalOpen(false);
-    };
-
-    // Handle input change
-    const handleInputChange = (e: any) => {
-        setInputValue(e.target.value);
-    };
-
-    // Handle input keydown event
-    const handleKeyDown = (e: any) => {
-        if (e.key === "Enter" || e.key === ",") {
-            e.preventDefault();
-            if (inputValue.trim() && !properties.includes(inputValue.trim())) {
-                setProperties([...properties, inputValue.trim()]);
-                setInputValue("");
-            }
-        }
-    };
-
-    // Handle tag deletion
-    const handleDeleteTag = (tagToDelete: any) => {
-        setProperties(properties.filter((tag) => tag !== tagToDelete));
     };
 
     return (
@@ -113,10 +89,21 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                 centered
             >
                 <Form
+                    form={form}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
                     name="basic"
                     layout="vertical"
+                    initialValues={{
+                        name: "",
+                        shortName: "",
+                        type: null,
+                        description: "",
+                        properties: [],
+                        temperatures: undefined,
+                        remotePrintAvailable: false,
+                    }}
                     style={{ width: "100%" }}
-                    initialValues={{ remember: true }}
                     autoComplete="off"
                     preserve={false}
                 >
@@ -131,10 +118,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <Input
-                            placeholder="ex. Polylactic Acid"
-                            onChange={(e) => setName(e.target.value)}
-                        />
+                        <Input placeholder="ex. Polylactic Acid" />
                     </Form.Item>
                     <Flex gap="10px">
                         <Form.Item<FieldType>
@@ -149,10 +133,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                                 },
                             ]}
                         >
-                            <Input
-                                placeholder="ex. PLA"
-                                onChange={(e) => setShortName(e.target.value)}
-                            />
+                            <Input placeholder="ex. PLA" />
                         </Form.Item>
                         <Form.Item<FieldType>
                             style={{ width: "50%" }}
@@ -166,7 +147,6 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             ]}
                         >
                             <Select
-                                onChange={setType}
                                 options={[
                                     {
                                         value: "filament",
@@ -190,23 +170,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <Input
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Type and press Enter or comma to add tags"
-                            style={{ width: "100%" }}
-                        />
-                        {properties.map((tag, index) => (
-                            <Tag
-                                key={index}
-                                closable
-                                onClose={() => handleDeleteTag(tag)}
-                                style={{ margin: 4 }}
-                            >
-                                {tag}
-                            </Tag>
-                        ))}
+                        <MultiType />
                     </Form.Item>
 
                     <Form.Item<FieldType>
@@ -221,28 +185,16 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <TextArea
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={3}
-                        />
+                        <TextArea rows={3} />
                     </Form.Item>
                     <Form.Item<FieldType>
                         label={null}
                         name="remotePrintAvailable"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select an option.",
-                            },
-                        ]}
                     >
                         <Flex gap="10px" align="center">
                             <p>Will it be available for remote printing?</p>
 
-                            <Switch
-                                value={remotePrintAvailable}
-                                onChange={setRemotePrintAvailable}
-                            />
+                            <Switch />
                         </Flex>
                     </Form.Item>
                 </Form>
