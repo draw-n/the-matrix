@@ -1,85 +1,35 @@
-import { Button, Form, Select, Input, Result, Flex, message } from "antd";
+import {
+    Button,
+    Form,
+    Select,
+    Input,
+    Result,
+    Flex,
+    message,
+    FormProps,
+} from "antd";
 import { useState } from "react";
 import SelectEquipment from "./SelectEquipment";
 import { useAuth } from "../../hooks/AuthContext";
 import "./issues.css";
 import axios from "axios";
-import { Equipment } from "../../types/Equipment";
 
 const { TextArea } = Input;
 
+interface FieldType {
+    equipment: string;
+    type: string;
+    initialDescription: string;
+    description: string;
+}
+
 const CreateIssueForm: React.FC = () => {
     const [form] = Form.useForm();
-    const [equipment, setEquipment] = useState<Equipment | null>(null);
-    const [type, setType] = useState<string | null>(null);
-    const [initialDescription, setInitialDescription] = useState<string | null>(
-        null
-    );
-    const [description, setDescription] = useState<string>("");
     const [submitted, setSubmitted] = useState<boolean>(false);
     const { user } = useAuth();
 
-    const handleSubmit = async () => {
-        try {
-            const newIssue = {
-                equipment: equipment?._id,
-                createdBy: user?._id,
-                dateCreated: new Date(),
-                description: `${initialDescription}\n${description}`,
-            };
-            const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/issues`,
-                newIssue
-            );
-            makeAnnouncement();
-            updateEquipment(response.data._id);
-        } catch (error) {
-            console.error("issue submitting an issue:", error);
-        }
-    };
-
-    const makeAnnouncement = async () => {
-        try {
-            const newAnnouncement = {
-                type: "issue",
-                title: equipment?.name,
-                createdBy: user?._id,
-                dateCreated: new Date(),
-                description: `${initialDescription}`,
-                status: "posted",
-            };
-            const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements`,
-                newAnnouncement
-            );
-        } catch (error) {
-            console.error("issue submitting a new announcement", error);
-        }
-    };
-
-    const updateEquipment = async (issueID: string) => {
-        try {
-            const updateEquipment = {
-                issues: [issueID],
-            };
-            if (equipment) {
-                const response = await axios.put(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment/${
-                        equipment?._id
-                    }`,
-                    updateEquipment
-                );
-            }
-        } catch (error) {
-            console.error("issue updating equipment", error);
-        }
-    };
-
     const refreshForm = () => {
-        setEquipment(null);
-        setType(null);
-        setDescription("");
-        setInitialDescription(null);
+        form.resetFields();
         setSubmitted(false);
     };
 
@@ -87,9 +37,22 @@ const CreateIssueForm: React.FC = () => {
         message.error("Missing one or more fields.");
     };
 
-    const onFinish = () => {
-        setSubmitted(true);
-        handleSubmit();
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+        try {
+            const newIssue = {
+                equipment: values.equipment,
+                description: `${values.initialDescription}\n${values.description}`,
+                createdBy: user?._id,
+                dateCreated: new Date(),
+            };
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/issues`,
+                newIssue
+            );
+            setSubmitted(true);
+        } catch (error) {
+            console.error("Problem creating an issue: ", error);
+        }
     };
 
     return (
@@ -116,8 +79,6 @@ const CreateIssueForm: React.FC = () => {
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
-                    {type}
-
                     <Flex style={{ width: "100%" }} justify="space-between">
                         <Form.Item required label="First Name">
                             <Input disabled value={user?.firstName} />
@@ -133,10 +94,10 @@ const CreateIssueForm: React.FC = () => {
                             <Input disabled value={user?.email} />
                         </Form.Item>
                     </Flex>
-                    <Form.Item
+                    <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="Type of Equipment"
-                        name="equipmentType"
+                        name="type"
                         rules={[
                             {
                                 required: true,
@@ -145,8 +106,6 @@ const CreateIssueForm: React.FC = () => {
                         ]}
                     >
                         <Select
-                            value={type}
-                            onChange={setType}
                             options={[
                                 {
                                     value: "filament",
@@ -170,33 +129,36 @@ const CreateIssueForm: React.FC = () => {
                             ]}
                         />
                     </Form.Item>
-                    {type !== null && (
-                        <Form.Item
-                            style={{ width: "100%" }}
-                            label="Select the Equipment with the Issue"
-                            name="equipmentID"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please select the equipment experiencing the issue.",
-                                },
-                            ]}
-                        >
-                            <SelectEquipment
-                                value={equipment}
-                                setValue={(value) => {
-                                    setEquipment(value);
-                                    form.setFieldsValue({
-                                        equipmentID: value,
-                                    }); // Update the form's value
-                                }}
-                                type={type}
-                            />
-                        </Form.Item>
-                    )}
 
-                    <Form.Item
+                    <Form.Item<FieldType>
+                        noStyle
+                        shouldUpdate={(prevValues, currentValues) =>
+                            prevValues.type !== currentValues.type
+                        }
+                    >
+                        {({ getFieldValue }) => {
+                            const type = getFieldValue("type");
+
+                            return type ? (
+                                <Form.Item
+                                    style={{ width: "100%" }}
+                                    label="Select the Equipment with the Issue"
+                                    name="equipment"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                "Please select the equipment experiencing the issue.",
+                                        },
+                                    ]}
+                                >
+                                    <SelectEquipment type={type} />
+                                </Form.Item>
+                            ) : null; // Hide when "option2" is selected
+                        }}
+                    </Form.Item>
+
+                    <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="What is the issue? Select the one that is the most applicable."
                         name="initialDescription"
@@ -209,8 +171,6 @@ const CreateIssueForm: React.FC = () => {
                         ]}
                     >
                         <Select
-                            value={initialDescription}
-                            onChange={setInitialDescription}
                             options={[
                                 {
                                     value: `There is no filament coming out of the nozzle or the nozzle is jammed.`,
@@ -240,7 +200,7 @@ const CreateIssueForm: React.FC = () => {
                             ]}
                         />
                     </Form.Item>
-                    <Form.Item
+                    <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="Please Provide More Details About the Issue"
                         name="description"
@@ -252,11 +212,7 @@ const CreateIssueForm: React.FC = () => {
                             },
                         ]}
                     >
-                        <TextArea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={6}
-                        />
+                        <TextArea rows={6} />
                     </Form.Item>
                     <Flex justify="end" style={{ width: "100%" }} gap="10px">
                         <Form.Item>

@@ -5,15 +5,16 @@ import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
 interface SelectEquipmentProps {
-    type: string | null;
-    value: Equipment | null;
-    setValue: (newValue: Equipment | null) => void;
+    type: string;
+    value?: string;
+    onChange?: (value: string) => void;
 }
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
     type,
     value,
-    setValue,
+    onChange,
+    ...rest
 }: SelectEquipmentProps) => {
     const [showEquipment, setShowEquipment] = useState<Equipment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -33,9 +34,17 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                 console.error("Fetching updates or issues failed:", error);
             }
         };
-        setValue(null);
+        if (onChange) {
+            onChange("");
+        } //TODO: this causes the form to auto create this every time, maybe make it less intense
         fetchData();
     }, [type]);
+
+    const handleSelect = (value: string) => {
+        if (onChange) {
+            onChange(value);
+        }
+    }
 
     return (
         <>
@@ -68,10 +77,10 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                                 <Col key={equipment._id} span={8}>
                                     <div
                                         className={`select-card ${
-                                            equipment._id === value?._id &&
+                                            equipment._id === value &&
                                             "select-active"
                                         }`}
-                                        onClick={() => setValue(equipment)}
+                                        onClick={() => handleSelect(equipment._id)}
                                     >
                                         <p>{equipment.name}</p>
                                     </div>

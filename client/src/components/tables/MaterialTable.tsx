@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Material } from "../../types/Material";
 import EditMaterialForm from "../forms/EditMaterialForm";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 
 interface TableMaterial extends Material {
     key: string;
@@ -70,6 +71,14 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             title: "Remote Print?",
             dataIndex: "remotePrintAvailable",
             key: "remotePrintAvailable",
+
+            render: (remotePrintAvailable) => {
+                return remotePrintAvailable ? (
+                    <CheckOutlined />
+                ) : (
+                    <CloseOutlined />
+                );
+            },
         },
         {
             title: "Type",
