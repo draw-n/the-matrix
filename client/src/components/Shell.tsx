@@ -51,6 +51,11 @@ const allPages: MenuItem[] = [
         label: "Remote Print",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
     },
+    {
+        key: "/settings",
+        label: "Settings",
+        access: ["admin"],
+    },
 ];
 
 interface ShellProps {

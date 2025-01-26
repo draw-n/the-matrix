@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Form, FormProps, Input } from "antd";
+import { Button, Divider, Flex, Form, FormProps, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,14 +23,16 @@ const Login: React.FC = () => {
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/users/login`,
                 values
             );
             login(values.email, values.password);
             navigate(location.state?.from || "/");
-        } catch (error) {
-            console.error("Login failed", error);
+        } catch (error: any) {
+            message.error(
+                String(error.response?.data?.message || "Unknown Error.")
+            );
         }
     };
 
