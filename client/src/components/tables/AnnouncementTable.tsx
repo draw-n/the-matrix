@@ -1,4 +1,4 @@
-import { Button, Space, Table, TableProps, Tag } from "antd";
+import { Button, Popconfirm, Space, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import EditAnnouncementForm from "../forms/EditAnnouncementForm";
@@ -184,12 +184,17 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                         >
                             Archive
                         </Button>
-                        <Button
-                            className="secondary-button-outlined"
-                            onClick={() => deleteAnnouncement(announcement._id)}
+                        <Popconfirm
+                            title="Delete Announcement"
+                            description="Are you sure to delete this announcement?"
+                            onConfirm={() =>
+                                deleteAnnouncement(announcement._id)
+                            }
+                            okText="Yes"
+                            cancelText="No"
                         >
-                            Delete
-                        </Button>
+                            <Button danger>Delete</Button>
+                        </Popconfirm>
                     </Space>
                 ),
         },
