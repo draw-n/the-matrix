@@ -1,4 +1,13 @@
-import { Button, DatePicker, Flex, Form, FormProps, Input, Select } from "antd";
+import {
+    Button,
+    DatePicker,
+    Flex,
+    Form,
+    FormProps,
+    Input,
+    message,
+    Select,
+} from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,14 +32,16 @@ const Signup: React.FC = () => {
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/users/register`,
                 values
             );
             login(values.email, values.password);
             navigate(location.state?.from || "/");
-        } catch (error) {
-            console.error("Login failed", error);
+        } catch (error: any) {
+            message.error(
+                String(error.response?.data?.message || "Unknown Error.")
+            );
         }
     };
 
@@ -120,7 +131,11 @@ const Signup: React.FC = () => {
                         >
                             <Input.Password />
                         </Form.Item>
-                        <Flex justify="space-between" gap="20px" style={{width: "100%"}}>
+                        <Flex
+                            justify="space-between"
+                            gap="20px"
+                            style={{ width: "100%" }}
+                        >
                             <Form.Item<FieldType>
                                 style={{ width: "100%" }}
                                 label="Status"
@@ -153,7 +168,7 @@ const Signup: React.FC = () => {
                             </Form.Item>
                             {showGradDate && (
                                 <Form.Item<FieldType>
-                                    style={{width: "100%"}}
+                                    style={{ width: "100%" }}
                                     label="Graduation Date"
                                     name="graduationDate"
                                     rules={[

@@ -13,8 +13,8 @@ import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
 import AllEquipment from "./pages/allEquipment/AllEquipment";
 import EquipmentProfile from "./pages/equipmentProfile/EquipmentProfile";
+import Settings from "./pages/settings/Settings";
 
-import NotFound from "./components/NotFound";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Equipment } from "./types/Equipment";
@@ -94,6 +94,20 @@ const App: React.FC = () => {
                                             "admin",
                                         ]}
                                         children={<Announcements />}
+                                    />
+                                }
+                            />
+                        }
+                    />
+
+                    <Route
+                        path="/settings"
+                        element={
+                            <PrivateRoute
+                                element={
+                                    <Shell
+                                        contentAccess={["admin"]}
+                                        children={<Settings />}
                                     />
                                 }
                             />

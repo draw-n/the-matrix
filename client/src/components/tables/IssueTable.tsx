@@ -1,4 +1,4 @@
-import { Button, Table, TableProps, Tag } from "antd";
+import { Button, Popconfirm, Table, TableProps, Tag } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Issue } from "../../types/Issue";
@@ -54,9 +54,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
         try {
             const editedIssue = { ...issue, status };
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${
-                    issue._id
-                }`,
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
                 editedIssue
             );
             setIssues(
@@ -239,9 +237,15 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     <Button onClick={() => changeIssueStatus(item, "archived")}>
                         Archive
                     </Button>
-                    <Button onClick={() => deleteIssue(item._id)}>
-                        Delete
-                    </Button>
+                    <Popconfirm
+                        title="Delete Issue"
+                        description="Are you sure to delete this issue?"
+                        onConfirm={() => deleteIssue(item._id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button danger>Delete</Button>
+                    </Popconfirm>
                 </>
             ),
         },
