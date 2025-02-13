@@ -26,8 +26,9 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/equipment`
                 );
                 const filterEquipment: Equipment[] = response.data.filter(
-                    (item) => item.type === type
+                    (item) => item.category === type
                 );
+                console.log(response.data)
                 setShowEquipment(filterEquipment);
                 setIsLoading(false);
             } catch (error) {

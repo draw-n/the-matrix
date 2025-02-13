@@ -1,7 +1,7 @@
 import { Button, Col, Flex, InputNumber, Row, Select, Space } from "antd";
 import { FilamentMoreSettings } from "../../../types/Equipment";
 import { Material } from "../../../types/Material";
-import { RedoOutlined } from "@ant-design/icons";
+import { CaretDownFilled, RedoOutlined } from "@ant-design/icons";
 
 interface AdvancedSettingsProps {
     settingDetails: FilamentMoreSettings;
@@ -20,6 +20,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                 <Flex gap="25px" align="center" style={{ width: "100%" }}>
                     <h3>Supports</h3>
                     <Select
+                        suffixIcon={<CaretDownFilled />}
                         style={{ width: "100%" }}
                         value={settingDetails.supports}
                         onChange={(value) =>

@@ -49,11 +49,11 @@ const corsOptions = {
 };*/
 
 var storage = multer.diskStorage({
-    //destination: function (req, file, cb) { keep hidden in production for now, don't want files constantly getting stored lol
-    //  console.log(file);
+    // destination: function (req, file, cb) { //keep hidden in production for now, don't want files constantly getting stored lol
+    //   console.log(file);
 
-    //cb(null, path.join(__dirname, "/uploads/"));
-    //},
+    // cb(null, path.join(__dirname, "/uploads/"));
+    // },
     filename: function (req, file, cb) {
         cb(
             null,
@@ -81,6 +81,7 @@ app.use("/announcements", require("./routes/announcements.router.js"));
 app.use("/users", require("./routes/users.router.js"));
 app.use("/equipment", require("./routes/equipment.router.js"));
 app.use("/materials", require("./routes/materials.router.js"));
+app.use("/categories", require("./routes/categories.router.js"));
 
 app.get("/", (req, res) => {
     res.send("Ello :D");

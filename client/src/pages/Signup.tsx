@@ -12,6 +12,7 @@ import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { CaretDownFilled } from "@ant-design/icons";
 
 interface FieldType {
     email: string;
@@ -148,6 +149,7 @@ const Signup: React.FC = () => {
                                 ]}
                             >
                                 <Select
+                                    suffixIcon={<CaretDownFilled />}
                                     onChange={(value) =>
                                         setShowGradDate(
                                             value === "undergraduate"

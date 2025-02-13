@@ -2,7 +2,13 @@ import { Button, Card, Flex, Select, Space } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { useState } from "react";
 import axios from "axios";
-import { UserSwitchOutlined } from "@ant-design/icons";
+import {
+    CaretDownFilled,
+    DeleteOutlined,
+    EditOutlined,
+    SaveOutlined,
+    UserSwitchOutlined,
+} from "@ant-design/icons";
 
 interface UserCardProps {
     cardUser: User;
@@ -45,36 +51,20 @@ const UserCard: React.FC<UserCardProps> = ({
 
     return (
         <>
-            <Card
-                title={cardUser.firstName + " " + cardUser.lastName}
-                extra={
-                    <Flex gap="5px">
-                        {editMode && (
-                            <Button onClick={() => deleteUser(cardUser._id)}>
-                                Delete
-                            </Button>
-                        )}
-                        {user?._id != cardUser._id && (
-                            <Button
-                                onClick={handleClick}
-                                className="primary-button-outlined"
-                            >
-                                {editMode ? "Save" : "Edit"}
-                            </Button>
-                        )}
-                    </Flex>
-                }
-                bordered={false}
-            >
+            <Card bordered={false} style={{ height: "100%" }}>
                 <Space
                     direction="vertical"
                     size="small"
                     style={{ width: "100%" }}
                 >
+                    <h3 style={{ textTransform: "capitalize" }}>
+                        {cardUser.firstName + " " + cardUser.lastName}
+                    </h3>
                     <p>Email: {cardUser.email}</p>
                     <Space style={{ width: "100%" }}>
                         <p>Access:</p>
                         <Select
+                            suffixIcon={<CaretDownFilled />}
                             size="small"
                             style={{ width: "100%" }}
                             disabled={!editMode}
@@ -89,6 +79,35 @@ const UserCard: React.FC<UserCardProps> = ({
                             ]}
                         />
                     </Space>
+                    <Flex gap="5px" style={{ width: "100%" }} justify="end">
+                        {editMode && (
+                            <Button
+                                size="small"
+                                danger
+                                onClick={() => deleteUser(cardUser._id)}
+                                icon={<DeleteOutlined />}
+                            >
+                                Delete
+                            </Button>
+                        )}
+                        {user?._id != cardUser._id && (
+                            <Button
+                                size="small"
+                                onClick={handleClick}
+                                className="primary-button-outlined"
+                                type={editMode ? "primary" : "default"}
+                                icon={
+                                    editMode ? (
+                                        <SaveOutlined />
+                                    ) : (
+                                        <EditOutlined />
+                                    )
+                                }
+                            >
+                                {editMode ? "Save" : "Edit"}
+                            </Button>
+                        )}
+                    </Flex>
                 </Space>
             </Card>
         </>

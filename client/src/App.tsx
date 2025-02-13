@@ -1,17 +1,23 @@
-import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import {
+    Route,
+    Routes,
+    BrowserRouter,
+    Navigate,
+    useNavigate,
+} from "react-router-dom";
 import "./App.css";
 
 import Shell from "./components/Shell";
 import PrivateRoute from "./components/PrivateRoute";
 
-import Announcements from "./pages/Announcements";
+import Announcements from "./pages/Dashboard";
 import Kiosk from "./pages/Kiosk";
 import ReportAnIssue from "./pages/reportIssues/ReportAnIssue";
 import EditUpdates from "./pages/editUpdates/EditUpdates";
 import Login from "./pages/Login";
 import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
-import AllEquipment from "./pages/allEquipment/AllEquipment";
+import AllEquipment from "./pages/makerspace/Makerspace";
 import EquipmentProfile from "./pages/equipmentProfile/EquipmentProfile";
 import Settings from "./pages/settings/Settings";
 
@@ -20,10 +26,12 @@ import axios from "axios";
 import { Equipment } from "./types/Equipment";
 import Signup from "./pages/Signup";
 import RemotePrint from "./pages/remotePrint/RemotePrint";
+import Dashboard from "./pages/Dashboard";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [refreshEquipment, setRefreshEquipment] = useState<number>(0);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,7 +55,7 @@ const App: React.FC = () => {
                         return (
                             <Route
                                 key={equipment._id}
-                                path={`/equipment/${equipment.routePath}`}
+                                path={`/makerspace/${equipment.routePath}`}
                                 element={
                                     <PrivateRoute
                                         element={
@@ -59,6 +67,7 @@ const App: React.FC = () => {
                                                     "moderator",
                                                     "admin",
                                                 ]}
+                                              
                                                 children={
                                                     <EquipmentProfile
                                                         equipment={equipment}
@@ -93,7 +102,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
-                                        children={<Announcements />}
+                                        children={<Dashboard />}
                                     />
                                 }
                             />
@@ -153,7 +162,7 @@ const App: React.FC = () => {
                         }
                     />
                     <Route
-                        path="/equipment"
+                        path="/makerspace"
                         element={
                             <PrivateRoute
                                 element={

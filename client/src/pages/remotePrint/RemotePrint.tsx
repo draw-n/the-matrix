@@ -110,7 +110,6 @@ const RemotePrint: React.FC = () => {
     return (
         <>
             <h1>Remote Printing</h1>
-            {`${JSON.stringify(settingDetails)}`}
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Steps current={current} items={items} />
                 <div style={{ width: "100%" }}>{steps[current].content}</div>

@@ -1,8 +1,20 @@
-import { Button, Card, Col, Flex, Input, Row, Space, Typography } from "antd";
+import {
+    Button,
+    Card,
+    Col,
+    Flex,
+    Input,
+    Row,
+    Select,
+    Space,
+    Typography,
+} from "antd";
 import { Equipment } from "../../types/Equipment";
 import IssueTable from "../../components/tables/IssueTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { EditOutlined, SaveOutlined } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 const { Paragraph } = Typography;
 
@@ -18,12 +30,26 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     setRefreshEquipment,
 }: EquipmentProfileProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
-
+    const [categories, setCategories] = useState<Category[]>();
     const [name, setName] = useState(equipment.name);
-    const [type, setType] = useState(equipment.type);
+    const [type, setType] = useState(equipment.category);
     const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    });
 
     const handleClick = () => {
         if (editMode) {
@@ -36,11 +62,11 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         try {
             const editedEquipment = {
                 _id: equipment._id,
-                name: name,
-                type: type,
-                headline: headline,
-                properties: properties,
-                description: description,
+                name,
+                category: type,
+                headline,
+                properties,
+                description,
                 status: equipment.status,
                 routePath: equipment.routePath,
             };
@@ -79,7 +105,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                         </h1>
                     )}
 
-                    <Button onClick={handleClick}>
+                    <Button
+                        onClick={handleClick}
+                        icon={editMode ? <SaveOutlined /> : <EditOutlined />}
+                    >
                         {editMode ? "Save" : "Edit"}
                     </Button>
                 </Flex>
@@ -114,11 +143,15 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                     >
                                         <h3>Type</h3>
                                         {editMode ? (
-                                            <Input
-                                                onChange={(e) =>
-                                                    setType(e.target.value)
-                                                }
+                                            <Select
+                                                options={categories?.map(
+                                                    (category) => ({
+                                                        value: category._id,
+                                                        label: category.name,
+                                                    })
+                                                )}
                                                 value={type}
+                                                onChange={setType}
                                             />
                                         ) : (
                                             <p
@@ -126,7 +159,12 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                                     textTransform: "capitalize",
                                                 }}
                                             >
-                                                {type}
+                                                {
+                                                    categories?.find(
+                                                        (item) =>
+                                                            item._id === type
+                                                    )?.name
+                                                }
                                             </p>
                                         )}
                                     </Flex>

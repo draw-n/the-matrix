@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Select } from "antd";
+import { Button, Modal, Form, Input, Select, Tooltip } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import type { Announcement } from "../../types/Announcement";
+import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
 
 interface EditAnnouncementFormProps {
     announcement: Announcement;
@@ -55,9 +56,14 @@ const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
 
     return (
         <>
-            <Button className="primary-button-filled" onClick={showModal}>
-                Edit
-            </Button>
+            <Tooltip title="Edit">
+                <Button
+                    icon={<EditOutlined />}
+                    className="primary-button-filled"
+                    onClick={showModal}
+                />
+            </Tooltip>
+
             <Modal
                 title="Edit Update"
                 open={isModalOpen}
@@ -67,6 +73,7 @@ const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
                 <Form layout="vertical">
                     <Form.Item label="Type">
                         <Select
+                            suffixIcon={<CaretDownFilled />}
                             value={type}
                             onChange={setType}
                             options={[

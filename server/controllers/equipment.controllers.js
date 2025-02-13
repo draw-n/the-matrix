@@ -113,6 +113,17 @@ const getEquipment = async (req, res) => {
     }
 };
 
+
+const getEquipmentCategories = async (req, res) => {
+    try {
+        const equipment = await Equipment.find();
+        const categories = [...new Set(equipment.map(item => item.category))];
+        return res.status(200).json(categories);
+    } catch (err) {
+        return res.status(500).send({ message: err.message });
+    }
+};
+
 module.exports = {
     createEquipment,
     deleteEquipment,

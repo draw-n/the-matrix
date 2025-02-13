@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 
-import { Button, Flex, Layout, Menu } from "antd";
+import { Breadcrumb, Button, Flex, Image, Layout, Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./NoAccess";
 import NotFound from "./NotFound";
-import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+    MenuOutlined,
+    CloseOutlined,
+    HomeFilled,
+    UsbFilled,
+    UserOutlined,
+    FileExclamationOutlined,
+    EditOutlined,
+    SettingOutlined,
+    DesktopOutlined,
+    TeamOutlined,
+} from "@ant-design/icons";
+
+import vandyLogo from "../assets/White_Pinstripe_V_Lockup.png";
+import vandyLogoSmall from "../assets/White_Pinstripe_V.png";
 
 const { Header, Content, Sider } = Layout;
 
@@ -21,40 +35,52 @@ interface MenuItem {
 const allPages: MenuItem[] = [
     {
         key: "/",
-        label: "Announcements",
+        label: "Dashboard",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <HomeFilled />,
     },
     {
         key: "/report",
         label: "Report an Issue",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <FileExclamationOutlined />,
     },
     {
         key: "/edit",
         label: "Edit Updates",
         access: ["moderator", "admin"],
+        icon: <EditOutlined />,
     },
     {
-        key: "/equipment",
-        label: "All Equipment",
+        key: "/makerspace",
+        label: "Makerspace",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <DesktopOutlined />,
     },
 
-    { key: "/directory", label: "User Directory", access: ["admin"] },
+    {
+        key: "/directory",
+        label: "User Directory",
+        access: ["admin"],
+        icon: <TeamOutlined />,
+    },
     {
         key: "/profile",
         label: "User Profile",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <UserOutlined />,
     },
     {
         key: "/upload",
         label: "Remote Print",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <UsbFilled />,
     },
     {
         key: "/settings",
         label: "Settings",
         access: ["admin"],
+        icon: <SettingOutlined />,
     },
 ];
 
@@ -91,51 +117,55 @@ const Shell: React.FC<ShellProps> = ({
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header className="shell-header">
-                <Flex
-                    style={{ width: "100%" }}
-                    justify="space-between"
-                    align="center"
-                >
-                    <Button
-                        type="text"
-                        icon={collapsed ? <MenuOutlined /> : <CloseOutlined />}
-                        className="sidebar-button"
-                        onClick={() => setCollapsed(!collapsed)}
-                    />
-                    <h1 className="header-title">DIGITAL FABRICATION LAB</h1>
-                    <ProfileDropdown />
+            <Sider
+                breakpoint="lg"
+                trigger={null}
+                collapsible
+                collapsed={collapsed}
+                className="shell-sider"
+            >
+                <Flex justify="center" style={{ padding: "20px" }}>
+                    <Image style={{ width: 50 }} src={vandyLogoSmall} />
                 </Flex>
-            </Header>
 
+                <Menu
+                    theme="dark"
+                    selectedKeys={getSelectedKeys()}
+                    defaultSelectedKeys={[location.pathname]}
+                    mode="inline"
+                    items={accessPages}
+                    onClick={({ key }) => {
+                        navigate(key);
+                    }}
+                />
+            </Sider>
             <Layout>
-                <Sider
-                    className="shell-sidebar"
-                    breakpoint="lg"
-                    collapsedWidth="0"
-                    trigger={null}
-                    collapsible
-                    collapsed={collapsed}
-                >
-                    <Menu
-                        theme="dark"
-                        className="shell-sidebar"
-                        selectedKeys={getSelectedKeys()}
-                        defaultSelectedKeys={[location.pathname]}
-                        mode="inline"
-                        items={accessPages}
-                        onClick={({ key }) => {
-                            navigate(key);
-                        }}
-                    />
-                </Sider>
-                <Content style={{ margin: "25px 50px" }}>
-                    {contentAccess.includes(String(user?.access)) ||
-                    user == null ? (
-                        <>{children}</>
-                    ) : (
-                        <NoAccess />
-                    )}
+                <Header>
+                    <Flex
+                        style={{ width: "100%", height: "100%" }}
+                        justify="space-between"
+                        align="center"
+                    >
+                        <Button
+                            style={{ color: "white" }}
+                            type="text"
+                            icon={
+                                collapsed ? <MenuOutlined /> : <CloseOutlined />
+                            }
+                            onClick={() => setCollapsed(!collapsed)}
+                        />
+                        <ProfileDropdown />
+                    </Flex>
+                </Header>
+                <Content>
+                    <div style={{ padding: "25px 50px" }}>
+                        {contentAccess.includes(String(user?.access)) ||
+                        user == null ? (
+                            <>{children}</>
+                        ) : (
+                            <NoAccess />
+                        )}
+                    </div>
                 </Content>
             </Layout>
         </Layout>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Updates from "../components/Updates";
+import Updates from "../components/Announcements";
 
 const Kiosk: React.FC = () => {
     useEffect(() => {

@@ -12,7 +12,7 @@ import {
 import { FormProps } from "antd";
 import { useState } from "react";
 import axios from "axios";
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import MultiType from "./MultiType";
 
 interface MaterialFormProps {
@@ -147,6 +147,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             ]}
                         >
                             <Select
+                                suffixIcon={<CaretDownFilled />}
                                 options={[
                                     {
                                         value: "filament",

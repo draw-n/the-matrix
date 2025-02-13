@@ -9,13 +9,13 @@ const createAnnouncement = async (req, res) => {
         if (type && description && createdBy && dateCreated) {
             let announcementObj = {
                 _id: new mongoose.Types.ObjectId(),
-                type: type,
-                status: status,
-                description: description,
-                createdBy: createdBy,
-                dateCreated: dateCreated,
+                type,
+                status,
+                description,
+                createdBy,
+                dateCreated,
                 lastUpdatedBy: createdBy,
-                dateLastUpdated: dateCreated,
+                dateLastUpdatedBy: dateCreated
             };
 
             if (title) {
@@ -38,7 +38,7 @@ const createAnnouncement = async (req, res) => {
 };
 
 const deleteAnnouncement = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params?.id;
 
     try {
         if (id) {

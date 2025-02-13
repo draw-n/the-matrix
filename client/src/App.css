@@ -1,25 +1,13 @@
-.shell-header {
-    background-color: var(--header-bg-color);
-    color: var(--header-text-color);
+.shell-sider {
+    overflow: auto;
+    height: 100vh;
+    position: sticky;
+    insetinlinestart: 0;
+    top: 0;
+    bottom: 0;
+    scrollbarwidth: thin;
+    scrollbargutter: stable;
 }
-
-.header-title {
-    color: var(--header-text-color);
-}
-
-.shell-sidebar {
-    background-color: var(--sidebar-bg-color);
-    color: var(--sidebar-text-color);
-}
-
-.sidebar-button {
-    color: var(--header-text-color);
-}
-
-.sidebar-button:hover {
-    color: var(--header-hover-color) !important;
-}
-
 
 .login-background {
     background: -webkit-linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -46,11 +34,8 @@
     border-radius: 10px;
 }
 
-
 .updates-carousel {
     margin: 0;
-    color: #fff;
-    background: var(--neutral-medium);
     text-align: center;
     overflow: hidden;
 }
@@ -71,4 +56,3 @@
 .updates-kiosk-mode {
     height: 100vh;
 }
-

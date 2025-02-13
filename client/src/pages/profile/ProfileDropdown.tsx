@@ -1,5 +1,20 @@
-import { Dropdown, Tooltip, Button, MenuProps, Flex } from "antd";
+import {
+    Dropdown,
+    Tooltip,
+    Button,
+    MenuProps,
+    Flex,
+    Avatar,
+    Badge,
+} from "antd";
 import React from "react";
+import {
+    BellFilled,
+    BellOutlined,
+    CaretDownFilled,
+    LogoutOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 
@@ -26,6 +41,7 @@ const ProfileDropdown: React.FC = () => {
                     Profile
                 </Flex>
             ),
+            icon: <UserOutlined />,
         },
         {
             key: "2",
@@ -41,15 +57,35 @@ const ProfileDropdown: React.FC = () => {
                     Logout
                 </Flex>
             ),
+            icon: <LogoutOutlined />,
         },
     ];
 
     return (
-        <Dropdown menu={{ items }} placement="bottomRight">
-            <a onClick={(e) => e.preventDefault()}>
-                {user?.firstName + " " + user?.lastName}
-            </a>
-        </Dropdown>
+        <Flex align="center" gap="middle">
+            <Badge count={5}>
+                <Button size="middle" variant="outlined" shape="circle">
+                    <BellFilled />
+                </Button>
+            </Badge>
+
+            <Dropdown
+                arrow
+                menu={{ items }}
+                placement="bottomRight"
+                trigger={["click"]}
+            >
+                <Button
+                    variant="outlined"
+                    size="middle"
+                    shape="round"
+                    iconPosition="end"
+                    icon={<CaretDownFilled style={{ marginLeft: "10px" }} />}
+                >
+                    {user?.firstName + " " + user?.lastName}
+                </Button>
+            </Dropdown>
+        </Flex>
     );
 };
 

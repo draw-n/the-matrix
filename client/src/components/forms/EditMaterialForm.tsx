@@ -15,6 +15,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { FilamentTemperatures, Material } from "../../types/Material";
+import { CaretDownFilled } from "@ant-design/icons";
 
 interface EditMaterialFormProps {
     material: Material;
@@ -143,6 +144,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                             ]}
                         >
                             <Select
+                                suffixIcon={<CaretDownFilled />}
                                 options={[
                                     {
                                         value: "filament",

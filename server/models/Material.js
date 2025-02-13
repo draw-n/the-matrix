@@ -15,9 +15,10 @@ const MaterialSchema = new Schema({
         type: String,
         required: true,
     },
-    type: {
-        type: String,
+    category: {
+        type: ObjectId,
         required: true,
+        ref: "Category"
     },
     properties: {
         type: [{ type: String }],
