@@ -10,18 +10,10 @@ const EquipmentSchema = new Schema({
     name: { type: String, required: true },
     routePath: { type: String, required: true },
     headline: { type: String },
-    type: {
-        type: String,
+    category: {
+        type: ObjectId,
         required: true,
-        enum: [
-            "filament",
-            "resin",
-            "powder",
-            "subtractive",
-            "computer",
-            "wiring",
-            "other",
-        ],
+        ref: "Category"
     },
     properties: {
         nozzle: { type: Number },

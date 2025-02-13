@@ -95,7 +95,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                             type="primary"
                             size="small"
                             onClick={() =>
-                                navigate(`/equipment/${equipment.routePath}`)
+                                navigate(`/makerspace/${equipment.routePath}`)
                             }
                         >
                             More Details

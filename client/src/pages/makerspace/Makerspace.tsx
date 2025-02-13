@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
-import { Col, Flex, Radio, Row, Space } from "antd";
+import { Col, Empty, Flex, Radio, Row, Space } from "antd";
 import EquipmentCard from "./EquipmentCard";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -48,7 +48,12 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
 
     return (
         <Space direction="vertical" size="middle">
-            <h1>ALL EQUIPMENT</h1>
+            <h1>MAKERSPACE</h1>
+            <p>
+                Find all details related to the Digital Fabrication Lab
+                makerspace, including the available equipment and materials we
+                carry for all your creative needs!
+            </p>
             {isLoading ? (
                 <Loading />
             ) : (
@@ -58,7 +63,7 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                         justify="space-between"
                         align="center"
                     >
-                        <h2>All Makerspace Equipment</h2>
+                        <h2>Equipment</h2>
                         <Flex gap="middle">
                             <Radio.Group
                                 onChange={(e) => setFilter(e.target.value)}
@@ -79,23 +84,30 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                             />
                         </Flex>
                     </Flex>
-                    <Row gutter={[16, 16]}>
-                        {equipments
-                            .filter((equipment) => equipment.type == filter)
-                            .map((equipment: Equipment, index) => {
-                                return (
-                                    <Col span={8} key={index}>
-                                        <EquipmentCard equipment={equipment} />
-                                    </Col>
-                                );
-                            })}
-                    </Row>
+                    {equipments.length > 0 ? (
+                        <Row gutter={[16, 16]}>
+                            {equipments
+                                .filter((equipment) => equipment.type == filter)
+                                .map((equipment: Equipment, index) => {
+                                    return (
+                                        <Col span={8} key={index}>
+                                            <EquipmentCard
+                                                equipment={equipment}
+                                            />
+                                        </Col>
+                                    );
+                                })}
+                        </Row>
+                    ) : (
+                        <Empty style={{ width: "100%" }} />
+                    )}
+
                     <Flex
                         style={{ width: "100%" }}
                         justify="space-between"
                         align="center"
                     >
-                        <h2>Manage Materials</h2>
+                        <h2>Materials</h2>
                         <MaterialForm
                             onUpdate={() =>
                                 setRefreshMaterials((prev) => prev + 1)

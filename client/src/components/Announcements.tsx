@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import Loading from "./Loading";
 import type { Announcement } from "../types/Announcement";
+import { geekblueDark } from "@ant-design/colors";
 
 interface UpdatesProps {
     kioskMode?: boolean;
@@ -63,7 +64,11 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
 
     return (
         <>
-            <Carousel arrows ref={carouselRef}>
+            <Carousel
+               
+                ref={carouselRef}
+                style={{ background: geekblueDark[4], color: "white" }}
+            >
                 {isLoading ? (
                     <div style={{ padding: 0 }}>
                         <div className="updates-carousel">
@@ -117,10 +122,22 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                     })
                 )}
                 {announcements?.length == 0 && (
-                    <div style={{ padding: 0 }}>
-                        <div className="updates-carousel">
+                    <div
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                            }}
+                            className="updates-carousel"
+                        >
                             <Flex
                                 align="center"
+                                flex="1"
                                 justify="center"
                                 style={{
                                     width: "100%",
@@ -128,6 +145,10 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                                 }}
                             >
                                 <Empty
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                    }}
                                     description={
                                         <Typography.Text className="updates-description">
                                             There are no announcements.

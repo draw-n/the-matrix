@@ -13,7 +13,7 @@ const AnnouncementSchema = new Schema({
     type: {
         type: String,
         required: true,
-        enum: ["issue", "event", "classes", "other"],
+        enum: ["event", "classes", "other"],
     },
     status: {
         type: String,

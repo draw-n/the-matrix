@@ -2,7 +2,7 @@ export interface Material {
     _id: string;
     name: string;
     shortName: string;
-    type: string;
+    category: string;
     properties: string[];
     description: string;
     remotePrintAvailable: boolean;

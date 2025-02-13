@@ -8,11 +8,13 @@ import {
     message,
     FormProps,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SelectEquipment from "./SelectEquipment";
 import { useAuth } from "../../hooks/AuthContext";
 import "./issues.css";
 import axios from "axios";
+import { CaretDownFilled } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 const { TextArea } = Input;
 
@@ -26,7 +28,23 @@ interface FieldType {
 const CreateIssueForm: React.FC = () => {
     const [form] = Form.useForm();
     const [submitted, setSubmitted] = useState<boolean>(false);
+    const [categories, setCategories] = useState<Category[]>();
+
     const { user } = useAuth();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const refreshForm = () => {
         form.resetFields();
@@ -106,27 +124,11 @@ const CreateIssueForm: React.FC = () => {
                         ]}
                     >
                         <Select
-                            options={[
-                                {
-                                    value: "filament",
-                                    label: "Filament Printers",
-                                },
-                                { value: "resin", label: "Resin Printers" },
-                                {
-                                    value: "powder",
-                                    label: "Powder Printers",
-                                },
-                                {
-                                    value: "subtractive",
-                                    label: "Subtractive/Traditional Manufacturing",
-                                },
-                                {
-                                    value: "computer",
-                                    label: "Desktops/TV Monitor",
-                                },
-                                { value: "wiring", label: "Wiring Tools" },
-                                { value: "other", label: "Other" },
-                            ]}
+                            suffixIcon={<CaretDownFilled />}
+                            options={categories?.map((category) => ({
+                                value: category._id,
+                                label: category.name,
+                            }))}
                         />
                     </Form.Item>
 
@@ -140,66 +142,52 @@ const CreateIssueForm: React.FC = () => {
                             const type = getFieldValue("type");
 
                             return type ? (
-                                <Form.Item
-                                    style={{ width: "100%" }}
-                                    label="Select the Equipment with the Issue"
-                                    name="equipment"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message:
-                                                "Please select the equipment experiencing the issue.",
-                                        },
-                                    ]}
-                                >
-                                    <SelectEquipment type={type} />
-                                </Form.Item>
+                                <>
+                                    <Form.Item
+                                        style={{ width: "100%" }}
+                                        label="Select the Equipment with the Issue"
+                                        name="equipment"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message:
+                                                    "Please select the equipment experiencing the issue.",
+                                            },
+                                        ]}
+                                    >
+                                        <SelectEquipment type={type} />
+                                    </Form.Item>
+                                    <Form.Item<FieldType>
+                                        style={{ width: "100%" }}
+                                        label="What is the issue? Select the one that is the most applicable."
+                                        name="initialDescription"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message:
+                                                    "Please add a description for the issue.",
+                                            },
+                                        ]}
+                                    >
+                                        <Select
+                                            suffixIcon={<CaretDownFilled />}
+                                            options={categories
+                                                ?.find(
+                                                    (item) => item._id === type
+                                                )
+                                                ?.defaultIssues?.map(
+                                                    (issue) => ({
+                                                        value: issue,
+                                                        label: issue,
+                                                    })
+                                                )}
+                                        />
+                                    </Form.Item>
+                                </>
                             ) : null; // Hide when "option2" is selected
                         }}
                     </Form.Item>
 
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="What is the issue? Select the one that is the most applicable."
-                        name="initialDescription"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a description for the issue.",
-                            },
-                        ]}
-                    >
-                        <Select
-                            options={[
-                                {
-                                    value: `There is no filament coming out of the nozzle or the nozzle is jammed.`,
-                                    label: "There is no filament coming out of the nozzle or the nozzle is jammed.",
-                                },
-                                {
-                                    value: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
-                                    label: "The software (ex. IP address for Vorons) or method for uploading print files (ex. SD Card for Prusa) is not accessible.",
-                                },
-
-                                {
-                                    value: "The printer is having problems accepting GCode files.",
-                                    label: "The printer is having problems accepting GCode files.",
-                                },
-                                {
-                                    value: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
-                                    label: "A physical printer part (ex. print head, bed, belt, etc) is noticeably broken or missing.",
-                                },
-                                {
-                                    value: "The printer is making weird noises or emitting a strange smell.",
-                                    label: "The printer is making weird noises or emitting a strange smell.",
-                                },
-                                {
-                                    value: "There is another issue not explained by the other options. Please describe it in the next field.",
-                                    label: "There is another issue not explained by the other options. Please describe it in the next field.",
-                                },
-                            ]}
-                        />
-                    </Form.Item>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="Please Provide More Details About the Issue"

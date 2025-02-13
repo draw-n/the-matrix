@@ -2,7 +2,7 @@ import { Input, Form, Button, Select, Modal, Tooltip } from "antd";
 import { useState } from "react";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
-import { PlusOutlined } from "@ant-design/icons";
+import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 
@@ -54,10 +54,10 @@ const CreateAnnouncementForm: React.FC<CreateAnnouncementFormProps> = ({
 
     return (
         <>
-            <Tooltip title="Make a New Announcement">
+            <Tooltip title="New Announcement" placement="topLeft">
                 <Button
                     type="primary"
-                    className="primary-button-filled"
+                    size="small"
                     icon={<PlusOutlined />}
                     onClick={showModal}
                 />
@@ -88,6 +88,7 @@ const CreateAnnouncementForm: React.FC<CreateAnnouncementFormProps> = ({
                         ]}
                     >
                         <Select
+                            suffixIcon={<CaretDownFilled />}
                             onChange={setType}
                             options={[
                                 { value: "event", label: "Event" },

@@ -128,7 +128,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                         acc[equipment._id] = {
                             name: equipment.name,
                             routePath: equipment.routePath,
-                            type: equipment.type,
+                            type: equipment.category,
                         };
                         return acc;
                     },
@@ -159,7 +159,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     routePath: "",
                 };
                 return (
-                    <a onClick={() => navigate(`/equipment/${routePath}`)}>
+                    <a onClick={() => navigate(`/makerspace/${routePath}`)}>
                         {name}
                     </a>
                 );

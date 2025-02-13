@@ -1,9 +1,18 @@
-import { Button, Popconfirm, Space, Table, TableProps, Tag } from "antd";
+import {
+    Button,
+    Popconfirm,
+    Space,
+    Table,
+    TableProps,
+    Tag,
+    Tooltip,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import EditAnnouncementForm from "../forms/EditAnnouncementForm";
 import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
+import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 
 interface TableAnnouncement extends Announcement {
     key: string;
@@ -179,22 +188,27 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                             onUpdate={() => setRefresh(refresh + 1)}
                             announcement={announcement}
                         />
-                        <Button
-                            onClick={() => archiveAnnouncement(announcement)}
-                        >
-                            Archive
-                        </Button>
-                        <Popconfirm
-                            title="Delete Announcement"
-                            description="Are you sure to delete this announcement?"
-                            onConfirm={() =>
-                                deleteAnnouncement(announcement._id)
-                            }
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button danger>Delete</Button>
-                        </Popconfirm>
+                        <Tooltip title="Archive">
+                            <Button
+                                icon={<FolderOutlined />}
+                                onClick={() =>
+                                    archiveAnnouncement(announcement)
+                                }
+                            />
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                            <Popconfirm
+                                title="Delete Announcement"
+                                description="Are you sure to delete this announcement?"
+                                onConfirm={() =>
+                                    deleteAnnouncement(announcement._id)
+                                }
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button icon={<DeleteOutlined />} danger />
+                            </Popconfirm>
+                        </Tooltip>
                     </Space>
                 ),
         },

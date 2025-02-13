@@ -1,21 +1,4 @@
-:root {
-    --header-bg-color: #141414; /* Dark gray/black for the header background */
-    --header-text-color: #ffffff; /* White for header text */
-    --header-hover-color: #d9d9d9; /* Lighter orange for hover effects */
 
-    /* Sidebar Colors */
-    --sidebar-bg-color: #1f1f1f; /* Slightly lighter black for sidebar background */
-    --sidebar-text-color: #ffffff; /* White for sidebar text */
-
-    --sidebar-border-color: #d9d9d9; /* Medium gray for sidebar borders */
-
-    /* Shared Colors */
-    --neutral-light: #f5f5f5; /* Light gray for backgrounds */
-    --neutral-medium: #d9d9d9; /* Medium gray for dividers or borders */
-    --neutral-dark: #595959; /* Dark gray for secondary text */
-    --text-primary: #141414; /* Black for primary text */
-    --text-secondary: #595959; /* Dark gray for secondary text */
-}
 
 body {
     margin: 0;

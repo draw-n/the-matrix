@@ -5,7 +5,7 @@ export interface Equipment {
     name: string;
     routePath: string;
     headline?: string;
-    type: string;
+    category: string;
     properties?: { nozzle?: Number; materials?: string[] };
     status: string;
     description: string;

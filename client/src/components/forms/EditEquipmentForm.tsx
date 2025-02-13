@@ -3,6 +3,7 @@ import { Button, Modal, Form, Input, Select } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import { Equipment } from "../../types/Equipment";
+import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
 
 interface EditEquipmentFormProps {
     equipment: Equipment;
@@ -13,7 +14,7 @@ const { TextArea } = Input;
 
 const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({
     equipment,
-    onUpdate
+    onUpdate,
 }: EditEquipmentFormProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [type, setType] = useState(equipment.type);
@@ -52,7 +53,7 @@ const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({
 
     return (
         <>
-            <Button type="primary" onClick={showModal}>
+            <Button type="primary" icon={<EditOutlined />} onClick={showModal}>
                 Edit
             </Button>
             <Modal
@@ -64,6 +65,7 @@ const EditEquipmentForm: React.FC<EditEquipmentFormProps> = ({
                 <Form layout="vertical">
                     <Form.Item label="Type">
                         <Select
+                            suffixIcon={<CaretDownFilled />}
                             value={type}
                             onChange={setType}
                             options={[
