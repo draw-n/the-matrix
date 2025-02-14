@@ -2,7 +2,7 @@ import { Badge, Button, Card, Flex, Input, Select, Space, Tag } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { Switch, Typography } from "antd";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import type { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,10 @@ import {
     CheckCircleTwoTone,
     ClockCircleTwoTone,
     CloseCircleTwoTone,
+    FrownTwoTone,
     PauseCircleTwoTone,
 } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 interface EquipmentCardProps {
     equipment: Equipment;
@@ -22,21 +24,36 @@ const { Paragraph } = Typography;
 const EquipmentCard: React.FC<EquipmentCardProps> = ({
     equipment,
 }: EquipmentCardProps) => {
+    const [categoryName, setCategoryName] = useState<string>("");
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get<Category>(
+                `${import.meta.env.VITE_BACKEND_URL}/categories/${equipment.category}`
+            )
+            setCategoryName(response.data.name);
+        }
+        fetchData();
+    }, []);
 
     const showStatus = () => {
         switch (equipment.status) {
-            case "working":
+            case "available":
                 return <CheckCircleTwoTone twoToneColor="#5FAE4D" />;
                 break;
-            case "broken":
+            case "error":
                 return <CloseCircleTwoTone twoToneColor="#B94D4D" />;
                 break;
-            case "fixing":
+            case "paused":
                 return <PauseCircleTwoTone twoToneColor="#D6C94D" />;
                 break;
-            case "updating":
+            case "busy":
                 return <ClockCircleTwoTone twoToneColor="#6B8DA3" />;
+                break;
+            case "offline":
+                return <FrownTwoTone twoToneColor="#6B6B6B" />
                 break;
             default:
                 return "";
@@ -64,7 +81,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                         size="small"
                     >
                         <Tag style={{ textTransform: "uppercase" }}>
-                            {equipment.type}
+                            {categoryName}
                         </Tag>
 
                         <h3>

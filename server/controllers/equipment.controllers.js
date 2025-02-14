@@ -13,7 +13,7 @@ const createEquipment = async (req, res) => {
                 type: type,
                 routePath: routePath,
                 description: description,
-                status: "working",
+                status: "available",
             });
             await equipment.save();
             return res.status(200).json(equipment);
