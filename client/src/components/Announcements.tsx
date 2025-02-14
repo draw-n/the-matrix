@@ -64,12 +64,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
 
     return (
         <>
-            <Carousel
-               
-                ref={carouselRef}
-                style={{ background: geekblueDark[4], color: "white" }}
-            >
-                {isLoading ? (
+        {isLoading ? (
                     <div style={{ padding: 0 }}>
                         <div className="updates-carousel">
                             <Flex
@@ -81,7 +76,13 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                             </Flex>
                         </div>
                     </div>
-                ) : (
+                ) : 
+           
+                ( <Carousel
+               
+                    ref={carouselRef}
+                    style={{ background: geekblueDark[4], color: "white" }}
+                >{(
                     announcements?.map((announcement: Announcement) => {
                         return (
                             <div
@@ -150,7 +151,7 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                                         height: "100%",
                                     }}
                                     description={
-                                        <Typography.Text className="updates-description">
+                                        <Typography.Text>
                                             There are no announcements.
                                         </Typography.Text>
                                     }
@@ -158,8 +159,9 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                             </Flex>
                         </div>
                     </div>
-                )}
-            </Carousel>
+                  )}
+          </Carousel>)
+}
         </>
     );
 };

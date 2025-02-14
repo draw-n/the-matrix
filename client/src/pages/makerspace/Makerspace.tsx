@@ -9,6 +9,7 @@ import type { Equipment } from "../../types/Equipment";
 import "./equipment.css";
 import MaterialForm from "../../components/forms/CreateMaterialForm";
 import MaterialTable from "../../components/tables/MaterialTable";
+import { Category } from "../../types/Category";
 
 interface AllEquipmentProps {
     refreshEquipment: number;
@@ -20,9 +21,10 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
     setRefreshEquipment,
 }) => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
-    const [filter, setFilter] = useState<string>("filament");
+    const [filter, setFilter] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [refreshMaterials, setRefreshMaterials] = useState<number>(0); // State for refresh count
+    const [categories, setCategories] = useState<Category[]>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,14 +34,21 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                 );
                 setEquipments(
                     response.data.filter(
-                        (equipment) => equipment.type === filter
+                        (equipment) => equipment.category === filter
                     )
                 );
 
-                console.log(response.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching equipment failed:", error);
+            }
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
             }
         };
 
@@ -67,15 +76,12 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                         <Flex gap="middle">
                             <Radio.Group
                                 onChange={(e) => setFilter(e.target.value)}
-                                defaultValue="filament"
                             >
-                                <Radio.Button value="filament">
-                                    Filament
-                                </Radio.Button>
-                                <Radio.Button value="resin">Resin</Radio.Button>
-                                <Radio.Button value="powder">
-                                    Powder
-                                </Radio.Button>
+                                {categories?.map((category) => (
+                                    <Radio.Button value={category._id}>
+                                        {category.name}
+                                    </Radio.Button>
+                                ))}
                             </Radio.Group>
                             <CreateEquipmentForm
                                 onUpdate={() =>
@@ -87,7 +93,9 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                     {equipments.length > 0 ? (
                         <Row gutter={[16, 16]}>
                             {equipments
-                                .filter((equipment) => equipment.type == filter)
+                                .filter(
+                                    (equipment) => equipment.category == filter
+                                )
                                 .map((equipment: Equipment, index) => {
                                     return (
                                         <Col span={8} key={index}>
