@@ -56,7 +56,7 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
     }, [refreshEquipment, filter]);
 
     return (
-        <Space direction="vertical" size="middle">
+        <Space direction="vertical" size="middle" style={{width: "100%"}}>
             <h1>MAKERSPACE</h1>
             <p>
                 Find all details related to the Digital Fabrication Lab

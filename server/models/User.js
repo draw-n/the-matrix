@@ -48,6 +48,16 @@ const UserSchema = new Schema({
     graduationDate: {
         type: Date,
     },
+    remotePrints: [
+        {
+            date: {
+                type: Date,
+            },
+            fileName: {
+                type: String,
+            },
+        },
+    ],
 });
 
 UserSchema.pre("save", async function (next) {

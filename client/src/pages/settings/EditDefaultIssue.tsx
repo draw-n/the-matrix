@@ -19,6 +19,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
 }: EditDefaultIssueProps) => {
     const [editMode, setEditMode] = useState(initialEditMode);
 
+
     return (
         <Flex justify="space-between" gap="small">
             <Input
