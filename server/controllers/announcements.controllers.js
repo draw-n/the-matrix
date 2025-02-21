@@ -57,7 +57,7 @@ const deleteAnnouncement = async (req, res) => {
             if (!announcement) {
                 return res
                     .status(404)
-                    .json({ message: "Announcement not found." });
+                    .send({ message: "Announcement not found." });
             }
 
             return res
@@ -87,17 +87,17 @@ const editAnnouncement = async (req, res) => {
     const id = req.params?.id;
     try {
         if (id) {
-            const announcement = Announcement.findByIdAndUpdate(id, req.body);
+            const announcement = await Announcement.findByIdAndUpdate(id, req.body);
 
             if (!announcement) {
                 return res
                     .status(404)
-                    .json({ message: "Announcement not found." });
+                    .send({ message: "Announcement not found." });
             }
 
             return res.status(200).json(announcement);
         } else {
-            return res.status(400).send({ message: "Missing Announcement ID" });
+            return res.status(400).send({ message: "Missing Announcement ID." });
         }
     } catch (err) {
         console.error(err.message);
@@ -122,7 +122,7 @@ const getAnnouncement = async (req, res) => {
             if (!announcement) {
                 return res
                     .status(404)
-                    .send({ message: "Announcement Not Found" });
+                    .send({ message: "Announcement not found." });
             }
             return res.status(200).json(announcement);
         } else {
@@ -131,7 +131,7 @@ const getAnnouncement = async (req, res) => {
                 .send({ message: "Missing Announcement ID." });
         }
     } catch (err) {
-        console.error(err);
+        console.error(err.message);
         return res.status(500).send({
             message: "Error when retrieving announcement.",
             error: err.message,

@@ -52,8 +52,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
             await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/issues/${_id}`
             );
-            // Update the state to remove the deleted equipment
-            setIssues(issues.filter((issue) => issue._id !== _id));
+            setRefresh(refresh + 1);
         } catch (error) {
             console.error("Error deleting equipment:", error);
         }
@@ -78,7 +77,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
         const fetchData = async () => {
             try {
                 const response = await axios.get<Issue[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/issues`
+                    `${import.meta.env.VITE_BACKEND_URL}/issues?status=open,in-progress,completed`
                 );
 
                 let formattedData = response.data

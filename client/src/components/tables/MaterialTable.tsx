@@ -74,11 +74,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             dataIndex: "shortName",
             key: "shortName",
         },
-        {
-            title: "Properties",
-            dataIndex: "properties",
-            key: "properties",
-        },
+       
         {
             title: "Remote Print?",
             dataIndex: "remotePrintAvailable",
@@ -93,9 +89,9 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             },
         },
         {
-            title: "Type",
-            key: "type",
-            dataIndex: "type",
+            title: "Category",
+            key: "category",
+            dataIndex: "category",
             filters: [
                 {
                     text: "Filament",

@@ -7,11 +7,13 @@ const {
     deleteIssue,
     editIssue,
     getIssue,
+    getAllIssues,
 } = require("../controllers/issues.controllers.js");
 
 router.post("/", createIssue);
 router.put("/:id", editIssue);
-router.get("/", getIssue);
+router.get("/:id", getIssue);
+router.get("/", getAllIssues);
 router.delete("/:id", deleteIssue);
 
 module.exports = router;

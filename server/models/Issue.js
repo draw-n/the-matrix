@@ -13,7 +13,7 @@ const IssueSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["open", "in progress", "completed", "archived"],
+        enum: ["open", "in-progress", "completed", "archived"],
         required: true,
     },
     description: {

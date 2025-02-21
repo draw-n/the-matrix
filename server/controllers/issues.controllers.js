@@ -1,18 +1,25 @@
 const Issue = require("../models/Issue.js");
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
+/**
+ * Creates new issue and saves to MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const createIssue = async (req, res) => {
     const { equipment, description, createdBy, dateCreated } = req.body;
 
     try {
         if (equipment && description && createdBy && dateCreated) {
             let issue = new Issue({
-                _id: new mongoose.Types.ObjectId(),
-                equipment: equipment,
+                _id: new ObjectId(),
+                equipment,
                 status: "open",
-                description: description,
-                createdBy: createdBy,
-                dateCreated: dateCreated,
+                description,
+                createdBy,
+                dateCreated,
                 assignedTo: "",
             });
             await issue.save();
@@ -20,78 +27,131 @@ const createIssue = async (req, res) => {
         } else {
             return res
                 .status(400)
-                .send({ message: "Missing Issue Information." });
+                .send({ message: "Missing at least one required field." });
         }
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({
+            message: "Error when creating new issue.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Deletes an issue from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const deleteIssue = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params?.id;
 
     try {
         if (id) {
-            Issue.findByIdAndDelete(id)
-                .then(function () {
-                    return res
-                        .status(200)
-                        .json({ message: "Successfully deleted." });
-                })
-                .catch(function (error) {
-                    return res.status(400).send({ message: error });
-                });
+            const issue = await Issue.findByIdAndDelete(id);
+            if (!issue) {
+                return res.status(404).json({ message: "Issue not found." });
+            }
+            return res
+                .status(200)
+                .json({ message: "Successfully deleted issue." });
         } else {
-            return res.status(400).send({ message: "Missing Issue ID" });
+            return res.status(400).send({ message: "Missing Issue ID." });
         }
     } catch (err) {
-        console.log(err.message);
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when deleting issue.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Updates an issue from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const editIssue = async (req, res) => {
     const id = req.params?.id;
     try {
         if (id) {
-            const issue = Issue.findByIdAndUpdate(id, req.body)
-                .then(function () {
-                    res.status(200).json(issue);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    res.status(400).send({ message: error });
-                });
+            const issue = await Issue.findByIdAndUpdate(id, req.body);
+
+            if (!issue) {
+                return res.status(404).send({ message: "Issue not found." });
+            }
+
+            return res.status(200).json(issue);
         } else {
-            res.status(400).send({ message: "Missing Issue ID" });
+            res.status(400).send({ message: "Missing Issue ID." });
         }
     } catch (err) {
-        console.log(err.message);
-        res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when updating issue.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Retrieves an issue from MongoDB based on id.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const getIssue = async (req, res) => {
-    const id = req.params.id;
-    if (id) {
-        try {
-            const issue = await Issue.findById(issue);
-            if (!issue) {
-                return res.status(404).send("Issue not found");
-            }
-            return res.status(200).json(issue);
-        } catch (error) {
-            console.error("Error fetching issue:", error);
-            return res.status(500).send("Internal server error");
-        }
-    }
+    const id = req.params?.id;
 
     try {
-        const issue = await Issue.find();
+        if (id) {
+            const issue = await Issue.findById(id);
+            if (!issue) {
+                return res.status(404).send({ message: "Issue not found." });
+            }
+            return res.status(200).json(issue);
+        } else {
+            return res.status(400).send({ message: "Missing Issue ID." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving issues.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Gets all issues from MongoDB based on filters.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const getAllIssues = async (req, res) => {
+    const { status } = req.query;
+
+    try {
+        let filter = {};
+
+        if (status) {
+            const statusArray = status.split(",");
+            filter.status = {
+                $in: statusArray.map((status) => new RegExp(status, "i")),
+            };
+        }
+
+        const issue = await Issue.find(filter);
         return res.status(200).json(issue);
     } catch (err) {
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving all issues.",
+            error: err.message,
+        });
     }
 };
 
@@ -100,4 +160,5 @@ module.exports = {
     deleteIssue,
     editIssue,
     getIssue,
+    getAllIssues,
 };
