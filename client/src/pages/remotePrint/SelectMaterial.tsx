@@ -23,12 +23,12 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
         const fetchData = async () => {
             try {
                 const response = await axios.get<Material[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials`
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/materials?remotePrintAvailable=true`
                 );
-                const filterMaterials = response.data.filter(
-                    (item) => item.remotePrintAvailable
-                );
-                setMaterials(filterMaterials);
+
+                setMaterials(response.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);

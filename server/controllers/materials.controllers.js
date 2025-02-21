@@ -147,8 +147,16 @@ const getMaterial = async (req, res) => {
  * @returns - response details (with status)
  */
 const getAllMaterials = async (req, res) => {
+    const { remotePrintAvailable } = req.query;
     try {
-        const material = await Material.find();
+        let filter = {};
+
+        if (remotePrintAvailable) {
+            filter.remotePrintAvailable =
+                remotePrintAvailable.toLowerCase() === "true";
+        }
+
+        const material = await Material.find(filter);
         return res.status(200).json(material);
     } catch (err) {
         console.error(err.message);

@@ -18,6 +18,7 @@ import Loading from "../../components/Loading";
 
 const UserDirectory: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
+    const [refresh, setRefresh] = useState<number>(0);
     const [filter, setFilter] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>("");
@@ -27,7 +28,7 @@ const UserDirectory: React.FC = () => {
             await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/users/${id}`
             );
-            setUsers(users.filter((user) => user._id != id));
+            setRefresh(refresh + 1);
         } catch (error) {
             console.error("Deleting user failed: ", error);
         }
@@ -36,13 +37,20 @@ const UserDirectory: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get<User[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/users`
-                );
-                const filterUsers: User[] = response.data.filter(
-                    (item: User) => filter == item.access || filter == ""
-                );
-                setUsers(filterUsers);
+                let response;
+                if (filter) {
+                    response = await axios.get<User[]>(
+                        `${
+                            import.meta.env.VITE_BACKEND_URL
+                        }/users?access=${filter}`
+                    );
+                } else {
+                    response = await axios.get<User[]>(
+                        `${import.meta.env.VITE_BACKEND_URL}/users`
+                    );
+                }
+
+                setUsers(response.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching users failed:", error);
@@ -50,7 +58,7 @@ const UserDirectory: React.FC = () => {
         };
 
         fetchData();
-    }, [filter]);
+    }, [filter, refresh]);
 
     return (
         <>

@@ -132,10 +132,18 @@ const getIssue = async (req, res) => {
  * @returns - response details (with status)
  */
 const getAllIssues = async (req, res) => {
-    const { status } = req.query;
+    const { status, equipment } = req.query;
 
     try {
         let filter = {};
+
+        if (equipment) {
+            if (ObjectId.isValid(equipment)) {
+                filter.equipment = ObjectId.createFromHexString(equipment); // Convert to ObjectId
+            } else {
+                filter.equipment = equipment; // It's a string, use it as is
+            }
+        }
 
         if (status) {
             const statusArray = status.split(",");

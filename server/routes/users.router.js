@@ -3,7 +3,7 @@ const passport = require("passport");
 const {
     createUser,
     getUser,
-    getUsers,
+    getAllUsers,
     updateUser,
     deleteUser,
 } = require("../controllers/users.controllers.js");
@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/", createUser);
 router.put("/:id", updateUser);
-router.get("/", getUsers);
+router.get("/", getAllUsers);
 router.get("/:id", getUser);
 router.delete("/:id", deleteUser);
 router.post("/register", createUser);

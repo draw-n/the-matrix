@@ -37,8 +37,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/materials/${_id}`
             );
-            // Update the state to remove the deleted equipment
-            setMaterials(materials.filter((material) => material._id !== _id));
+            setRefresh(refresh + 1);
         } catch (error) {
             console.error("Error deleting material:", error);
         }
@@ -74,7 +73,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             dataIndex: "shortName",
             key: "shortName",
         },
-       
+
         {
             title: "Remote Print?",
             dataIndex: "remotePrintAvailable",
@@ -156,8 +155,14 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                 expandable={{
                     expandedRowRender: (record) => (
                         <>
-                            <p><b>Properties: </b>{record.properties.join(", ")}</p>
-                            <p style={{ margin: 0 }}><b>Description: </b>{record.description}</p>
+                            <p>
+                                <b>Properties: </b>
+                                {record.properties.join(", ")}
+                            </p>
+                            <p style={{ margin: 0 }}>
+                                <b>Description: </b>
+                                {record.description}
+                            </p>
                         </>
                     ),
                     rowExpandable: (record) => record.description.length > 0,

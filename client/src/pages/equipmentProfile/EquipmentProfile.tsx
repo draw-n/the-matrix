@@ -20,6 +20,7 @@ const { Paragraph } = Typography;
 
 interface EquipmentProfileProps {
     equipment: Equipment;
+    refreshEquipment: number;
     setRefreshEquipment: () => void;
 }
 
@@ -27,6 +28,7 @@ const { TextArea } = Input;
 
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
+    refreshEquipment,
     setRefreshEquipment,
 }: EquipmentProfileProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -209,7 +211,11 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     <Col span={24}>
                         <Card>
                             <h3>{`${equipment.name}'s Current Issues`}</h3>
-                            <IssueTable equipmentFilter={equipment._id} />
+                            <IssueTable
+                                refresh={refreshEquipment}
+                                setRefresh={setRefreshEquipment}
+                                equipmentFilter={equipment._id}
+                            />
                         </Card>
                     </Col>
                 </Row>

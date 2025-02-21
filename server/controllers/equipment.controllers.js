@@ -140,7 +140,6 @@ const getAllEquipment = async (req, res) => {
     try {
         let filter = {};
         if (category) {
-            // Check if the category is a valid ObjectId (mongoose checks the format)
             if (ObjectId.isValid(category)) {
                 filter.category = ObjectId.createFromHexString(category); // Convert to ObjectId
             } else {

@@ -76,22 +76,27 @@ const IssueTable: React.FC<IssueTableProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get<Issue[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/issues?status=open,in-progress,completed`
-                );
-
-                let formattedData = response.data
-                    .filter((item) => item.status != "archived")
-                    .map((item) => ({
-                        ...item,
-                        key: item._id, // or item.id if you have a unique identifier
-                    }));
+                let response;
 
                 if (equipmentFilter) {
-                    formattedData = formattedData.filter(
-                        (equipment) => equipment.equipment === equipmentFilter
+                    response = await axios.get<Issue[]>(
+                        `${
+                            import.meta.env.VITE_BACKEND_URL
+                        }/issues?status=open,in-progress,completed&equipment=${equipmentFilter}`
+                    );
+                } else {
+                    response = await axios.get<Issue[]>(
+                        `${
+                            import.meta.env.VITE_BACKEND_URL
+                        }/issues?status=open,in-progress,completed`
                     );
                 }
+
+                let formattedData = response.data.map((item) => ({
+                    ...item,
+                    key: item._id, // or item.id if you have a unique identifier
+                }));
+
                 setIssues(formattedData);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);

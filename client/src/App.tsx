@@ -70,6 +70,7 @@ const App: React.FC = () => {
                                                 children={
                                                     <EquipmentProfile
                                                         equipment={equipment}
+                                                        refreshEquipment={refreshEquipment}
                                                         setRefreshEquipment={() =>
                                                             setRefreshEquipment(
                                                                 refreshEquipment +

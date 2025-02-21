@@ -1,12 +1,19 @@
 const User = require("../models/User.js");
 
+/**
+ * Creates a new user, likely at sign in
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const createUser = async (req, res) => {
     const { firstName, lastName, email, password, accessCode } = req.body;
 
     try {
-        let user = await User.findOne({ email: email.toLowerCase() });
-        if (user)
+        let user = await User.findOne({ email: new RegExp(email, "i") });
+        if (user) {
             return res.status(400).json({ message: "User already exists." });
+        }
         if (accessCode != process.env.ACCESS_CODE) {
             return res.status(401).json({
                 message:
@@ -14,10 +21,10 @@ const createUser = async (req, res) => {
             });
         }
         user = new User({
-            firstName: firstName,
-            lastName: lastName,
+            firstName,
+            lastName,
             email: email.toLowerCase(),
-            password: password,
+            password,
             access: "novice",
         });
 
@@ -28,74 +35,113 @@ const createUser = async (req, res) => {
             .json({ message: "User registered successfully." });
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({
+            message: "Error with registering new user",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Deletes a user from MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const deleteUser = async (req, res) => {
-    const userId = req.params.id;
+    const id = req.params?.id;
 
     try {
-        if (userId) {
-            User.findByIdAndDelete(userId)
-                .then(function () {
-                    return res
-                        .status(200)
-                        .json({ message: "Successfully deleted." });
-                })
-                .catch(function (error) {
-                    return res.status(400).send({ message: error });
-                });
+        if (id) {
+            const user = await User.findByIdAndDelete(id);
+            if (!user) {
+                return res.status(404).send({ message: "User not found." });
+            }
+
+            return res
+                .status(200)
+                .json({ message: "Successfully deleted user." });
         } else {
-            return res.status(400).send({ message: "Missing User ID" });
+            return res.status(400).send({ message: "Missing User ID." });
         }
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send({ message: err.message });
+        return res
+            .status(500)
+            .send({ message: "Error when deleting user.", error: err.message });
     }
 };
 
+/**
+ * Updates a user in MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const updateUser = async (req, res) => {
-    const userId = req.params?.id;
+    const id = req.params?.id;
     try {
-        if (userId) {
-            const user = User.findByIdAndUpdate(userId, req.body)
-                .then(function () {
-                    res.status(200).json(user);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                    res.status(400).send({ message: error });
-                });
+        if (id) {
+            const user = await User.findByIdAndUpdate(id, req.body);
+            if (!user) {
+                return res.status(404).send({ message: "User not found." });
+            }
+
+            return res.status(200).json(user);
         } else {
-            res.status(400).send({ message: "Missing User ID" });
+            return res.status(400).send({ message: "Missing User ID." });
         }
     } catch (err) {
         console.error(err.message);
-        res.status(500).send({ message: err.message });
+        return res
+            .status(500)
+            .send({ message: "Error when updating user.", error: err.message });
     }
 };
 
+/**
+ * Retrieves a user from MongoDB based on id.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const getUser = async (req, res) => {
     const id = req.params?.id;
-    if (id) {
-        try {
+
+    try {
+        if (id) {
             const user = await User.findById(id);
             if (!user) {
-                return res.status(404).send("User not found");
+                return res.status(404).send("User not found.");
             }
 
             return res.status(200).json({ user });
-        } catch (error) {
-            console.error("Error fetching user:", error);
-            return res.status(500).send("Internal server error");
+        } else {
+            return res.status(400).send({ message: "Missing User ID." });
         }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return res.status(500).send({
+            message: "Error when retrieving user.",
+            error: err.message,
+        });
     }
 };
 
-const getUsers = async (req, res) => {
+/**
+ * Gets all issues from MongoDB based on filters.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const getAllUsers = async (req, res) => {
+    const { access } = req.query;
     try {
-        const user = await User.find();
+        let filter = {};
+        if (access) {
+            filter.access = new RegExp(access, "i");
+        }
+        const user = await User.find(filter);
         return res.status(200).json(user);
     } catch (err) {
         return res.status(500).send({ message: err.message });
@@ -107,5 +153,5 @@ module.exports = {
     deleteUser,
     updateUser,
     getUser,
-    getUsers,
+    getAllUsers,
 };
