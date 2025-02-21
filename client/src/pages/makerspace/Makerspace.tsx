@@ -11,12 +11,12 @@ import MaterialForm from "../../components/forms/CreateMaterialForm";
 import MaterialTable from "../../components/tables/MaterialTable";
 import { Category } from "../../types/Category";
 
-interface AllEquipmentProps {
+interface MakerspaceProps {
     refreshEquipment: number;
     setRefreshEquipment: (item: number) => void;
 }
 
-const AllEquipment: React.FC<AllEquipmentProps> = ({
+const Makerspace: React.FC<MakerspaceProps> = ({
     refreshEquipment,
     setRefreshEquipment,
 }) => {
@@ -24,24 +24,10 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
     const [filter, setFilter] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [refreshMaterials, setRefreshMaterials] = useState<number>(0); // State for refresh count
-    const [categories, setCategories] = useState<Category[]>();
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await axios.get<Equipment[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment`
-                );
-                setEquipments(
-                    response.data.filter(
-                        (equipment) => equipment.category === filter
-                    )
-                );
-
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Fetching equipment failed:", error);
-            }
             try {
                 const response = await axios.get<Category[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/categories`
@@ -50,13 +36,29 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
             } catch (error) {
                 console.error(error);
             }
+
+            if (filter) {
+                try {
+                    const response = await axios.get<Equipment[]>(
+                        `${
+                            import.meta.env.VITE_BACKEND_URL
+                        }/equipment?category=${filter}`
+                    );
+                    setEquipments(response.data);
+                    setIsLoading(false);
+                } catch (error) {
+                    console.error("Fetching equipment failed:", error);
+                }
+            } else {
+                setFilter(categories[0]?._id);
+            }
         };
 
         fetchData();
     }, [refreshEquipment, filter]);
 
     return (
-        <Space direction="vertical" size="middle" style={{width: "100%"}}>
+        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <h1>MAKERSPACE</h1>
             <p>
                 Find all details related to the Digital Fabrication Lab
@@ -76,9 +78,13 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                         <Flex gap="middle">
                             <Radio.Group
                                 onChange={(e) => setFilter(e.target.value)}
+                                value={filter}
                             >
                                 {categories?.map((category) => (
-                                    <Radio.Button value={category._id}>
+                                    <Radio.Button
+                                        key={category._id}
+                                        value={category._id}
+                                    >
                                         {category.name}
                                     </Radio.Button>
                                 ))}
@@ -92,19 +98,13 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
                     </Flex>
                     {equipments.length > 0 ? (
                         <Row gutter={[16, 16]}>
-                            {equipments
-                                .filter(
-                                    (equipment) => equipment.category == filter
-                                )
-                                .map((equipment: Equipment, index) => {
-                                    return (
-                                        <Col span={8} key={index}>
-                                            <EquipmentCard
-                                                equipment={equipment}
-                                            />
-                                        </Col>
-                                    );
-                                })}
+                            {equipments.map((equipment: Equipment, index) => {
+                                return (
+                                    <Col span={8} key={index}>
+                                        <EquipmentCard equipment={equipment} />
+                                    </Col>
+                                );
+                            })}
                         </Row>
                     ) : (
                         <Empty style={{ width: "100%" }} />
@@ -133,4 +133,4 @@ const AllEquipment: React.FC<AllEquipmentProps> = ({
     );
 };
 
-export default AllEquipment;
+export default Makerspace;

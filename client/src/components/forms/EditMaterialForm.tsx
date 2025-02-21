@@ -12,10 +12,11 @@ import {
     Row,
     FormProps,
     message,
+    Tooltip,
 } from "antd";
 import axios from "axios";
 import { FilamentTemperatures, Material } from "../../types/Material";
-import { CaretDownFilled } from "@ant-design/icons";
+import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
 
 interface EditMaterialFormProps {
     material: Material;
@@ -25,7 +26,7 @@ interface EditMaterialFormProps {
 interface FieldType {
     name: string;
     shortName: string;
-    type: string;
+    category: string;
     properties: string[];
     description: string;
     remotePrintAvailable: boolean;
@@ -79,9 +80,14 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
 
     return (
         <>
-            <Button className="primary-button-filled" onClick={showModal}>
-                Edit
-            </Button>
+            <Tooltip title="Edit">
+                <Button
+                    className="primary-button-filled"
+                    icon={<EditOutlined />}
+                    onClick={showModal}
+                />
+            </Tooltip>
+
             <Modal
                 title="Edit Update"
                 open={isModalOpen}
@@ -97,7 +103,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                     initialValues={{
                         name: material.name,
                         shortName: material.shortName,
-                        type: material.type,
+                        type: material.category,
                         description: material.description,
                         temperatures: material.temperatures,
                         properties: material.properties,
@@ -132,7 +138,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                             <Input />
                         </Form.Item>
                         <Form.Item<FieldType>
-                            name="type"
+                            name="category"
                             style={{ width: "50%" }}
                             label="Type"
                             rules={[

@@ -1,9 +1,21 @@
-import { Button, Space, Table, TableProps, Tag } from "antd";
+import {
+    Button,
+    Popconfirm,
+    Space,
+    Table,
+    TableProps,
+    Tag,
+    Tooltip,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Material } from "../../types/Material";
 import EditMaterialForm from "../forms/EditMaterialForm";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+    CheckOutlined,
+    CloseOutlined,
+    DeleteOutlined,
+} from "@ant-design/icons";
 
 interface TableMaterial extends Material {
     key: string;
@@ -119,12 +131,18 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                             onUpdate={() => setRefresh(refresh + 1)}
                             material={material}
                         />
-                        <Button
-                            className="secondary-button-outlined"
-                            onClick={() => deleteMaterial(material._id)}
-                        >
-                            Delete
-                        </Button>
+
+                        <Tooltip title="Delete">
+                            <Popconfirm
+                                title="Delete Issue"
+                                description="Are you sure to delete this issue?"
+                                onConfirm={() => deleteMaterial(material._id)}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button icon={<DeleteOutlined />} danger />
+                            </Popconfirm>
+                        </Tooltip>
                     </Space>
                 ),
         },
@@ -141,7 +159,10 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                 size="middle"
                 expandable={{
                     expandedRowRender: (record) => (
-                        <p style={{ margin: 0 }}>{record.description}</p>
+                        <>
+                            <p><b>Properties: </b>{record.properties.join(", ")}</p>
+                            <p style={{ margin: 0 }}><b>Description: </b>{record.description}</p>
+                        </>
                     ),
                     rowExpandable: (record) => record.description.length > 0,
                 }}

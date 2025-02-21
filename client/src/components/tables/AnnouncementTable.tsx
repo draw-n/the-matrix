@@ -1,5 +1,6 @@
 import {
     Button,
+    message,
     Popconfirm,
     Space,
     Table,
@@ -39,12 +40,11 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         try {
             const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/announcements/${_id}`
-            ); //TODO: add success vs. failed
-            // Update the state to remove the deleted announcement
-            setAnnouncements(
-                announcements.filter((announcement) => announcement._id !== _id)
             );
-        } catch (error) {
+            message.success(response.data.message);
+            setRefresh(refresh + 1);
+        } catch (error: any) {
+            message.error(error.response?.data?.message || "Unknown Error.");
             console.error("Error deleting announcement:", error);
         }
     };
@@ -58,9 +58,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 }`, //TODO: may remove this option
                 editedAnnouncement
             );
-            setAnnouncements(
-                announcements.filter((item) => item._id !== announcement._id)
-            );
+            setRefresh(refresh + 1);
         } catch (error) {
             console.error("Issue archiving announcement", error);
         }
@@ -69,16 +67,16 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const responseUpdates = await axios.get<Announcement[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/announcements`
+                const response = await axios.get<Announcement[]>(
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/announcements?status=posted`
                 );
 
-                const formattedData = responseUpdates.data
-                    .filter((item) => item.status != "archived")
-                    .map((item) => ({
-                        ...item,
-                        key: item._id, // or item.id if you have a unique identifier
-                    }));
+                const formattedData = response.data.map((item) => ({
+                    ...item,
+                    key: item._id, // or item.id if you have a unique identifier
+                }));
                 setAnnouncements(formattedData);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);

@@ -155,7 +155,7 @@ const CreateIssueForm: React.FC = () => {
                                             },
                                         ]}
                                     >
-                                        <SelectEquipment type={type} />
+                                        <SelectEquipment category={type} />
                                     </Form.Item>
                                     <Form.Item<FieldType>
                                         style={{ width: "100%" }}

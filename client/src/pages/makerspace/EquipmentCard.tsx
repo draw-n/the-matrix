@@ -1,23 +1,51 @@
-import { Badge, Button, Card, Flex, Input, Select, Space, Tag } from "antd";
-import { useAuth, type User } from "../../hooks/AuthContext";
-import { Switch, Typography } from "antd";
+import { Button, Card, Flex, Space, Tag } from "antd";
+import { Typography } from "antd";
+import { gold, gray, green, purple, red } from "@ant-design/colors";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
 import type { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";
 import {
-    CheckCircleTwoTone,
-    ClockCircleTwoTone,
-    CloseCircleTwoTone,
-    FrownTwoTone,
-    PauseCircleTwoTone,
+    CheckCircleOutlined,
+    ClockCircleOutlined,
+    CloseCircleOutlined,
+    FrownOutlined,
+    PauseCircleOutlined,
 } from "@ant-design/icons";
 import { Category } from "../../types/Category";
 
 interface EquipmentCardProps {
     equipment: Equipment;
 }
+
+type EquipmentStatus = "available" | "error" | "paused" | "busy" | "offline";
+
+const statusStyles: Record<
+    EquipmentStatus,
+    { color: string; icon: React.ReactNode }
+> = {
+    available: {
+        color: green[4],
+        icon: <CheckCircleOutlined />,
+    },
+    error: {
+        color: red[4],
+        icon: <CloseCircleOutlined />,
+    },
+    paused: {
+        color: gold[4],
+        icon: <PauseCircleOutlined />,
+    },
+    busy: {
+        color: purple[4],
+        icon: <ClockCircleOutlined />,
+    },
+    offline: {
+        color: gray[2],
+        icon: <FrownOutlined />,
+    },
+};
 
 const { Paragraph } = Typography;
 
@@ -31,35 +59,14 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get<Category>(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${equipment.category}`
-            )
+                `${import.meta.env.VITE_BACKEND_URL}/categories/${
+                    equipment.category
+                }`
+            );
             setCategoryName(response.data.name);
-        }
+        };
         fetchData();
     }, []);
-
-    const showStatus = () => {
-        switch (equipment.status) {
-            case "available":
-                return <CheckCircleTwoTone twoToneColor="#5FAE4D" />;
-                break;
-            case "error":
-                return <CloseCircleTwoTone twoToneColor="#B94D4D" />;
-                break;
-            case "paused":
-                return <PauseCircleTwoTone twoToneColor="#D6C94D" />;
-                break;
-            case "busy":
-                return <ClockCircleTwoTone twoToneColor="#6B8DA3" />;
-                break;
-            case "offline":
-                return <FrownTwoTone twoToneColor="#6B6B6B" />
-                break;
-            default:
-                return "";
-                break;
-        }
-    };
 
     return (
         <>
@@ -98,16 +105,30 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                         </h3>
                         <p>{equipment.headline}</p>
                     </Space>
-                    <Flex justify="space-between" style={{ width: "100%" }}>
-                        <Flex
-                            justify="center"
+                    <Flex
+                        justify="space-between"
+                        align="end"
+                        style={{ width: "100%" }}
+                    >
+                        <Tag
                             style={{ textTransform: "capitalize" }}
-                            align="center"
-                            gap="10px"
+                            color={
+                                statusStyles[
+                                    (equipment.status as EquipmentStatus) ||
+                                        "offline"
+                                ].color
+                            }
+                            bordered
+                            icon={
+                                statusStyles[
+                                    (equipment.status as EquipmentStatus) ||
+                                        "offline"
+                                ].icon
+                            }
                         >
-                            {showStatus()}
                             {equipment.status}
-                        </Flex>
+                        </Tag>
+
                         <Button
                             type="primary"
                             size="small"

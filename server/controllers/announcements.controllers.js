@@ -1,106 +1,182 @@
 const Announcement = require("../models/Announcement.js");
 const mongoose = require("mongoose");
 
+/**
+ * Creates new announcement and saves to MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const createAnnouncement = async (req, res) => {
-    const { type, description, createdBy, dateCreated, status } = req.body;
-    const title = req.query?.title;
+    const { type, description, createdBy, dateCreated, status, title } =
+        req.body;
 
     try {
         if (type && description && createdBy && dateCreated) {
-            let announcementObj = {
+            let announcement = new Announcement({
                 _id: new mongoose.Types.ObjectId(),
                 type,
                 status,
+                title,
                 description,
                 createdBy,
                 dateCreated,
                 lastUpdatedBy: createdBy,
-                dateLastUpdatedBy: dateCreated
-            };
-
-            if (title) {
-                announcementObj = { ...announcementObj, title: title };
-            }
-
-            const announcement = new Announcement(announcementObj);
+                dateLastUpdated: dateCreated,
+            });
 
             await announcement.save();
+
             return res.status(200).json(announcement);
         } else {
             return res
                 .status(400)
-                .send({ message: "Missing Announcement Information." });
+                .send({ message: "Missing at least one required field." });
         }
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({
+            message: "Error when creating new announcement.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Deletes an announcement from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const deleteAnnouncement = async (req, res) => {
     const id = req.params?.id;
 
     try {
         if (id) {
-            Announcement.findByIdAndDelete(id)
-                .then(function () {
-                    return res
-                        .status(200)
-                        .json({ message: "Successfully deleted." });
-                })
-                .catch(function (error) {
-                    return res.status(400).send({ message: error });
-                });
+            const announcement = await Announcement.findByIdAndDelete(id);
+            if (!announcement) {
+                return res
+                    .status(404)
+                    .json({ message: "Announcement not found." });
+            }
+
+            return res
+                .status(200)
+                .send({ message: "Successfully deleted announcement." });
         } else {
-            return res.status(400).send({ message: "Missing Announcement ID" });
+            return res
+                .status(400)
+                .send({ message: "Missing Announcement ID." });
         }
     } catch (err) {
-        console.log(err.message);
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when deleting announcement.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Updates an announcement from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const editAnnouncement = async (req, res) => {
     const id = req.params?.id;
     try {
         if (id) {
-            const update = Announcement.findByIdAndUpdate(id, req.body)
-                .then(function () {
-                    res.status(200).json(update);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    res.status(400).send({ message: error });
-                });
+            const announcement = Announcement.findByIdAndUpdate(id, req.body);
+
+            if (!announcement) {
+                return res
+                    .status(404)
+                    .json({ message: "Announcement not found." });
+            }
+
+            return res.status(200).json(announcement);
         } else {
-            res.status(400).send({ message: "MissingAnnouncement ID" });
+            return res.status(400).send({ message: "Missing Announcement ID" });
         }
     } catch (err) {
-        console.log(err.message);
-        res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when updating announcement.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Retrieves an announcement from MongoDB based on id.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const getAnnouncement = async (req, res) => {
-    const id = req.query?.id;
-    if (id) {
-        try {
+    const id = req.params?.id;
+    try {
+        if (id) {
             const announcement = await Announcement.findById(id);
             if (!announcement) {
-                return res.status(404).send("Announcement not found");
+                return res
+                    .status(404)
+                    .send({ message: "Announcement Not Found" });
             }
             return res.status(200).json(announcement);
-        } catch (error) {
-            console.error("Error fetching issue:", error);
-            return res.status(500).send("Internal server error");
+        } else {
+            return res
+                .status(400)
+                .send({ message: "Missing Announcement ID." });
         }
-    }
-
-    try {
-        const announcement = await Announcement.find();
-        return res.status(200).json(announcement);
     } catch (err) {
-        return res.status(500).send({ message: err.message });
+        console.error(err);
+        return res.status(500).send({
+            message: "Error when retrieving announcement.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Gets all announcements based off a filter
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const getAllAnnouncements = async (req, res) => {
+    const {
+        type,
+        status,
+        createdBy,
+        dateCreated,
+        lastUpdatedBy,
+        dateLastUpdated,
+    } = req.query;
+    try {
+        let filter = {};
+
+        if (type) {
+            filter.type = new RegExp(type, "i"); // 'i' makes the search case-insensitive
+        }
+
+        if (status) {
+            filter.status = new RegExp(status, "i");
+        }
+
+        if (createdBy) {
+            filter.createdBy = new RegExp(createdBy, "i");
+        }
+
+        const announcements = await Announcement.find(filter);
+        return res.status(200).json(announcements);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving all announcements.",
+            message: err.message,
+        });
     }
 };
 
@@ -109,4 +185,5 @@ module.exports = {
     deleteAnnouncement,
     editAnnouncement,
     getAnnouncement,
+    getAllAnnouncements,
 };

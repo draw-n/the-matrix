@@ -10,14 +10,13 @@ import "./App.css";
 import Shell from "./components/Shell";
 import PrivateRoute from "./components/PrivateRoute";
 
-import Announcements from "./pages/Dashboard";
 import Kiosk from "./pages/Kiosk";
 import ReportAnIssue from "./pages/reportIssues/ReportAnIssue";
 import EditUpdates from "./pages/editUpdates/EditUpdates";
 import Login from "./pages/Login";
 import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
-import AllEquipment from "./pages/makerspace/Makerspace";
+import Makerspace from "./pages/makerspace/Makerspace";
 import EquipmentProfile from "./pages/equipmentProfile/EquipmentProfile";
 import Settings from "./pages/settings/Settings";
 
@@ -26,7 +25,7 @@ import axios from "axios";
 import { Equipment } from "./types/Equipment";
 import Signup from "./pages/Signup";
 import RemotePrint from "./pages/remotePrint/RemotePrint";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -175,7 +174,7 @@ const App: React.FC = () => {
                                             "admin",
                                         ]}
                                         children={
-                                            <AllEquipment
+                                            <Makerspace
                                                 refreshEquipment={
                                                     refreshEquipment
                                                 }

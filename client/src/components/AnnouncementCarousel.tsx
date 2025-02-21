@@ -7,11 +7,13 @@ import Loading from "./Loading";
 import type { Announcement } from "../types/Announcement";
 import { geekblueDark } from "@ant-design/colors";
 
-interface UpdatesProps {
+interface AnnouncementCarouselProps {
     kioskMode?: boolean;
 }
 
-const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
+const AnnouncementCarousel: React.FC<AnnouncementCarouselProps> = ({
+    kioskMode,
+}: AnnouncementCarouselProps) => {
     const [announcements, setAnnouncements] = useState<Announcement[]>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -22,18 +24,18 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
         const fetchData = async () => {
             try {
                 const response = await axios.get<Announcement[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/announcements`
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/announcements?status=posted`
                 );
-                const formattedData = response.data
-                    .filter((item) => item.status != "archived")
-                    .map((item) => ({
-                        ...item,
-                        key: item._id, // or item.id if you have a unique identifier
-                    }));
+                const formattedData = response.data.map((item) => ({
+                    ...item,
+                    key: item._id, // or item.id if you have a unique identifier
+                }));
                 setAnnouncements(formattedData);
                 setIsLoading(false);
             } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
+                console.error("Internal Server Error: ", error);
             }
         };
 
@@ -64,26 +66,24 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
 
     return (
         <>
-        {isLoading ? (
-                    <div style={{ padding: 0 }}>
-                        <div className="updates-carousel">
-                            <Flex
-                                style={{ width: "100%", height: "100%" }}
-                                justify="center"
-                                align="center"
-                            >
-                                <Loading />
-                            </Flex>
-                        </div>
+            {isLoading ? (
+                <div style={{ padding: 0 }}>
+                    <div className="updates-carousel">
+                        <Flex
+                            style={{ width: "100%", height: "100%" }}
+                            justify="center"
+                            align="center"
+                        >
+                            <Loading />
+                        </Flex>
                     </div>
-                ) : 
-           
-                ( <Carousel
-               
+                </div>
+            ) : (
+                <Carousel
                     ref={carouselRef}
                     style={{ background: geekblueDark[4], color: "white" }}
-                >{(
-                    announcements?.map((announcement: Announcement) => {
+                >
+                    {announcements?.map((announcement: Announcement) => {
                         return (
                             <div
                                 className={`updates-carousel ${
@@ -120,50 +120,45 @@ const Updates: React.FC<UpdatesProps> = ({ kioskMode }: UpdatesProps) => {
                                 </Flex>
                             </div>
                         );
-                    })
-                )}
-                {announcements?.length == 0 && (
-                    <div
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    >
+                    })}
+                    {announcements?.length == 0 && (
                         <div
                             style={{
                                 width: "100%",
                                 height: "100%",
                             }}
-                            className="updates-carousel"
                         >
-                            <Flex
-                                align="center"
-                                flex="1"
-                                justify="center"
+                            <div
                                 style={{
                                     width: "100%",
                                     height: "100%",
                                 }}
+                                className="updates-carousel"
                             >
                                 <Empty
                                     style={{
+                                        alignContent: "center",
+                                        justifyContent: "center",
                                         width: "100%",
-                                        height: "100%",
+                                        height: kioskMode ? "100vh" : 300,
                                     }}
                                     description={
-                                        <Typography.Text>
+                                        <Typography.Text
+                                            style={{
+                                                color: "white",
+                                            }}
+                                        >
                                             There are no announcements.
                                         </Typography.Text>
                                     }
                                 />
-                            </Flex>
+                            </div>
                         </div>
-                    </div>
-                  )}
-          </Carousel>)
-}
+                    )}
+                </Carousel>
+            )}
         </>
     );
 };
 
-export default Updates;
+export default AnnouncementCarousel;

@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
+import "./issues.css";
+
 interface SelectEquipmentProps {
-    type: string;
+    category: string;
     value?: string;
     onChange?: (value: string) => void;
 }
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
-    type,
+    category,
     value,
     onChange,
     ...rest
@@ -23,13 +25,11 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
         const fetchData = async () => {
             try {
                 const response = await axios.get<Equipment[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment`
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/equipment?category=${category}`
                 );
-                const filterEquipment: Equipment[] = response.data.filter(
-                    (item) => item.category === type
-                );
-                console.log(response.data)
-                setShowEquipment(filterEquipment);
+                setShowEquipment(response.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);
@@ -39,13 +39,13 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
             onChange("");
         } //TODO: this causes the form to auto create this every time, maybe make it less intense
         fetchData();
-    }, [type]);
+    }, [category]);
 
     const handleSelect = (value: string) => {
         if (onChange) {
             onChange(value);
         }
-    }
+    };
 
     return (
         <>
@@ -65,7 +65,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                             <Empty
                                 description={
                                     <Typography.Text>
-                                        No equipment of this type found.
+                                        No equipment of this category found.
                                     </Typography.Text>
                                 }
                             />
@@ -81,7 +81,9 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                                             equipment._id === value &&
                                             "select-active"
                                         }`}
-                                        onClick={() => handleSelect(equipment._id)}
+                                        onClick={() =>
+                                            handleSelect(equipment._id)
+                                        }
                                     >
                                         <p>{equipment.name}</p>
                                     </div>

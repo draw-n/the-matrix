@@ -1,5 +1,5 @@
 import { ThemeConfig } from "antd";
-import { geekblue, geekblueDark, gray } from "@ant-design/colors";
+import { geekblue, geekblueDark } from "@ant-design/colors";
 
 const theme: ThemeConfig = {
     token: {

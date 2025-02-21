@@ -1,10 +1,19 @@
-import { Button, Popconfirm, Table, TableProps, Tag } from "antd";
+import {
+    Button,
+    Flex,
+    Popconfirm,
+    Table,
+    TableProps,
+    Tag,
+    Tooltip,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Issue } from "../../types/Issue";
 import { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../hooks/AuthContext";
+import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 
 interface TableIssue extends Issue {
     key: string;
@@ -23,8 +32,8 @@ interface EquipmentInfo {
 
 interface IssueTableProps {
     equipmentFilter?: string;
-    refresh?: number;
-    setRefresh?: (numValue: number) => void;
+    refresh: number;
+    setRefresh: (numValue: number) => void;
 }
 
 const IssueTable: React.FC<IssueTableProps> = ({
@@ -57,12 +66,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
                 editedIssue
             );
-            setIssues(
-                issues.filter(
-                    (item) =>
-                        item._id !== issue._id && item.status != "archived"
-                )
-            );
+            setRefresh(refresh + 1);
         } catch (error) {
             console.error("Issue archiving issue", error);
         }
@@ -233,20 +237,25 @@ const IssueTable: React.FC<IssueTableProps> = ({
             title: "Actions",
             key: "action",
             render: (item: Issue) => (
-                <>
-                    <Button onClick={() => changeIssueStatus(item, "archived")}>
-                        Archive
-                    </Button>
-                    <Popconfirm
-                        title="Delete Issue"
-                        description="Are you sure to delete this issue?"
-                        onConfirm={() => deleteIssue(item._id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button danger>Delete</Button>
-                    </Popconfirm>
-                </>
+                <Flex gap="small">
+                    <Tooltip title="Archive">
+                        <Button
+                            icon={<FolderOutlined />}
+                            onClick={() => changeIssueStatus(item, "archived")}
+                        />
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <Popconfirm
+                            title="Delete Issue"
+                            description="Are you sure to delete this issue?"
+                            onConfirm={() => deleteIssue(item._id)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button icon={<DeleteOutlined />} danger />
+                        </Popconfirm>
+                    </Tooltip>
+                </Flex>
             ),
         },
     ];

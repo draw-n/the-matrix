@@ -9,7 +9,8 @@ const Profile: React.FC = () => {
 
     const [firstName, setFirstName] = useState(user?.firstName);
     const [lastName, setLastName] = useState(user?.lastName);
-    const [password, setPassword] = useState("");
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
 
     /*    if (!firstName) {
         setFirstName(user?.firstName);
@@ -122,6 +123,16 @@ const Profile: React.FC = () => {
                             </Space>
                         </Flex>
                     </Space>
+                </Card>
+                <Card>
+                    <h2>Change Password</h2>
+                    <h3>Current Password</h3>
+                    <Input.Password />
+                    <h3>New Password</h3>
+                    <Input.Password />
+                    <Flex justify="end">
+                        <Button>Submit</Button>
+                    </Flex>
                 </Card>
             </Space>
         </>

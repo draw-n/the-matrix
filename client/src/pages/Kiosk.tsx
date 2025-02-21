@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import Updates from "../components/Announcements";
+import Updates from "../components/AnnouncementCarousel";
+import AnnouncementCarousel from "../components/AnnouncementCarousel";
 
 const Kiosk: React.FC = () => {
     useEffect(() => {
@@ -10,7 +11,7 @@ const Kiosk: React.FC = () => {
         // Cleanup the interval on component unmount
         return () => clearInterval(interval);
     }, []);
-    return <Updates kioskMode />;
+    return <AnnouncementCarousel kioskMode />;
 };
 
 export default Kiosk;

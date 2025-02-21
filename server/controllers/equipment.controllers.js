@@ -1,126 +1,160 @@
 const Equipment = require("../models/Equipment.js");
+const Category = require("../models/Category.js");
 var mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types; // Import ObjectId
 
+/**
+ * Creates new equipment and saves to MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - respones details
+ * @returns - response details (with status)
+ */
 const createEquipment = async (req, res) => {
-    const { name, type, description, routePath } = req.body;
+    const { name, category, description, routePath } = req.body;
 
     try {
-        if (name && type && description && routePath) {
+        if (name && category && description && routePath) {
             let equipment = new Equipment({
-                _id: new mongoose.Types.ObjectId(),
-                name: name,
-                type: type,
-                routePath: routePath,
-                description: description,
+                _id: new ObjectId(),
+                name,
+                category: ObjectId.createFromHexString(category),
+                routePath,
+                description,
                 status: "available",
             });
             await equipment.save();
+
             return res.status(200).json(equipment);
         } else {
             return res
                 .status(400)
-                .send({ message: "Missing Equipment Information." });
+                .send({ message: "Missing at least one required field." });
         }
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send({ message: err.message });
+        return res.status(500).send({
+            message: "Error when creating new equipment.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Deletes an equipment from MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const deleteEquipment = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params?.id;
 
     try {
         if (id) {
-            Equipment.findByIdAndDelete(id)
-                .then(function () {
-                    return res
-                        .status(200)
-                        .json({ message: "Successfully deleted." });
-                })
-                .catch(function (error) {
-                    return res.status(400).send({ message: error });
-                });
+            const equipment = await Equipment.findByIdAndDelete(id);
+            
+            return res
+                .status(200)
+                .send({ message: "Successfully deleted equipment." });
         } else {
             return res.status(400).send({ message: "Missing Equipment ID" });
         }
     } catch (err) {
-        console.log(err.message);
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when deleting equipment.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Updates an equipment from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const editEquipment = async (req, res) => {
     const id = req.params?.id;
-    const { name, routePath, type, properties, status, description, imageSrc } =
-        req.body;
-
-    // Prepare update object
-    const updateData = {};
-
-    // Populate update object with fields to update
-    if (name) updateData.name = name;
-    if (routePath) updateData.routePath = routePath;
-    if (type) updateData.type = type;
-    if (properties) updateData.properties = properties;
-    if (status) updateData.status = status;
-    if (description) updateData.description = description;
-    if (imageSrc) updateData.imageSrc = imageSrc;
 
     try {
         if (id) {
-            const updatedEquipment = await Equipment.findByIdAndUpdate(
-                id,
-                updateData,
-                { new: true, runValidators: true }
-            );
+            const equipment = await Equipment.findByIdAndUpdate(id, req.body);
 
-            if (!updatedEquipment) {
-                return res.status(404).json({ message: "Equipment not found" });
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .json({ message: "Equipment not found." });
             }
 
-            return res.status(200).json(updatedEquipment);
+            return res.status(200).json(equipment);
         } else {
-            return res.status(400).send({ message: "Missing Equipment ID" });
+            return res.status(400).send({ message: "Missing Equipment ID." });
         }
     } catch (err) {
-        console.log(err.message);
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when updating equipment.",
+            error: err.message,
+        });
     }
 };
 
+/**
+ * Retrieves an equipment from MongoDB based on id.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
 const getEquipment = async (req, res) => {
-    const id = req.query?.id;
-    if (id) {
-        try {
+    const id = req.params?.id;
+
+    try {
+        if (id) {
             const equipment = await Equipment.findById(id);
             if (!equipment) {
-                return res.status(404).send("Equipment not found");
+                return res
+                    .status(404)
+                    .send({ message: "Equipment not found." });
             }
             return res.status(200).json(equipment);
-        } catch (error) {
-            console.error("Error fetching issue:", error);
-            return res.status(500).send("Internal server error");
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID." });
         }
-    }
-
-    try {
-        const equipment = await Equipment.find();
-        return res.status(200).json(equipment);
     } catch (err) {
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving equipment.",
+            error: err.message,
+        });
     }
 };
 
-
-const getEquipmentCategories = async (req, res) => {
+/**
+ * Gets all equipment based off a filter
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - respones details (with status)
+ */
+const getAllEquipment = async (req, res) => {
+    const { category } = req.query;
     try {
-        const equipment = await Equipment.find();
-        const categories = [...new Set(equipment.map(item => item.category))];
-        return res.status(200).json(categories);
+        let filter = {};
+        if (category) {
+            // Check if the category is a valid ObjectId (mongoose checks the format)
+            if (ObjectId.isValid(category)) {
+                filter.category = ObjectId.createFromHexString(category); // Convert to ObjectId
+            } else {
+                filter.category = category; // It's a string, use it as is
+            }
+        }
+        const equipments = await Equipment.find(filter);
+        return res.status(200).json(equipments);
     } catch (err) {
-        return res.status(500).send({ message: err.message });
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving all equipment.",
+            message: err.message,
+        });
     }
 };
 
@@ -129,4 +163,5 @@ module.exports = {
     deleteEquipment,
     editEquipment,
     getEquipment,
+    getAllEquipment,
 };
