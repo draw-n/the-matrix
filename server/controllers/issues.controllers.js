@@ -51,7 +51,7 @@ const deleteIssue = async (req, res) => {
         if (id) {
             const issue = await Issue.findByIdAndDelete(id);
             if (!issue) {
-                return res.status(404).json({ message: "Issue not found." });
+                return res.status(404).send({ message: "Issue not found." });
             }
             return res
                 .status(200)
@@ -86,7 +86,7 @@ const editIssue = async (req, res) => {
 
             return res.status(200).json(issue);
         } else {
-            res.status(400).send({ message: "Missing Issue ID." });
+            return res.status(400).send({ message: "Missing Issue ID." });
         }
     } catch (err) {
         console.error(err.message);
@@ -119,7 +119,7 @@ const getIssue = async (req, res) => {
     } catch (err) {
         console.error(err.message);
         return res.status(500).send({
-            message: "Error when retrieving issues.",
+            message: "Error when retrieving issue.",
             error: err.message,
         });
     }
