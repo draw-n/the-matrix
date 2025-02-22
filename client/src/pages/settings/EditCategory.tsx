@@ -4,11 +4,21 @@ import {
     PlusOutlined,
     SaveOutlined,
 } from "@ant-design/icons";
-import { Button, Flex, Input, Tooltip } from "antd";
+import {
+    Alert,
+    Button,
+    ColorPicker,
+    Flex,
+    Input,
+    Modal,
+    Space,
+    Tooltip,
+} from "antd";
 import { useState } from "react";
 import { Category } from "../../types/Category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
+import { geekblue } from "@ant-design/colors";
 
 interface EditCategoryProps {
     category: Category;
@@ -22,6 +32,22 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     const [defaultIssues, setDefaultIssues] = useState<string[] | undefined>(
         category.defaultIssues
     );
+    const [color, setColor] = useState(category.color);
+    const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        deleteCategory();
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
         setDefaultIssues((prevIssues) => {
@@ -60,12 +86,13 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     };
 
     const updateCategory = async () => {
+        setIsColorPickerOpen(false);
         try {
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${
                     category._id
                 }`,
-                { ...category, defaultIssues }
+                { ...category, defaultIssues, color }
             );
         } catch (error) {
             console.error(error);
@@ -74,17 +101,62 @@ const EditCategory: React.FC<EditCategoryProps> = ({
 
     return (
         <Flex vertical gap="middle">
-            {JSON.stringify(defaultIssues)}
             <Flex justify="space-between">
                 <h2>{category.name}</h2>
-                <Flex justify="end">
+                <Flex justify="end" gap="middle">
+                    <ColorPicker
+                        defaultValue={category.color || geekblue[5]}
+                        showText
+                        allowClear
+                        onOpenChange={setIsColorPickerOpen}
+                        open={isColorPickerOpen}
+                        onChange={(e) => setColor(e.toHexString())}
+                        panelRender={(panel) => (
+                            <Flex vertical gap="small">
+                                {panel}
+
+                                <Flex justify="end">
+                                    <Button onClick={updateCategory}>
+                                        Save
+                                    </Button>
+                                </Flex>
+                            </Flex>
+                        )}
+                    />
+
                     <Button
-                        onClick={deleteCategory}
+                        onClick={showModal}
                         icon={<DeleteOutlined />}
                         danger
                     >
                         Delete
                     </Button>
+                    <>
+                        <Modal
+                            open={isModalOpen}
+                            onOk={handleOk}
+                            onCancel={handleCancel}
+                            centered
+                            title={`Delete the ${category.name} Category`}
+                        >
+                            <Space
+                                direction="vertical"
+                                style={{ width: "100%" }}
+                                size="small"
+                            >
+                                <p>
+                                    Deleting this category will also delete its
+                                    associated equipment and materials.
+                                </p>
+                                <p>
+                                    <b>
+                                        Are you sure you wish to delete the{" "}
+                                        {category.name} category?
+                                    </b>
+                                </p>
+                            </Space>
+                        </Modal>
+                    </>
                 </Flex>
             </Flex>
 

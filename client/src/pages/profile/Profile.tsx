@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Col, Flex, Input, Row, Space } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Profile: React.FC = () => {
@@ -12,15 +12,12 @@ const Profile: React.FC = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
-    /*    if (!firstName) {
-        setFirstName(user?.firstName);
-    }
-
-    if (!lastName) {
-        setLastName(user?.lastName);
-    }
-        TODO: keeps rerendering too many times
-*/
+    useEffect(() => {
+        if (user) {
+            setFirstName(user?.firstName);
+            setLastName(user?.lastName);
+        }
+    }, [user]);
 
     const handleClick = () => {
         if (editMode) {

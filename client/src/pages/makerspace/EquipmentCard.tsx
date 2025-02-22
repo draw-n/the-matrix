@@ -10,6 +10,7 @@ import {
     CheckCircleOutlined,
     ClockCircleOutlined,
     CloseCircleOutlined,
+    EyeOutlined,
     FrownOutlined,
     PauseCircleOutlined,
 } from "@ant-design/icons";
@@ -52,8 +53,7 @@ const { Paragraph } = Typography;
 const EquipmentCard: React.FC<EquipmentCardProps> = ({
     equipment,
 }: EquipmentCardProps) => {
-    const [categoryName, setCategoryName] = useState<string>("");
-
+    const [category, setCategory] = useState<Category>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -63,7 +63,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                     equipment.category
                 }`
             );
-            setCategoryName(response.data.name);
+            setCategory(response.data);
         };
         fetchData();
     }, [equipment]);
@@ -87,8 +87,11 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                         style={{ width: "100%", flexGrow: 1 }}
                         size="small"
                     >
-                        <Tag style={{ textTransform: "uppercase" }}>
-                            {categoryName}
+                        <Tag
+                            color={category?.color}
+                            style={{ textTransform: "uppercase" }}
+                        >
+                            {category?.name}
                         </Tag>
 
                         <h3>
@@ -130,13 +133,14 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                         </Tag>
 
                         <Button
-                            type="primary"
+                            variant="outlined"
                             size="small"
+                            icon={<EyeOutlined />}
                             onClick={() =>
                                 navigate(`/makerspace/${equipment.routePath}`)
                             }
                         >
-                            More Details
+                            More
                         </Button>
                     </Flex>
                 </Flex>

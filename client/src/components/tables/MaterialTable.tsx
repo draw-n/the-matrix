@@ -113,7 +113,12 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                 category && (
                     <Tag
                         style={{ textTransform: "uppercase" }}
-                        color={"blue"}
+                        color={
+                            categories?.find(
+                                (checkCategory) =>
+                                    checkCategory._id === category
+                            )?.color || "geekblue"
+                        }
                         key={category}
                     >
                         {

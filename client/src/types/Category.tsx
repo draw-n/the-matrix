@@ -3,4 +3,5 @@ export interface Category {
     name: string;
     defaultIssues?: string[];
     properties?: string[];
+    color: string;
 }

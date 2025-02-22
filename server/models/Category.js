@@ -13,6 +13,7 @@ const CategorySchema = new Schema({
             type: String,
         },
     ],
+    color: { type: String, required: true },
 });
 
 module.exports = Category = mongoose.model("categories", CategorySchema);
