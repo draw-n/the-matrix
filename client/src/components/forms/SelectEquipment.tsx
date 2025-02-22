@@ -75,7 +75,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                     <Row gutter={[20, 20]}>
                         {showEquipment.map((equipment: Equipment) => {
                             return (
-                                <Col key={equipment._id} span={8}>
+                                <Col key={equipment._id} lg={8} xs={24}>
                                     <div
                                         className={`select-card ${
                                             equipment._id === value &&

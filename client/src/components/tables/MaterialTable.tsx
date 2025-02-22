@@ -77,6 +77,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             title: "Name",
             dataIndex: "name",
             key: "name",
+            responsive: ["md"],
         },
         {
             title: "Short Name",
@@ -133,6 +134,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
         {
             title: "Action",
             key: "action",
+            responsive: ["lg"],
             render: (material) =>
                 material._id && (
                     <Space>

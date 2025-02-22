@@ -117,8 +117,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Card>
-                            <Row>
-                                <Col span={8}>
+                            <Row gutter={[16, 16]}>
+                                <Col lg={8} span={24}>
                                     <Flex
                                         style={{ width: "100%" }}
                                         align="center"
@@ -137,7 +137,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                         )}
                                     </Flex>
                                 </Col>
-                                <Col span={8}>
+                                <Col lg={8} span={24}>
                                     <Flex
                                         style={{ width: "100%" }}
                                         align="center"
@@ -171,7 +171,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                         )}
                                     </Flex>
                                 </Col>
-                                <Col span={8}>
+                                <Col lg={8} span={24}>
                                     <Flex
                                         style={{ width: "100%" }}
                                         align="center"

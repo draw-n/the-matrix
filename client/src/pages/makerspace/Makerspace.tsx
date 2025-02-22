@@ -100,7 +100,7 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                         <Row gutter={[16, 16]}>
                             {equipments.map((equipment: Equipment, index) => {
                                 return (
-                                    <Col span={8} key={index}>
+                                    <Col span={24} lg={8} key={index}>
                                         <EquipmentCard equipment={equipment} />
                                     </Col>
                                 );
