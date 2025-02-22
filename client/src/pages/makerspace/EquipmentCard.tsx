@@ -66,7 +66,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
             setCategoryName(response.data.name);
         };
         fetchData();
-    }, []);
+    }, [equipment]);
 
     return (
         <>

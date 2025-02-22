@@ -16,6 +16,7 @@ import {
     CloseOutlined,
     DeleteOutlined,
 } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 interface TableMaterial extends Material {
     key: string;
@@ -31,7 +32,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
     setRefresh,
 }: MaterialTableProps) => {
     const [materials, setMaterials] = useState<TableMaterial[]>([]);
-
+    const [categories, setCategories] = useState<Category[]>();
     const deleteMaterial = async (_id: string) => {
         try {
             await axios.delete(
@@ -52,11 +53,20 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
 
                 const formattedData = responseUpdates.data.map((item) => ({
                     ...item,
-                    key: item._id, // or item.id if you have a unique identifier
+                    key: item._id,
                 }));
                 setMaterials(formattedData);
             } catch (error) {
                 console.error("Fetching updates or issues failed:", error);
+            }
+
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
             }
         };
         fetchData();
@@ -91,28 +101,27 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             title: "Category",
             key: "category",
             dataIndex: "category",
-            filters: [
-                {
-                    text: "Filament",
-                    value: "filament",
-                },
-                {
-                    text: "Resin",
-                    value: "resin",
-                },
-                {
-                    text: "Powder",
-                    value: "powder",
-                },
-            ],
+            filters: categories?.map((category) => ({
+                text: category.name,
+                value: category._id,
+            })),
             // specify the condition of filtering result
             // here is that finding the name started with `value`
             onFilter: (value, record) =>
-                record.type.indexOf(value as string) === 0,
-            render: (type) =>
-                type && (
-                    <Tag color={"blue"} key={type}>
-                        {type.toUpperCase()}
+                record.category.indexOf((value as string).toLowerCase()) === 0,
+            render: (category) =>
+                category && (
+                    <Tag
+                        style={{ textTransform: "uppercase" }}
+                        color={"blue"}
+                        key={category}
+                    >
+                        {
+                            categories?.find(
+                                (checkCategory) =>
+                                    checkCategory._id === category
+                            )?.name
+                        }
                     </Tag>
                 ),
         },

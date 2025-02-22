@@ -13,7 +13,7 @@ const EquipmentSchema = new Schema({
     category: {
         type: ObjectId,
         required: true,
-        ref: "Category"
+        ref: "Category",
     },
     properties: {
         nozzle: { type: Number },
@@ -24,6 +24,14 @@ const EquipmentSchema = new Schema({
         enum: ["available", "paused", "busy", "error", "offline"],
         required: true,
     },
+    /*
+        available - printer is working as intended and no one is printing with it
+        paused - printer is working as intended but it's paused currently
+        busy - printer is working as intended and it is printing something
+        error - printer has a reported issue or is being fixed - won't allow prints on this
+        offline - printer is completely offline (can't find in the network) - won't allow prints on this
+    */
+
     description: {
         type: String,
         required: true,

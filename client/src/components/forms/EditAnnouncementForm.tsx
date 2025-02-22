@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Select, Tooltip } from "antd";
+import { Button, Modal, Form, Input, Select, Tooltip, FormProps } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
 import axios from "axios";
 import type { Announcement } from "../../types/Announcement";
@@ -10,30 +10,37 @@ interface EditAnnouncementFormProps {
     onUpdate: () => void;
 }
 
+interface FieldType {
+    type: string;
+    description: string;
+}
+
 const { TextArea } = Input;
 
 const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
     announcement,
     onUpdate,
 }: EditAnnouncementFormProps) => {
+    const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [type, setType] = useState(announcement.type);
-    const [description, setDescription] = useState(announcement.description);
 
     const { user } = useAuth();
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const handleOk = async () => {
+    const handleOk = () => {
+        form.submit();
+    };
+
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const editedAnnouncement = {
-                id: announcement._id,
-                description: description,
+            const editedAnnouncement: Announcement = {
+                ...values,
+                _id: announcement._id,
                 createdBy: announcement.createdBy,
                 dateCreated: announcement.dateCreated,
-                type: type,
-                lastUpdatedBy: user?._id,
+                lastUpdatedBy: user?._id || announcement.createdBy,
                 dateLastUpdated: Date(),
                 status: announcement.status,
             };
@@ -44,10 +51,10 @@ const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
                 editedAnnouncement
             );
             onUpdate();
+            setIsModalOpen(false);
         } catch (error) {
             console.error("Issue editing update", error);
         }
-        setIsModalOpen(false);
     };
 
     const handleCancel = () => {
@@ -70,12 +77,18 @@ const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
                 onOk={handleOk}
                 onCancel={handleCancel}
             >
-                <Form layout="vertical">
-                    <Form.Item label="Type">
+                <Form
+                    form={form}
+                    initialValues={{
+                        type: announcement.type,
+                        description: announcement.description,
+                    }}
+                    layout="vertical"
+                    onFinish={onFinish}
+                >
+                    <Form.Item<FieldType> name="type" label="Type">
                         <Select
                             suffixIcon={<CaretDownFilled />}
-                            value={type}
-                            onChange={setType}
                             options={[
                                 { value: "event", label: "Event" },
                                 { value: "classes", label: "Classes" },
@@ -83,12 +96,8 @@ const EditAnnouncementForm: React.FC<EditAnnouncementFormProps> = ({
                             ]}
                         />
                     </Form.Item>
-                    <Form.Item label="Description">
-                        <TextArea
-                            rows={6}
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
+                    <Form.Item<FieldType> name="description" label="Description">
+                        <TextArea rows={6} />
                     </Form.Item>
                 </Form>
             </Modal>

@@ -20,7 +20,7 @@ const { TextArea } = Input;
 
 interface FieldType {
     equipment: string;
-    type: string;
+    category: string;
     initialDescription: string;
     description: string;
 }
@@ -114,8 +114,8 @@ const CreateIssueForm: React.FC = () => {
                     </Flex>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
-                        label="Type of Equipment"
-                        name="type"
+                        label="Equipment Category"
+                        name="category"
                         rules={[
                             {
                                 required: true,
@@ -135,13 +135,13 @@ const CreateIssueForm: React.FC = () => {
                     <Form.Item<FieldType>
                         noStyle
                         shouldUpdate={(prevValues, currentValues) =>
-                            prevValues.type !== currentValues.type
+                            prevValues.category !== currentValues.category
                         }
                     >
                         {({ getFieldValue }) => {
-                            const type = getFieldValue("type");
+                            const category = getFieldValue("category");
 
-                            return type ? (
+                            return category ? (
                                 <>
                                     <Form.Item
                                         style={{ width: "100%" }}
@@ -155,7 +155,7 @@ const CreateIssueForm: React.FC = () => {
                                             },
                                         ]}
                                     >
-                                        <SelectEquipment category={type} />
+                                        <SelectEquipment category={category} />
                                     </Form.Item>
                                     <Form.Item<FieldType>
                                         style={{ width: "100%" }}
@@ -173,7 +173,7 @@ const CreateIssueForm: React.FC = () => {
                                             suffixIcon={<CaretDownFilled />}
                                             options={categories
                                                 ?.find(
-                                                    (item) => item._id === type
+                                                    (item) => item._id === category
                                                 )
                                                 ?.defaultIssues?.map(
                                                     (issue) => ({

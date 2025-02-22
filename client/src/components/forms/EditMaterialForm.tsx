@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Modal,
@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import { FilamentTemperatures, Material } from "../../types/Material";
 import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 interface EditMaterialFormProps {
     material: Material;
@@ -40,7 +41,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
     onUpdate,
 }: EditMaterialFormProps) => {
     const [form] = Form.useForm();
-
+    const [categories, setCategories] = useState<Category[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -50,6 +51,20 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
     const handleOk = async () => {
         form.submit();
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
@@ -103,7 +118,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                     initialValues={{
                         name: material.name,
                         shortName: material.shortName,
-                        type: material.category,
+                        category: material.category,
                         description: material.description,
                         temperatures: material.temperatures,
                         properties: material.properties,
@@ -140,7 +155,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                         <Form.Item<FieldType>
                             name="category"
                             style={{ width: "50%" }}
-                            label="Type"
+                            label="Category"
                             rules={[
                                 {
                                     required: true,
@@ -151,14 +166,10 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                         >
                             <Select
                                 suffixIcon={<CaretDownFilled />}
-                                options={[
-                                    {
-                                        value: "filament",
-                                        label: "Filament",
-                                    },
-                                    { value: "resin", label: "Resin" },
-                                    { value: "powder", label: "Powder" },
-                                ]}
+                                options={categories?.map((category) => ({
+                                    value: category._id,
+                                    label: category.name,
+                                }))}
                             />
                         </Form.Item>
                     </Flex>

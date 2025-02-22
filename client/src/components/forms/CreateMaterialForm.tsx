@@ -10,10 +10,11 @@ import {
     message,
 } from "antd";
 import { FormProps } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import MultiType from "./MultiType";
+import { Category } from "../../types/Category";
 
 interface MaterialFormProps {
     onUpdate: () => void;
@@ -22,7 +23,7 @@ interface MaterialFormProps {
 interface FieldType {
     name: string;
     shortName: string;
-    type: string;
+    category: string;
     description: string;
     properties: string[];
     remotePrintAvailable: boolean;
@@ -34,12 +35,26 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
     onUpdate,
 }: MaterialFormProps) => {
     const [form] = Form.useForm();
-
+    const [categories, setCategories] = useState<Category[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleOk = async () => {
         form.submit();
@@ -97,7 +112,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                     initialValues={{
                         name: "",
                         shortName: "",
-                        type: null,
+                        category: null,
                         description: "",
                         properties: [],
                         temperatures: undefined,
@@ -137,8 +152,8 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                         </Form.Item>
                         <Form.Item<FieldType>
                             style={{ width: "50%" }}
-                            label="Type"
-                            name="type"
+                            label="Category"
+                            name="category"
                             rules={[
                                 {
                                     required: true,
@@ -148,14 +163,10 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                         >
                             <Select
                                 suffixIcon={<CaretDownFilled />}
-                                options={[
-                                    {
-                                        value: "filament",
-                                        label: "Filament",
-                                    },
-                                    { value: "resin", label: "Resin" },
-                                    { value: "powder", label: "Powder" },
-                                ]}
+                                options={categories?.map((category) => ({
+                                    value: category._id,
+                                    label: category.name,
+                                }))}
                             />
                         </Form.Item>
                     </Flex>

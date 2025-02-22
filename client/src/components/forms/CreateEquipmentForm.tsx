@@ -1,7 +1,8 @@
-import { Input, Form, Button, Select, Modal, Tooltip } from "antd";
-import { useState } from "react";
+import { Input, Form, Button, Select, Modal, Tooltip, FormProps } from "antd";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
+import { Category } from "../../types/Category";
 
 const { TextArea } = Input;
 
@@ -11,7 +12,7 @@ interface CreateEquipmentFormProps {
 
 interface FieldType {
     name: string;
-    type: string;
+    category: string;
     description: string;
     routePath: string;
 }
@@ -19,34 +20,44 @@ interface FieldType {
 const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
     onUpdate,
 }: CreateEquipmentFormProps) => {
-    const [name, setName] = useState<string>("");
-    const [type, setType] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [routePath, setRoutePath] = useState<string>("");
-
+    const [form] = Form.useForm();
+    const [categories, setCategories] = useState<Category[]>();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get<Category[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                );
+                setCategories(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const handleOk = async () => {
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const newEquipment = {
-                name: name,
-                type: type,
-                description: description,
-                routePath,
-            };
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-                newEquipment
-            ); // TODO add success vs. failed
+                values
+            );
             onUpdate();
             setIsModalOpen(false);
+            form.resetFields();
         } catch (error) {
             console.error("Error creating new update:", error);
         }
+    };
+
+    const handleOk = async () => {
+        form.submit();
     };
 
     const handleCancel = () => {
@@ -71,6 +82,8 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                 onCancel={handleCancel}
             >
                 <Form
+                    onFinish={onFinish}
+                    form={form}
                     name="basic"
                     layout="vertical"
                     style={{ width: "100%" }}
@@ -90,7 +103,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                             },
                         ]}
                     >
-                        <Input onChange={(e) => setName(e.target.value)} />
+                        <Input />
                     </Form.Item>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
@@ -104,12 +117,12 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                             },
                         ]}
                     >
-                        <Input onChange={(e) => setRoutePath(e.target.value)} />
+                        <Input />
                     </Form.Item>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
-                        label="Type of Equipment"
-                        name="type"
+                        label="Equipment Category"
+                        name="category"
                         rules={[
                             {
                                 required: true,
@@ -119,25 +132,10 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                     >
                         <Select
                             suffixIcon={<CaretDownFilled />}
-                            onChange={setType}
-                            options={[
-                                {
-                                    value: "filament",
-                                    label: "Filament Printers",
-                                },
-                                { value: "resin", label: "Resin Printers" },
-                                { value: "powder", label: "Powder Printers" },
-                                {
-                                    value: "subtractive",
-                                    label: "Subtractive/Traditional Manufacturing",
-                                },
-                                {
-                                    value: "computer",
-                                    label: "Desktops/TV Monitor",
-                                },
-                                { value: "wiring", label: "Wiring Tools" },
-                                { value: "other", label: "Other" },
-                            ]}
+                            options={categories?.map((category) => ({
+                                value: category._id,
+                                label: category.name,
+                            }))}
                         />
                     </Form.Item>
                     <Form.Item<FieldType>
@@ -153,7 +151,6 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                         ]}
                     >
                         <TextArea
-                            onChange={(e) => setDescription(e.target.value)}
                             rows={6}
                         />
                     </Form.Item>
