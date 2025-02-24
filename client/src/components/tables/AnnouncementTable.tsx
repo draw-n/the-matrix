@@ -229,6 +229,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 pagination={{
                     pageSize: 5,
                 }}
+                
                 columns={updateColumns}
                 dataSource={finalData}
                 size="middle"
