@@ -31,7 +31,7 @@ const createMaterial = async (req, res) => {
                 _id: new ObjectId(),
                 name,
                 shortName,
-                type,
+                category,
                 description,
                 properties,
                 remotePrintAvailable,

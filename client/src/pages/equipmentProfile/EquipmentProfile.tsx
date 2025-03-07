@@ -117,77 +117,72 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Card>
-                            <Row gutter={[16, 16]}>
-                                <Col lg={8} span={24}>
-                                    <Flex
-                                        style={{ width: "100%" }}
-                                        align="center"
-                                        vertical
-                                    >
-                                        <h3>Headline</h3>
-                                        {editMode ? (
-                                            <Input
-                                                onChange={(e) =>
-                                                    setHeadline(e.target.value)
-                                                }
-                                                value={headline}
-                                            />
-                                        ) : (
-                                            <p>{headline}</p>
+                            <Flex style={{ width: "100%" }} vertical>
+                                <h3>Headline</h3>
+                                {editMode ? (
+                                    <Input
+                                        onChange={(e) =>
+                                            setHeadline(e.target.value)
+                                        }
+                                        value={headline}
+                                    />
+                                ) : (
+                                    <p>{headline}</p>
+                                )}
+                            </Flex>
+                        </Card>
+                    </Col>
+                    <Col lg={12} span={24}>
+                        <Card>
+                            <Flex
+                                style={{ width: "100%" }}
+                                align="center"
+                                vertical
+                            >
+                                <h3>Type</h3>
+                                {editMode ? (
+                                    <Select
+                                        options={categories?.map(
+                                            (category) => ({
+                                                value: category._id,
+                                                label: category.name,
+                                            })
                                         )}
-                                    </Flex>
-                                </Col>
-                                <Col lg={8} span={24}>
-                                    <Flex
-                                        style={{ width: "100%" }}
-                                        align="center"
-                                        vertical
+                                        value={type}
+                                        onChange={setType}
+                                    />
+                                ) : (
+                                    <p
+                                        style={{
+                                            textTransform: "capitalize",
+                                        }}
                                     >
-                                        <h3>Type</h3>
-                                        {editMode ? (
-                                            <Select
-                                                options={categories?.map(
-                                                    (category) => ({
-                                                        value: category._id,
-                                                        label: category.name,
-                                                    })
-                                                )}
-                                                value={type}
-                                                onChange={setType}
-                                            />
-                                        ) : (
-                                            <p
-                                                style={{
-                                                    textTransform: "capitalize",
-                                                }}
-                                            >
-                                                {
-                                                    categories?.find(
-                                                        (item) =>
-                                                            item._id === type
-                                                    )?.name
-                                                }
-                                            </p>
-                                        )}
-                                    </Flex>
-                                </Col>
-                                <Col lg={8} span={24}>
-                                    <Flex
-                                        style={{ width: "100%" }}
-                                        align="center"
-                                        vertical
-                                    >
-                                        <h3>Status</h3>
-                                        <p
-                                            style={{
-                                                textTransform: "capitalize",
-                                            }}
-                                        >
-                                            {equipment.status}
-                                        </p>
-                                    </Flex>
-                                </Col>
-                            </Row>
+                                        {
+                                            categories?.find(
+                                                (item) => item._id === type
+                                            )?.name
+                                        }
+                                    </p>
+                                )}
+                            </Flex>
+                        </Card>
+                    </Col>
+                    <Col lg={12} span={24}>
+                        <Card>
+                            <Flex
+                                style={{ width: "100%" }}
+                                align="center"
+                                vertical
+                            >
+                                <h3>Status</h3>
+                                <p
+                                    style={{
+                                        textTransform: "capitalize",
+                                    }}
+                                >
+                                    {equipment.status}
+                                </p>
+                            </Flex>
                         </Card>
                     </Col>
                     <Col span={24}>

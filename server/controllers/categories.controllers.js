@@ -1,4 +1,10 @@
 const Category = require("../models/Category.js");
+const Equipment = require("../models/Equipment.js");
+const Material = require("../models/Material.js");
+const Issue = require("../models/Issue.js");
+
+var randomColor = require("randomcolor");
+
 var mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types;
 
@@ -18,6 +24,7 @@ const createCategory = async (req, res) => {
                 name,
                 defaultIssues,
                 properties,
+                color: randomColor(),
             });
             await category.save();
             return res.status(200).json(category);
@@ -50,6 +57,19 @@ const deleteCategory = async (req, res) => {
             if (!category) {
                 return res.status(404).send({ message: "Category not found." });
             }
+
+            const matchingEquipment = await Equipment.find({ category: id });
+            const equipment = await Equipment.deleteMany({ category: id });
+            if (equipment.deletedCount > 0) {
+                const idsToDelete = matchingEquipment.map(
+                    (equipment) => equipment._id
+                );
+                const issues = await Issue.deleteMany({
+                    equipment: { $in: idsToDelete },
+                });
+            }
+            const material = await Material.deleteMany({ category: id });
+
             return res
                 .status(200)
                 .json({ message: "Successfully deleted category." });
@@ -134,12 +154,10 @@ const getAllCategories = async (req, res) => {
         return res.status(200).json(categories);
     } catch (err) {
         console.error(err.message);
-        return res
-            .status(500)
-            .send({
-                message: "Error with retrieving categories.",
-                error: err.message,
-            });
+        return res.status(500).send({
+            message: "Error with retrieving categories.",
+            error: err.message,
+        });
     }
 };
 
