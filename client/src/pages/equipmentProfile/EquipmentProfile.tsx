@@ -4,6 +4,7 @@ import {
     Col,
     Flex,
     Input,
+    message,
     Row,
     Select,
     Space,
@@ -15,6 +16,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
+import { useNavigate } from "react-router-dom";
+import ConfirmAction from "../../components/ConfirmAction";
 
 const { Paragraph } = Typography;
 
@@ -38,6 +41,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,6 +86,18 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
             setRefreshEquipment();
         } catch (error) {
             console.error("Issue updating equipment", error);
+        }
+    };
+
+    const deleteEquipment = async () => {
+        try {
+            const response = await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipment._id}`
+            );
+            setRefreshEquipment();
+            navigate("/makerspace");
+        } catch (error) {
+            console.error("Issue deleting equipment", error);
         }
     };
 
@@ -213,6 +230,28 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             />
                         </Card>
                     </Col>
+                    {editMode && (
+                        <Col span={24}>
+                            <Card>
+                                <h3>Admin Actions</h3>
+                                <ConfirmAction
+                                    target={
+                                        <Button
+                                            danger
+                                            style={{ width: "100%" }}
+                                        >
+                                            {`Delete ${equipment.name}`} and its
+                                            associated data
+                                        </Button>
+                                    }
+                                    actionSuccess={deleteEquipment}
+                                    title={`Delete the ${equipment.name} Equipment`}
+                                    headlineText="Deleting this equipment will also delete its associated issues."
+                                    confirmText={`Are you sure you wish to delete the ${equipment.name} equipment?`}
+                                />
+                            </Card>
+                        </Col>
+                    )}
                 </Row>
             </Space>
         </>

@@ -7,18 +7,25 @@ import {
 import {
     Alert,
     Button,
+    Collapse,
     ColorPicker,
     Flex,
     Input,
+    List,
+    message,
     Modal,
     Space,
+    Tag,
     Tooltip,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Category } from "../../types/Category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
 import { geekblue } from "@ant-design/colors";
+import { Equipment } from "../../types/Equipment";
+import { Material } from "../../types/Material";
+import ConfirmAction from "../../components/ConfirmAction";
 
 interface EditCategoryProps {
     category: Category;
@@ -35,6 +42,34 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     const [color, setColor] = useState(category.color);
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [equipment, setEquipment] = useState<Equipment[]>([]);
+    const [materials, setMaterials] = useState<Material[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/equipment?category=${
+                        category._id
+                    }`
+                );
+                setEquipment(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/materials?category=${
+                        category._id
+                    }`
+                );
+                setMaterials(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, [category]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -79,6 +114,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
             const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${category._id}`
             );
+            message.success(response.data.message);
             onUpdate();
         } catch (error) {
             console.error(error);
@@ -123,40 +159,58 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                             </Flex>
                         )}
                     />
-
-                    <Button
-                        onClick={showModal}
-                        icon={<DeleteOutlined />}
-                        danger
-                    >
-                        Delete
-                    </Button>
-                    <>
-                        <Modal
-                            open={isModalOpen}
-                            onOk={handleOk}
-                            onCancel={handleCancel}
-                            centered
-                            title={`Delete the ${category.name} Category`}
-                        >
-                            <Space
-                                direction="vertical"
-                                style={{ width: "100%" }}
+                    <ConfirmAction
+                        target={
+                            <Button icon={<DeleteOutlined />} danger>
+                                Delete
+                            </Button>
+                        }
+                        actionSuccess={deleteCategory}
+                        title={`Delete the ${category.name} Category`}
+                        headlineText="Deleting this category will also delete its associated equipment and materials."
+                        confirmText={`Are you sure you wish to delete the ${category.name} category?`}
+                        children={
+                            <Collapse
                                 size="small"
-                            >
-                                <p>
-                                    Deleting this category will also delete its
-                                    associated equipment and materials.
-                                </p>
-                                <p>
-                                    <b>
-                                        Are you sure you wish to delete the{" "}
-                                        {category.name} category?
-                                    </b>
-                                </p>
-                            </Space>
-                        </Modal>
-                    </>
+                                items={[
+                                    {
+                                        key: "1",
+                                        label: "Equipment",
+                                        children: (
+                                            <List
+                                                size="small"
+                                                dataSource={equipment?.map(
+                                                    (item) => item.name
+                                                )}
+                                                renderItem={(item) => (
+                                                    <List.Item>
+                                                        {item}
+                                                    </List.Item>
+                                                )}
+                                            />
+                                        ),
+                                    },
+                                    {
+                                        key: "2",
+                                        label: "Materials",
+                                        children: (
+                                            <List
+                                                size="small"
+                                                dataSource={materials?.map(
+                                                    (item) => item.name
+                                                )}
+                                                renderItem={(item) => (
+                                                    <List.Item>
+                                                        {item}
+                                                    </List.Item>
+                                                )}
+                                            />
+                                        ),
+                                    },
+                                ]}
+                            />
+                        }
+                    />
                 </Flex>
             </Flex>
 
@@ -174,6 +228,18 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                 <Button onClick={addIssue} icon={<PlusOutlined />}>
                     Add Issue
                 </Button>
+            </Flex>
+            <h3>Equipment</h3>
+            <Flex wrap>
+                {equipment?.map((item) => (
+                    <Tag>{item.name}</Tag>
+                ))}
+            </Flex>
+            <h3>Materials</h3>
+            <Flex wrap>
+                {materials?.map((item) => (
+                    <Tag>{item.name}</Tag>
+                ))}
             </Flex>
         </Flex>
     );

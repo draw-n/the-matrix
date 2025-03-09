@@ -1,5 +1,5 @@
 const Equipment = require("../models/Equipment.js");
-const Category = require("../models/Category.js");
+const Issue = require("../models/Issue.js")
 var mongoose = require("mongoose");
 const { ObjectId } = mongoose.Types; // Import ObjectId
 
@@ -51,7 +51,11 @@ const deleteEquipment = async (req, res) => {
     try {
         if (id) {
             const equipment = await Equipment.findByIdAndDelete(id);
-            
+            if (!equipment) {
+                return res.status(404).send({message: "Equipment not found."});
+
+            }
+            const issues = await Issue.deleteMany({equipment: id})
             return res
                 .status(200)
                 .send({ message: "Successfully deleted equipment." });
