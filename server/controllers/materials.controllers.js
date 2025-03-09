@@ -147,13 +147,21 @@ const getMaterial = async (req, res) => {
  * @returns - response details (with status)
  */
 const getAllMaterials = async (req, res) => {
-    const { remotePrintAvailable } = req.query;
+    const { remotePrintAvailable, category } = req.query;
     try {
         let filter = {};
 
         if (remotePrintAvailable) {
             filter.remotePrintAvailable =
                 remotePrintAvailable.toLowerCase() === "true";
+        }
+
+        if (category) {
+            if (ObjectId.isValid(category)) {
+                filter.category = ObjectId.createFromHexString(category); // Convert to ObjectId
+            } else {
+                filter.category = category; // It's a string, use it as is
+            }
         }
 
         const material = await Material.find(filter);

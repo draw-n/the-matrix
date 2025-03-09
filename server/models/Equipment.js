@@ -36,6 +36,10 @@ const EquipmentSchema = new Schema({
         type: String,
         required: true,
     },
+    avatarImage: {
+        type: ObjectId,
+        ref: "File",
+    },
 });
 
 module.exports = Equipment = mongoose.model("equipment", EquipmentSchema);
