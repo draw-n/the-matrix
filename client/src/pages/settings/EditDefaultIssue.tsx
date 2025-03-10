@@ -1,29 +1,30 @@
 import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Flex, Input, Tooltip } from "antd";
+import { Button, Flex, Input, Popconfirm, Tooltip } from "antd";
 import React, { useState } from "react";
 
 interface EditDefaultIssueProps {
     initialEditMode: boolean;
     issue: string;
-    setIssue: (index: number, item: string) => void;
+    updateIssue: (index: number, item: string) => void;
     index: number;
     updateCategory: () => void;
+    deleteIssue: (index: number) => void;
 }
 
 const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
     issue,
-    setIssue,
+    updateIssue,
     index,
     initialEditMode,
     updateCategory,
+    deleteIssue,
 }: EditDefaultIssueProps) => {
     const [editMode, setEditMode] = useState(initialEditMode);
-
 
     return (
         <Flex justify="space-between" gap="small">
             <Input
-                onChange={(e) => setIssue(index, e.target.value)}
+                onChange={(e) => updateIssue(index, e.target.value)}
                 value={issue}
                 disabled={!editMode}
             />
@@ -46,8 +47,16 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
                 </Tooltip>
             )}
 
-            <Tooltip title="Delete Issue">
-                <Button danger icon={<DeleteOutlined />} />
+            <Tooltip title="Delete">
+                <Popconfirm
+                    title="Delete Common Issue"
+                    description="Are you sure you want to delete this common issue?"
+                    okText="Yes"
+                    cancelText="No"
+                    onConfirm={() => deleteIssue(index)}
+                >
+                    <Button danger icon={<DeleteOutlined />} />
+                </Popconfirm>
             </Tooltip>
         </Flex>
     );

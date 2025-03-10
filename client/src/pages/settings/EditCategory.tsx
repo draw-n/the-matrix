@@ -36,8 +36,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     category,
     onUpdate,
 }: EditCategoryProps) => {
-    const [defaultIssues, setDefaultIssues] = useState<string[] | undefined>(
-        category.defaultIssues
+    const [defaultIssues, setDefaultIssues] = useState<string[]>(
+        category.defaultIssues || []
     );
     const [color, setColor] = useState(category.color);
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -95,6 +95,12 @@ const EditCategory: React.FC<EditCategoryProps> = ({
         });
     };
 
+    const deleteIssueAtIndex = (index: number) => {
+        const updatedArray = [...defaultIssues.slice(0, index), ...defaultIssues.slice(index + 1)];
+        setDefaultIssues(updatedArray);
+        updateCategory();
+    };
+
     const addIssue = () => {
         const newIssue = ""; // You can customize how you get the new issue
 
@@ -120,6 +126,10 @@ const EditCategory: React.FC<EditCategoryProps> = ({
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        updateCategory();
+    }, [defaultIssues])
 
     const updateCategory = async () => {
         setIsColorPickerOpen(false);
@@ -219,7 +229,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     initialEditMode={issue === ""}
                     index={index}
                     issue={issue}
-                    setIssue={updateIssueAtIndex}
+                    updateIssue={updateIssueAtIndex}
+                    deleteIssue={deleteIssueAtIndex}
                     updateCategory={updateCategory}
                 />
             ))}
