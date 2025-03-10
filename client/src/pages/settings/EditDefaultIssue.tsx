@@ -49,6 +49,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
 
             <Tooltip title="Delete">
                 <Popconfirm
+                    placement="topRight"
                     title="Delete Common Issue"
                     description="Are you sure you want to delete this common issue?"
                     okText="Yes"

@@ -285,9 +285,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
     return (
         <>
             <Table
-                pagination={{
-                    pageSize: numRows, // Set the number of rows per page
-                }}
+                pagination={{defaultPageSize: numRows, hideOnSinglePage: true}}
                 columns={issueColumns}
                 dataSource={finalData}
                 expandable={{

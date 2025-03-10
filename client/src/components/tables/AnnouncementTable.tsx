@@ -197,7 +197,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                         <Tooltip title="Delete">
                             <Popconfirm
                                 title="Delete Announcement"
-                                description="Are you sure to delete this announcement?"
+                                description="Are you sure you want to delete this announcement?"
                                 onConfirm={() =>
                                     deleteAnnouncement(announcement._id)
                                 }
@@ -226,10 +226,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
     return (
         <>
             <Table
-                pagination={{
-                    pageSize: 5,
-                }}
-                
+                pagination={{ defaultPageSize: 5, hideOnSinglePage: true }}
                 columns={updateColumns}
                 dataSource={finalData}
                 size="middle"

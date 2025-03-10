@@ -66,7 +66,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
 
     return (
         <>
-            <Tooltip title="Add New Equipment">
+            <Tooltip title="Add New Equipment" placement="topLeft">
                 <Button
                     type="primary"
                     className="primary-button-filled"

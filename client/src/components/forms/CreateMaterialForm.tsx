@@ -87,7 +87,7 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
 
     return (
         <>
-            <Tooltip title="Add New Materials">
+            <Tooltip title="Add New Materials" placement="topLeft">
                 <Button
                     type="primary"
                     className="primary-button-filled"

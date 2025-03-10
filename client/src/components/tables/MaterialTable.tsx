@@ -162,9 +162,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
     return (
         <>
             <Table
-                pagination={{
-                    pageSize: numRows, // Set the number of rows per page
-                }}
+                pagination={{defaultPageSize: numRows, hideOnSinglePage: true}}
                 columns={updateColumns}
                 dataSource={materials}
                 size="middle"
