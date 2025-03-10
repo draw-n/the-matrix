@@ -52,6 +52,12 @@ const allPages: MenuItem[] = [
         icon: <EditOutlined />,
     },
     {
+        key: "/upload",
+        label: "Remote Print",
+        access: ["novice", "proficient", "expert", "moderator", "admin"],
+        icon: <UsbFilled />,
+    },
+    {
         key: "/makerspace",
         label: "Makerspace",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
@@ -70,12 +76,7 @@ const allPages: MenuItem[] = [
         access: ["novice", "proficient", "expert", "moderator", "admin"],
         icon: <UserOutlined />,
     },
-    {
-        key: "/upload",
-        label: "Remote Print",
-        access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <UsbFilled />,
-    },
+
     {
         key: "/settings",
         label: "Settings",

@@ -18,6 +18,7 @@ import axios from "axios";
 import { FilamentTemperatures, Material } from "../../types/Material";
 import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
+import MultiType from "./MultiType";
 
 interface EditMaterialFormProps {
     material: Material;
@@ -104,7 +105,7 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
             </Tooltip>
 
             <Modal
-                title="Edit Update"
+                title="Edit Material"
                 open={isModalOpen}
                 centered
                 onOk={handleOk}
@@ -173,6 +174,16 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                             />
                         </Form.Item>
                     </Flex>
+                    <Form.Item<FieldType>
+                        label="Properties"
+                        name="properties"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please add properties for the material."
+                            }
+                        ]}
+                        ><MultiType /></Form.Item>
                     <Form.Item<FieldType>
                         name="description"
                         label="Description"
