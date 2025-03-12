@@ -171,16 +171,24 @@ const CreateIssueForm: React.FC = () => {
                                     >
                                         <Select
                                             suffixIcon={<CaretDownFilled />}
-                                            options={categories
-                                                ?.find(
-                                                    (item) => item._id === category
-                                                )
-                                                ?.defaultIssues?.map(
-                                                    (issue) => ({
-                                                        value: issue,
-                                                        label: issue,
-                                                    })
-                                                )}
+                                            options={[
+                                                ...(categories
+                                                    ?.find(
+                                                        (item) =>
+                                                            item._id ===
+                                                            category
+                                                    )
+                                                    ?.defaultIssues?.map(
+                                                        (issue) => ({
+                                                            value: issue,
+                                                            label: issue,
+                                                        })
+                                                    ) || []),
+                                                {
+                                                    value: "There is another issue not covered by the other options. Please elaborate below.",
+                                                    label: "There is another issue not covered by the other options. Please elaborate below.",
+                                                },
+                                            ]}
                                         />
                                     </Form.Item>
                                 </>
