@@ -145,11 +145,12 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
 
                         <Tooltip title="Delete">
                             <Popconfirm
-                                title="Delete Issue"
-                                description="Are you sure to delete this issue?"
+                                title="Delete Material"
+                                description="Are you sure to delete this material?"
                                 onConfirm={() => deleteMaterial(material._id)}
                                 okText="Yes"
                                 cancelText="No"
+                                placement="topRight"
                             >
                                 <Button icon={<DeleteOutlined />} danger />
                             </Popconfirm>

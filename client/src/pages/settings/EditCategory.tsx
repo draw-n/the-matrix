@@ -36,6 +36,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     category,
     onUpdate,
 }: EditCategoryProps) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [defaultIssues, setDefaultIssues] = useState<string[]>(
         category.defaultIssues || []
     );
@@ -54,6 +55,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     }`
                 );
                 setEquipment(response.data);
+                setIsLoading(true)
             } catch (error) {
                 console.error(error);
             }
@@ -70,19 +72,6 @@ const EditCategory: React.FC<EditCategoryProps> = ({
         };
         fetchData();
     }, [category]);
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleOk = () => {
-        deleteCategory();
-        setIsModalOpen(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
         setDefaultIssues((prevIssues) => {

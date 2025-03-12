@@ -7,6 +7,7 @@ import {
     message,
     Row,
     Select,
+    Skeleton,
     Space,
     Typography,
 } from "antd";
@@ -34,6 +35,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     refreshEquipment,
     setRefreshEquipment,
 }: EquipmentProfileProps) => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [categories, setCategories] = useState<Category[]>();
     const [name, setName] = useState(equipment.name);
@@ -51,6 +53,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/categories`
                 );
                 setCategories(response.data);
+                setIsLoading(false)
             } catch (error) {
                 console.error(error);
             }
@@ -134,89 +137,108 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Card>
-                            <Flex style={{ width: "100%" }} vertical>
-                                <h3>Headline</h3>
-                                {editMode ? (
-                                    <Input
-                                        onChange={(e) =>
-                                            setHeadline(e.target.value)
-                                        }
-                                        value={headline}
-                                    />
-                                ) : (
-                                    <p>{headline}</p>
-                                )}
-                            </Flex>
+                            {isLoading ? (
+                                <Skeleton active paragraph={{ rows: 2 }} />
+                            ) : (
+                                <Flex style={{ width: "100%" }} vertical>
+                                    <h3>Headline</h3>
+                                    {editMode ? (
+                                        <Input
+                                            onChange={(e) =>
+                                                setHeadline(e.target.value)
+                                            }
+                                            value={headline}
+                                        />
+                                    ) : (
+                                        <p>{headline}</p>
+                                    )}
+                                </Flex>
+                            )}
                         </Card>
                     </Col>
                     <Col lg={12} span={24}>
                         <Card>
-                            <Flex
-                                style={{ width: "100%" }}
-                                align="center"
-                                vertical
-                            >
-                                <h3>Type</h3>
-                                {editMode ? (
-                                    <Select
-                                        options={categories?.map(
-                                            (category) => ({
-                                                value: category._id,
-                                                label: category.name,
-                                            })
-                                        )}
-                                        value={type}
-                                        onChange={setType}
-                                    />
-                                ) : (
+                            {isLoading ? (
+                                <Skeleton active paragraph={{ rows: 1 }} />
+                            ) : (
+                                <Flex
+                                    style={{ width: "100%", height: "100%" }}
+                                    align="center"
+                                    vertical
+                                >
+                                    <h3>Type</h3>
+                                    {editMode ? (
+                                        <Select
+                                            options={categories?.map(
+                                                (category) => ({
+                                                    value: category._id,
+                                                    label: category.name,
+                                                })
+                                            )}
+                                            value={type}
+                                            onChange={setType}
+                                        />
+                                    ) : (
+                                        <p
+                                            style={{
+                                                textTransform: "capitalize",
+                                            }}
+                                        >
+                                            {
+                                                categories?.find(
+                                                    (item) => item._id === type
+                                                )?.name
+                                            }
+                                        </p>
+                                    )}
+                                </Flex>
+                            )}
+                        </Card>
+                    </Col>
+                    <Col lg={12} span={24}>
+                        <Card>
+                            {isLoading ? (
+                                <Skeleton active paragraph={{ rows: 1 }} />
+                            ) : (
+                                <Flex
+                                    style={{ width: "100%", height: "100%" }}
+                                    align="center"
+                                    vertical
+                                >
+                                    <h3>Status</h3>
                                     <p
                                         style={{
                                             textTransform: "capitalize",
                                         }}
                                     >
-                                        {
-                                            categories?.find(
-                                                (item) => item._id === type
-                                            )?.name
-                                        }
+                                        {equipment.status}
                                     </p>
-                                )}
-                            </Flex>
-                        </Card>
-                    </Col>
-                    <Col lg={12} span={24}>
-                        <Card>
-                            <Flex
-                                style={{ width: "100%" }}
-                                align="center"
-                                vertical
-                            >
-                                <h3>Status</h3>
-                                <p
-                                    style={{
-                                        textTransform: "capitalize",
-                                    }}
-                                >
-                                    {equipment.status}
-                                </p>
-                            </Flex>
+                                </Flex>
+                            )}
                         </Card>
                     </Col>
                     <Col span={24}>
                         <Card>
-                            <h3>Description</h3>
-                            {editMode ? (
-                                <TextArea
-                                    autoSize
-                                    value={description}
-                                    onChange={(e) =>
-                                        setDescription(e.target.value)
-                                    }
-                                />
+                            {isLoading ? (
+                                <Skeleton active paragraph={{ rows: 4 }} />
                             ) : (
-                                <Paragraph>
-                                    <p>{description}</p>
-                                </Paragraph>
+                                <Flex vertical>
+                                    {" "}
+                                    <h3>Description</h3>
+                                    {editMode ? (
+                                        <TextArea
+                                            autoSize
+                                            value={description}
+                                            onChange={(e) =>
+                                                setDescription(e.target.value)
+                                            }
+                                        />
+                                    ) : (
+                                        <Paragraph>
+                                            <p>{description}</p>
+                                        </Paragraph>
+                                    )}
+                                </Flex>
                             )}
                         </Card>
                     </Col>

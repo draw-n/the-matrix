@@ -1,4 +1,4 @@
-import { Button, Flex, List, Space, Tag } from "antd";
+import { Button, Flex, List, Skeleton, Space, Tag } from "antd";
 import { Material } from "../../types/Material";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -46,7 +46,7 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
     return (
         <>
             {isLoading ? (
-                <Loading />
+                <Skeleton active />
             ) : (
                 <Space direction="vertical" size="large">
                     <h2>Select Material</h2>

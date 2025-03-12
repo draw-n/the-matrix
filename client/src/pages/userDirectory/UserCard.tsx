@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Select, Space } from "antd";
+import { Button, Card, Flex, Popconfirm, Select, Space } from "antd";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import { useState } from "react";
 import axios from "axios";
@@ -81,14 +81,21 @@ const UserCard: React.FC<UserCardProps> = ({
                     </Space>
                     <Flex gap="5px" style={{ width: "100%" }} justify="end">
                         {editMode && (
-                            <Button
-                                size="small"
-                                danger
-                                onClick={() => deleteUser(cardUser._id)}
-                                icon={<DeleteOutlined />}
+                            <Popconfirm
+                                title="Delete User"
+                                description="Are you sure you want to delete this user?"
+                                onConfirm={() => deleteUser(cardUser._id)}
+                                okText="Yes"
+                                cancelText="No"
                             >
-                                Delete
-                            </Button>
+                                <Button
+                                    size="small"
+                                    danger
+                                    icon={<DeleteOutlined />}
+                                >
+                                    Delete
+                                </Button>
+                            </Popconfirm>
                         )}
                         {user?._id != cardUser._id && (
                             <Button

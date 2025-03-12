@@ -182,7 +182,14 @@ const CreateMaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <MultiType />
+                        {/*<MultiType />*/}
+                        <Select
+                            mode="tags"
+                            style={{ width: "100%" }}
+                            tokenSeparators={[","]}
+                            open={false}
+                            suffixIcon={null}
+                        />
                     </Form.Item>
 
                     <Form.Item<FieldType>

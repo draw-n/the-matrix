@@ -10,6 +10,8 @@ import {
     Empty,
     Typography,
     Select,
+    Segmented,
+    message,
 } from "antd";
 import axios from "axios";
 import UserCard from "./UserCard";
@@ -25,9 +27,10 @@ const UserDirectory: React.FC = () => {
 
     const deleteUser = async (id: string) => {
         try {
-            await axios.delete(
+            const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/users/${id}`
             );
+            message.success(response.data.message)
             setRefresh(refresh + 1);
         } catch (error) {
             console.error("Deleting user failed: ", error);
@@ -70,22 +73,19 @@ const UserDirectory: React.FC = () => {
                 >
                     <h1>USER DIRECTORY</h1>
                     <Flex gap="20px">
-                        <Radio.Group
-                            onChange={(e) => setFilter(e.target.value)}
+                        <Segmented
+                            options={[
+                                { label: "All", value: "" },
+                                { label: "Novice", value: "novice" },
+                                { label: "Proficient", value: "proficient" },
+                                { label: "Expert", value: "expert" },
+                                { label: "Moderator", value: "moderator" },
+                                { label: "Admin", value: "admin" },
+                            ]}
+                            onChange={(value) => setFilter(value)}
                             defaultValue=""
-                            buttonStyle="solid"
-                        >
-                            <Radio.Button value="">All</Radio.Button>
-                            <Radio.Button value="novice">Novice</Radio.Button>
-                            <Radio.Button value="proficient">
-                                Proficient
-                            </Radio.Button>
-                            <Radio.Button value="expert">Expert</Radio.Button>
-                            <Radio.Button value="moderator">
-                                Moderator
-                            </Radio.Button>
-                            <Radio.Button value="admin">Admin</Radio.Button>
-                        </Radio.Group>
+                        />
+
                         {/*
                             <Select
                             showSearch
