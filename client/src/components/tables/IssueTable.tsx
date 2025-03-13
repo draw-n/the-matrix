@@ -251,7 +251,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     <Tooltip title="Delete">
                         <Popconfirm
                             title="Delete Issue"
-                            description="Are you sure to delete this issue?"
+                            description="Are you sure you want to delete this issue?"
                             onConfirm={() => deleteIssue(item._id)}
                             okText="Yes"
                             cancelText="No"

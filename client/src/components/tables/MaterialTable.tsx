@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Material } from "../../types/Material";
-import EditMaterialForm from "../forms/EditMaterialForm";
+import MaterialForm from "../forms/MaterialForm";
 import {
     CheckOutlined,
     CloseOutlined,
@@ -138,7 +138,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             render: (material) =>
                 material._id && (
                     <Space>
-                        <EditMaterialForm
+                        <MaterialForm
                             onUpdate={() => setRefresh(refresh + 1)}
                             material={material}
                         />

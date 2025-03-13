@@ -9,11 +9,12 @@ const IssueSchema = new Schema({
     },
     equipment: {
         type: ObjectId,
+        ref: "Equipment",
         required: true,
     },
     status: {
         type: String,
-        enum: ["open", "in-progress", "completed", "archived"],
+        enum: ["open", "in-progress", "completed"],
         required: true,
     },
     description: {
@@ -21,7 +22,8 @@ const IssueSchema = new Schema({
         required: true,
     },
     createdBy: {
-        type: String,
+        type: ObjectId,
+        ref: "User",
         required: true,
     },
     dateCreated: {
@@ -29,7 +31,8 @@ const IssueSchema = new Schema({
         required: true,
     },
     assignedTo: {
-        type: String,
+        type: ObjectId,
+        ref: "User"
     },
 });
 

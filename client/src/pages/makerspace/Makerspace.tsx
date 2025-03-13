@@ -7,7 +7,7 @@ import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/Equipment";
 
 import "./equipment.css";
-import MaterialForm from "../../components/forms/CreateMaterialForm";
+import MaterialForm from "../../components/forms/MaterialForm";
 import MaterialTable from "../../components/tables/MaterialTable";
 import { Category } from "../../types/Category";
 

@@ -16,12 +16,11 @@ import {
 } from "antd";
 import axios from "axios";
 import { FilamentTemperatures, Material } from "../../types/Material";
-import { CaretDownFilled, EditOutlined } from "@ant-design/icons";
+import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
-import MultiType from "./MultiType";
 
-interface EditMaterialFormProps {
-    material: Material;
+interface MaterialFormProps {
+    material?: Material;
     onUpdate: () => void;
 }
 
@@ -37,10 +36,10 @@ interface FieldType {
 
 const { TextArea } = Input;
 
-const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
+const MaterialForm: React.FC<MaterialFormProps> = ({
     material,
     onUpdate,
-}: EditMaterialFormProps) => {
+}: MaterialFormProps) => {
     const [form] = Form.useForm();
     const [categories, setCategories] = useState<Category[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,16 +68,28 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const editedMaterial: Material = {
-                _id: material._id,
-                ...values,
-            };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/materials/${material._id}`,
-                editedMaterial
-            );
+            if (material) {
+                const editedMaterial: Material = {
+                    _id: material._id,
+                    ...values,
+                };
+                const response = await axios.put(
+                    `${import.meta.env.VITE_BACKEND_URL}/materials/${
+                        material._id
+                    }`,
+                    editedMaterial
+                );
+                message.success(response.data.message);
+            } else {
+                const response = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/materials`,
+                    values
+                );
+                message.success("Material successfully created!");
+                form.resetFields();
+            }
+
             onUpdate();
-            message.success("Material successfully updated!");
             setIsModalOpen(false);
         } catch (error) {
             console.error("Issue editing update", error);
@@ -96,16 +107,16 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
 
     return (
         <>
-            <Tooltip title="Edit">
+            <Tooltip title={material ? "Edit Material" : "Add Material"}>
                 <Button
-                    className="primary-button-filled"
-                    icon={<EditOutlined />}
+                    type="primary"
+                    icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={showModal}
                 />
             </Tooltip>
 
             <Modal
-                title="Edit Material"
+                title={material ? "Edit Material" : "Add Material"}
                 open={isModalOpen}
                 centered
                 onOk={handleOk}
@@ -116,15 +127,30 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                     onFinishFailed={onFinishFailed}
                     layout="vertical"
                     form={form}
-                    initialValues={{
-                        name: material.name,
-                        shortName: material.shortName,
-                        category: material.category,
-                        description: material.description,
-                        temperatures: material.temperatures,
-                        properties: material.properties,
-                        remotePrintAvailable: material.remotePrintAvailable,
-                    }}
+                    colon={false}
+                    preserve={false}
+                    initialValues={
+                        material
+                            ? {
+                                  name: material.name,
+                                  shortName: material.shortName,
+                                  category: material.category,
+                                  description: material.description,
+                                  temperatures: material.temperatures,
+                                  properties: material.properties,
+                                  remotePrintAvailable:
+                                      material.remotePrintAvailable,
+                              }
+                            : {
+                                  name: "",
+                                  shortName: "",
+                                  category: null,
+                                  description: "",
+                                  properties: [],
+                                  temperatures: undefined,
+                                  remotePrintAvailable: false,
+                              }
+                    }
                 >
                     <Form.Item<FieldType>
                         label="Name"
@@ -132,11 +158,11 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                         rules={[
                             {
                                 required: true,
-                                message: "Please add a name to the material.",
+                                message: "Please add a name for the material.",
                             },
                         ]}
                     >
-                        <Input />
+                        <Input placeholder="ex. Polylactic Acid" />
                     </Form.Item>
                     <Flex gap="10px">
                         <Form.Item<FieldType>
@@ -147,11 +173,11 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                                 {
                                     required: true,
                                     message:
-                                        "Please add a short name to the material.",
+                                        "Please add a short name/nickname to the material.",
                                 },
                             ]}
                         >
-                            <Input />
+                            <Input placeholder="ex. PLA" />
                         </Form.Item>
                         <Form.Item<FieldType>
                             name="category"
@@ -180,10 +206,19 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                         rules={[
                             {
                                 required: true,
-                                message: "Please add properties for the material."
-                            }
+                                message:
+                                    "Please add properties for the material.",
+                            },
                         ]}
-                        ><MultiType /></Form.Item>
+                    >
+                        <Select
+                            mode="tags"
+                            style={{ width: "100%" }}
+                            tokenSeparators={[","]}
+                            open={false}
+                            suffixIcon={null}
+                        />
+                    </Form.Item>
                     <Form.Item<FieldType>
                         name="description"
                         label="Description"
@@ -200,13 +235,17 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                     <Form.Item
                         noStyle
                         shouldUpdate={(prevValues, currentValues) =>
-                            prevValues.type !== currentValues.type
+                            prevValues.category !== currentValues.category
                         }
                     >
                         {({ getFieldValue }) => {
-                            const type = getFieldValue("type");
+                            const category = categories?.find(
+                                (item) => item._id == getFieldValue("category")
+                            );
                             // Only render the grid if 'visibility' is 'show'
-                            return type === "filament" ? (
+                            return category?.properties?.includes(
+                                "temperature"
+                            ) ? (
                                 <Row gutter={[16, 16]}>
                                     <Col span={4}>
                                         <p>Extruder</p>
@@ -223,7 +262,9 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                                                 rules={[
                                                     {
                                                         required:
-                                                            type === "filament",
+                                                            category?.properties?.includes(
+                                                                "temperature"
+                                                            ),
                                                         message:
                                                             "Please add a temperature for the extruder on the first layer.",
                                                     },
@@ -255,7 +296,9 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                                                 rules={[
                                                     {
                                                         required:
-                                                            type === "filament",
+                                                            category?.properties?.includes(
+                                                                "temperature"
+                                                            ),
                                                         message:
                                                             "Please add a temperature for the extruder after the first layer.",
                                                     },
@@ -290,7 +333,9 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                                                 rules={[
                                                     {
                                                         required:
-                                                            type === "filament",
+                                                            category?.properties?.includes(
+                                                                "temperature"
+                                                            ),
                                                         message:
                                                             "Please add a temperature for the bed on the first layer.",
                                                     },
@@ -322,7 +367,9 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
                                                 rules={[
                                                     {
                                                         required:
-                                                            type === "filament",
+                                                            category?.properties?.includes(
+                                                                "temperature"
+                                                            ),
                                                         message:
                                                             "Please add a temperature for the bed after the first layer.",
                                                     },
@@ -349,13 +396,10 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
 
                     <Form.Item<FieldType>
                         name="remotePrintAvailable"
-                        label={null}
+                        label="Will it be available for remote printing?"
+                        layout="horizontal"
                     >
-                        <Flex gap="10px" align="center">
-                            <p>Will it be available for remote printing?</p>
-
-                            <Switch />
-                        </Flex>
+                        <Switch />
                     </Form.Item>
                 </Form>
             </Modal>
@@ -363,4 +407,4 @@ const EditMaterialForm: React.FC<EditMaterialFormProps> = ({
     );
 };
 
-export default EditMaterialForm;
+export default MaterialForm;

@@ -1,4 +1,4 @@
-import { Button, Form, FormProps, Input, Modal } from "antd";
+import { Button, Form, FormProps, Input, Modal, Select } from "antd";
 import axios from "axios";
 import { useState } from "react";
 
@@ -10,6 +10,7 @@ interface CreateCategoryFormProps {
 
 interface FieldType {
     name: string;
+    properties: string[];
 }
 
 const CreateCategoryForm: React.FC<CreateCategoryFormProps> = ({
@@ -55,6 +56,17 @@ const CreateCategoryForm: React.FC<CreateCategoryFormProps> = ({
                     label="Category Name"
                 >
                     <Input />
+                </Form.Item>
+                <Form.Item<FieldType> name="properties" label="Properties">
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        style={{ width: "100%" }}
+                        placeholder="Please select"
+                        options={[
+                            { value: "temperature", label: "Temperature" },
+                        ]}
+                    />
                 </Form.Item>
             </Form>
         </Modal>

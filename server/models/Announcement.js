@@ -17,7 +17,7 @@ const AnnouncementSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["scheduled", "posted", "archived"],
+        enum: ["scheduled", "posted"],
         required: true,
     },
     description: {
@@ -25,7 +25,8 @@ const AnnouncementSchema = new Schema({
         required: true,
     },
     createdBy: {
-        type: String,
+        type: ObjectId,
+        ref: "User",
         required: true,
     },
     dateCreated: {
@@ -33,7 +34,8 @@ const AnnouncementSchema = new Schema({
         required: true,
     },
     lastUpdatedBy: {
-        type: String,
+        type: ObjectId,
+        ref: "User",
         required: true,
     },
     dateLastUpdated: {
