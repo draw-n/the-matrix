@@ -1,7 +1,7 @@
 import { Flex, Space } from "antd";
 import { useState } from "react";
 
-import CreateAnnouncementForm from "../../components/forms/CreateAnnouncementForm";
+import AnnouncementForm from "../../components/forms/AnnouncementForm";
 import AnnouncementTable from "../../components/tables/AnnouncementTable";
 import IssueTable from "../../components/tables/IssueTable";
 
@@ -21,7 +21,7 @@ const EditUpdates: React.FC = () => {
                 >
                     <h2>Announcements</h2>
 
-                    <CreateAnnouncementForm
+                    <AnnouncementForm
                         onUpdate={() => setRefreshUpdates((prev) => prev + 1)}
                     />
                 </Flex>

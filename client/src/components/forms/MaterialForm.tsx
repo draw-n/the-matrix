@@ -110,6 +110,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             <Tooltip title={material ? "Edit Material" : "Add Material"}>
                 <Button
                     type="primary"
+                    size="small"
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={showModal}
                 />

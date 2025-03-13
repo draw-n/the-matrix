@@ -5,7 +5,7 @@ export interface Announcement {
     status?: string;
     description: string;
     createdBy: string;
-    dateCreated: string;
+    dateCreated: Date;
     lastUpdatedBy: string;
-    dateLastUpdated: string;
+    dateLastUpdated: Date;
 }

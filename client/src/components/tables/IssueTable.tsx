@@ -242,12 +242,6 @@ const IssueTable: React.FC<IssueTableProps> = ({
             key: "action",
             render: (item: Issue) => (
                 <Flex gap="small">
-                    <Tooltip title="Archive">
-                        <Button
-                            icon={<FolderOutlined />}
-                            onClick={() => changeIssueStatus(item, "archived")}
-                        />
-                    </Tooltip>
                     <Tooltip title="Delete">
                         <Popconfirm
                             title="Delete Issue"
@@ -285,7 +279,10 @@ const IssueTable: React.FC<IssueTableProps> = ({
     return (
         <>
             <Table
-                pagination={{defaultPageSize: numRows, hideOnSinglePage: true}}
+                pagination={{
+                    defaultPageSize: numRows,
+                    hideOnSinglePage: true,
+                }}
                 columns={issueColumns}
                 dataSource={finalData}
                 expandable={{

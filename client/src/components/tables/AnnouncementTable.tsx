@@ -10,7 +10,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import EditAnnouncementForm from "../forms/EditAnnouncementForm";
+import AnnouncementForm from "../forms/AnnouncementForm";
 import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
@@ -46,21 +46,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         } catch (error: any) {
             message.error(error.response?.data?.message || "Unknown Error.");
             console.error("Error deleting announcement:", error);
-        }
-    };
-
-    const archiveAnnouncement = async (announcement: Announcement) => {
-        try {
-            const editedAnnouncement = { ...announcement, status: "archived" };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements/${
-                    announcement._id
-                }`, //TODO: may remove this option
-                editedAnnouncement
-            );
-            setRefresh(refresh + 1);
-        } catch (error) {
-            console.error("Issue archiving announcement", error);
         }
     };
 
@@ -182,18 +167,11 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
             render: (announcement) =>
                 announcement._id && (
                     <Space>
-                        <EditAnnouncementForm
+                        <AnnouncementForm
                             onUpdate={() => setRefresh(refresh + 1)}
                             announcement={announcement}
                         />
-                        <Tooltip title="Archive">
-                            <Button
-                                icon={<FolderOutlined />}
-                                onClick={() =>
-                                    archiveAnnouncement(announcement)
-                                }
-                            />
-                        </Tooltip>
+
                         <Tooltip title="Delete">
                             <Popconfirm
                                 title="Delete Announcement"
