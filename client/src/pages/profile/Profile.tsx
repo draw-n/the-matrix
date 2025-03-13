@@ -1,4 +1,15 @@
-import { Alert, Button, Card, Col, Flex, Input, Row, Space } from "antd";
+import {
+    Alert,
+    Button,
+    Card,
+    Col,
+    Descriptions,
+    DescriptionsProps,
+    Flex,
+    Input,
+    Row,
+    Space,
+} from "antd";
 import { useAuth } from "../../hooks/AuthContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -73,54 +84,82 @@ const Profile: React.FC = () => {
                                 {editMode ? "Save" : "Edit"}
                             </Button>
                         </Flex>
-                        <Flex style={{ width: "100%" }} justify="space-between">
-                            <Space direction="vertical">
-                                <h3>First Name</h3>
-                                {editMode ? (
-                                    <Input
-                                        size="small"
-                                        value={firstName}
-                                        onChange={(e) =>
-                                            setFirstName(e.target.value)
-                                        }
-                                    />
-                                ) : (
-                                    <p>
-                                        {firstName
-                                            ? firstName
-                                            : user?.firstName}
-                                    </p>
-                                )}
-                            </Space>
-
-                            <Space direction="vertical">
-                                <h3>Last Name</h3>
-                                {editMode ? (
-                                    <Input
-                                        size="small"
-                                        value={lastName}
-                                        onChange={(e) =>
-                                            setLastName(e.target.value)
-                                        }
-                                    />
-                                ) : (
-                                    <p>
-                                        {lastName ? lastName : user?.lastName}
-                                    </p>
-                                )}
-                            </Space>
-                            <Space direction="vertical">
-                                <h3>Email</h3>
-                                <p>{user?.email}</p>
-                            </Space>
-
-                            <Space direction="vertical">
-                                <h3>Access Role</h3>
-                                <p style={{ textTransform: "capitalize" }}>
-                                    {user?.access}
-                                </p>
-                            </Space>
-                        </Flex>
+                        <Descriptions
+                            layout="vertical"
+                            colon={false}
+                            items={[
+                                {
+                                    key: "1",
+                                    label: "First Name",
+                                    children: editMode ? (
+                                        <Input
+                                            size="small"
+                                            value={firstName}
+                                            onChange={(e) =>
+                                                setFirstName(e.target.value)
+                                            }
+                                        />
+                                    ) : (
+                                        <p>
+                                            {firstName
+                                                ? firstName
+                                                : user?.firstName}
+                                        </p>
+                                    ),
+                                },
+                                {
+                                    key: "2",
+                                    label: "Last Name",
+                                    children: editMode ? (
+                                        <Input
+                                            size="small"
+                                            value={lastName}
+                                            onChange={(e) =>
+                                                setLastName(e.target.value)
+                                            }
+                                        />
+                                    ) : (
+                                        <p>
+                                            {lastName
+                                                ? lastName
+                                                : user?.lastName}
+                                        </p>
+                                    ),
+                                },
+                                {
+                                    key: "3",
+                                    label: "Email",
+                                    children: <p>{user?.email}</p>,
+                                },
+                                {
+                                    key: "4",
+                                    label: "Access Role",
+                                    children: (
+                                        <p
+                                            style={{
+                                                textTransform: "capitalize",
+                                            }}
+                                        >
+                                            {user?.access}
+                                        </p>
+                                    ),
+                                },
+                                {
+                                    key: "5",
+                                    label: "Status",
+                                    span: 2,
+                                    children: (
+                                        <p
+                                            style={{
+                                                textTransform: "capitalize",
+                                            }}
+                                        >
+                                            {user?.status}
+                                        </p>
+                                    ),
+                                },
+                            ]}
+                        />
                     </Space>
                 </Card>
                 <Card>
