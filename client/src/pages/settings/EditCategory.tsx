@@ -3,29 +3,17 @@ import {
     EditOutlined,
     PlusOutlined,
     SaveOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
-import {
-    Alert,
-    Button,
-    Collapse,
-    ColorPicker,
-    Flex,
-    Input,
-    List,
-    message,
-    Modal,
-    Space,
-    Tag,
-    Tooltip,
-} from "antd";
+import { Button, Collapse, Flex, List, message, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { Category } from "../../types/Category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
-import { geekblue } from "@ant-design/colors";
 import { Equipment } from "../../types/Equipment";
 import { Material } from "../../types/Material";
 import ConfirmAction from "../../components/ConfirmAction";
+import CategoryForm from "./CategoryForm";
 
 interface EditCategoryProps {
     category: Category;
@@ -40,8 +28,6 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     const [defaultIssues, setDefaultIssues] = useState<string[]>(
         category.defaultIssues || []
     );
-    const [color, setColor] = useState(category.color);
-    const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [equipment, setEquipment] = useState<Equipment[]>([]);
     const [materials, setMaterials] = useState<Material[]>([]);
@@ -55,7 +41,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     }`
                 );
                 setEquipment(response.data);
-                setIsLoading(true)
+                setIsLoading(true);
             } catch (error) {
                 console.error(error);
             }
@@ -85,7 +71,10 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     };
 
     const deleteIssueAtIndex = (index: number) => {
-        const updatedArray = [...defaultIssues.slice(0, index), ...defaultIssues.slice(index + 1)];
+        const updatedArray = [
+            ...defaultIssues.slice(0, index),
+            ...defaultIssues.slice(index + 1),
+        ];
         setDefaultIssues(updatedArray);
         updateCategory();
     };
@@ -118,16 +107,15 @@ const EditCategory: React.FC<EditCategoryProps> = ({
 
     useEffect(() => {
         updateCategory();
-    }, [defaultIssues])
+    }, [defaultIssues]);
 
     const updateCategory = async () => {
-        setIsColorPickerOpen(false);
         try {
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${
                     category._id
                 }`,
-                { ...category, defaultIssues, color }
+                { ...category, defaultIssues }
             );
         } catch (error) {
             console.error(error);
@@ -139,24 +127,17 @@ const EditCategory: React.FC<EditCategoryProps> = ({
             <Flex justify="space-between">
                 <h2>{category.name}</h2>
                 <Flex justify="end" gap="middle">
-                    <ColorPicker
-                        defaultValue={category.color || geekblue[5]}
-                        showText
-                        allowClear
-                        onOpenChange={setIsColorPickerOpen}
-                        open={isColorPickerOpen}
-                        onChange={(e) => setColor(e.toHexString())}
-                        panelRender={(panel) => (
-                            <Flex vertical gap="small">
-                                {panel}
-
-                                <Flex justify="end">
-                                    <Button onClick={updateCategory}>
-                                        Save
-                                    </Button>
-                                </Flex>
-                            </Flex>
-                        )}
+                    <Button
+                        onClick={() => setIsModalOpen(true)}
+                        icon={<SettingOutlined />}
+                    >
+                        Settings
+                    </Button>
+                    <CategoryForm
+                        onUpdate={onUpdate}
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
+                        category={category}
                     />
                     <ConfirmAction
                         target={

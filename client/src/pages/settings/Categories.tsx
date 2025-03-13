@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Flex, Input, Tabs, Tooltip } from "antd";
-import CreateCategoryForm from "./CreateCategoryForm";
+import CategoryForm from "./CategoryForm";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import EditCategory from "./EditCategory";
 import axios from "axios";
@@ -112,7 +112,7 @@ const Categories: React.FC = () => {
                 onEdit={onEdit}
                 items={items}
             />
-            <CreateCategoryForm
+            <CategoryForm
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
                 onUpdate={() => setRefreshCategories(refreshCategories + 1)}

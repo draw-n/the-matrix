@@ -15,7 +15,7 @@ const { ObjectId } = mongoose.Types;
  * @returns - response details (with status)
  */
 const createCategory = async (req, res) => {
-    const { name, defaultIssues, properties } = req.body;
+    const { name, defaultIssues, properties, color } = req.body;
 
     try {
         if (name) {
@@ -24,7 +24,7 @@ const createCategory = async (req, res) => {
                 name,
                 defaultIssues,
                 properties,
-                color: randomColor(),
+                color: color || randomColor(),
             });
             await category.save();
             return res.status(200).json(category);
