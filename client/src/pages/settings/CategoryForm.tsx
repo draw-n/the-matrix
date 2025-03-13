@@ -111,7 +111,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                         ]}
                         label="Category Name"
                     >
-                        <Input />
+                        <Input size="small" />
                     </Form.Item>
                     <Form.Item<FieldType>
                         name="color"
@@ -124,6 +124,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                         ]}
                     >
                         <ColorPicker
+                            size="small"
                             value={form.getFieldValue("color")}
                             onChange={(e) => {
                                 form.setFieldsValue({ color: e.toHexString() }); // Ensures color stays as a hex string
@@ -135,6 +136,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
 
                 <Form.Item<FieldType> name="properties" label="Properties">
                     <Select
+                        size="small"
                         mode="multiple"
                         allowClear
                         style={{ width: "100%" }}

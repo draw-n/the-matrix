@@ -99,17 +99,25 @@ const CreateIssueForm: React.FC = () => {
                 >
                     <Flex style={{ width: "100%" }} justify="space-between">
                         <Form.Item required label="First Name">
-                            <Input disabled value={user?.firstName} />
+                            <Input
+                                size="small"
+                                disabled
+                                value={user?.firstName}
+                            />
                         </Form.Item>
                         <Form.Item required label="Last Name">
-                            <Input disabled value={user?.lastName} />
+                            <Input
+                                size="small"
+                                disabled
+                                value={user?.lastName}
+                            />
                         </Form.Item>
                         <Form.Item
                             style={{ width: "40%" }}
                             required
                             label="Email"
                         >
-                            <Input disabled value={user?.email} />
+                            <Input size="small" disabled value={user?.email} />
                         </Form.Item>
                     </Flex>
                     <Form.Item<FieldType>
@@ -124,6 +132,7 @@ const CreateIssueForm: React.FC = () => {
                         ]}
                     >
                         <Select
+                            size="small"
                             suffixIcon={<CaretDownFilled />}
                             options={categories?.map((category) => ({
                                 value: category._id,
@@ -170,6 +179,7 @@ const CreateIssueForm: React.FC = () => {
                                         ]}
                                     >
                                         <Select
+                                            size="small"
                                             suffixIcon={<CaretDownFilled />}
                                             options={[
                                                 ...(categories
@@ -208,7 +218,7 @@ const CreateIssueForm: React.FC = () => {
                             },
                         ]}
                     >
-                        <TextArea rows={6} />
+                        <TextArea size="small" rows={6} />
                     </Form.Item>
                     <Flex justify="end" style={{ width: "100%" }} gap="10px">
                         <Form.Item>

@@ -53,7 +53,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/categories`
                 );
                 setCategories(response.data);
-                setIsLoading(false)
+                setIsLoading(false);
             } catch (error) {
                 console.error(error);
             }
@@ -111,6 +111,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     {editMode ? (
                         <h1>
                             <Input
+                                size="small"
                                 style={{
                                     textTransform: "uppercase",
                                     font: "inherit",
@@ -144,6 +145,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                     <h3>Headline</h3>
                                     {editMode ? (
                                         <Input
+                                            size="small"
                                             onChange={(e) =>
                                                 setHeadline(e.target.value)
                                             }
@@ -169,6 +171,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                     <h3>Type</h3>
                                     {editMode ? (
                                         <Select
+                                            size="small"
                                             options={categories?.map(
                                                 (category) => ({
                                                     value: category._id,
@@ -223,10 +226,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                 <Skeleton active paragraph={{ rows: 4 }} />
                             ) : (
                                 <Flex vertical>
-                                    {" "}
                                     <h3>Description</h3>
                                     {editMode ? (
                                         <TextArea
+                                            size="small"
                                             autoSize
                                             value={description}
                                             onChange={(e) =>

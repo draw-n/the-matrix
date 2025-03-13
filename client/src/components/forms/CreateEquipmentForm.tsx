@@ -1,4 +1,13 @@
-import { Input, Form, Button, Select, Modal, Tooltip, FormProps } from "antd";
+import {
+    Input,
+    Form,
+    Button,
+    Select,
+    Modal,
+    Tooltip,
+    FormProps,
+    Flex,
+} from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
@@ -61,12 +70,13 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
     };
 
     const handleCancel = () => {
+        form.resetFields()
         setIsModalOpen(false);
     };
 
     return (
         <>
-            <Tooltip title="Add New Equipment" placement="topLeft">
+            <Tooltip title="Add Equipment" placement="topLeft">
                 <Button
                     type="primary"
                     size="small"
@@ -76,10 +86,11 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
             </Tooltip>
 
             <Modal
-                title="Add New Equipment"
+                title="Add Equipment"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
+                centered
             >
                 <Form
                     onFinish={onFinish}
@@ -103,41 +114,45 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                             },
                         ]}
                     >
-                        <Input />
+                        <Input size="small" />
                     </Form.Item>
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="Route Path"
-                        name="routePath"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please add a route path (ex. voron-1).",
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="Equipment Category"
-                        name="category"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select a category type.",
-                            },
-                        ]}
-                    >
-                        <Select
-                            suffixIcon={<CaretDownFilled />}
-                            options={categories?.map((category) => ({
-                                value: category._id,
-                                label: category.name,
-                            }))}
-                        />
-                    </Form.Item>
+                    <Flex gap="small">
+                        <Form.Item<FieldType>
+                            style={{ width: "100%" }}
+                            label="Route Path"
+                            name="routePath"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please add a route path (ex. voron-1).",
+                                },
+                            ]}
+                        >
+                            <Input addonBefore="/makerspace/" size="small" />
+                        </Form.Item>
+                        <Form.Item<FieldType>
+                            style={{ width: "100%" }}
+                            label="Category"
+                            name="category"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please select a category type.",
+                                },
+                            ]}
+                        >
+                            <Select
+                                size="small"
+                                suffixIcon={<CaretDownFilled />}
+                                options={categories?.map((category) => ({
+                                    value: category._id,
+                                    label: category.name,
+                                }))}
+                            />
+                        </Form.Item>
+                    </Flex>
+
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="Description"
@@ -150,9 +165,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                             },
                         ]}
                     >
-                        <TextArea
-                            rows={6}
-                        />
+                        <TextArea size="small" rows={6} />
                     </Form.Item>
                 </Form>
             </Modal>

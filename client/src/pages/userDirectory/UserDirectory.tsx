@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAuth, type User } from "../../hooks/AuthContext";
 import {
-    Radio,
-    Input,
     Flex,
     Row,
     Col,
     Space,
     Empty,
     Typography,
-    Select,
     Segmented,
     message,
 } from "antd";
 import axios from "axios";
 import UserCard from "./UserCard";
-import NoAccess from "../../components/NoAccess";
 import Loading from "../../components/Loading";
 
 const UserDirectory: React.FC = () => {
@@ -30,7 +26,7 @@ const UserDirectory: React.FC = () => {
             const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/users/${id}`
             );
-            message.success(response.data.message)
+            message.success(response.data.message);
             setRefresh(refresh + 1);
         } catch (error) {
             console.error("Deleting user failed: ", error);

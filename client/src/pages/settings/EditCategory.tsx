@@ -142,7 +142,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     />
                     <ConfirmAction
                         target={
-                            <Button icon={<DeleteOutlined />} danger>
+                            <Button icon={<DeleteOutlined />} size="small" danger>
                                 Delete
                             </Button>
                         }

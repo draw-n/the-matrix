@@ -163,7 +163,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <Input placeholder="ex. Polylactic Acid" />
+                        <Input size="small" placeholder="ex. Polylactic Acid" />
                     </Form.Item>
                     <Flex gap="10px">
                         <Form.Item<FieldType>
@@ -178,7 +178,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                 },
                             ]}
                         >
-                            <Input placeholder="ex. PLA" />
+                            <Input size="small" placeholder="ex. PLA" />
                         </Form.Item>
                         <Form.Item<FieldType>
                             name="category"
@@ -193,6 +193,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             ]}
                         >
                             <Select
+                                size="small"
                                 suffixIcon={<CaretDownFilled />}
                                 options={categories?.map((category) => ({
                                     value: category._id,
@@ -213,6 +214,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         ]}
                     >
                         <Select
+                            size="small"
                             mode="tags"
                             style={{ width: "100%" }}
                             tokenSeparators={[","]}
@@ -231,7 +233,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             },
                         ]}
                     >
-                        <TextArea rows={3} />
+                        <TextArea size="small" rows={3} />
                     </Form.Item>
                     <Form.Item
                         noStyle
@@ -272,6 +274,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                 ]}
                                             >
                                                 <InputNumber
+                                                    size="small"
                                                     formatter={(value) =>
                                                         `${value} °C`
                                                     }
@@ -306,6 +309,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                 ]}
                                             >
                                                 <InputNumber
+                                                    size="small"
                                                     formatter={(value) =>
                                                         `${value} °C`
                                                     }
@@ -343,6 +347,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                 ]}
                                             >
                                                 <InputNumber
+                                                    size="small"
                                                     formatter={(value) =>
                                                         `${value} °C`
                                                     }
@@ -377,6 +382,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                 ]}
                                             >
                                                 <InputNumber
+                                                    size="small"
                                                     formatter={(value) =>
                                                         `${value} °C`
                                                     }

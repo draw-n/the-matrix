@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../hooks/AuthContext";
 
-import { Input, Form, Button, Select, Modal, Tooltip, FormProps } from "antd";
+import { Input, Form, Button, Select, Modal, Tooltip, FormProps, Flex } from "antd";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import type { Announcement } from "../../types/Announcement";
@@ -121,31 +121,38 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                               }
                     }
                 >
-                    <Form.Item<FieldType>
-                        style={{ width: "100%" }}
-                        label="Type of Update"
-                        name="type"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please select a category type.",
-                            },
-                        ]}
-                    >
-                        <Select
-                            suffixIcon={<CaretDownFilled />}
-                            options={[
-                                { value: "event", label: "Event" },
-                                { value: "classes", label: "Classes" },
-                                { value: "other", label: "Other" },
+                    <Flex justify="space-between" gap="small">
+                        <Form.Item<FieldType>
+                            style={{ width: "50%" }}
+                            name="title"
+                            label="Title"
+                        >
+                            <Input size="small" />
+                        </Form.Item>
+                        <Form.Item<FieldType>
+                            style={{ width: "50%" }}
+                            label="Type"
+                            name="type"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please select a category type.",
+                                },
                             ]}
-                        />
-                    </Form.Item>
-                    <Form.Item<FieldType> name="title" label="Title">
-                        <Input />
-                    </Form.Item>
+                        >
+                            <Select
+                                size="small"
+                                suffixIcon={<CaretDownFilled />}
+                                options={[
+                                    { value: "event", label: "Event" },
+                                    { value: "classes", label: "Classes" },
+                                    { value: "other", label: "Other" },
+                                ]}
+                            />
+                        </Form.Item>
+                    </Flex>
+
                     <Form.Item<FieldType>
-                        style={{ width: "100%" }}
                         label="Description"
                         name="description"
                         rules={[
@@ -156,7 +163,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                             },
                         ]}
                     >
-                        <TextArea rows={6} />
+                        <TextArea size="small" rows={6} />
                     </Form.Item>
                 </Form>
             </Modal>

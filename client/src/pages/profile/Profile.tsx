@@ -78,6 +78,7 @@ const Profile: React.FC = () => {
                                 <h3>First Name</h3>
                                 {editMode ? (
                                     <Input
+                                        size="small"
                                         value={firstName}
                                         onChange={(e) =>
                                             setFirstName(e.target.value)
@@ -96,6 +97,7 @@ const Profile: React.FC = () => {
                                 <h3>Last Name</h3>
                                 {editMode ? (
                                     <Input
+                                        size="small"
                                         value={lastName}
                                         onChange={(e) =>
                                             setLastName(e.target.value)
