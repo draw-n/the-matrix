@@ -250,7 +250,11 @@ const IssueTable: React.FC<IssueTableProps> = ({
                             okText="Yes"
                             cancelText="No"
                         >
-                            <Button icon={<DeleteOutlined />} danger />
+                            <Button
+                                icon={<DeleteOutlined />}
+                                size="small"
+                                danger
+                            />
                         </Popconfirm>
                     </Tooltip>
                 </Flex>

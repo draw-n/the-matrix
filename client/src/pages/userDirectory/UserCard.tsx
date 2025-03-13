@@ -101,7 +101,6 @@ const UserCard: React.FC<UserCardProps> = ({
                             <Button
                                 size="small"
                                 onClick={handleClick}
-                                className="primary-button-outlined"
                                 type={editMode ? "primary" : "default"}
                                 icon={
                                     editMode ? (

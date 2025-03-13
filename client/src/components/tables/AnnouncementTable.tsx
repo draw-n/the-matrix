@@ -131,7 +131,43 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 </p>
             ),
         },
-
+        {
+            title: "Last Updated By",
+            dataIndex: "lastUpdatedBy",
+            key: "lastUpdatedBy",
+            sorter: {
+                compare: (a, b) =>
+                    a.userInfo.fullName.localeCompare(b.userInfo.fullName),
+                multiple: 2,
+            },
+            render: (record) => {
+                const userInfo = users[record];
+                const { fullName, email } = userInfo || {
+                    fullName: "Loading...",
+                    email: "",
+                };
+                return <a href={`mailto:${email}`}>{fullName}</a>;
+            },
+        },
+        {
+            title: "Date Last Updated",
+            dataIndex: "dateLastUpdated",
+            key: "dateLastUpdated",
+            defaultSortOrder: "ascend",
+            sorter: {
+                compare: (a, b) =>
+                    new Date(a.dateCreated).getTime() -
+                    new Date(b.dateCreated).getTime(),
+                multiple: 1,
+            },
+            render: (dateCreated) => (
+                <p>
+                    {new Date(dateCreated).getTime() == new Date(0).getTime()
+                        ? ""
+                        : new Date(dateCreated).toLocaleString()}
+                </p>
+            ),
+        },
         {
             title: "Type",
             key: "type",
@@ -162,7 +198,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 ),
         },
         {
-            title: "Action",
+            title: "Actions",
             key: "action",
             render: (announcement) =>
                 announcement._id && (
@@ -182,7 +218,11 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                                 okText="Yes"
                                 cancelText="No"
                             >
-                                <Button icon={<DeleteOutlined />} danger />
+                                <Button
+                                    icon={<DeleteOutlined />}
+                                    size="small"
+                                    danger
+                                />
                             </Popconfirm>
                         </Tooltip>
                     </Space>
@@ -210,7 +250,18 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 size="middle"
                 expandable={{
                     expandedRowRender: (record) => (
-                        <p style={{ margin: 0 }}>{record.description}</p>
+                        <>
+                            {record.title && (
+                                <p>
+                                    <b>Title:</b>
+                                    {" " + record.title}
+                                </p>
+                            )}
+                            <p>
+                                <b>Description:</b>
+                            </p>
+                            <p style={{ margin: 0 }}>{record.description}</p>
+                        </>
                     ),
                     rowExpandable: (record) => record.description.length > 0,
                 }}

@@ -130,6 +130,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     <Button
                         onClick={() => setIsModalOpen(true)}
                         icon={<SettingOutlined />}
+                        size="small"
                     >
                         Settings
                     </Button>

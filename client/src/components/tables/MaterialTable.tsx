@@ -152,7 +152,11 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                                 cancelText="No"
                                 placement="topRight"
                             >
-                                <Button icon={<DeleteOutlined />} danger />
+                                <Button
+                                    icon={<DeleteOutlined />}
+                                    size="small"
+                                    danger
+                                />
                             </Popconfirm>
                         </Tooltip>
                     </Space>
@@ -163,7 +167,10 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
     return (
         <>
             <Table
-                pagination={{defaultPageSize: numRows, hideOnSinglePage: true}}
+                pagination={{
+                    defaultPageSize: numRows,
+                    hideOnSinglePage: true,
+                }}
                 columns={updateColumns}
                 dataSource={materials}
                 size="middle"

@@ -31,6 +31,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
             {editMode ? (
                 <Tooltip title="Save Issue">
                     <Button
+                        size="small"
                         icon={<SaveOutlined />}
                         onClick={() => {
                             updateCategory();
@@ -41,6 +42,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
             ) : (
                 <Tooltip title="Edit Issue">
                     <Button
+                        size="small"
                         icon={<EditOutlined />}
                         onClick={() => setEditMode(true)}
                     />
@@ -56,7 +58,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
                     cancelText="No"
                     onConfirm={() => deleteIssue(index)}
                 >
-                    <Button danger icon={<DeleteOutlined />} />
+                    <Button size="small" danger icon={<DeleteOutlined />} />
                 </Popconfirm>
             </Tooltip>
         </Flex>

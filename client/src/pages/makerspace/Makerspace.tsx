@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
-import { Col, Empty, Flex, Radio, Row, Space } from "antd";
+import { Button, Col, Dropdown, Empty, Flex, Radio, Row, Space } from "antd";
 import EquipmentCard from "./EquipmentCard";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -76,19 +76,27 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                     >
                         <h2>Equipment</h2>
                         <Flex gap="middle">
-                            <Radio.Group
-                                onChange={(e) => setFilter(e.target.value)}
-                                value={filter}
+                            <Dropdown
+                                menu={{
+                                    items: categories?.map((category) => ({
+                                        key: category._id,
+                                        label: category.name,
+                                    })),
+                                    onClick: ({ key }) => {
+                                        setFilter(key);
+                                    },
+                                }}
+                                placement="bottom"
                             >
-                                {categories?.map((category) => (
-                                    <Radio.Button
-                                        key={category._id}
-                                        value={category._id}
-                                    >
-                                        {category.name}
-                                    </Radio.Button>
-                                ))}
-                            </Radio.Group>
+                                <Button variant="solid" size="small" style={{ width: 200 }}>
+                                    {
+                                        categories?.find(
+                                            (item) => item._id === filter
+                                        )?.name
+                                    }
+                                </Button>
+                            </Dropdown>
+
                             <CreateEquipmentForm
                                 onUpdate={() =>
                                     setRefreshEquipment(refreshEquipment + 1)
