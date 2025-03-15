@@ -1,28 +1,39 @@
-import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, FormProps, Input, Modal, Select, Tooltip } from "antd";
+import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    Button,
+    Flex,
+    Form,
+    FormProps,
+    Input,
+    Modal,
+    Select,
+    Tooltip,
+} from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Issue } from "../../types/Issue";
 
 const { TextArea } = Input;
 
 interface EditIssueFormProps {
+    issue: Issue;
     onUpdate: () => void;
 }
 
 interface FieldType {
-    name: string;
-    category: string;
+    status: string;
     description: string;
-    routePath: string;
+    assignedTo: string[];
 }
 
-const EditIssueForm: React.FC<EditIssueFormProps> = ({onUpdate}: EditIssueFormProps) => {
+const EditIssueForm: React.FC<EditIssueFormProps> = ({
+    issue,
+    onUpdate,
+}: EditIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    useEffect(() => {
-       
-    }, []);
+    useEffect(() => {}, []);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -30,13 +41,19 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({onUpdate}: EditIssueFormPr
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-                values
+            const editedIssue: Issue = {
+                _id: issue._id,
+                equipment: issue.equipment,
+                createdBy: issue.createdBy,
+                dateCreated: issue.dateCreated,
+                ...values
+            }
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
+                editedIssue
             );
             onUpdate();
             setIsModalOpen(false);
-            form.resetFields();
         } catch (error) {
             console.error("Error creating new update:", error);
         }
@@ -47,21 +64,21 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({onUpdate}: EditIssueFormPr
     };
 
     const handleCancel = () => {
-        form.resetFields()
+        form.resetFields();
         setIsModalOpen(false);
     };
     return (
         <>
-            <Tooltip title="Add Equipment" placement="topLeft">
+            <Tooltip title="Edit Issue" placement="topLeft">
                 <Button
                     type="primary"
                     size="small"
-                    icon={<PlusOutlined />}
+                    icon={<EditOutlined />}
                     onClick={showModal}
                 />
             </Tooltip>
             <Modal
-                title="Add Equipment"
+                title="Edit Issue"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -73,53 +90,41 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({onUpdate}: EditIssueFormPr
                     name="basic"
                     layout="vertical"
                     style={{ width: "100%" }}
-                    initialValues={{ remember: true }}
+                    initialValues={{
+                        status: issue.status,
+                        description: issue.description,
+                    }}
                     autoComplete="off"
                     preserve={false}
                 >
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
-                        label="Name"
-                        name="name"
+                        label="Status"
+                        name="status"
                         rules={[
                             {
                                 required: true,
-                                message:
-                                    "Please add a description to the announcement.",
+                                message: "Please select a category type.",
                             },
                         ]}
                     >
-                        <Input size="small" />
+                        <Select
+                            options={[
+                                {
+                                    value: "open",
+                                    label: "Open",
+                                },
+                                {
+                                    value: "in progress",
+                                    label: "In Progress",
+                                },
+                                {
+                                    value: "completed",
+                                    label: "Completed",
+                                },
+                            ]}
+                        />
                     </Form.Item>
-                    <Flex gap="small">
-                        <Form.Item<FieldType>
-                            style={{ width: "100%" }}
-                            label="Route Path"
-                            name="routePath"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please add a route path (ex. voron-1).",
-                                },
-                            ]}
-                        >
-                            <Input addonBefore="/makerspace/" size="small" />
-                        </Form.Item>
-                        <Form.Item<FieldType>
-                            style={{ width: "100%" }}
-                            label="Category"
-                            name="category"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please select a category type.",
-                                },
-                            ]}
-                        >
-                            
-                        </Form.Item>
-                    </Flex>
 
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}

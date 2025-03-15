@@ -5,5 +5,5 @@ export interface Issue {
     description: string;
     createdBy: string;
     dateCreated: Date;
-    assignedTo?: string;
+    assignedTo?: string[];
 }

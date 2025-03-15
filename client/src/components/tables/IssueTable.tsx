@@ -94,7 +94,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     response = await axios.get<Issue[]>(
                         `${
                             import.meta.env.VITE_BACKEND_URL
-                        }/issues?status=open,in-progress,completed`
+                        }/issues`
                     );
                 }
 
@@ -280,6 +280,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                       render: (item: Issue) => (
                           <Flex gap="small">
                               <EditIssueForm
+                                  issue={item}
                                   onUpdate={() => setRefresh(refresh + 1)}
                               />
                               <Tooltip title="Delete">
