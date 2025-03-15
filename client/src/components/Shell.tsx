@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import { Breadcrumb, Button, Flex, Image, Layout, Menu } from "antd";
+import { Button, Flex, Image, Layout, Menu, Skeleton } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
-import NoAccess from "./NoAccess";
+import NoAccess from "./rbac/NoAccess";
 import NotFound from "./NotFound";
 import {
     MenuOutlined,
@@ -19,8 +19,8 @@ import {
     TeamOutlined,
 } from "@ant-design/icons";
 
-import vandyLogo from "../assets/White_Pinstripe_V_Lockup.png";
 import vandyLogoSmall from "../assets/White_Pinstripe_V.png";
+import { checkAccess } from "./rbac/HasAccess";
 
 const { Header, Content, Sider } = Layout;
 
@@ -100,7 +100,7 @@ const Shell: React.FC<ShellProps> = ({
     const [collapsed, setCollapsed] = useState<boolean>(false);
 
     const accessPages: MenuItem[] = allPages.filter((item) =>
-        item.access.some((access) => user?.access == access)
+        checkAccess(item.access)
     );
 
     const getSelectedKeys = (): string[] => {
@@ -160,12 +160,12 @@ const Shell: React.FC<ShellProps> = ({
                 </Header>
                 <Content>
                     <div style={{ padding: "25px 50px" }}>
-                        {contentAccess.includes(String(user?.access)) ||
-                        user == null ? (
-                            <>{children}</>
-                        ) : (
-                            <NoAccess />
-                        )}
+                        {user &&
+                            (checkAccess(contentAccess) ? (
+                                children
+                            ) : (
+                                <NoAccess />
+                            ))}
                     </div>
                 </Content>
             </Layout>

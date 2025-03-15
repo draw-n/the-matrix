@@ -12,10 +12,9 @@ const NoAccess: React.FC = () => {
             extra={
                 <Button
                     type="primary"
-                    className="primary-button"
                     onClick={() => navigate("/")}
                 >
-                    To Announcements
+                    To Dashboard
                 </Button>
             }
         />
