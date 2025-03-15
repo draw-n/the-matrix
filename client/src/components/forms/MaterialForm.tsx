@@ -245,7 +245,6 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             const category = categories?.find(
                                 (item) => item._id == getFieldValue("category")
                             );
-                            // Only render the grid if 'visibility' is 'show'
                             return category?.properties?.includes(
                                 "temperature"
                             ) ? (

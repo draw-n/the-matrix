@@ -30,10 +30,10 @@ const IssueSchema = new Schema({
         type: Date,
         required: true,
     },
-    assignedTo: {
+    assignedTo: [{
         type: ObjectId,
         ref: "User"
-    },
+    }],
 });
 
 module.exports = Issue = mongoose.model("issue", IssueSchema);

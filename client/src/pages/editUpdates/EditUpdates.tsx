@@ -29,7 +29,7 @@ const EditUpdates: React.FC = () => {
                     refresh={refreshUpdates}
                     setRefresh={setRefreshUpdates}
                 />
-                <h2>Equipment Issues</h2>
+                <h2>Issues</h2>
                 <IssueTable
                     refresh={refreshIssues}
                     setRefresh={setRefreshIssues}

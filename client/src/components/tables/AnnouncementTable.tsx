@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Button,
     message,
     Popconfirm,
@@ -15,6 +16,9 @@ import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
+import randomColor from "randomcolor";
+import AutoAvatar from "../AutoAvatar";
+import { cyan, geekblue, gold, green, magenta, purple, red } from "@ant-design/colors";
 
 interface TableAnnouncement extends Announcement {
     key: string;
@@ -94,6 +98,21 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         fetchData();
     }, [refresh]);
 
+    const types = [
+        {
+            value: "event",
+            color: magenta[5],
+        },
+        {
+            value: "classes",
+            color: cyan[5],
+        },
+        {
+            value: "other",
+            color: purple[5],
+        },
+    ];
+
     const updateColumns: TableProps["columns"] = [
         {
             title: "Created By",
@@ -110,7 +129,16 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     fullName: "Loading...",
                     email: "",
                 };
-                return <a href={`mailto:${email}`}>{fullName}</a>;
+                return (
+                    <a href={`mailto:${email}`}>
+                        <AutoAvatar seed={fullName}>
+                            {fullName
+                                .split(" ")
+                                .map((item) => item.charAt(0))
+                                .join("")}
+                        </AutoAvatar>
+                    </a>
+                );
             },
         },
         {
@@ -147,7 +175,16 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     fullName: "Loading...",
                     email: "",
                 };
-                return <a href={`mailto:${email}`}>{fullName}</a>;
+                return (
+                    <a href={`mailto:${email}`}>
+                        <AutoAvatar seed={fullName}>
+                            {fullName
+                                .split(" ")
+                                .map((item) => item.charAt(0))
+                                .join("")}
+                        </AutoAvatar>
+                    </a>
+                );
             },
         },
         {
@@ -193,42 +230,54 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 record.type.indexOf(value as string) === 0,
             render: (type) =>
                 type && (
-                    <Tag color={"blue"} key={type}>
+                    <Tag
+                        color={
+                            types.find((item) => item.value === type)?.color ||
+                            geekblue[4]
+                        }
+                        key={type}
+                    >
                         {type.toUpperCase()}
                     </Tag>
                 ),
         },
-        ... checkAccess(["admin", "moderator"]) ? [{
-            title: "Actions",
-            key: "action",
-            render: (announcement: Announcement) =>
-                announcement._id && (
-                    <Space>
-                        <AnnouncementForm
-                            onUpdate={() => setRefresh(refresh + 1)}
-                            announcement={announcement}
-                        />
+        ...(checkAccess(["admin", "moderator"])
+            ? [
+                  {
+                      title: "Actions",
+                      key: "action",
+                      render: (announcement: Announcement) =>
+                          announcement._id && (
+                              <Space>
+                                  <AnnouncementForm
+                                      onUpdate={() => setRefresh(refresh + 1)}
+                                      announcement={announcement}
+                                  />
 
-                        <Tooltip title="Delete">
-                            <Popconfirm
-                                title="Delete Announcement"
-                                description="Are you sure you want to delete this announcement?"
-                                onConfirm={() =>
-                                    deleteAnnouncement(announcement._id)
-                                }
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    icon={<DeleteOutlined />}
-                                    size="small"
-                                    danger
-                                />
-                            </Popconfirm>
-                        </Tooltip>
-                    </Space>
-                ),
-        }]: [],
+                                  <Tooltip title="Delete">
+                                      <Popconfirm
+                                          title="Delete Announcement"
+                                          description="Are you sure you want to delete this announcement?"
+                                          onConfirm={() =>
+                                              deleteAnnouncement(
+                                                  announcement._id
+                                              )
+                                          }
+                                          okText="Yes"
+                                          cancelText="No"
+                                      >
+                                          <Button
+                                              icon={<DeleteOutlined />}
+                                              size="small"
+                                              danger
+                                          />
+                                      </Popconfirm>
+                                  </Tooltip>
+                              </Space>
+                          ),
+                  },
+              ]
+            : []),
     ];
 
     const finalData = announcements.map((row) => {

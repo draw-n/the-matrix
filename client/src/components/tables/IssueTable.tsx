@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Button,
     Flex,
     Popconfirm,
@@ -15,6 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../hooks/AuthContext";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
+import randomColor from "randomcolor";
+import AutoAvatar from "../AutoAvatar";
+import { geekblue, gold, green, red } from "@ant-design/colors";
+import EditIssueForm from "../forms/EditIssueForm";
 
 interface TableIssue extends Issue {
     key: string;
@@ -154,6 +159,21 @@ const IssueTable: React.FC<IssueTableProps> = ({
         fetchData();
     }, [refresh]);
 
+    const statuses = [
+        {
+            value: "open",
+            color: red[5],
+        },
+        {
+            value: "in progress",
+            color: gold[5],
+        },
+        {
+            value: "completed",
+            color: green[5],
+        },
+    ];
+
     const issueColumns: TableProps["columns"] = [
         {
             title: "Equipment",
@@ -189,7 +209,15 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     fullName: "",
                     email: "",
                 };
-                return <a href={`mailto:${email}`}>{fullName}</a>;
+                return (
+                    <a href={`mailto:${email}`}>
+                        <AutoAvatar seed={fullName}>
+                            {fullName
+                                .split(" ")
+                                .map((item: string) => item.charAt(0))}
+                        </AutoAvatar>
+                    </a>
+                );
             },
         },
         {
@@ -233,7 +261,13 @@ const IssueTable: React.FC<IssueTableProps> = ({
             onFilter: (value, record) =>
                 record.status.indexOf(value as string) === 0,
             render: (type) => (
-                <Tag color={"blue"} key={type}>
+                <Tag
+                    color={
+                        statuses.find((item) => item.value === type)?.color ||
+                        geekblue[5]
+                    }
+                    key={type}
+                >
                     {type.toUpperCase()}
                 </Tag>
             ),
@@ -245,6 +279,9 @@ const IssueTable: React.FC<IssueTableProps> = ({
                       key: "action",
                       render: (item: Issue) => (
                           <Flex gap="small">
+                              <EditIssueForm
+                                  onUpdate={() => setRefresh(refresh + 1)}
+                              />
                               <Tooltip title="Delete">
                                   <Popconfirm
                                       title="Delete Issue"
