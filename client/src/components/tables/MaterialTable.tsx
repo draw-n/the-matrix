@@ -17,6 +17,7 @@ import {
     DeleteOutlined,
 } from "@ant-design/icons";
 import { Category } from "../../types/Category";
+import { checkAccess } from "../rbac/HasAccess";
 
 interface TableMaterial extends Material {
     key: string;
@@ -84,20 +85,6 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             dataIndex: "shortName",
             key: "shortName",
         },
-
-        {
-            title: "Remote Print?",
-            dataIndex: "remotePrintAvailable",
-            key: "remotePrintAvailable",
-
-            render: (remotePrintAvailable) => {
-                return remotePrintAvailable ? (
-                    <CheckOutlined />
-                ) : (
-                    <CloseOutlined />
-                );
-            },
-        },
         {
             title: "Category",
             key: "category",
@@ -106,8 +93,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                 text: category.name,
                 value: category._id,
             })),
-            // specify the condition of filtering result
-            // here is that finding the name started with `value`
+
             onFilter: (value, record) =>
                 record.category.indexOf((value as string).toLowerCase()) === 0,
             render: (category) =>
@@ -132,36 +118,55 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                 ),
         },
         {
-            title: "Action",
-            key: "action",
-            responsive: ["lg"],
-            render: (material) =>
-                material._id && (
-                    <Space>
-                        <MaterialForm
-                            onUpdate={() => setRefresh(refresh + 1)}
-                            material={material}
-                        />
+            title: "Remote Print?",
+            dataIndex: "remotePrintAvailable",
+            key: "remotePrintAvailable",
 
-                        <Tooltip title="Delete">
-                            <Popconfirm
-                                title="Delete Material"
-                                description="Are you sure to delete this material?"
-                                onConfirm={() => deleteMaterial(material._id)}
-                                okText="Yes"
-                                cancelText="No"
-                                placement="topRight"
-                            >
-                                <Button
-                                    icon={<DeleteOutlined />}
-                                    size="small"
-                                    danger
-                                />
-                            </Popconfirm>
-                        </Tooltip>
-                    </Space>
-                ),
+            render: (remotePrintAvailable) => {
+                return remotePrintAvailable ? (
+                    <CheckOutlined />
+                ) : (
+                    <CloseOutlined />
+                );
+            },
         },
+
+        ...(checkAccess(["admin", "moderator"])
+            ? [
+                  {
+                      title: "Actions",
+                      key: "action",
+                      render: (material: Material) =>
+                          material._id && (
+                              <Space>
+                                  <MaterialForm
+                                      onUpdate={() => setRefresh(refresh + 1)}
+                                      material={material}
+                                  />
+
+                                  <Tooltip title="Delete">
+                                      <Popconfirm
+                                          title="Delete Material"
+                                          description="Are you sure to delete this material?"
+                                          onConfirm={() =>
+                                              deleteMaterial(material._id)
+                                          }
+                                          okText="Yes"
+                                          cancelText="No"
+                                          placement="topRight"
+                                      >
+                                          <Button
+                                              icon={<DeleteOutlined />}
+                                              size="small"
+                                              danger
+                                          />
+                                      </Popconfirm>
+                                  </Tooltip>
+                              </Space>
+                          ),
+                  },
+              ]
+            : []),
     ];
     const numRows = 5;
     return (

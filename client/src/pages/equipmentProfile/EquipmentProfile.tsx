@@ -19,6 +19,7 @@ import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
 import { useNavigate } from "react-router-dom";
 import ConfirmAction from "../../components/ConfirmAction";
+import HasAccess from "../../components/rbac/HasAccess";
 
 const { Paragraph } = Typography;
 
@@ -127,13 +128,16 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             {equipment.name}
                         </h1>
                     )}
-
-                    <Button
-                        onClick={handleClick}
-                        icon={editMode ? <SaveOutlined /> : <EditOutlined />}
-                    >
-                        {editMode ? "Save" : "Edit"}
-                    </Button>
+                    <HasAccess roles={["admin", "moderator"]}>
+                        <Button
+                            onClick={handleClick}
+                            icon={
+                                editMode ? <SaveOutlined /> : <EditOutlined />
+                            }
+                        >
+                            {editMode ? "Save" : "Edit"}
+                        </Button>
+                    </HasAccess>
                 </Flex>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>

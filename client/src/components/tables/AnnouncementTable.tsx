@@ -14,6 +14,7 @@ import AnnouncementForm from "../forms/AnnouncementForm";
 import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
+import { checkAccess } from "../rbac/HasAccess";
 
 interface TableAnnouncement extends Announcement {
     key: string;
@@ -197,10 +198,10 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     </Tag>
                 ),
         },
-        {
+        ... checkAccess(["admin", "moderator"]) ? [{
             title: "Actions",
             key: "action",
-            render: (announcement) =>
+            render: (announcement: Announcement) =>
                 announcement._id && (
                     <Space>
                         <AnnouncementForm
@@ -227,7 +228,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                         </Tooltip>
                     </Space>
                 ),
-        },
+        }]: [],
     ];
 
     const finalData = announcements.map((row) => {

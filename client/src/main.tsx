@@ -5,11 +5,10 @@ import theme from "./theme.ts";
 import "./index.css";
 import { AuthProvider } from "./hooks/AuthContext.tsx";
 import { ConfigProvider } from "antd";
+
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <ConfigProvider
-            theme={theme}
-        >
+        <ConfigProvider theme={theme}>
             <AuthProvider>
                 <App />
             </AuthProvider>

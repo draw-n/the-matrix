@@ -6,6 +6,7 @@ import AdvancedSettings from "./components/AdvancedSettings";
 import { FilamentMoreSettings } from "../../types/Equipment";
 import { Material } from "../../types/Material";
 import { useAuth } from "../../hooks/AuthContext";
+import HasAccess from "../../components/rbac/HasAccess";
 
 interface MoreSettingsProps {
     prev: () => void;
@@ -92,9 +93,12 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         step={0.1}
                     />
                 </Space>
-                {user?.access != "novice" && (
+                <HasAccess
+                    roles={["proficient", "expert", "moderator", "admin"]}
+                >
                     <Collapse items={items} defaultActiveKey={["1"]} />
-                )}
+                </HasAccess>
+
                 <Flex gap="10px" style={{ width: "100%" }} justify="center">
                     <Button
                         onClick={prev}

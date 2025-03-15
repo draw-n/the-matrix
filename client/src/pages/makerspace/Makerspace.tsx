@@ -10,6 +10,7 @@ import "./equipment.css";
 import MaterialForm from "../../components/forms/MaterialForm";
 import MaterialTable from "../../components/tables/MaterialTable";
 import { Category } from "../../types/Category";
+import HasAccess from "../../components/rbac/HasAccess";
 
 interface MakerspaceProps {
     refreshEquipment: number;
@@ -88,7 +89,11 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                                 }}
                                 placement="bottom"
                             >
-                                <Button variant="solid" size="small" style={{ width: 200 }}>
+                                <Button
+                                    variant="solid"
+                                    size="small"
+                                    style={{ width: 200 }}
+                                >
                                     {
                                         categories?.find(
                                             (item) => item._id === filter
@@ -96,12 +101,15 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                                     }
                                 </Button>
                             </Dropdown>
-
-                            <CreateEquipmentForm
-                                onUpdate={() =>
-                                    setRefreshEquipment(refreshEquipment + 1)
-                                }
-                            />
+                            <HasAccess roles={["admin", "moderator"]}>
+                                <CreateEquipmentForm
+                                    onUpdate={() =>
+                                        setRefreshEquipment(
+                                            refreshEquipment + 1
+                                        )
+                                    }
+                                />
+                            </HasAccess>
                         </Flex>
                     </Flex>
                     {equipments.length > 0 ? (
@@ -124,11 +132,13 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                         align="center"
                     >
                         <h2>Materials</h2>
-                        <MaterialForm
-                            onUpdate={() =>
-                                setRefreshMaterials((prev) => prev + 1)
-                            }
-                        />
+                        <HasAccess roles={["admin", "moderator"]}>
+                            <MaterialForm
+                                onUpdate={() =>
+                                    setRefreshMaterials((prev) => prev + 1)
+                                }
+                            />
+                        </HasAccess>
                     </Flex>
 
                     <MaterialTable

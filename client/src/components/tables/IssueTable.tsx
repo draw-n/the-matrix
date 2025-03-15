@@ -14,6 +14,7 @@ import { Equipment } from "../../types/Equipment";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../hooks/AuthContext";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
+import { checkAccess } from "../rbac/HasAccess";
 
 interface TableIssue extends Issue {
     key: string;
@@ -237,29 +238,33 @@ const IssueTable: React.FC<IssueTableProps> = ({
                 </Tag>
             ),
         },
-        {
-            title: "Actions",
-            key: "action",
-            render: (item: Issue) => (
-                <Flex gap="small">
-                    <Tooltip title="Delete">
-                        <Popconfirm
-                            title="Delete Issue"
-                            description="Are you sure you want to delete this issue?"
-                            onConfirm={() => deleteIssue(item._id)}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button
-                                icon={<DeleteOutlined />}
-                                size="small"
-                                danger
-                            />
-                        </Popconfirm>
-                    </Tooltip>
-                </Flex>
-            ),
-        },
+        ...(checkAccess(["admin", "moderator"])
+            ? [
+                  {
+                      title: "Actions",
+                      key: "action",
+                      render: (item: Issue) => (
+                          <Flex gap="small">
+                              <Tooltip title="Delete">
+                                  <Popconfirm
+                                      title="Delete Issue"
+                                      description="Are you sure you want to delete this issue?"
+                                      onConfirm={() => deleteIssue(item._id)}
+                                      okText="Yes"
+                                      cancelText="No"
+                                  >
+                                      <Button
+                                          icon={<DeleteOutlined />}
+                                          size="small"
+                                          danger
+                                      />
+                                  </Popconfirm>
+                              </Tooltip>
+                          </Flex>
+                      ),
+                  },
+              ]
+            : []),
     ];
 
     const numRows = 5;

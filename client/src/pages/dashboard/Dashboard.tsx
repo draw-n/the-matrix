@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 import { DesktopOutlined, EditOutlined } from "@ant-design/icons";
 import PrintingChart from "./PrintingChart";
+import HasAccess from "../../components/rbac/HasAccess";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
@@ -28,8 +29,9 @@ const Dashboard: React.FC = () => {
                                 >
                                     <h2>Announcements</h2>
                                     <Flex gap="small">
-                                        {(user?.access == "moderator" ||
-                                            user?.access == "admin") && (
+                                        <HasAccess
+                                            roles={["admin", "moderator"]}
+                                        >
                                             <Tooltip title="Edit Announcements">
                                                 <Button
                                                     onClick={() =>
@@ -41,7 +43,8 @@ const Dashboard: React.FC = () => {
                                                     icon={<EditOutlined />}
                                                 />
                                             </Tooltip>
-                                        )}
+                                        </HasAccess>
+
                                         <Tooltip title="Kiosk Mode">
                                             <Button
                                                 onClick={() =>
