@@ -18,7 +18,15 @@ import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
 import randomColor from "randomcolor";
 import AutoAvatar from "../AutoAvatar";
-import { cyan, geekblue, gold, green, magenta, purple, red } from "@ant-design/colors";
+import {
+    cyan,
+    geekblue,
+    gold,
+    green,
+    magenta,
+    purple,
+    red,
+} from "@ant-design/colors";
 
 interface TableAnnouncement extends Announcement {
     key: string;
@@ -130,14 +138,16 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     email: "",
                 };
                 return (
-                    <a href={`mailto:${email}`}>
-                        <AutoAvatar seed={fullName}>
-                            {fullName
-                                .split(" ")
-                                .map((item) => item.charAt(0))
-                                .join("")}
-                        </AutoAvatar>
-                    </a>
+                    <Tooltip title={fullName}>
+                        <a href={`mailto:${email}`}>
+                            <AutoAvatar seed={fullName}>
+                                {fullName
+                                    .split(" ")
+                                    .map((item) => item.charAt(0))
+                                    .join("")}
+                            </AutoAvatar>
+                        </a>
+                    </Tooltip>
                 );
             },
         },
@@ -176,14 +186,16 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     email: "",
                 };
                 return (
-                    <a href={`mailto:${email}`}>
-                        <AutoAvatar seed={fullName}>
-                            {fullName
-                                .split(" ")
-                                .map((item) => item.charAt(0))
-                                .join("")}
-                        </AutoAvatar>
-                    </a>
+                    <Tooltip title={fullName}>
+                        <a href={`mailto:${email}`}>
+                            <AutoAvatar seed={fullName}>
+                                {fullName
+                                    .split(" ")
+                                    .map((item) => item.charAt(0))
+                                    .join("")}
+                            </AutoAvatar>
+                        </a>
+                    </Tooltip>
                 );
             },
         },

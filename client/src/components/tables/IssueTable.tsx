@@ -92,9 +92,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     );
                 } else {
                     response = await axios.get<Issue[]>(
-                        `${
-                            import.meta.env.VITE_BACKEND_URL
-                        }/issues`
+                        `${import.meta.env.VITE_BACKEND_URL}/issues`
                     );
                 }
 
@@ -210,13 +208,15 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     email: "",
                 };
                 return (
-                    <a href={`mailto:${email}`}>
-                        <AutoAvatar seed={fullName}>
-                            {fullName
-                                .split(" ")
-                                .map((item: string) => item.charAt(0))}
-                        </AutoAvatar>
-                    </a>
+                    <Tooltip title={fullName}>
+                        <a href={`mailto:${email}`}>
+                            <AutoAvatar seed={fullName}>
+                                {fullName
+                                    .split(" ")
+                                    .map((item: string) => item.charAt(0))}
+                            </AutoAvatar>
+                        </a>
+                    </Tooltip>
                 );
             },
         },

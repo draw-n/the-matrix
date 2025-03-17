@@ -12,6 +12,8 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Issue } from "../../types/Issue";
+import { User } from "../../hooks/AuthContext";
+import HasAccess from "../rbac/HasAccess";
 
 const { TextArea } = Input;
 
@@ -32,8 +34,17 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
 }: EditIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [users, setUsers] = useState<User[]>([]);
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get<User[]>(
+                `${import.meta.env.VITE_BACKEND_URL}/users?access=admin`
+            );
+            setUsers(response.data);
+        };
+        fetchData();
+    }, []);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -46,8 +57,8 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                 equipment: issue.equipment,
                 createdBy: issue.createdBy,
                 dateCreated: issue.dateCreated,
-                ...values
-            }
+                ...values,
+            };
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
                 editedIssue
@@ -125,6 +136,25 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                             ]}
                         />
                     </Form.Item>
+                    <HasAccess roles={["admin"]}>
+                        <Form.Item<FieldType>
+                            name="assignedTo"
+                            label="Assigned To"
+                        >
+                            <Select
+                                size="small"
+                                mode="multiple"
+                                showSearch
+                                allowClear
+                                style={{ width: "100%" }}
+                                placeholder="Please select"
+                                options={users?.map((user) => ({
+                                    value: user._id,
+                                    label: `${user.firstName} ${user.lastName}`,
+                                }))}
+                            />
+                        </Form.Item>
+                    </HasAccess>
 
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
