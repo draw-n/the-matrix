@@ -2,7 +2,16 @@ import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../hooks/AuthContext";
 
-import { Input, Form, Button, Select, Modal, Tooltip, FormProps, Flex } from "antd";
+import {
+    Input,
+    Form,
+    Button,
+    Select,
+    Modal,
+    Tooltip,
+    FormProps,
+    Flex,
+} from "antd";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import type { Announcement } from "../../types/Announcement";
@@ -94,6 +103,13 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                 />
             </Tooltip>
             <Modal
+                styles={{
+                    body: {
+                        scrollbarGutter: "stable && both-edges",
+                        overflowY: "auto",
+                        maxHeight: "calc(100vh - 200px)",
+                    },
+                }}
                 title={announcement ? "Edit Announcement" : "Add Announcement"}
                 open={isModalOpen}
                 centered

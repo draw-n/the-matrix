@@ -6,6 +6,7 @@ import React, {
     ReactNode,
     useEffect,
 } from "react";
+import { RemotePrint } from "../types/Equipment";
 
 export interface User {
     _id: string;
@@ -15,9 +16,11 @@ export interface User {
     access: string;
     status: string;
     graduationDate?: Date;
+    remotePrints?: RemotePrint[];
 }
 
 interface AuthContextType {
+    setUser: (item: User) => void;
     user: User | null;
     login: (email: string, password: string) => void;
     logout: () => void;
@@ -73,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ setUser, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

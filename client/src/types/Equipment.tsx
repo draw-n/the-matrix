@@ -25,3 +25,8 @@ export interface FilamentMoreSettings {
         perimeters: number;
     };
 }
+
+export interface RemotePrint {
+    date: Date,
+    fileName: string
+}

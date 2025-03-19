@@ -117,6 +117,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             </Tooltip>
 
             <Modal
+              
                 title={material ? "Edit Material" : "Add Material"}
                 open={isModalOpen}
                 centered

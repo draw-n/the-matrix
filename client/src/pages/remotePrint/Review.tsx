@@ -20,6 +20,7 @@ interface ReviewProps {
     uploadedFile: UploadFile[];
     material: Material | null;
     settingDetails: FilamentMoreSettings | null;
+    handleSubmit: () => void;
 }
 
 const Review: React.FC<ReviewProps> = ({
@@ -27,6 +28,7 @@ const Review: React.FC<ReviewProps> = ({
     material,
     uploadedFile,
     settingDetails,
+    handleSubmit
 }: ReviewProps) => {
     const items: CollapseProps["items"] = [
         {
@@ -164,7 +166,7 @@ const Review: React.FC<ReviewProps> = ({
                     >
                         More Settings
                     </Button>
-                    <Button type="primary">Submit</Button>
+                    <Button type="primary" onClick={handleSubmit}>Submit</Button>
                 </Flex>
             </Space>
         </>
