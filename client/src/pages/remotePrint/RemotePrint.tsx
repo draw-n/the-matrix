@@ -75,10 +75,11 @@ const RemotePrint: React.FC = () => {
                         new Date(latestDate.date).valueOf() -
                             new Date().valueOf()
                     );
-                    setAllowPrint(timeDifference >= 86400000);
+                    setAllowPrint(true);
+                    //setAllowPrint(timeDifference >= 86400000);
                 }
             } else {
-                setAllowPrint(false);
+                setAllowPrint(true);
             }
         }
     }, [user]);
@@ -109,6 +110,10 @@ const RemotePrint: React.FC = () => {
                 setUser(editedUser);
                 setSubmitted(true);
                 setAllowPrint(false);
+
+                // CALL SLICING API
+                const responseApi = await axios.get("http://127.0.0.1:5000/file/" + uploadedFile[0].name);
+                alert(responseApi.data);
             }
         } catch (err) {
             console.error(err);
