@@ -1,8 +1,4 @@
-import {
-    Route,
-    Routes,
-    BrowserRouter,
-} from "react-router-dom";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import "./App.css";
 
 import Shell from "./components/Shell";
@@ -29,7 +25,6 @@ const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [refreshEquipment, setRefreshEquipment] = useState<number>(0);
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -48,42 +43,40 @@ const App: React.FC = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    {equipments?.map((equipment) => {
-                        return (
-                            <Route
-                                key={equipment._id}
-                                path={`/makerspace/${equipment.routePath}`}
-                                element={
-                                    <PrivateRoute
-                                        element={
-                                            <Shell
-                                                contentAccess={[
-                                                    "novice",
-                                                    "proficient",
-                                                    "expert",
-                                                    "moderator",
-                                                    "admin",
-                                                ]}
-                                              
-                                                children={
-                                                    <EquipmentProfile
-                                                        equipment={equipment}
-                                                        refreshEquipment={refreshEquipment}
-                                                        setRefreshEquipment={() =>
-                                                            setRefreshEquipment(
-                                                                refreshEquipment +
-                                                                    1
-                                                            )
-                                                        }
-                                                    />
-                                                }
-                                            />
-                                        }
-                                    />
-                                }
-                            />
-                        );
-                    })}
+                    {equipments?.map((equipment) => (
+                        <Route
+                            key={equipment._id}
+                            path={`/makerspace/${equipment.routePath}`}
+                            element={
+                                <PrivateRoute
+                                    element={
+                                        <Shell
+                                            contentAccess={[
+                                                "novice",
+                                                "proficient",
+                                                "expert",
+                                                "moderator",
+                                                "admin",
+                                            ]}
+                                            children={
+                                                <EquipmentProfile
+                                                    equipment={equipment}
+                                                    refreshEquipment={
+                                                        refreshEquipment
+                                                    }
+                                                    setRefreshEquipment={() =>
+                                                        setRefreshEquipment(
+                                                            refreshEquipment + 1
+                                                        )
+                                                    }
+                                                />
+                                            }
+                                        />
+                                    }
+                                />
+                            }
+                        />
+                    ))}
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
 
