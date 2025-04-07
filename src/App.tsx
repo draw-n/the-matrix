@@ -49,6 +49,7 @@ const App: React.FC = () => {
         <>
             <BrowserRouter>
                 <Routes>
+                    {/*
                     {equipments && equipments?.map((equipment) => (
                         <Route
                             key={equipment._id}
@@ -83,6 +84,7 @@ const App: React.FC = () => {
                             }
                         />
                     ))}
+                        */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
 
