@@ -31,19 +31,25 @@ const App: React.FC = () => {
                 const response = await axios.get<Equipment[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/equipment`
                 );
-                setEquipments(response.data);
+                setEquipments(response.data as Equipment[]);
             } catch (error) {
                 console.error("Error fetching routes:", error);
             }
         };
         fetchData();
+        if (Array.isArray(equipments)) {
+            equipments.map(item => {
+            });
+          } else {
+            console.error("Expected an array, got:", equipments);
+          }
     }, [refreshEquipment]);
 
     return (
         <>
             <BrowserRouter>
                 <Routes>
-                    {equipments?.map((equipment) => (
+                    {equipments && equipments?.map((equipment) => (
                         <Route
                             key={equipment._id}
                             path={`/makerspace/${equipment.routePath}`}
