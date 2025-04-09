@@ -36,13 +36,15 @@ const App: React.FC = () => {
                 console.error("Error fetching routes:", error);
             }
         };
-        fetchData();
+        /*fetchData();
         if (Array.isArray(equipments)) {
             equipments.map(item => {
             });
           } else {
             console.error("Expected an array, got:", equipments);
-          }
+          }*/
+        console.log("backend:");
+        console.log(import.meta.env.VITE_BACKEND_URL);
     }, [refreshEquipment]);
 
     return (
