@@ -36,13 +36,12 @@ const App: React.FC = () => {
                 console.error("Error fetching routes:", error);
             }
         };
-        /*fetchData();
+        fetchData();
         if (Array.isArray(equipments)) {
-            equipments.map(item => {
-            });
-          } else {
+            equipments.map((item) => {});
+        } else {
             console.error("Expected an array, got:", equipments);
-          }*/
+        }
         console.log("backend:");
         console.log(import.meta.env.VITE_BACKEND_URL);
     }, [refreshEquipment]);
@@ -51,42 +50,43 @@ const App: React.FC = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    {/*
-                    {equipments && equipments?.map((equipment) => (
-                        <Route
-                            key={equipment._id}
-                            path={`/makerspace/${equipment.routePath}`}
-                            element={
-                                <PrivateRoute
-                                    element={
-                                        <Shell
-                                            contentAccess={[
-                                                "novice",
-                                                "proficient",
-                                                "expert",
-                                                "moderator",
-                                                "admin",
-                                            ]}
-                                            children={
-                                                <EquipmentProfile
-                                                    equipment={equipment}
-                                                    refreshEquipment={
-                                                        refreshEquipment
-                                                    }
-                                                    setRefreshEquipment={() =>
-                                                        setRefreshEquipment(
-                                                            refreshEquipment + 1
-                                                        )
-                                                    }
-                                                />
-                                            }
-                                        />
-                                    }
-                                />
-                            }
-                        />
-                    ))}
-                        */}
+                    {equipments &&
+                        equipments?.map((equipment) => (
+                            <Route
+                                key={equipment._id}
+                                path={`/makerspace/${equipment.routePath}`}
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                children={
+                                                    <EquipmentProfile
+                                                        equipment={equipment}
+                                                        refreshEquipment={
+                                                            refreshEquipment
+                                                        }
+                                                        setRefreshEquipment={() =>
+                                                            setRefreshEquipment(
+                                                                refreshEquipment +
+                                                                    1
+                                                            )
+                                                        }
+                                                    />
+                                                }
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                        ))}
+
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
 
