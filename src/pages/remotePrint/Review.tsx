@@ -15,6 +15,7 @@ import {
 import { useEffect } from "react";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
+import ConfirmAction from "../../components/ConfirmAction";
 
 interface ReviewProps {
     prev: () => void;
@@ -44,7 +45,8 @@ const Review: React.FC<ReviewProps> = ({
                     <Col span={8}>
                         <h3>Vertical Shell</h3>
                         <p>
-                            Perimeters: {`${settingDetails?.verticalShell.perimeters}`}
+                            Perimeters:{" "}
+                            {`${settingDetails?.verticalShell.perimeters}`}
                         </p>
                     </Col>
                     <Col span={8}>
@@ -111,7 +113,7 @@ const Review: React.FC<ReviewProps> = ({
             iframe.src = "http://localhost:8000";
             iframe.width = "100%";
             iframe.height = "600px";
-            iframe.onload = function() {
+            iframe.onload = function () {
                 iframe.contentWindow?.postMessage(
                     { action: "set3DView", src: uploadedFile[0].name },
                     "http://localhost:8000"
@@ -127,7 +129,11 @@ const Review: React.FC<ReviewProps> = ({
         <>
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Card>
-                    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                    <Space
+                        direction="vertical"
+                        size="middle"
+                        style={{ width: "100%" }}
+                    >
                         <Flex style={{ width: "100%" }} justify="space-between">
                             <div>
                                 <h3>Material</h3>
@@ -190,9 +196,18 @@ const Review: React.FC<ReviewProps> = ({
                     >
                         More Settings
                     </Button>
-                    <Button type="primary" onClick={handleSubmit}>
-                        Submit
-                    </Button>
+                    <ConfirmAction
+                        actionSuccess={handleSubmit}
+                        title="Confirm Bed Clear"
+                        headlineText="Check the live webcam below."
+                        confirmText="Is the bed clear? If not, please select cancel and try again at another time."
+                        target={<Button type="primary">Submit</Button>}
+                    >
+                        <iframe
+                            src={import.meta.env.VITE_CAMERA_URL}
+                            style={{ width: "100%" }}
+                        />
+                    </ConfirmAction>
                 </Flex>
             </Space>
         </>
