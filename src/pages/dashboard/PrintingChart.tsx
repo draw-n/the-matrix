@@ -10,63 +10,73 @@ import {
 } from "recharts";
 
 import { geekblueDark } from "@ant-design/colors";
-import { Flex, Radio } from "antd";
+import { Flex, Radio, Segmented } from "antd";
 import { CheckboxGroupProps } from "antd/es/checkbox";
-
-const data = [
-    {
-        name: "Jan 2024",
-        amt: 2400,
-    },
-    {
-        name: "Feb 2024",
-        amt: 2210,
-    },
-    {
-        name: "Mar 2024",
-        amt: 2290,
-    },
-    {
-        name: "Apr 2024",
-        amt: 2000,
-    },
-    {
-        name: "May 2024",
-        amt: 2181,
-    },
-    {
-        name: "Jun 2024",
-        amt: 2500,
-    },
-    {
-        name: "Jul 2024",
-        amt: 2100,
-    },
-];
-
-const options: CheckboxGroupProps<string>["options"] = [
-    { label: "Past Month", value: "Past Month" },
-    { label: "Past Year", value: "Past Year" },
-    { label: "All Time", value: "All Time" },
-];
+import { useAuth } from "../../hooks/AuthContext";
+import { useMemo, useState } from "react";
+import dayjs from "dayjs";
 
 const PrintingChart: React.FC = () => {
+    const { user } = useAuth();
+
+    const [pastDays, setPastDays] = useState(30);
+
+    const chartData = useMemo(() => {
+        if (!user?.remotePrints || user.remotePrints.length === 0) return [];
+
+        const today = dayjs().startOf("day");
+        const oneMonthAgo = today.subtract(pastDays, "day");
+
+        // 1. Create map of past 31 days (30 days ago through today)
+        const dateMap: Record<string, number> = {};
+        for (let i = 0; i <= 30; i++) {
+            const dateKey = oneMonthAgo.add(i, "day").format("YYYY-MM-DD");
+            dateMap[dateKey] = 0;
+        }
+
+        // 2. Count remotePrints by date
+        user.remotePrints.forEach(({ date }) => {
+            const parsed = dayjs(date).startOf("day");
+
+            if (
+                (parsed.isAfter(oneMonthAgo) && parsed.isBefore(today)) ||
+                parsed.isSame(oneMonthAgo) ||
+                parsed.isSame(today)
+            ) {
+                const key = parsed.format("YYYY-MM-DD");
+                if (dateMap[key] !== undefined) {
+                    dateMap[key]++;
+                }
+            }
+        });
+        console.log(
+            Object.entries(dateMap).map(([date, count]) => ({
+                date: dayjs(date).format("MMM D"), // e.g., "Apr 15"
+                count,
+            }))
+        );
+        // 3. Convert to recharts format
+        return Object.entries(dateMap).map(([date, count]) => ({
+            date: dayjs(date).format("MMM D"), // e.g., "Apr 15"
+            count,
+        }));
+    }, [user?.remotePrints, pastDays]);
+
     return (
         <>
             <Flex vertical gap="middle">
-                <Radio.Group block options={options} defaultValue="Apple" />
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart
-                        data={data}
+                        data={chartData}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
+                        <XAxis dataKey="date" />
                         <YAxis />
                         <Tooltip />
                         <Line
                             type="monotone"
-                            dataKey="amt"
+                            dataKey="count"
                             stroke={geekblueDark[5]}
                             strokeWidth={2}
                         />
