@@ -77,30 +77,32 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                     >
                         <h2>Equipment</h2>
                         <Flex gap="middle">
-                            <Dropdown
-                                menu={{
-                                    items: categories?.map((category) => ({
-                                        key: category._id,
-                                        label: category.name,
-                                    })),
-                                    onClick: ({ key }) => {
-                                        setFilter(key);
-                                    },
-                                }}
-                                placement="bottom"
-                            >
-                                <Button
-                                    variant="solid"
-                                    size="small"
-                                    style={{ width: 200 }}
+                            {categories.length > 0 && (
+                                <Dropdown
+                                    menu={{
+                                        items: categories?.map((category) => ({
+                                            key: category._id,
+                                            label: category.name,
+                                        })),
+                                        onClick: ({ key }) => {
+                                            setFilter(key);
+                                        },
+                                    }}
+                                    placement="bottom"
                                 >
-                                    {
-                                        categories?.find(
-                                            (item) => item._id === filter
-                                        )?.name
-                                    }
-                                </Button>
-                            </Dropdown>
+                                    <Button
+                                        variant="solid"
+                                        size="small"
+                                        style={{ width: 200 }}
+                                    >
+                                        {
+                                            categories?.find(
+                                                (item) => item._id === filter
+                                            )?.name
+                                        }
+                                    </Button>
+                                </Dropdown>
+                            )}
                             <HasAccess roles={["admin", "moderator"]}>
                                 <CreateEquipmentForm
                                     onUpdate={() =>

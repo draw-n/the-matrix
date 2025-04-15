@@ -9,14 +9,12 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    
-    /*useEffect(() => {
-        setTimeout(() => {
-            if (!user) {
-                navigate("/login");
-            }
-        }, 1000);
-    });*/
+
+    useEffect(() => {
+        if (!user) {
+            navigate("/login");
+        }
+    });
 
     return <>{element}</>;
 };
