@@ -24,7 +24,7 @@ const Makerspace: React.FC<MakerspaceProps> = ({
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [filter, setFilter] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [refreshMaterials, setRefreshMaterials] = useState<number>(0); // State for refresh count
+    const [refreshMaterials, setRefreshMaterials] = useState<number>(0);
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
@@ -46,13 +46,13 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                         }/equipment?category=${filter}`
                     );
                     setEquipments(response.data);
-                    setIsLoading(false);
                 } catch (error) {
                     console.error("Fetching equipment failed:", error);
                 }
             } else {
                 setFilter(categories[0]?._id);
             }
+            setIsLoading(false);
         };
 
         fetchData();

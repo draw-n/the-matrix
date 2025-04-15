@@ -47,12 +47,12 @@ const RemotePrint: React.FC = () => {
             ...settingDetails,
             temperatures: material?.temperatures || {
                 extruder: {
-                    firstLayer: 240,
-                    otherLayers: 240,
+                    firstLayer: 200,
+                    otherLayers: 200,
                 },
                 bed: {
-                    firstLayer: 65,
-                    otherLayers: 65,
+                    firstLayer: 60,
+                    otherLayers: 60,
                 },
             },
         });
