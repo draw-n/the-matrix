@@ -131,7 +131,7 @@ const RemotePrint: React.FC = () => {
                 />
             ),
         },
-        /*{
+        {
             title: "Select Material",
             content: (
                 <SelectMaterial
@@ -152,7 +152,7 @@ const RemotePrint: React.FC = () => {
                     setSettingDetails={setSettingDetails}
                 />
             ),
-        },*/
+        },
         {
             title: "Review",
             content: (
