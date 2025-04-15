@@ -21,6 +21,7 @@ interface CreateEquipmentFormProps {
 
 interface FieldType {
     name: string;
+    headline?: string;
     category: string;
     description: string;
     routePath: string;
@@ -70,7 +71,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
     };
 
     const handleCancel = () => {
-        form.resetFields()
+        form.resetFields();
         setIsModalOpen(false);
     };
 
@@ -113,6 +114,13 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                                     "Please add a description to the announcement.",
                             },
                         ]}
+                    >
+                        <Input size="small" />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                        style={{ width: "100%" }}
+                        label="Headline"
+                        name="headline"
                     >
                         <Input size="small" />
                     </Form.Item>
