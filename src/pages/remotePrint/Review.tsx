@@ -115,7 +115,7 @@ const Review: React.FC<ReviewProps> = ({
             iframe.height = "600px";
             iframe.onload = function () {
                 iframe.contentWindow?.postMessage(
-                    { action: "set3DView", src: "viewer/" + uploadedFile[0].name },
+                    { action: "set3DView", src: "viewing/" + uploadedFile[0].name },
                     "http://10.16.137.45:8000"
                 );
             };
