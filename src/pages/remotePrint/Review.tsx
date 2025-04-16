@@ -110,13 +110,13 @@ const Review: React.FC<ReviewProps> = ({
         if (container) {
             container.innerHTML = "";
             const iframe = document.createElement("iframe");
-            iframe.src = "http://localhost:8000";
+            iframe.src = "http://10.16.137.45:8000";
             iframe.width = "100%";
             iframe.height = "600px";
             iframe.onload = function () {
                 iframe.contentWindow?.postMessage(
                     { action: "set3DView", src: "viewer/" + uploadedFile[0].name },
-                    "http://localhost:8000"
+                    "http://10.16.137.45:8000"
                 );
             };
             console.log(uploadedFile);
