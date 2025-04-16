@@ -24,10 +24,11 @@ const UploadFile: React.FC<UploadFileProps> = ({
         if (uploadedFile.length === 0) {
             message.error("You must upload a file!");
         } else {
-            next();
+            const responseApi = await axios.get("http://10.16.137.45:5000/viewer/" + uploadedFile[0].name);
             uploadedFile[0].name = uploadedFile[0].name.replace(".stl", "_tweaked.stl")
 
-            const responseApi = await axios.get("http://127.0.0.1:5000/viewer/" + uploadedFile[0].name);
+            next();
+           
         }
     };
 

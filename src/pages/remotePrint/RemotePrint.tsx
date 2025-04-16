@@ -112,7 +112,7 @@ const RemotePrint: React.FC = () => {
                 setAllowPrint(false);
 
                 // CALL SLICING API
-                const responseApi = await axios.get("http://localhost:5000/file/" + uploadedFile[0].name);
+                const responseApi = await axios.get("http://10.16.137.45:5000/file/" + uploadedFile[0].name);
                 alert(responseApi.data);
             }
         } catch (err) {
