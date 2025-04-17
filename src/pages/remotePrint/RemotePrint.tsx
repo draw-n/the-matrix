@@ -111,8 +111,8 @@ const RemotePrint: React.FC = () => {
                 setSubmitted(true);
                 setAllowPrint(false);
 
-                // CALL SLICING API
-                const responseApi = await axios.get("http://10.16.137.45:5000/file/" + uploadedFile[0].name);
+                // CALL SLICING API with just pla
+                const responseApi = await axios.get("http://10.16.137.45:5000/materialPrint/pla/" + uploadedFile[0].name);
                 alert(responseApi.data);
             }
         } catch (err) {
