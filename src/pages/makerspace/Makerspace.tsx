@@ -119,7 +119,7 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                             {equipments.map((equipment: Equipment, index) => {
                                 return (
                                     <Col span={24} lg={8} key={index}>
-                                        <EquipmentCard equipment={equipment} />
+                                        <EquipmentCard onUpdate={() => setRefreshEquipment(refreshEquipment + 1)} equipment={equipment} />
                                     </Col>
                                 );
                             })}

@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
 import ConfirmAction from "../../components/ConfirmAction";
+import "./remotePrint.css";
 
 interface ReviewProps {
     prev: () => void;
@@ -203,10 +204,12 @@ const Review: React.FC<ReviewProps> = ({
                         confirmText="Is the bed clear? If not, please select cancel and try again at another time."
                         target={<Button type="primary">Submit</Button>}
                     >
-                        <iframe
-                            src={import.meta.env.VITE_CAMERA_URL}
-                            style={{ width: "100%" }}
-                        />
+                        <div className="responsive-iframe-wrapper">
+                            <iframe
+                                src={import.meta.env.VITE_CAMERA_URL}
+                                className="responsive-iframe"
+                            />
+                        </div>
                     </ConfirmAction>
                 </Flex>
             </Space>
