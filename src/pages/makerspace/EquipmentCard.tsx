@@ -17,6 +17,7 @@ import type { Category } from "../../types/Category";
 
 interface EquipmentCardProps {
     equipment: Equipment;
+    onUpdate: () => void;
 }
 
 type EquipmentStatus = "available" | "error" | "paused" | "busy" | "offline";
@@ -51,10 +52,13 @@ const { Paragraph } = Typography;
 
 const EquipmentCard: React.FC<EquipmentCardProps> = ({
     equipment,
+    onUpdate,
 }: EquipmentCardProps) => {
     const [category, setCategory] = useState<Category>();
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+
+    const delay = 5000;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,9 +68,29 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                 }`
             );
             setCategory(response.data);
+
             setIsLoading(false);
         };
+
+        const fetchStatus = async () => {
+            if (equipment.ipUrl) {
+                const updatedStatus = await axios.get<Equipment>(
+                    `${import.meta.env.VITE_BACKEND_URL}/equipment/status/${
+                        equipment._id
+                    }`
+                );
+                if (equipment !== updatedStatus.data) {
+                    onUpdate();
+                }
+            }
+        };
         fetchData();
+
+        const interval = setInterval(() => {
+            fetchStatus();
+        }, delay);
+
+        return () => clearInterval(interval);
     }, [equipment]);
 
     return (
@@ -119,13 +143,13 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                         >
                             <Tag
                                 style={{ textTransform: "capitalize" }}
+                                bordered
                                 color={
                                     statusStyles[
                                         (equipment.status as EquipmentStatus) ||
                                             "offline"
                                     ].color
                                 }
-                                bordered
                                 icon={
                                     statusStyles[
                                         (equipment.status as EquipmentStatus) ||
@@ -135,7 +159,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                             >
                                 {equipment.status}
                             </Tag>
-
                             <Button
                                 variant="outlined"
                                 size="small"
