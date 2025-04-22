@@ -104,27 +104,7 @@ const Review: React.FC<ReviewProps> = ({
         },
     ];
 
-    // Integrate the iframe creation and message sending code
-    useEffect(() => {
-        const container = document.getElementById("iframeContainer");
-        if (container) {
-            container.innerHTML = "";
-            const iframe = document.createElement("iframe");
-            iframe.src = "http://10.16.137.45:8000";
-            iframe.width = "100%";
-            iframe.height = "600px";
-            iframe.onload = function () {
-                iframe.contentWindow?.postMessage(
-                    { action: "set3DView", src: uploadedFile[0].name },
-                    "http://10.16.137.45:8000"
-                );
-            };
-            console.log(uploadedFile);
-            console.log(uploadedFile[0].name);
-            container.appendChild(iframe);
-        }
-    }, []);
-
+   
     return (
         <>
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -181,12 +161,6 @@ const Review: React.FC<ReviewProps> = ({
                         </Card>
                     </Col>
                 </Row>
-
-                {/* Section to render the iframe */}
-                <Card>
-                    <h3>View</h3>
-                    <div id="iframeContainer" />
-                </Card>
 
                 <Flex justify="center" gap="10px">
                     <Button
