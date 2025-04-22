@@ -103,8 +103,6 @@ const Review: React.FC<ReviewProps> = ({
             ),
         },
     ];
-
-   
     return (
         <>
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -136,7 +134,7 @@ const Review: React.FC<ReviewProps> = ({
                 </Card>
 
                 <Row gutter={20}>
-                    <Col style={{ height: "100%" }} span={12}>
+                    <Col style={{ height: "100%" }} span={24}>
                         <Card style={{ height: "100%" }}>
                             <h3>File to be printed</h3>
                             <Upload
@@ -154,12 +152,7 @@ const Review: React.FC<ReviewProps> = ({
                             </Upload>
                         </Card>
                     </Col>
-                    <Col span={12}>
-                        <Card>
-                            <h3>Estimated Finish Times</h3>
-                            <p>test</p>
-                        </Card>
-                    </Col>
+                   
                 </Row>
 
                 <Flex justify="center" gap="10px">
