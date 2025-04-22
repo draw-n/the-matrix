@@ -106,7 +106,7 @@ const Review: React.FC<ReviewProps> = ({
 
     // Integrate the iframe creation and message sending code
     useEffect(() => {
-        /*const container = document.getElementById("iframeContainer");
+        const container = document.getElementById("iframeContainer");
         if (container) {
             container.innerHTML = "";
             const iframe = document.createElement("iframe");
@@ -122,7 +122,7 @@ const Review: React.FC<ReviewProps> = ({
             console.log(uploadedFile);
             console.log(uploadedFile[0].name);
             container.appendChild(iframe);
-        }*/
+        }
     }, []);
 
     return (
