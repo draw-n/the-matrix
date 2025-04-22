@@ -1,0 +1,94 @@
+{
+  "hash": "e971586d",
+  "configHash": "6c804fea",
+  "lockfileHash": "4d27e2a4",
+  "browserHash": "0b1a1f30",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "2cf62373",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "a70c9fd6",
+      "needsInterop": true
+    },
+    "antd": {
+      "src": "../../node_modules/antd/es/index.js",
+      "file": "antd.js",
+      "fileHash": "f5dd1bb6",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "7940b640",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "f1e6a7e6",
+      "needsInterop": false
+    },
+    "@ant-design/colors": {
+      "src": "../../node_modules/@ant-design/colors/es/index.js",
+      "file": "@ant-design_colors.js",
+      "fileHash": "0422b330",
+      "needsInterop": false
+    },
+    "@ant-design/icons": {
+      "src": "../../node_modules/@ant-design/icons/es/index.js",
+      "file": "@ant-design_icons.js",
+      "fileHash": "3582883a",
+      "needsInterop": false
+    },
+    "recharts": {
+      "src": "../../node_modules/recharts/es6/index.js",
+      "file": "recharts.js",
+      "fileHash": "d6ac7fa2",
+      "needsInterop": false
+    },
+    "dayjs": {
+      "src": "../../node_modules/dayjs/dayjs.min.js",
+      "file": "dayjs.js",
+      "fileHash": "b82aea18",
+      "needsInterop": true
+    },
+    "randomcolor": {
+      "src": "../../node_modules/randomcolor/randomColor.js",
+      "file": "randomcolor.js",
+      "fileHash": "1c9b43b6",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-DPLKJ6H7": {
+      "file": "chunk-DPLKJ6H7.js"
+    },
+    "chunk-DYTBUFLL": {
+      "file": "chunk-DYTBUFLL.js"
+    },
+    "chunk-CDQGQYCP": {
+      "file": "chunk-CDQGQYCP.js"
+    },
+    "chunk-AIHAQKB3": {
+      "file": "chunk-AIHAQKB3.js"
+    },
+    "chunk-TNTPHDQH": {
+      "file": "chunk-TNTPHDQH.js"
+    },
+    "chunk-T3NLTCVN": {
+      "file": "chunk-T3NLTCVN.js"
+    },
+    "chunk-32E4H3EV": {
+      "file": "chunk-32E4H3EV.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}
