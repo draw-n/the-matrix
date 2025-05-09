@@ -3,6 +3,7 @@ import { FilamentTemperatures } from "./Material";
 export interface Equipment {
     _id: string;
     name: string;
+    ipUrl?: string;
     routePath: string;
     headline?: string;
     category: string;
