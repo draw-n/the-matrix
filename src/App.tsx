@@ -43,7 +43,7 @@ const App: React.FC = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    {Array.isArray(equipments) &&
+                    {/*Array.isArray(equipments) &&
                         equipments.length > 0 &&
                         equipments.map((equipment) => (
                             <Route
@@ -79,7 +79,7 @@ const App: React.FC = () => {
                                     />
                                 }
                             />
-                        ))}
+                        ))*/}
 
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
