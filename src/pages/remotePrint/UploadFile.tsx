@@ -24,14 +24,12 @@ const UploadFile: React.FC<UploadFileProps> = ({
         if (uploadedFile.length === 0) {
             message.error("You must upload a file!");
         } else {
-
             next();
-           
         }
     };
 
     const props: UploadProps = {
-        action: `${import.meta.env.VITE_BACKEND_URL}/upload`,
+        action: `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
         name: "file",
         headers: {
             authorization: "authorization-text",
@@ -60,7 +58,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
         onDrop(e) {
             console.log("Dropped files", e.dataTransfer.files);
         },
-        customRequest: (options: any) => {
+        customRequest: async (options: any) => {
             const data = new FormData();
             data.append("file", options.file);
             const config = {
@@ -69,7 +67,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 },
             };
 
-            axios
+            await axios
                 .post(options.action, data, config)
                 .then((response: any) => {
                     message.success(response.data.message);
@@ -77,6 +75,8 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 })
                 .catch((err: Error) => {
                     console.log(err);
+                    message.error("Upload failed.");
+                    options.onError(err);
                 });
         },
     };
