@@ -37,13 +37,6 @@ const App: React.FC = () => {
             }
         };
         fetchData();
-        if (Array.isArray(equipments)) {
-            equipments.map((item) => {});
-        } else {
-            console.error("Expected an array, got:", equipments);
-        }
-        console.log("backend:");
-        console.log(import.meta.env.VITE_BACKEND_URL);
     }, [refreshEquipment]);
 
     return (
@@ -51,7 +44,8 @@ const App: React.FC = () => {
             <BrowserRouter>
                 <Routes>
                     {equipments &&
-                        equipments?.map((equipment) => (
+                        equipments.length > 0 &&
+                        equipments.map((equipment) => (
                             <Route
                                 key={equipment._id}
                                 path={`/makerspace/${equipment.routePath}`}

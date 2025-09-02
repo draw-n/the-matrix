@@ -95,6 +95,14 @@ const RemotePrint: React.FC = () => {
     const handleSubmit = async () => {
         try {
             if (user) {
+                // CALL SLICING API
+                const printResponse = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/jobs`,
+                    {
+                        fileName: uploadedFile[0].name,
+                    }
+                );
+
                 const editedRemotePrints = [
                     ...(user?.remotePrints || []),
                     { date: new Date(), fileName: uploadedFile[0].name },
@@ -103,17 +111,13 @@ const RemotePrint: React.FC = () => {
                     ...user,
                     remotePrints: editedRemotePrints,
                 };
-                const response = await axios.put<User>(
+                const userResponse = await axios.put<User>(
                     `${import.meta.env.VITE_BACKEND_URL}/users/${user?._id}`,
                     editedUser
                 );
                 setUser(editedUser);
                 setSubmitted(true);
                 setAllowPrint(false);
-
-                // CALL SLICING API
-                const responseApi = await axios.get("http://10.16.137.45:5000/file/" + uploadedFile[0].name);
-                alert(responseApi.data);
             }
         } catch (err) {
             console.error(err);
