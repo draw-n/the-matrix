@@ -43,7 +43,7 @@ const App: React.FC = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    {equipments &&
+                    {Array.isArray(equipments) &&
                         equipments.length > 0 &&
                         equipments.map((equipment) => (
                             <Route
