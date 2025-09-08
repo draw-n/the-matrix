@@ -121,7 +121,8 @@ const RemotePrint: React.FC = () => {
                 setSubmitted(true);
                 setAllowPrint(false);
             }
-        } catch (err) {
+        } catch (err: any) {
+            message.error(err.response?.data?.message || "Unable to print at this time. Please try again later.");
             console.error(err);
         }
     };
