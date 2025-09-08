@@ -15,7 +15,7 @@ export interface Equipment {
 export interface FilamentMoreSettings {
     infill: number;
     layerHeight: number;
-    supports: string;
+    supports: boolean;
     temperatures: FilamentTemperatures;
     horizontalShell: {
         topLayers: number;

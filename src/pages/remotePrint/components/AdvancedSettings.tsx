@@ -1,4 +1,13 @@
-import { Button, Col, Flex, InputNumber, Row, Select, Space } from "antd";
+import {
+    Button,
+    Col,
+    Flex,
+    InputNumber,
+    Row,
+    Select,
+    Space,
+    Switch,
+} from "antd";
 import { FilamentMoreSettings } from "../../../types/Equipment";
 import { Material } from "../../../types/Material";
 import { CaretDownFilled, RedoOutlined } from "@ant-design/icons";
@@ -19,28 +28,14 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
             <Space style={{ width: "100%" }} direction="vertical" size="large">
                 <Flex gap="25px" align="center" style={{ width: "100%" }}>
                     <h3>Supports</h3>
-                    <Select
-                        suffixIcon={<CaretDownFilled />}
-                        style={{ width: "100%" }}
-                        value={settingDetails.supports}
-                        onChange={(value) =>
+                    <Switch
+                        checked={settingDetails.supports}
+                        onChange={(checked) =>
                             setSettingDetails({
                                 ...settingDetails,
-                                supports: value,
+                                supports: checked,
                             })
                         }
-                        options={[
-                            { value: "none", label: "None" },
-                            {
-                                value: "plate-only",
-                                label: "Support on build plate only",
-                            },
-                            {
-                                value: "enforcers-only",
-                                label: "For support enforcers only",
-                            },
-                            { value: "everywhere", label: "Everywhere" },
-                        ]}
                     />
                 </Flex>
                 <Space
