@@ -99,15 +99,27 @@ const Shell: React.FC<ShellProps> = ({
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
 
-    const accessPages: MenuItem[] = allPages.filter((item) =>
-        checkAccess(item.access)
-    );
+    // Convert custom MenuItem[] to Ant Design Menu items format
+    const menuItems = allPages
+        .filter((item) => checkAccess(item.access))
+        .map((item) => ({
+            key: item.key,
+            label: item.label,
+            icon: item.icon,
+            children: item.children
+                ? item.children.map((child) => ({
+                      key: child.key,
+                      label: child.label,
+                      icon: child.icon,
+                  }))
+                : undefined,
+        }));
 
     const getSelectedKeys = (): string[] => {
         const currentPath = location.pathname;
 
         // Get keys that match the beginning of the current path
-        let selectedPages = accessPages
+        let selectedPages = menuItems
             .filter((item) => currentPath.startsWith(String(item.key)))
             .map((item) => item.key as string); // Ensure the key is treated as a string
         if (selectedPages.length > 1) {
@@ -134,7 +146,7 @@ const Shell: React.FC<ShellProps> = ({
                     selectedKeys={getSelectedKeys()}
                     defaultSelectedKeys={[location.pathname]}
                     mode="inline"
-                    items={accessPages}
+                    items={menuItems}
                     onClick={({ key }) => {
                         navigate(key);
                     }}
