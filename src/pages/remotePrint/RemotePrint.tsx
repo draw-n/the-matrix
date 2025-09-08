@@ -17,9 +17,9 @@ const RemotePrint: React.FC = () => {
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
     const [material, setMaterial] = useState<Material | null>(null);
     const [settingDetails, setSettingDetails] = useState<FilamentMoreSettings>({
-        infill: 20,
-        layerHeight: 0.1,
-        supports: "everywhere",
+        infill: 0.2,
+        layerHeight: 0.2,
+        supports: true,
         temperatures: {
             extruder: {
                 firstLayer: 240,
