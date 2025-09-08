@@ -100,6 +100,8 @@ const RemotePrint: React.FC = () => {
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
                         fileName: uploadedFile[0].name,
+                        material,
+                        options: settingDetails
                     }
                 );
 

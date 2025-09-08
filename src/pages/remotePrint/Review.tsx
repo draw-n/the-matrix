@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
 import ConfirmAction from "../../components/ConfirmAction";
+import ViewModel from "./components/ViewModel";
 
 interface ReviewProps {
     prev: () => void;
@@ -150,9 +151,9 @@ const Review: React.FC<ReviewProps> = ({
                             >
                                 {/* The button won't be visible, and the upload list will still be shown */}
                             </Upload>
+                            <ViewModel file={uploadedFile[0]} />
                         </Card>
                     </Col>
-                   
                 </Row>
 
                 <Flex justify="center" gap="10px">
