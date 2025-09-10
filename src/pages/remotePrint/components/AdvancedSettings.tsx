@@ -329,6 +329,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                             <Flex gap="10px" justify="end">
                                 <p>Top layers: </p>
                                 <InputNumber
+                                    min={0}
                                     value={
                                         settingDetails.horizontalShell.topLayers
                                     }
@@ -364,6 +365,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                             <Flex gap="10px" justify="end">
                                 <p>Bottom layers: </p>
                                 <InputNumber
+                                    min={0}
                                     value={
                                         settingDetails.horizontalShell
                                             .bottomLayers
