@@ -73,7 +73,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
         <>
             <Card
                 className="equipment-card"
-                bordered={false}
                 style={{ height: "100%" }}
             >
                 {isLoading ? (

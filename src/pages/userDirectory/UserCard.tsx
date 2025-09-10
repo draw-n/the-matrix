@@ -51,7 +51,7 @@ const UserCard: React.FC<UserCardProps> = ({
 
     return (
         <>
-            <Card bordered={false} style={{ height: "100%" }}>
+            <Card style={{ height: "100%" }}>
                 <Space
                     direction="vertical"
                     size="small"

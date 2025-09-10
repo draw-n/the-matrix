@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, Flex, Image, Layout, Menu, Skeleton } from "antd";
+import { Button, Divider, Flex, Image, Layout, Menu, theme } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
@@ -98,8 +98,7 @@ const Shell: React.FC<ShellProps> = ({
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
-
-    // Convert custom MenuItem[] to Ant Design Menu items format
+    const { colorPrimary } = theme.useToken().token;
     const menuItems = allPages
         .filter((item) => checkAccess(item.access))
         .map((item) => ({
@@ -136,13 +135,29 @@ const Shell: React.FC<ShellProps> = ({
                 collapsible
                 collapsed={collapsed}
                 className="shell-sider"
+                theme="light"
             >
                 <Flex justify="center" style={{ padding: "20px" }}>
-                    <Image style={{ width: 50 }} src={vandyLogoSmall} />
+                    <div
+                        style={{
+                            borderRadius: "1000px",
+                            backgroundColor: colorPrimary,
+                            padding: "7px",
+                        }}
+                    >
+                        <Image
+                            style={{
+                                width: 40,
+                                height: 40,
+                                objectFit: "contain",
+                            }}
+                            src={vandyLogoSmall}
+                        />
+                    </div>
                 </Flex>
-
+                <Divider style={{ margin: "auto", width: "80%" }} />
                 <Menu
-                    theme="dark"
+                    theme="light"
                     selectedKeys={getSelectedKeys()}
                     defaultSelectedKeys={[location.pathname]}
                     mode="inline"
@@ -160,7 +175,6 @@ const Shell: React.FC<ShellProps> = ({
                         align="center"
                     >
                         <Button
-                            style={{ color: "white" }}
                             type="text"
                             icon={
                                 collapsed ? <MenuOutlined /> : <CloseOutlined />

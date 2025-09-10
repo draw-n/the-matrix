@@ -1,4 +1,4 @@
-import { Flex, Button, Space, Row, Col, Card, Tooltip } from "antd";
+import { Flex, Button, Space, Row, Col, Card, Tooltip, theme } from "antd";
 import AnnouncementCarousel from "../../components/AnnouncementCarousel";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
@@ -10,13 +10,34 @@ const Dashboard: React.FC = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const {
+        token: { colorPrimary },
+    } = theme.useToken();
+
     return (
         <>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
-                <h1>DASHBOARD</h1>
-
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
+                        <Card style={{ background: colorPrimary }}>
+                            <h2 style={{ color: "white", margin: 0 }}>
+                                Hello, {user?.firstName}!
+                            </h2>
+                        </Card>
+                    </Col>
+                    <Col span={16}>
+                        <Card>
+                            <Space
+                                style={{ width: "100%" }}
+                                direction="vertical"
+                                size="small"
+                            >
+                                <h2>REMOTE PRINTING OCCURRENCES</h2>
+                                <PrintingChart />
+                            </Space>
+                        </Card>
+                    </Col>
+                    <Col span={8}>
                         <Card>
                             <Space
                                 style={{ width: "100%" }}
@@ -59,18 +80,6 @@ const Dashboard: React.FC = () => {
                                     </Flex>
                                 </Flex>
                                 <AnnouncementCarousel />
-                            </Space>
-                        </Card>
-                    </Col>
-                    <Col span={24}>
-                        <Card>
-                            <Space
-                                style={{ width: "100%" }}
-                                direction="vertical"
-                                size="small"
-                            >
-                                <h2>Remote Printing Occurrences</h2>
-                                <PrintingChart />
                             </Space>
                         </Card>
                     </Col>
