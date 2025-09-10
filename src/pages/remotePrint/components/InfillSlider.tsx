@@ -16,16 +16,16 @@ const InfillSlider: React.FC<InfillSliderProps> = ({
             <Flex style={{ width: "100%" }} justify="space-between" gap="10px">
                 <Slider
                     min={0}
-                    max={1}
+                    max={100}
                     onChange={onChange}
                     value={typeof infill === "number" ? infill : 0}
-                    step={0.01}
+                    step={1}
                     style={{ width: "100%" }}
                 />
                 <InputNumber
                     min={0}
-                    max={1}
-                    step={0.01}
+                    max={100}
+                    step={1}
                     formatter={(value) => `${value}%`}
                     parser={(value) =>
                         value?.replace("%", "") as unknown as number
