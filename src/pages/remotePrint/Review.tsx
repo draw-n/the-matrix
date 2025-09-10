@@ -171,16 +171,12 @@ const Review: React.FC<ReviewProps> = ({
                         confirmText="Is the bed clear? If not, please select cancel and try again at another time."
                         target={<Button type="primary">Submit</Button>}
                     >
-                        <iframe
-                            id="camera-iframe"
-                            src={import.meta.env.VITE_CAMERA_URL}
-                            style={{
-                                width: "100%",
-                                height: "400px",
-                                borderRadius: "10px",
-                                overflow: "hidden",
-                            }}
-                        />
+                        <div id="camera-iframe-container">
+                            <iframe
+                                id="camera-iframe"
+                                src={import.meta.env.VITE_CAMERA_URL}
+                            />
+                        </div>
                     </ConfirmAction>
                 </Flex>
             </Space>
