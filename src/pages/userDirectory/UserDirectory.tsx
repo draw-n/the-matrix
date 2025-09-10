@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import UserCard from "./UserCard";
 import Loading from "../../components/Loading";
+import DownloadEmails from "./DownloadEmails";
 
 const UserDirectory: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -69,6 +70,7 @@ const UserDirectory: React.FC = () => {
                 >
                     <h1>USER DIRECTORY</h1>
                     <Flex gap="20px">
+                        <DownloadEmails />
                         <Segmented
                             options={[
                                 { label: "All", value: "" },
