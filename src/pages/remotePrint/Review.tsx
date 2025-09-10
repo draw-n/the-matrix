@@ -172,8 +172,14 @@ const Review: React.FC<ReviewProps> = ({
                         target={<Button type="primary">Submit</Button>}
                     >
                         <iframe
+                            id="camera-iframe"
                             src={import.meta.env.VITE_CAMERA_URL}
-                            style={{ width: "100%" }}
+                            style={{
+                                width: "100%",
+                                height: "400px",
+                                borderRadius: "10px",
+                                overflow: "hidden",
+                            }}
                         />
                     </ConfirmAction>
                 </Flex>

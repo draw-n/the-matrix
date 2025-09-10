@@ -56,3 +56,11 @@
 .updates-kiosk-mode {
     height: 100vh;
 }
+
+#camera-iframe {
+    transform: scale(0.8); /* scale down */
+    transform-origin: top left;
+    width: 125%; /* inverse of scale */
+    height: 125%;
+    border: none;
+}
