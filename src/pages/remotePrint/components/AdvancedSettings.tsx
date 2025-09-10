@@ -339,7 +339,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             horizontalShell: {
                                                 ...settingDetails.horizontalShell,
                                                 topLayers:
-                                                    value ||
+                                                    value ??
                                                     settingDetails
                                                         .horizontalShell
                                                         .topLayers,
@@ -376,7 +376,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                             horizontalShell: {
                                                 ...settingDetails.horizontalShell,
                                                 bottomLayers:
-                                                    value ||
+                                                    value ??
                                                     settingDetails
                                                         .horizontalShell
                                                         .bottomLayers,
