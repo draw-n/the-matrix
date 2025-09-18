@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
-import { Button, Col, Dropdown, Empty, Flex, Radio, Row, Space } from "antd";
+import { Button, Card, Col, Dropdown, Empty, Flex, Radio, Row, Space } from "antd";
 import EquipmentCard from "./EquipmentCard";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -127,26 +127,27 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                     ) : (
                         <Empty style={{ width: "100%" }} />
                     )}
+                    <Card>
+                        <Flex
+                            style={{ width: "100%" }}
+                            justify="space-between"
+                            align="center"
+                        >
+                            <h2>Materials</h2>
+                            <HasAccess roles={["admin", "moderator"]}>
+                                <MaterialForm
+                                    onUpdate={() =>
+                                        setRefreshMaterials((prev) => prev + 1)
+                                    }
+                                />
+                            </HasAccess>
+                        </Flex>
 
-                    <Flex
-                        style={{ width: "100%" }}
-                        justify="space-between"
-                        align="center"
-                    >
-                        <h2>Materials</h2>
-                        <HasAccess roles={["admin", "moderator"]}>
-                            <MaterialForm
-                                onUpdate={() =>
-                                    setRefreshMaterials((prev) => prev + 1)
-                                }
-                            />
-                        </HasAccess>
-                    </Flex>
-
-                    <MaterialTable
-                        refresh={refreshMaterials}
-                        setRefresh={setRefreshMaterials}
-                    />
+                        <MaterialTable
+                            refresh={refreshMaterials}
+                            setRefresh={setRefreshMaterials}
+                        />
+                    </Card>
                 </>
             )}
         </Space>

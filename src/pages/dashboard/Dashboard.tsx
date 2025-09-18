@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <Card style={{ background: colorPrimary }}>
+                        <Card style={{ background: colorPrimary, border: "none" }}>
                             <h2 style={{ color: "white", margin: 0 }}>
                                 Hello, {user?.firstName}!
                             </h2>

@@ -35,24 +35,25 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
-    useEffect(() => {
-        const storedID = localStorage.getItem("userID");
-        if (storedID) {
-            const fetchUser = async () => {
-                try {
-                    const response = await axios.get(
-                        `${import.meta.env.VITE_BACKEND_URL}/users/${storedID}`
-                    );
-                    if (response.data.user) {
-                        setUser(response.data.user); // Set user in context state
-                    }
-                } catch (error) {
-                    console.error("Failed to fetch user details", error);
-                }
-            };
+    axios.defaults.withCredentials = true;
 
-            fetchUser();
-        }
+   useEffect(() => {
+        // Fetch current user from session
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/users/me`
+                );
+                if (response.data.user) {
+                    setUser(response.data.user);
+                } else {
+                    setUser(null);
+                }
+            } catch (error) {
+                setUser(null);
+            }
+        };
+        fetchUser();
     }, []);
 
     const login = async (email: string, password: string) => {
@@ -62,17 +63,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 { email, password }
             );
             if (response.data.user) {
-                localStorage.setItem("userID", response.data.user._id);
                 setUser(response.data.user);
+            } else {
+                setUser(null);
             }
         } catch (error) {
-            console.error("Login failed", error);
+            setUser(null);
+            throw error;
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem("userID");
-        setUser(null);
+    const logout = async () => {
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/users/logout`
+            );
+        } finally {
+            setUser(null);
+        }
     };
 
     return (
