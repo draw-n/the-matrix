@@ -9,6 +9,50 @@
     scrollbargutter: stable;
 }
 
+.ant-layout-header h1 {
+    font-size: 16px; /* optional */
+    font-weight: 400; /* optional */
+    color: #797979; /* your desired color */
+    margin: 0;
+}
+
+.ant-card h2 {
+    text-transform: uppercase;
+    color: #a9a9a9; /* your desired color */
+    font-size: 16px; /* optional */
+    font-weight: 700; /* optional */
+}
+
+/* Always show arrows */
+.ant-carousel .slick-prev,
+.ant-carousel .slick-next {
+    opacity: 1 !important;
+    z-index: 2;
+    color: #797979;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hover effect */
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-next:hover {
+    color: #263ea0;
+}
+
+/* Arrow positioning (optional tweak) */
+.ant-carousel .slick-prev {
+    left: -25px; /* adjust as needed */
+}
+
+.ant-carousel .slick-next {
+    right: -25px; /* adjust as needed */
+}
+
+.ant-card-body {
+    height: 100%
+}
+
 .login-background {
     background: -webkit-linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
         url("./assets/DF-Banner-2.png");

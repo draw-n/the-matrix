@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmAction from "../../components/ConfirmAction";
 import HasAccess from "../../components/rbac/HasAccess";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 interface EquipmentProfileProps {
     equipment: Equipment;
@@ -230,7 +230,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                 <Skeleton active paragraph={{ rows: 4 }} />
                             ) : (
                                 <Flex vertical>
-                                    <h3>Description</h3>
+                                    <Title level={2}>DESCRIPTION</Title>
                                     {editMode ? (
                                         <TextArea
                                             size="small"
@@ -251,7 +251,9 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     </Col>
                     <Col span={24}>
                         <Card>
-                            <h3>{`${equipment.name}'s Current Issues`}</h3>
+                            <Title
+                                level={2}
+                            >{`${equipment.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
                             <IssueTable
                                 refresh={refreshEquipment}
                                 setRefresh={setRefreshEquipment}

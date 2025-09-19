@@ -28,12 +28,15 @@ const theme: ThemeConfig = {
             activeBarBorderWidth: 0,
             itemMarginInline: 0,
         },
+        Typography: {     
+            titleMarginTop: 0,
+         
+        },
         Card: {
             lineWidth: 1,
             colorBorder: "#a9a9a9",
             colorBorderBg: "#a9a9a9",
-            fontSizeHeading2: 20,
-            colorTextHeading: "#a9a9a9",
+        
         },
         Divider: {
             colorBorder: "#797979",

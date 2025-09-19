@@ -1,4 +1,6 @@
 import {
+    Area,
+    AreaChart,
     CartesianGrid,
     Legend,
     Line,
@@ -9,7 +11,7 @@ import {
     YAxis,
 } from "recharts";
 
-import { geekblueDark } from "@ant-design/colors";
+import { geekblueDark, red } from "@ant-design/colors";
 import { Flex, Radio, Segmented } from "antd";
 import { CheckboxGroupProps } from "antd/es/checkbox";
 import { useAuth } from "../../hooks/AuthContext";
@@ -65,22 +67,51 @@ const PrintingChart: React.FC = () => {
     return (
         <>
             <Flex vertical gap="middle">
-                <ResponsiveContainer width="100%" height={300}>
-                    <LineChart
+                <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart
                         data={chartData}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
+                        <defs>
+                            <linearGradient
+                                id="count"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="5%"
+                                    stopColor={red[5]}
+                                    stopOpacity={0.8}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor={red[5]}
+                                    stopOpacity={0}
+                                />
+                            </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
+                        <XAxis dataKey="date" tickLine={false} />
+                        <YAxis
+                            width={5}
+                            allowDecimals={false}
+                            type="number"
+                            interval="preserveStartEnd"
+                            domain={[0, "dataMax + 5"]}
+                        />
                         <Tooltip />
-                        <Line
+                        <Area
+                            fill="url(#count)"
                             type="monotone"
                             dataKey="count"
-                            stroke={geekblueDark[5]}
+                            name="Number of Prints"
+                            stroke={red[5]}
                             strokeWidth={2}
+                            dot={false}
                         />
-                    </LineChart>
+                    </AreaChart>
                 </ResponsiveContainer>
             </Flex>
         </>

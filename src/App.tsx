@@ -1,5 +1,4 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
-import "./App.css";
 
 import Shell from "./components/Shell";
 import PrivateRoute from "./components/PrivateRoute";
@@ -20,6 +19,8 @@ import { Equipment } from "./types/Equipment";
 import Signup from "./pages/Signup";
 import RemotePrint from "./pages/remotePrint/RemotePrint";
 import Dashboard from "./pages/dashboard/Dashboard";
+
+import "./App.css";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -53,6 +54,7 @@ const App: React.FC = () => {
                                     <PrivateRoute
                                         element={
                                             <Shell
+                                                title={equipment.name}
                                                 contentAccess={[
                                                     "novice",
                                                     "proficient",
@@ -97,6 +99,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
+                                        title="Dashboard"
                                         children={<Dashboard />}
                                     />
                                 }
@@ -110,6 +113,7 @@ const App: React.FC = () => {
                             <PrivateRoute
                                 element={
                                     <Shell
+                                        title="Settings"
                                         contentAccess={["admin"]}
                                         children={<Settings />}
                                     />
@@ -131,6 +135,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
+                                        title="Remote Print"
                                         children={<RemotePrint />}
                                     />
                                 }
@@ -150,6 +155,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
+                                        title="User Profile"
                                         children={<Profile />}
                                     />
                                 }
@@ -169,6 +175,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
+                                        title="Makerspace"
                                         children={
                                             <Makerspace
                                                 refreshEquipment={
@@ -190,6 +197,7 @@ const App: React.FC = () => {
                             <PrivateRoute
                                 element={
                                     <Shell
+                                        title="Edit Updates"
                                         contentAccess={["moderator", "admin"]}
                                         children={<EditUpdates />}
                                     />
@@ -211,6 +219,7 @@ const App: React.FC = () => {
                                             "moderator",
                                             "admin",
                                         ]}
+                                        title="Report an Issue"
                                         children={<ReportAnIssue />}
                                     />
                                 }
@@ -225,6 +234,7 @@ const App: React.FC = () => {
                                     <Shell
                                         contentAccess={["admin"]}
                                         children={<UserDirectory />}
+                                        title="User Directory"
                                     />
                                 }
                             />

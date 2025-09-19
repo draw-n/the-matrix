@@ -1,8 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+
 import theme from "./theme.ts";
 import "./index.css";
+import App from "./App.tsx";
 import { AuthProvider } from "./hooks/AuthContext.tsx";
 import { ConfigProvider } from "antd";
 import '@ant-design/v5-patch-for-react-19';

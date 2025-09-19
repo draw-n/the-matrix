@@ -58,8 +58,6 @@ const Profile: React.FC = () => {
     return (
         <>
             <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                <h1>PROFILE</h1>
-
                 <Card>
                     <h2>{`${user?.firstName} ${user?.lastName}`}</h2>
                     <p style={{ textTransform: "capitalize" }}>

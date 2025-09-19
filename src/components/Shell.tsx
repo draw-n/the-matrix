@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, Divider, Flex, Image, Layout, Menu, theme } from "antd";
+import { Button, Divider, Flex, Image, Layout, Menu, theme, Typography } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
@@ -22,6 +22,7 @@ import {
 import vandyLogoSmall from "../assets/White_Pinstripe_V.png";
 import { checkAccess } from "./rbac/HasAccess";
 
+const { Title } = Typography;
 const { Header, Content, Sider } = Layout;
 
 interface MenuItem {
@@ -75,6 +76,7 @@ const allPages: MenuItem[] = [
         label: "User Profile",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
         icon: <UserOutlined />,
+        
     },
 
     {
@@ -88,11 +90,13 @@ const allPages: MenuItem[] = [
 interface ShellProps {
     children?: React.ReactNode;
     contentAccess: string[];
+    title?: string;
 }
 
 const Shell: React.FC<ShellProps> = ({
     children,
     contentAccess,
+    title,
 }: ShellProps) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -174,18 +178,26 @@ const Shell: React.FC<ShellProps> = ({
                         justify="space-between"
                         align="center"
                     >
-                        <Button
-                            type="text"
-                            icon={
-                                collapsed ? <MenuOutlined /> : <CloseOutlined />
-                            }
-                            onClick={() => setCollapsed(!collapsed)}
-                        />
+                        <Flex gap="small" align="center">
+                            <Button
+                                type="text"
+                                icon={
+                                    collapsed ? (
+                                        <MenuOutlined />
+                                    ) : (
+                                        <CloseOutlined />
+                                    )
+                                }
+                                onClick={() => setCollapsed(!collapsed)}
+                            />
+                            {title && <Title level={1}>{title}</Title>}
+                        </Flex>
+
                         <ProfileDropdown />
                     </Flex>
                 </Header>
                 <Content>
-                    <div style={{ padding: "25px 50px" }}>
+                    <div style={{ padding: "30px 50px" }}>
                         {user &&
                             (checkAccess(contentAccess) ? (
                                 children

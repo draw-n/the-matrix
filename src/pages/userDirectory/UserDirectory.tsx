@@ -68,7 +68,6 @@ const UserDirectory: React.FC = () => {
                     justify="space-between"
                     align="center"
                 >
-                    <h1>USER DIRECTORY</h1>
                     <Flex gap="20px">
                         <DownloadEmails />
                         <Segmented

@@ -178,7 +178,6 @@ const RemotePrint: React.FC = () => {
 
     return (
         <>
-            <h1>Remote Printing</h1>
             {submitted ? (
                 <Result
                     status="success"
