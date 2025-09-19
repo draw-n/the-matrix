@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 
-import { Button, Divider, Flex, Image, Layout, Menu, theme, Typography } from "antd";
+import {
+    Button,
+    Divider,
+    Flex,
+    Image,
+    Layout,
+    Menu,
+    theme,
+    Typography,
+    MenuProps,
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
@@ -25,65 +35,120 @@ import { checkAccess } from "./rbac/HasAccess";
 const { Title } = Typography;
 const { Header, Content, Sider } = Layout;
 
-interface MenuItem {
+// Custom type for your page definitions (with access)
+interface PageItem {
     label: React.ReactNode;
     key: React.Key;
     access: string[];
+    type?: string;
     icon?: React.ReactNode;
-    children?: MenuItem[];
+    children?: PageItem[];
 }
 
-const allPages: MenuItem[] = [
+const allPages: PageItem[] = [
     {
-        key: "/",
-        label: "Dashboard",
+        key: "general",
+        label: "GENERAL",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <HomeFilled />,
+        type: "group",
+        children: [
+            {
+                key: "/",
+                label: "Dashboard",
+                access: [
+                    "novice",
+                    "proficient",
+                    "expert",
+                    "moderator",
+                    "admin",
+                ],
+                icon: <HomeFilled />,
+            },
+            {
+                key: "/profile",
+                label: "User Profile",
+                access: [
+                    "novice",
+                    "proficient",
+                    "expert",
+                    "moderator",
+                    "admin",
+                ],
+                icon: <UserOutlined />,
+            },
+        ],
     },
     {
-        key: "/report",
-        label: "Report an Issue",
+        key: "equipment",
+        label: "EQUIPMENT",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <FileExclamationOutlined />,
+        type: "group",
+        children: [
+            {
+                key: "/makerspace",
+                label: "Makerspace",
+                access: [
+                    "novice",
+                    "proficient",
+                    "expert",
+                    "moderator",
+                    "admin",
+                ],
+                icon: <DesktopOutlined />,
+            },
+            {
+                key: "/report",
+                label: "Report an Issue",
+                access: [
+                    "novice",
+                    "proficient",
+                    "expert",
+                    "moderator",
+                    "admin",
+                ],
+                icon: <FileExclamationOutlined />,
+            },
+            {
+                key: "/upload",
+                label: "Remote Print",
+                access: [
+                    "novice",
+                    "proficient",
+                    "expert",
+                    "moderator",
+                    "admin",
+                ],
+                icon: <UsbFilled />,
+            },
+        ],
     },
     {
-        key: "/edit",
-        label: "Edit Updates",
+        key: "admin",
+        label: "ADMIN",
         access: ["moderator", "admin"],
-        icon: <EditOutlined />,
-    },
-    {
-        key: "/upload",
-        label: "Remote Print",
-        access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <UsbFilled />,
-    },
-    {
-        key: "/makerspace",
-        label: "Makerspace",
-        access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <DesktopOutlined />,
-    },
+        type: "group",
+        children: [
+            {
+                key: "/edit",
+                label: "Edit Updates",
+                access: ["moderator", "admin"],
+                icon: <EditOutlined />,
+            },
 
-    {
-        key: "/directory",
-        label: "User Directory",
-        access: ["admin"],
-        icon: <TeamOutlined />,
-    },
-    {
-        key: "/profile",
-        label: "User Profile",
-        access: ["novice", "proficient", "expert", "moderator", "admin"],
-        icon: <UserOutlined />,
-        
-    },
+            {
+                key: "/directory",
+                label: "User Directory",
+                access: ["admin"],
+                icon: <TeamOutlined />,
+            },
 
-    {
-        key: "/settings",
-        label: "Settings",
-        access: ["admin"],
-        icon: <SettingOutlined />,
+            {
+                key: "/settings",
+                label: "Settings",
+                access: ["admin"],
+                icon: <SettingOutlined />,
+            },
+        ],
     },
 ];
 
@@ -103,28 +168,49 @@ const Shell: React.FC<ShellProps> = ({
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
     const { colorPrimary } = theme.useToken().token;
-    const menuItems = allPages
+    // Only use AntD's MenuItem type for the mapped menuItems
+    const menuItems: MenuProps["items"] = allPages
         .filter((item) => checkAccess(item.access))
-        .map((item) => ({
-            key: item.key,
-            label: item.label,
-            icon: item.icon,
-            children: item.children
-                ? item.children.map((child) => ({
-                      key: child.key,
-                      label: child.label,
-                      icon: child.icon,
-                  }))
-                : undefined,
-        }));
+        .map((item) => {
+            if (item.type === "group" && item.children) {
+                return {
+                    type: "group",
+                    label: item.label,
+                    key: item.key,
+                    children: item.children
+                        .filter((child) => checkAccess(child.access))
+                        .map((child) => ({
+                            key: child.key,
+                            label: child.label,
+                            icon: child.icon,
+                        })),
+                };
+            }
+            return {
+                key: item.key,
+                label: item.label,
+                icon: item.icon,
+            };
+        });
 
     const getSelectedKeys = (): string[] => {
         const currentPath = location.pathname;
 
-        // Get keys that match the beginning of the current path
-        let selectedPages = menuItems
-            .filter((item) => currentPath.startsWith(String(item.key)))
-            .map((item) => item.key as string); // Ensure the key is treated as a string
+        // Flatten all menu items to get all leaf keys
+        const flattenMenuItems = (items: MenuProps["items"] = []): string[] => {
+            return items.flatMap(item => {
+                if (!item) return [];
+                if ('children' in item && Array.isArray(item.children)) {
+                    return flattenMenuItems(item.children);
+                }
+                return typeof item.key === "string" ? [item.key] : [];
+            });
+        };
+
+        const allKeys = flattenMenuItems(menuItems);
+
+        // Find the key(s) that match the current path
+        let selectedPages = allKeys.filter(key => currentPath.startsWith(key));
         if (selectedPages.length > 1) {
             selectedPages = selectedPages.filter((item) => item !== "/");
         }
