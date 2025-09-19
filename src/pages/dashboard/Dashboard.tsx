@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import PrintingChart from "./PrintingChart";
 import HasAccess from "../../components/rbac/HasAccess";
+import AnnouncementCard from "./AnnouncementCard";
 
 const { Title } = Typography;
 
@@ -49,70 +50,30 @@ const Dashboard: React.FC = () => {
                             <Space
                                 style={{ width: "100%" }}
                                 direction="vertical"
-                                size="small"
+                                size="middle"
                             >
-                                <Flex justify="space-between">
-                                    <Title level={2}>
+                                <Flex justify="space-between" align="center">
+                                    <Title level={2} style={{ margin: 0 }}>
                                         REMOTE PRINTING OCCURRENCES
                                     </Title>
                                     <Button
                                         variant="filled"
                                         type="primary"
-                                        size="small"
-                                        shape="circle"
+                                        size="middle"
+                                        shape="round"
+                                        iconPosition="end"
                                         icon={<PlusOutlined />}
                                         onClick={() => navigate("/upload")}
-                                    />
+                                    >
+                                        New Print
+                                    </Button>
                                 </Flex>
                                 <PrintingChart />
                             </Space>
                         </Card>
                     </Col>
                     <Col span={8}>
-                        <Card>
-                            <Space
-                                style={{ width: "100%" }}
-                                direction="vertical"
-                                size="small"
-                            >
-                                <Flex
-                                    justify={"space-between"}
-                                    align={"center"}
-                                >
-                                    <h2>Announcements</h2>
-                                    <Flex gap="small">
-                                        <HasAccess
-                                            roles={["admin", "moderator"]}
-                                        >
-                                            <Tooltip title="Edit Announcements">
-                                                <Button
-                                                    onClick={() =>
-                                                        navigate("/edit")
-                                                    }
-                                                    size="small"
-                                                    type="primary"
-                                                    className="primary-button-filled"
-                                                    icon={<EditOutlined />}
-                                                />
-                                            </Tooltip>
-                                        </HasAccess>
-
-                                        <Tooltip title="Kiosk Mode">
-                                            <Button
-                                                onClick={() =>
-                                                    navigate("/kiosk")
-                                                }
-                                                size="small"
-                                                type="primary"
-                                                className="secondary-button-filled"
-                                                icon={<DesktopOutlined />}
-                                            />
-                                        </Tooltip>
-                                    </Flex>
-                                </Flex>
-                                <AnnouncementCarousel />
-                            </Space>
-                        </Card>
+                        <AnnouncementCard />
                     </Col>
                 </Row>
             </Space>

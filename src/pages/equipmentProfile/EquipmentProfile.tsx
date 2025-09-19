@@ -9,6 +9,8 @@ import {
     Select,
     Skeleton,
     Space,
+    Tag,
+    theme,
     Typography,
 } from "antd";
 import { Equipment } from "../../types/Equipment";
@@ -20,6 +22,8 @@ import { Category } from "../../types/Category";
 import { useNavigate } from "react-router-dom";
 import ConfirmAction from "../../components/ConfirmAction";
 import HasAccess from "../../components/rbac/HasAccess";
+import HeaderCard from "./HeaderCard";
+import StatusCard from "./StatusCard";
 
 const { Paragraph, Title } = Typography;
 
@@ -107,123 +111,31 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
     return (
         <>
+            <HasAccess roles={["admin", "moderator"]}>
+                <Button
+                    onClick={handleClick}
+                    icon={editMode ? <SaveOutlined /> : <EditOutlined />}
+                >
+                    {editMode ? "Save" : "Edit"}
+                </Button>
+            </HasAccess>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
-                <Flex justify="space-between" gap="10px">
-                    {editMode ? (
-                        <h1>
-                            <Input
-                                size="small"
-                                style={{
-                                    textTransform: "uppercase",
-                                    font: "inherit",
-                                    fontFamily: "inherit",
-                                    fontSize: "inherit",
-                                }}
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </h1>
-                    ) : (
-                        <h1 style={{ textTransform: "uppercase" }}>
-                            {equipment.name}
-                        </h1>
-                    )}
-                    <HasAccess roles={["admin", "moderator"]}>
-                        <Button
-                            onClick={handleClick}
-                            icon={
-                                editMode ? <SaveOutlined /> : <EditOutlined />
-                            }
-                        >
-                            {editMode ? "Save" : "Edit"}
-                        </Button>
-                    </HasAccess>
-                </Flex>
                 <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <Card>
-                            {isLoading ? (
-                                <Skeleton active paragraph={{ rows: 2 }} />
-                            ) : (
-                                <Flex style={{ width: "100%" }} vertical>
-                                    <h3>Headline</h3>
-                                    {editMode ? (
-                                        <Input
-                                            size="small"
-                                            onChange={(e) =>
-                                                setHeadline(e.target.value)
-                                            }
-                                            value={headline}
-                                        />
-                                    ) : (
-                                        <p>{headline}</p>
-                                    )}
-                                </Flex>
-                            )}
-                        </Card>
+                    <Col span={18}>
+                        <HeaderCard
+                            equipment={equipment}
+                            category={
+                                categories?.find((item) => item._id === type)
+                                    ?.name
+                            }
+                        />
                     </Col>
-                    <Col lg={12} span={24}>
-                        <Card>
-                            {isLoading ? (
-                                <Skeleton active paragraph={{ rows: 1 }} />
-                            ) : (
-                                <Flex
-                                    style={{ width: "100%", height: "100%" }}
-                                    align="center"
-                                    vertical
-                                >
-                                    <h3>Type</h3>
-                                    {editMode ? (
-                                        <Select
-                                            size="small"
-                                            options={categories?.map(
-                                                (category) => ({
-                                                    value: category._id,
-                                                    label: category.name,
-                                                })
-                                            )}
-                                            value={type}
-                                            onChange={setType}
-                                        />
-                                    ) : (
-                                        <p
-                                            style={{
-                                                textTransform: "capitalize",
-                                            }}
-                                        >
-                                            {
-                                                categories?.find(
-                                                    (item) => item._id === type
-                                                )?.name
-                                            }
-                                        </p>
-                                    )}
-                                </Flex>
-                            )}
-                        </Card>
+                    <Col span={6}>
+                        <StatusCard equipment={equipment} />
                     </Col>
-                    <Col lg={12} span={24}>
-                        <Card>
-                            {isLoading ? (
-                                <Skeleton active paragraph={{ rows: 1 }} />
-                            ) : (
-                                <Flex
-                                    style={{ width: "100%", height: "100%" }}
-                                    align="center"
-                                    vertical
-                                >
-                                    <h3>Status</h3>
-                                    <p
-                                        style={{
-                                            textTransform: "capitalize",
-                                        }}
-                                    >
-                                        {equipment.status}
-                                    </p>
-                                </Flex>
-                            )}
-                        </Card>
-                    </Col>
+                </Row>
+
+                <Row gutter={[16, 16]}>
                     <Col span={24}>
                         <Card>
                             {isLoading ? (

@@ -1,3 +1,4 @@
+import { red } from "@ant-design/colors";
 import {
     CaretRightOutlined,
     InboxOutlined,
@@ -84,13 +85,22 @@ const UploadFile: React.FC<UploadFileProps> = ({
     return (
         <>
             <Flex vertical style={{ width: "100%" }} gap="large">
-                <h2>Upload File</h2>
+                <h2>UPLOAD FILE</h2>
+                <p>
+                    Note: You can only upload files with the .stl or .3mf
+                    extensions. We do not support other file types for remote
+                    printing at this time. If you wish to use a different mesh
+                    file type, please visit the Digital Fabrication lab
+                    in-person to print.
+                </p>
                 <Dragger
                     {...props}
                     fileList={uploadedFile}
                     style={{ width: "100%" }}
                 >
-                    <p className="ant-upload-drag-icon">
+                    <p
+                        className="ant-upload-drag-icon"
+                    >
                         <InboxOutlined />
                     </p>
                     <p className="ant-upload-text">

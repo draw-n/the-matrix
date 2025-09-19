@@ -157,7 +157,8 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                                       >
                                           <Button
                                               icon={<DeleteOutlined />}
-                                              size="small"
+                                              size="middle"
+                                              shape="circle"
                                               danger
                                           />
                                       </Popconfirm>

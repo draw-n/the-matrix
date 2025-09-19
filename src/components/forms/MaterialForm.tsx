@@ -110,14 +110,17 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             <Tooltip title={material ? "Edit Material" : "Add Material"}>
                 <Button
                     type="primary"
-                    size="small"
+                    size="middle"
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={showModal}
-                />
+                    iconPosition="end"
+                    shape={material? "circle" : "round"}
+                >
+                    {material ? null : "Add New Material"}
+                </Button>
             </Tooltip>
 
             <Modal
-              
                 title={material ? "Edit Material" : "Add Material"}
                 open={isModalOpen}
                 centered

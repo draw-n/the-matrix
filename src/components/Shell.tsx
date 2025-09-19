@@ -79,8 +79,8 @@ const allPages: PageItem[] = [
         ],
     },
     {
-        key: "equipment",
-        label: "EQUIPMENT",
+        key: "hub",
+        label: "HUB",
         access: ["novice", "proficient", "expert", "moderator", "admin"],
         type: "group",
         children: [
