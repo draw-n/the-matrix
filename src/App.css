@@ -9,6 +9,17 @@
     scrollbargutter: stable;
 }
 
+.card-selection {
+    opacity: 0 !important;
+    transition: opacity 1s ease;
+    -webkit-transition: opacity 1s ease;
+}
+
+.card-selection.slick-initialized {
+    opacity: 1 !important;
+}
+
+
 .ant-menu-item-group-title {
     font-weight: 700;
 }

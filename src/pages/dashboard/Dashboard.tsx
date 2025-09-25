@@ -22,6 +22,8 @@ import PrintingChart from "./PrintingChart";
 import HasAccess from "../../components/rbac/HasAccess";
 import AnnouncementCard from "./AnnouncementCard";
 import SocialsCard from "./SocialsCard";
+import AdminCard from "./AdminCard";
+import RemotePrintCard from "./RemotePrintCard";
 
 const { Title } = Typography;
 
@@ -47,31 +49,10 @@ const Dashboard: React.FC = () => {
                         </Card>
                     </Col>
                     <Col span={16}>
-                        <Card>
-                            <Space
-                                style={{ width: "100%" }}
-                                direction="vertical"
-                                size="middle"
-                            >
-                                <Flex justify="space-between" align="center">
-                                    <Title level={2} style={{ margin: 0 }}>
-                                        REMOTE PRINTING OCCURRENCES
-                                    </Title>
-                                    <Button
-                                        variant="filled"
-                                        type="primary"
-                                        size="middle"
-                                        shape="round"
-                                        iconPosition="end"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => navigate("/upload")}
-                                    >
-                                        New Print
-                                    </Button>
-                                </Flex>
-                                <PrintingChart />
-                            </Space>
-                        </Card>
+                        <Flex vertical gap={16}>
+                           <RemotePrintCard />
+                            <AdminCard />
+                        </Flex>
                     </Col>
                     <Col span={8}>
                         <Flex vertical gap={16}>

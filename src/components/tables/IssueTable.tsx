@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Button,
     Flex,
     Popconfirm,
@@ -16,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../hooks/AuthContext";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
-import randomColor from "randomcolor";
 import AutoAvatar from "../AutoAvatar";
 import { geekblue, gold, green, red } from "@ant-design/colors";
 import EditIssueForm from "../forms/EditIssueForm";

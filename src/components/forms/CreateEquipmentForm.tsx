@@ -25,6 +25,7 @@ interface FieldType {
     category: string;
     description: string;
     routePath: string;
+    ipUrl: string;
 }
 
 const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
@@ -121,6 +122,13 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                         style={{ width: "100%" }}
                         label="Headline"
                         name="headline"
+                    >
+                        <Input size="small" />
+                    </Form.Item>
+                       <Form.Item<FieldType>
+                        style={{ width: "100%" }}
+                        label="IP Address or URL"
+                        name="ipUrl"
                     >
                         <Input size="small" />
                     </Form.Item>

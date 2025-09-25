@@ -1,6 +1,7 @@
 import { geekblueDark } from "@ant-design/colors";
 import { Radio, Row, Col, Card, Carousel, Flex } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Loading from "./Loading";
 
 export interface CardSelectionProps {
     options?: { label: string; value: string }[];
@@ -19,15 +20,25 @@ const CardSelection: React.FC<CardSelectionProps> = ({
         }
     };
 
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => setVisible(true), 500);
+        return () => clearTimeout(timeout);
+    }, []);
+
     return (
         <div
             style={{
                 width: "100%",
                 maxWidth: 800,
                 margin: "0 auto",
+                opacity: visible ? 1 : 0,
+                transition: "opacity 0.5s ease", // fade in over 0.5s
             }}
         >
             <Carousel
+                className="card-selection"
                 infinite={(options?.length ?? 0) > 3}
                 key={options?.length}
                 dots={false}

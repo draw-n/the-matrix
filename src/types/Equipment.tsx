@@ -10,6 +10,7 @@ export interface Equipment {
     status: string;
     description: string;
     imgSrc?: string;
+    ipUrl?: string;
 }
 
 export interface FilamentMoreSettings {
