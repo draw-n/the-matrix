@@ -97,10 +97,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
             >
                 <Button
                     type="primary"
-                    size="small"
+                    size="middle"
                     icon={announcement ? <EditOutlined /> : <PlusOutlined />}
                     onClick={showModal}
-                />
+                    iconPosition="end"
+                    shape={announcement ? "circle" : "round"}
+                >
+                    {announcement ? null : "Add New Announcement"}
+                </Button>
             </Tooltip>
             <Modal
                 styles={{

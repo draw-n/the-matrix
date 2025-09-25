@@ -1,15 +1,31 @@
-import { Card, Flex, Tag, Skeleton, Input, theme, Space, Divider } from "antd";
+import {
+    Card,
+    Flex,
+    Tag,
+    Skeleton,
+    Input,
+    theme,
+    Space,
+    Divider,
+    Button,
+} from "antd";
 import { Equipment } from "../../types/Equipment";
 import React from "react";
+import HasAccess from "../../components/rbac/HasAccess";
+import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
 interface HeaderCardProps {
     equipment: Equipment;
     category?: string;
+    handleClick?: () => void;
+    editMode?: boolean;
 }
 
 const HeaderCard: React.FC<HeaderCardProps> = ({
     equipment,
     category,
+    handleClick,
+    editMode,
 }: HeaderCardProps) => {
     const {
         token: { colorPrimary, colorBgContainer },
@@ -22,7 +38,7 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                 border: "none",
             }}
         >
-            <Flex justify="space-between" align="center">
+            <Flex justify="space-between" align="end">
                 <Flex vertical align="flex-start">
                     <Tag
                         color={colorBgContainer}
@@ -47,7 +63,15 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                         <p>{equipment.headline}</p>
                     </Flex>
                 </Flex>
-             
+                <HasAccess roles={["admin", "moderator"]}>
+                    <Button
+                        onClick={handleClick}
+                        shape="circle"
+                        variant="outlined"
+                        type="primary"
+                        icon={editMode ? <SaveOutlined /> : <EditOutlined />}
+                    />
+                </HasAccess>
             </Flex>
         </Card>
     );

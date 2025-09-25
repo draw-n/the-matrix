@@ -111,14 +111,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
     return (
         <>
-            <HasAccess roles={["admin", "moderator"]}>
-                <Button
-                    onClick={handleClick}
-                    icon={editMode ? <SaveOutlined /> : <EditOutlined />}
-                >
-                    {editMode ? "Save" : "Edit"}
-                </Button>
-            </HasAccess>
+         
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
                 <Row gutter={[16, 16]}>
                     <Col span={18}>
@@ -128,6 +121,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                 categories?.find((item) => item._id === type)
                                     ?.name
                             }
+                            editMode={editMode}
+                            handleClick={handleClick}
                         />
                     </Col>
                     <Col span={6}>

@@ -21,6 +21,7 @@ import {
 import PrintingChart from "./PrintingChart";
 import HasAccess from "../../components/rbac/HasAccess";
 import AnnouncementCard from "./AnnouncementCard";
+import SocialsCard from "./SocialsCard";
 
 const { Title } = Typography;
 
@@ -73,7 +74,10 @@ const Dashboard: React.FC = () => {
                         </Card>
                     </Col>
                     <Col span={8}>
-                        <AnnouncementCard />
+                        <Flex vertical gap={16}>
+                            <AnnouncementCard />
+                            <SocialsCard />
+                        </Flex>
                     </Col>
                 </Row>
             </Space>

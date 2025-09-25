@@ -7,13 +7,15 @@ import {
     Flex,
     message,
     FormProps,
+    Tooltip,
+    Modal,
 } from "antd";
 import { useEffect, useState } from "react";
 import SelectEquipment from "./SelectEquipment";
 import { useAuth } from "../../hooks/AuthContext";
 import "./issues.css";
 import axios from "axios";
-import { CaretDownFilled } from "@ant-design/icons";
+import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
 
 const { TextArea } = Input;
@@ -27,7 +29,11 @@ interface FieldType {
 
 const CreateIssueForm: React.FC = () => {
     const [form] = Form.useForm();
-    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
     const [categories, setCategories] = useState<Category[]>();
 
     const { user } = useAuth();
@@ -46,11 +52,6 @@ const CreateIssueForm: React.FC = () => {
         fetchData();
     }, []);
 
-    const refreshForm = () => {
-        form.resetFields();
-        setSubmitted(false);
-    };
-
     const onFinishFailed = () => {
         message.error("Missing one or more fields.");
     };
@@ -67,59 +68,49 @@ const CreateIssueForm: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/issues`,
                 newIssue
             );
-            setSubmitted(true);
+            setIsModalOpen(false);
         } catch (error) {
             console.error("Problem creating an issue: ", error);
         }
     };
 
+    const handleOk = async () => {
+        form.submit();
+    };
+
+    const handleCancel = () => {
+        form.resetFields();
+        setIsModalOpen(false);
+    };
+
     return (
         <>
-            {submitted ? (
-                <Result
-                    status="success"
-                    title="Successfully Submitted an Issue!"
-                    subTitle="Thank you for letting us know about the problem. We will fix it as soon as possible."
-                    extra={[
-                        <Button
-                            onClick={refreshForm}
-                            key="resubmit"
-                            type="primary"
-                        >
-                            Submit Another
-                        </Button>,
-                    ]}
-                />
-            ) : (
+            <Tooltip title={"Add Issue"}>
+                <Button
+                    type="primary"
+                    size="middle"
+                    icon={<PlusOutlined />}
+                    onClick={showModal}
+                    iconPosition="end"
+                    shape={"round"}
+                >
+                    Add New Issue
+                </Button>
+            </Tooltip>
+
+            <Modal
+                title={"Add Issue"}
+                open={isModalOpen}
+                centered
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
                 <Form
                     form={form}
                     layout="vertical"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
-                    <Flex style={{ width: "100%" }} justify="space-between">
-                        <Form.Item required label="First Name">
-                            <Input
-                                size="small"
-                                disabled
-                                value={user?.firstName}
-                            />
-                        </Form.Item>
-                        <Form.Item required label="Last Name">
-                            <Input
-                                size="small"
-                                disabled
-                                value={user?.lastName}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            style={{ width: "40%" }}
-                            required
-                            label="Email"
-                        >
-                            <Input size="small" disabled value={user?.email} />
-                        </Form.Item>
-                    </Flex>
                     <Form.Item<FieldType>
                         style={{ width: "100%" }}
                         label="Equipment Category"
@@ -220,18 +211,8 @@ const CreateIssueForm: React.FC = () => {
                     >
                         <TextArea size="small" rows={6} />
                     </Form.Item>
-                    <Flex justify="end" style={{ width: "100%" }} gap="10px">
-                        <Form.Item>
-                            <Button onClick={refreshForm}>Clear All</Button>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button htmlType="submit" type="primary">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Flex>
                 </Form>
-            )}
+            </Modal>
         </>
     );
 };

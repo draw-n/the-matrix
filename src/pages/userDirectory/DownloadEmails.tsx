@@ -1,3 +1,4 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import axios from "axios";
 
@@ -22,7 +23,16 @@ const DownloadEmails: React.FC = () => {
     };
     return (
         <>
-            <Button onClick={handleDownload}>Download Emails</Button>
+            <Button
+                iconPosition="end"
+                icon={<DownloadOutlined />}
+                onClick={handleDownload}
+                shape="round"
+                type="primary"
+                variant="filled"
+            >
+                Download Emails
+            </Button>
         </>
     );
 };

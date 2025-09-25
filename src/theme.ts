@@ -1,7 +1,9 @@
-import { ThemeConfig } from "antd";
+import { ThemeConfig, theme } from "antd";
 import { geekblue, geekblueDark } from "@ant-design/colors";
 
-const theme: ThemeConfig = {
+const { darkAlgorithm } = theme;
+
+const matrixTheme: ThemeConfig = {
     token: {
         colorPrimary: geekblueDark[4],
         colorBgContainer: "#f8f9fa",
@@ -11,6 +13,7 @@ const theme: ThemeConfig = {
         colorBorderSecondary: "#a9a9a9",
         colorTextBase: geekblueDark[0],
     },
+   // algorithm: darkAlgorithm,
     components: {
         Layout: {
             headerBg: "#f8f9fa",
@@ -56,4 +59,4 @@ const theme: ThemeConfig = {
     },
 };
 
-export default theme;
+export default matrixTheme;

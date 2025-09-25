@@ -280,7 +280,8 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                                       >
                                           <Button
                                               icon={<DeleteOutlined />}
-                                              size="small"
+                                              size="middle"
+                                              shape="circle"
                                               danger
                                           />
                                       </Popconfirm>

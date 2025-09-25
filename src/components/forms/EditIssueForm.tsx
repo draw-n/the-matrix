@@ -83,7 +83,8 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
             <Tooltip title="Edit Issue" placement="topLeft">
                 <Button
                     type="primary"
-                    size="small"
+                    shape="circle"
+                    size="middle"
                     icon={<EditOutlined />}
                     onClick={showModal}
                 />

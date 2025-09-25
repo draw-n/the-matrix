@@ -293,7 +293,8 @@ const IssueTable: React.FC<IssueTableProps> = ({
                                   >
                                       <Button
                                           icon={<DeleteOutlined />}
-                                          size="small"
+                                          shape="circle"
+                                          size="middle"
                                           danger
                                       />
                                   </Popconfirm>

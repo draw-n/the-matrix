@@ -4,6 +4,8 @@ import { useState } from "react";
 import AnnouncementForm from "../../components/forms/AnnouncementForm";
 import AnnouncementTable from "../../components/tables/AnnouncementTable";
 import IssueTable from "../../components/tables/IssueTable";
+import IssueTab from "./IssueTab";
+import AnnouncementTab from "./AnnouncementTab";
 
 const EditUpdates: React.FC = () => {
     const [refreshUpdates, setRefreshUpdates] = useState<number>(0); // State for refresh count
@@ -13,40 +15,12 @@ const EditUpdates: React.FC = () => {
         {
             key: "1",
             label: "Issues",
-            children: (
-                <>
-                    <h2>Issues</h2>
-                    <IssueTable
-                        refresh={refreshIssues}
-                        setRefresh={setRefreshIssues}
-                    />
-                </>
-            ),
+            children: <IssueTab />,
         },
         {
             key: "2",
             label: "Announcements",
-            children: (
-                <>
-                    <Flex
-                        align="center"
-                        justify="space-between"
-                        style={{ width: "100%" }}
-                    >
-                        <h2>Announcements</h2>
-
-                        <AnnouncementForm
-                            onUpdate={() =>
-                                setRefreshUpdates((prev) => prev + 1)
-                            }
-                        />
-                    </Flex>
-                    <AnnouncementTable
-                        refresh={refreshUpdates}
-                        setRefresh={setRefreshUpdates}
-                    />
-                </>
-            ),
+            children: <AnnouncementTab />,
         },
     ];
 
