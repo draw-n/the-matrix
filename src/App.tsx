@@ -21,6 +21,7 @@ import RemotePrint from "./pages/remotePrint/RemotePrint";
 import Dashboard from "./pages/dashboard/Dashboard";
 
 import "./App.css";
+import FirstTime from "./pages/login/FirstTime";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -86,6 +87,7 @@ const App: React.FC = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
 
+                    <Route path="/first-time" element={<FirstTime />} />
                     <Route
                         path="/"
                         element={

@@ -43,7 +43,7 @@ const CardSelection: React.FC<CardSelectionProps> = ({
                 key={options?.length}
                 dots={false}
                 slidesToShow={Math.min(3, options?.length ?? 0)}
-                arrows
+                arrows={(options?.length || 0) > 3}
             >
                 {options?.map((opt) => (
                     <Flex

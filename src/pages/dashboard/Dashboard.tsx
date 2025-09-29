@@ -24,6 +24,7 @@ import AnnouncementCard from "./AnnouncementCard";
 import SocialsCard from "./SocialsCard";
 import AdminCard from "./AdminCard";
 import RemotePrintCard from "./RemotePrintCard";
+import FirstTime from "../login/FirstTime";
 
 const { Title } = Typography;
 

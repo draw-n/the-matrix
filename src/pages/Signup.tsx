@@ -20,8 +20,6 @@ interface FieldType {
     firstName: string;
     lastName: string;
     accessCode: string;
-    status: string;
-    graduationDate?: Date;
 }
 
 const Signup: React.FC = () => {
@@ -38,7 +36,7 @@ const Signup: React.FC = () => {
                 values
             );
             login(values.email, values.password);
-            navigate(location.state?.from || "/");
+            navigate("/first-time");
         } catch (error: any) {
             message.error(
                 String(error.response?.data?.message || "Unknown Error.")
@@ -48,7 +46,7 @@ const Signup: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            navigate(location.state?.from || "/");
+            navigate("/first-time");
         }
     });
 
@@ -132,59 +130,6 @@ const Signup: React.FC = () => {
                         >
                             <Input.Password />
                         </Form.Item>
-                        <Flex
-                            justify="space-between"
-                            gap="20px"
-                            style={{ width: "100%" }}
-                        >
-                            <Form.Item<FieldType>
-                                style={{ width: "100%" }}
-                                label="Status"
-                                name="status"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please select a status.",
-                                    },
-                                ]}
-                            >
-                                <Select
-                                    suffixIcon={<CaretDownFilled />}
-                                    onChange={(value) =>
-                                        setShowGradDate(
-                                            value === "undergraduate"
-                                        )
-                                    }
-                                    options={[
-                                        {
-                                            value: "undergraduate",
-                                            label: "Undergraduate Student",
-                                        },
-                                        {
-                                            value: "graduate",
-                                            label: "Graduate Student",
-                                        },
-                                        { value: "faculty", label: "Faculty" },
-                                    ]}
-                                />
-                            </Form.Item>
-                            {showGradDate && (
-                                <Form.Item<FieldType>
-                                    style={{ width: "100%" }}
-                                    label="Graduation Date"
-                                    name="graduationDate"
-                                    rules={[
-                                        {
-                                            required: showGradDate,
-                                            message:
-                                                "Please choose a graduation date.",
-                                        },
-                                    ]}
-                                >
-                                    <DatePicker picker="month" />
-                                </Form.Item>
-                            )}
-                        </Flex>
 
                         <Flex align="end" justify="space-between">
                             <Form.Item<FieldType>
