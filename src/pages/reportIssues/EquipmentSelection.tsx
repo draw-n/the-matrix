@@ -43,7 +43,7 @@ const EquipmentSelection: React.FC<EquipmentSelectionProps> = ({
     }, [category]);
 
     return (
-        <Flex gap="large" vertical align="center" justify="center">
+        <Flex gap="large" style={{width: "100%"}} vertical align="center" justify="center">
             <p>Select the equipment that experienced the issue.</p>
             <CardSelection
                 value={value}

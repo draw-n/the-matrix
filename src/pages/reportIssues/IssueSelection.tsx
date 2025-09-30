@@ -42,9 +42,14 @@ const IssueSelection: React.FC<IssueSelectionProps> = ({
     }, [categoryId]);
 
     return (
-        <Flex gap="large" vertical align="center" justify="center">
+        <Flex
+            gap="large"
+            style={{ width: "100%" }}
+            vertical
+            align="center"
+            justify="center"
+        >
             <p>Select the issue that is most applicable.</p>
-            {category ? JSON.stringify(category) : ""}
             <CardSelection
                 value={value}
                 onChange={onChange}

@@ -27,7 +27,7 @@ const CategorySelection: React.FC<CardSelectionProps> = ({
     }, []);
 
     return (
-        <Flex gap="large" vertical align="center" justify="center">
+        <Flex gap="large" style={{width: "100%"}} vertical align="center" justify="center">
             <p>What category does the equipment fit into?</p>
             <CardSelection
                 value={value}

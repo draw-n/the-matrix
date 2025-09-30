@@ -12,25 +12,21 @@ import IssueSelection from "./IssueSelection";
 import MoreDetails from "./MoreDetails";
 import SubmittedIssue from "./SubmittedIssue";
 
-interface FieldType {
-    equipment: string;
-    category: string;
-    initialDescription: string;
-    description: string;
-}
-
 const ReportAnIssue: React.FC = () => {
-    const [form] = Form.useForm();
     const [stepIndex, setStepIndex] = useState(0);
-    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [equipment, setEquipment] = useState<string>("");
+    const [category, setCategory] = useState<string>("");
+    const [initialDescription, setInitialDescription] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
 
     const { user } = useAuth();
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish = async () => {
         try {
             const newIssue = {
-                equipment: values.equipment,
-                description: `${values.initialDescription}\n${values.description}`,
+                equipment,
+                category,
+                description: initialDescription + "\n" + description,
                 createdBy: user?._id,
                 dateCreated: new Date(),
             };
@@ -38,80 +34,78 @@ const ReportAnIssue: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/issues`,
                 newIssue
             );
+            setEquipment("");
+            setCategory("");
+            setInitialDescription("");
+            setDescription("");
             setStepIndex(stepIndex + 1);
-            form.resetFields();
         } catch (error) {
             console.error("Problem creating an issue: ", error);
         }
     };
-    const steps = [
-        <Description />,
-        <Form.Item<FieldType> name="category" style={{ margin: 0 }}>
-            <CategorySelection />
-        </Form.Item>,
-        <>
-            <Form.Item
-                noStyle
-                shouldUpdate={(prev, curr) => prev.category !== curr.category}
-            >
-                {({ getFieldValue }) => (
-                    <Form.Item<FieldType>
-                        name="equipment"
-                        style={{ margin: 0 }}
-                    >
-                        <EquipmentSelection
-                            category={getFieldValue("category")}
-                        />
-                    </Form.Item>
-                )}
-            </Form.Item>
-        </>,
 
-        <>
-            <Form.Item
-                noStyle
-                shouldUpdate={(prev, curr) => prev.category !== curr.category}
-            >
-                {({ getFieldValue }) => (
-                    <Form.Item<FieldType>
-                        name="initialDescription"
-                        style={{ margin: 0 }}
-                    >
-                        <IssueSelection
-                            categoryId={getFieldValue("category")}
-                        />
-                    </Form.Item>
-                )}
-            </Form.Item>
-        </>,
-        <Form.Item<FieldType> name="description" style={{ margin: 0 }}>
-            <MoreDetails />
-        </Form.Item>,
-        <SubmittedIssue refreshForm={() => setStepIndex(0)} />,
-    ];
+    const renderStep = () => {
+        switch (stepIndex) {
+            case 0:
+                return <Description />;
+            case 1:
+                return (
+                    <CategorySelection
+                        value={category}
+                        onChange={setCategory}
+                    />
+                );
+            case 2:
+                return (
+                    <EquipmentSelection
+                        category={category}
+                        value={equipment}
+                        onChange={setEquipment}
+                    />
+                );
+            case 3:
+                return (
+                    <IssueSelection
+                        categoryId={category}
+                        value={initialDescription}
+                        onChange={setInitialDescription}
+                    />
+                );
+            case 4:
+                return (
+                    <MoreDetails
+                        value={description}
+                        onChange={setDescription}
+                    />
+                );
+            case 5:
+                return <SubmittedIssue refreshForm={() => setStepIndex(0)} />;
+
+            default:
+                return null;
+        }
+    };
 
     return (
-        <Form form={form} onFinish={onFinish}>
-            {JSON.stringify(form.getFieldsValue())}
-            {steps.map((step, index) => (
-                <Flex
-                    style={{
-                        display: index === stepIndex ? "contents" : "none",
-                        margin: 0,
-                        padding: 0,
-                    }}
-                >
-                    {step}
-                </Flex>
-            ))}
+        <Flex
+            justify="center"
+            align="center"
+            vertical
+            style={{ height: "80vh" }}
+        >
+            {equipment}
+            {category}
+            {initialDescription}
+            {description}
+            {renderStep()}
             <Flex
                 style={{ marginTop: 20 }}
                 justify="center"
                 align="center"
-                flex="1"
+            
                 gap="small"
             >
-                {stepIndex > 0 && stepIndex < steps.length - 1 && (
+                {stepIndex > 0 && stepIndex < 4 && (
                     <Button
                         variant="filled"
                         type="primary"
@@ -122,34 +116,30 @@ const ReportAnIssue: React.FC = () => {
                         Back
                     </Button>
                 )}
-                {stepIndex < steps.length - 2 && (
+                {stepIndex < 4 && (
                     <Button
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        onClick={() =>
-                            setStepIndex(
-                                Math.min(stepIndex + 1, steps.length - 1)
-                            )
-                        }
+                        onClick={() => setStepIndex(Math.min(stepIndex + 1, 4))}
                     >
                         Next
                     </Button>
                 )}
-                {stepIndex === steps.length - 2 && (
+                {stepIndex === 4 && (
                     <Button
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        htmlType="submit"
+                        onClick={onFinish}
                     >
                         Submit
                     </Button>
                 )}
             </Flex>
-        </Form>
+        </Flex>
     );
 };
 
