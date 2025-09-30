@@ -53,9 +53,7 @@ const FirstTime: React.FC = () => {
     const onFinish = async () => {
         try {
             await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/first-time/${
-                    user?._id
-                }`,
+                `${import.meta.env.VITE_BACKEND_URL}/users/first-time`,
                 { status, graduationYear, departments }
             );
             navigate("/");
