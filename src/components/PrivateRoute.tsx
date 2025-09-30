@@ -1,34 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../hooks/AuthContext";
 import axios from "axios";
+import { useAuth } from "../hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface PrivateRouteProps {
     element: React.ReactNode;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
-    const { user } = useAuth();
-    const [isLoading, setIsLoading] = useState(true);
+    const { user, loading } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/me`);
-                setIsLoading(false);
-                if (!response.data.user) {
-                    window.location.href = '/login';
-                }
-            } catch (error) {
-                console.error("Fetching user failed:", error);
-                window.location.href = '/login';
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchData();
-    }, [user]);
+        if (!loading && !user) {
+            navigate("/login");
+        }
+    }, [loading, user, navigate]);
 
-    if (isLoading || !user) {
+    if (loading) {
         return null;
     }
 

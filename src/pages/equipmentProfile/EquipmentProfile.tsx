@@ -17,6 +17,7 @@ import { Category } from "../../types/Category";
 import ConfirmAction from "../../components/ConfirmAction";
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
+import { useNavigate } from "react-router-dom";
 
 const { Paragraph, Title } = Typography;
 
@@ -41,6 +42,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -94,7 +97,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipment._id}`
             );
             setRefreshEquipment();
-            window.location.href = "/makerspace";
+            navigate("/makerspace");
         } catch (error) {
             console.error("Issue deleting equipment", error);
         }

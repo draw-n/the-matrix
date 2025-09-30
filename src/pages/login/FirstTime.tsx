@@ -6,6 +6,7 @@ import StatusSelection from "./StatusSelection";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import GradYearSelection from "./GradYearSelection";
 import DepartmentSelect from "./DepartmentSelect";
+import { useNavigate } from "react-router-dom";
 
 
 const FirstTime: React.FC = () => {
@@ -17,6 +18,8 @@ const FirstTime: React.FC = () => {
     const [departments, setDepartments] = useState<string[] | undefined>(
         undefined
     );
+
+    const navigate = useNavigate();
 
     const renderStep = () => {
         switch (stepIndex) {
@@ -52,7 +55,7 @@ const FirstTime: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/users/first-time`,
                 { status, graduationYear, departments }
             );
-            window.location.href = "/";
+            navigate("/");
         } catch (error) {
             console.error("Error updating user:", error);
         }

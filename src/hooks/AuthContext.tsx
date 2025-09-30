@@ -24,6 +24,7 @@ interface AuthContextType {
     user: User | null;
     login: (email: string, password: string) => void;
     logout: () => void;
+    loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,33 +35,13 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-
+    const [loading, setLoading] = useState(true);
     axios.defaults.withCredentials = true;
 
-   useEffect(() => {
-        // Fetch current user from session
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/users/me`
-                );
-                if (response.data.user) {
-                    setUser(response.data.user);
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                setUser(null);
-            }
-        };
-        fetchUser();
-    }, []);
-
-    const login = async (email: string, password: string) => {
+    const fetchUser = async () => {
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/users/login`,
-                { email, password }
+            const response = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}/users/me`
             );
             if (response.data.user) {
                 setUser(response.data.user);
@@ -69,7 +50,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
         } catch (error) {
             setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const login = async (email: string, password: string) => {
+        try {
+            setLoading(true);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/users/login`,
+                { email, password },
+                {
+                    withCredentials: true,
+                }
+            );
+            console.log("Login response:", response.data);
+
+            if (response.data.user) {
+                setUser(response.data.user);
+            } else {
+                setUser(null);
+            }
+        } catch (error) {
+            setUser(null);
             throw error;
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -84,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ setUser, user, login, logout }}>
+        <AuthContext.Provider value={{ loading, setUser, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

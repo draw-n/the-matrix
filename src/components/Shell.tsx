@@ -11,7 +11,7 @@ import {
     Typography,
     MenuProps,
 } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./rbac/NoAccess";
@@ -166,8 +166,9 @@ const Shell: React.FC<ShellProps> = ({
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
+
+    const navigate = useNavigate()
     const { colorPrimary } = theme.useToken().token;
-    // Only use AntD's MenuItem type for the mapped menuItems
     const menuItems: MenuProps["items"] = allPages
         .filter((item) => checkAccess(item.access))
         .map((item) => {
@@ -256,7 +257,7 @@ const Shell: React.FC<ShellProps> = ({
                     mode="inline"
                     items={menuItems}
                     onClick={({ key }) => {
-                        window.location.href = key;
+                        navigate(key);
                     }}
                 />
             </Sider>

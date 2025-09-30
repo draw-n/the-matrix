@@ -1,7 +1,8 @@
 import { Button, Divider, Flex, Form, FormProps, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface FieldType {
     email: string;
@@ -12,21 +13,25 @@ interface FieldType {
 const Login: React.FC = () => {
     const { user, login } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/users/login`,
-                values
-            );
-            login(values.email, values.password);
-            window.location.href = location.state?.from || "/";
+            await login(values.email, values.password);
         } catch (error: any) {
-            message.error(
-                String(error.response?.data?.message || "Unknown Error.")
-            );
+            if (error?.response?.data?.message) {
+                message.error(error.response.data.message);
+            } else {
+                message.error("Login failed. Please check your credentials.");
+            }
         }
     };
+
+    useEffect(() => {
+        if (user) {
+            navigate("/", { replace: true });
+        }
+    }, [user]);
 
     return (
         <>
@@ -95,8 +100,7 @@ const Login: React.FC = () => {
                     </Form>
 
                     <p style={{ textAlign: "center" }}>
-                        First time user?{" "}
-                        <a href="/signup">Signup</a>
+                        First time user? <a href="/signup">Signup</a>
                     </p>
                 </Flex>
             </Flex>

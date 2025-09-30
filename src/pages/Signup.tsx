@@ -1,14 +1,8 @@
-import {
-    Button,
-    Flex,
-    Form,
-    FormProps,
-    Input,
-    message,
-} from "antd";
+import { Button, Flex, Form, FormProps, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface FieldType {
     email: string;
@@ -21,7 +15,7 @@ interface FieldType {
 const Signup: React.FC = () => {
     const { user, login } = useAuth();
     const [showGradDate, setShowGradDate] = useState<boolean>(false);
-
+    const navigate = useNavigate();
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
             await axios.post(
@@ -29,7 +23,7 @@ const Signup: React.FC = () => {
                 values
             );
             login(values.email, values.password);
-            window.location.href = "/first-time";
+            navigate("/first-time");
         } catch (error: any) {
             message.error(
                 String(error.response?.data?.message || "Unknown Error.")
@@ -39,7 +33,7 @@ const Signup: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            window.location.href = "/first-time";
+            navigate("/first-time");
         }
     });
 

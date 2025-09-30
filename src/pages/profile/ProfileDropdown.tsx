@@ -16,13 +16,15 @@ import {
     UserOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../../hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ProfileDropdown: React.FC = () => {
     const { user, logout } = useAuth();
-
+    const navigate = useNavigate();
+    
     const logOut = () => {
         logout();
-        window.location.href = "/login";
+        navigate("/login");
     };
 
     const items: MenuProps["items"] = [
@@ -34,7 +36,7 @@ const ProfileDropdown: React.FC = () => {
                     justify="space-between"
                     gap="10px"
                     align="center"
-                    onClick={() => (window.location.href = "/profile")}
+                    onClick={() => navigate("/profile")}
                 >
                     Profile
                 </Flex>
