@@ -15,6 +15,9 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/me`);
                 setIsLoading(false);
+                if (!response.data.user) {
+                    window.location.href = '/login';
+                }
             } catch (error) {
                 console.error("Fetching user failed:", error);
                 window.location.href = '/login';

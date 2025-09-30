@@ -22,6 +22,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 
 import "./App.css";
 import FirstTime from "./pages/login/FirstTime";
+import NotFound from "./components/NotFound";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -89,7 +90,7 @@ const App: React.FC = () => {
 
                     <Route path="/first-time" element={<FirstTime />} />
                     <Route
-                        path="/"
+                        index
                         element={
                             <PrivateRoute
                                 element={
@@ -244,7 +245,7 @@ const App: React.FC = () => {
                     />
 
                     <Route path="/kiosk" element={<Kiosk />} />
-                    {/*<Route path="*" element={<NotFound />} />*/}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
         </>
