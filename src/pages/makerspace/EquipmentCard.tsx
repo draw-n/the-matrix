@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { Button, Card, Flex, Skeleton, Space, Tag, Typography } from "antd";
@@ -54,7 +53,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
 }: EquipmentCardProps) => {
     const [category, setCategory] = useState<Category>();
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,10 +69,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
 
     return (
         <>
-            <Card
-                className="equipment-card"
-                style={{ height: "100%" }}
-            >
+            <Card className="equipment-card" style={{ height: "100%" }}>
                 {isLoading ? (
                     <Skeleton active />
                 ) : (
@@ -139,11 +134,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                 variant="outlined"
                                 size="small"
                                 icon={<EyeOutlined />}
-                                onClick={() =>
-                                    navigate(
-                                        `/makerspace/${equipment.routePath}`
-                                    )
-                                }
+                                href={`/makerspace/${equipment.routePath}`}
                             >
                                 More
                             </Button>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import axios from "axios";
 
@@ -9,7 +8,6 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
     const { user } = useAuth();
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -19,7 +17,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
                 setIsLoading(false);
             } catch (error) {
                 console.error("Fetching user failed:", error);
-                navigate("/login");
+                window.location.href = '/login';
             } finally {
                 setIsLoading(false);
             }

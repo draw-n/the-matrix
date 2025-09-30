@@ -9,28 +9,16 @@ import {
     theme,
     Typography,
 } from "antd";
-import AnnouncementCarousel from "../../components/AnnouncementCarousel";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
-import {
-    DesktopOutlined,
-    EditOutlined,
-    PlusCircleFilled,
-    PlusOutlined,
-} from "@ant-design/icons";
-import PrintingChart from "./PrintingChart";
-import HasAccess from "../../components/rbac/HasAccess";
+
 import AnnouncementCard from "./AnnouncementCard";
 import SocialsCard from "./SocialsCard";
 import AdminCard from "./AdminCard";
 import RemotePrintCard from "./RemotePrintCard";
-import FirstTime from "../login/FirstTime";
+import { useAuth } from "../../hooks/AuthContext";
 
-const { Title } = Typography;
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
 
     const {
         token: { colorPrimary },

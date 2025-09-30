@@ -1,8 +1,7 @@
 import { Button, Divider, Flex, Form, FormProps, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 interface FieldType {
     email: string;
@@ -12,10 +11,7 @@ interface FieldType {
 
 const Login: React.FC = () => {
     const { user, login } = useAuth();
-    const navigate = useNavigate();
     const location = useLocation();
-
-   
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
@@ -24,7 +20,7 @@ const Login: React.FC = () => {
                 values
             );
             login(values.email, values.password);
-            navigate(location.state?.from || "/");
+            window.location.href = location.state?.from || "/";
         } catch (error: any) {
             message.error(
                 String(error.response?.data?.message || "Unknown Error.")
@@ -100,7 +96,7 @@ const Login: React.FC = () => {
 
                     <p style={{ textAlign: "center" }}>
                         First time user?{" "}
-                        <a onClick={() => navigate("/signup")}>Signup</a>
+                        <a href="/signup">Signup</a>
                     </p>
                 </Flex>
             </Flex>

@@ -1,13 +1,12 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, } from "react";
 
-import { Form, Select, FormProps, Button, Flex } from "antd";
+import { Button, Flex } from "antd";
 import StatusSelection from "./StatusSelection";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import GradYearSelection from "./GradYearSelection";
 import DepartmentSelect from "./DepartmentSelect";
-import { useAuth } from "../../hooks/AuthContext";
-import { useNavigate } from "react-router-dom";
+
 
 const FirstTime: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
@@ -18,9 +17,6 @@ const FirstTime: React.FC = () => {
     const [departments, setDepartments] = useState<string[] | undefined>(
         undefined
     );
-
-    const { user } = useAuth();
-    const navigate = useNavigate();
 
     const renderStep = () => {
         switch (stepIndex) {
@@ -56,7 +52,7 @@ const FirstTime: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/users/first-time`,
                 { status, graduationYear, departments }
             );
-            navigate("/");
+            window.location.href = "/";
         } catch (error) {
             console.error("Error updating user:", error);
         }

@@ -1,18 +1,14 @@
 import {
     Button,
-    DatePicker,
     Flex,
     Form,
     FormProps,
     Input,
     message,
-    Select,
 } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { CaretDownFilled } from "@ant-design/icons";
 
 interface FieldType {
     email: string;
@@ -24,9 +20,6 @@ interface FieldType {
 
 const Signup: React.FC = () => {
     const { user, login } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
-
     const [showGradDate, setShowGradDate] = useState<boolean>(false);
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
@@ -36,7 +29,7 @@ const Signup: React.FC = () => {
                 values
             );
             login(values.email, values.password);
-            navigate("/first-time");
+            window.location.href = "/first-time";
         } catch (error: any) {
             message.error(
                 String(error.response?.data?.message || "Unknown Error.")
@@ -46,7 +39,7 @@ const Signup: React.FC = () => {
 
     useEffect(() => {
         if (user) {
-            navigate("/first-time");
+            window.location.href = "/first-time";
         }
     });
 
@@ -160,7 +153,7 @@ const Signup: React.FC = () => {
 
                     <p style={{ textAlign: "center" }}>
                         Already a user?{"  "}
-                        <a onClick={() => navigate("/login")}>Login</a>
+                        <a href="/login">Login</a>
                     </p>
                 </Flex>
             </Flex>

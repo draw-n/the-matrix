@@ -6,7 +6,6 @@ import Review from "./Review";
 import { useEffect, useState } from "react";
 import { Material } from "../../types/Material";
 import { FilamentMoreSettings } from "../../types/Equipment";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, User } from "../../hooks/AuthContext";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -60,7 +59,6 @@ const RemotePrint: React.FC = () => {
     }, [isLoading]);
 
     const { user, setUser } = useAuth();
-    const navigate = useNavigate();
 
     useEffect(() => {
         setSettingDetails({
@@ -209,11 +207,7 @@ const RemotePrint: React.FC = () => {
                     title="Successfully Sliced and Uploaded Your Print!"
                     subTitle="Please pick up your print between 10 am to 6 pm on the nearest weekday you are available. Pick up location is Olin Hall, 4th Floor, Room 414."
                     extra={[
-                        <Button
-                            onClick={() => navigate("/")}
-                            type="primary"
-                            key="dashboard"
-                        >
+                        <Button href="/" type="primary" key="dashboard">
                             To Dashboard
                         </Button>,
                     ]}
@@ -244,7 +238,7 @@ const RemotePrint: React.FC = () => {
                     status="warning"
                     title="Please wait after 24 hours from your last print."
                     extra={
-                        <Button type="primary" onClick={() => navigate("/")}>
+                        <Button type="primary" href="/">
                             To Dashboard
                         </Button>
                     }

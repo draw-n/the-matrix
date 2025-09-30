@@ -11,7 +11,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type { Issue } from "../../types/Issue";
 import { Equipment } from "../../types/Equipment";
-import { useNavigate } from "react-router-dom";
 import { User } from "../../hooks/AuthContext";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
@@ -75,7 +74,6 @@ const IssueTable: React.FC<IssueTableProps> = ({
         }
     };
 
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -184,7 +182,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     routePath: "",
                 };
                 return (
-                    <a onClick={() => navigate(`/makerspace/${routePath}`)}>
+                    <a href={`/makerspace/${routePath}`}>
                         {name}
                     </a>
                 );

@@ -1,8 +1,6 @@
 import { Button, Result } from "antd";
-import { useNavigate } from "react-router-dom";
 
 const NotFound: React.FC = () => {
-    const navigate = useNavigate();
 
     return (
         <Result
@@ -10,7 +8,7 @@ const NotFound: React.FC = () => {
             title="404"
             subTitle="Sorry, this page does not exist."
             extra={
-                <Button onClick={() => navigate("/")}>To Announcements</Button>
+                <Button href="/">To Dashboard</Button>
             }
         />
     );

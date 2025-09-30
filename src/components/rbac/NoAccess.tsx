@@ -1,8 +1,6 @@
 import { Result, Button } from "antd";
-import { useNavigate } from "react-router-dom";
 
 const NoAccess: React.FC = () => {
-    const navigate = useNavigate();
     
     return (
         <Result
@@ -12,7 +10,7 @@ const NoAccess: React.FC = () => {
             extra={
                 <Button
                     type="primary"
-                    onClick={() => navigate("/")}
+                    href="/"
                 >
                     To Dashboard
                 </Button>

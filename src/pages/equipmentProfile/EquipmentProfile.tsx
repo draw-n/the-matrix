@@ -4,24 +4,17 @@ import {
     Col,
     Flex,
     Input,
-    message,
     Row,
-    Select,
     Skeleton,
     Space,
-    Tag,
-    theme,
     Typography,
 } from "antd";
 import { Equipment } from "../../types/Equipment";
 import IssueTable from "../../components/tables/IssueTable";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Category } from "../../types/Category";
-import { useNavigate } from "react-router-dom";
 import ConfirmAction from "../../components/ConfirmAction";
-import HasAccess from "../../components/rbac/HasAccess";
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
 
@@ -48,8 +41,6 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -103,7 +94,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipment._id}`
             );
             setRefreshEquipment();
-            navigate("/makerspace");
+            window.location.href = "/makerspace";
         } catch (error) {
             console.error("Issue deleting equipment", error);
         }
@@ -111,7 +102,6 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
     return (
         <>
-         
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
                 <Row gutter={[16, 16]}>
                     <Col span={18}>

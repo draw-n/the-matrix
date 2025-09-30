@@ -11,7 +11,7 @@ import {
     Typography,
     MenuProps,
 } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./rbac/NoAccess";
@@ -163,7 +163,6 @@ const Shell: React.FC<ShellProps> = ({
     contentAccess,
     title,
 }: ShellProps) => {
-    const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -257,7 +256,7 @@ const Shell: React.FC<ShellProps> = ({
                     mode="inline"
                     items={menuItems}
                     onClick={({ key }) => {
-                        navigate(key);
+                        window.location.href = key;
                     }}
                 />
             </Sider>
