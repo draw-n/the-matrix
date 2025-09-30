@@ -1,9 +1,6 @@
 import { Flex, Space, Tabs, TabsProps } from "antd";
 import { useState } from "react";
 
-import AnnouncementForm from "../../components/forms/AnnouncementForm";
-import AnnouncementTable from "../../components/tables/AnnouncementTable";
-import IssueTable from "../../components/tables/IssueTable";
 import IssueTab from "./IssueTab";
 import AnnouncementTab from "./AnnouncementTab";
 

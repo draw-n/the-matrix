@@ -58,7 +58,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                     dateLastUpdated: new Date(),
                     status: announcement.status,
                 };
-                const response = await axios.put(
+                const response = await axios.put<Announcement>(
                     `${import.meta.env.VITE_BACKEND_URL}/announcements/${
                         announcement._id
                     }`,
@@ -71,14 +71,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                     status: "posted",
                     ...values,
                 };
-                const response = await axios.post(
+                const response = await axios.post<Announcement>(
                     `${import.meta.env.VITE_BACKEND_URL}/announcements`,
                     announcement
                 );
                 form.resetFields();
             }
-
             onUpdate();
+
             setIsModalOpen(false);
         } catch (error) {
             console.error("Error creating new update:", error);

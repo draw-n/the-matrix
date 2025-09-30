@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Button,
     message,
     Popconfirm,
@@ -16,17 +15,8 @@ import type { User } from "../../hooks/AuthContext";
 import type { Announcement } from "../../types/Announcement";
 import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
 import { checkAccess } from "../rbac/HasAccess";
-import randomColor from "randomcolor";
 import AutoAvatar from "../AutoAvatar";
-import {
-    cyan,
-    geekblue,
-    gold,
-    green,
-    magenta,
-    purple,
-    red,
-} from "@ant-design/colors";
+import { cyan, geekblue, magenta, purple } from "@ant-design/colors";
 
 interface TableAnnouncement extends Announcement {
     key: string;
@@ -38,15 +28,14 @@ interface UserInfo {
 }
 
 interface AnnouncementTableProps {
-    refresh: number;
-    setRefresh: (numValue: number) => void;
+    refreshTable: () => void;
+    announcements: Announcement[];
 }
 
 const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
-    refresh,
-    setRefresh,
-}: AnnouncementTableProps) => {
-    const [announcements, setAnnouncements] = useState<TableAnnouncement[]>([]);
+    refreshTable,
+    announcements,
+}) => {
     const [users, setUsers] = useState<Record<string, UserInfo>>({});
 
     const deleteAnnouncement = async (_id: string) => {
@@ -55,7 +44,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/announcements/${_id}`
             );
             message.success(response.data.message);
-            setRefresh(refresh + 1);
+            refreshTable();
         } catch (error: any) {
             message.error(error.response?.data?.message || "Unknown Error.");
             console.error("Error deleting announcement:", error);
@@ -63,24 +52,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Announcement[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/announcements?status=posted`
-                );
-
-                const formattedData = response.data.map((item) => ({
-                    ...item,
-                    key: item._id, // or item.id if you have a unique identifier
-                }));
-                setAnnouncements(formattedData);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-        };
-
         const fetchUserData = async () => {
             try {
                 const response = await axios.get<User[]>(
@@ -103,8 +74,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
             }
         };
         fetchUserData();
-        fetchData();
-    }, [refresh]);
+    }, [announcements]);
 
     const types = [
         {
@@ -121,6 +91,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         },
     ];
 
+   
     const updateColumns: TableProps["columns"] = [
         {
             title: "Created By",
@@ -262,7 +233,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                           announcement._id && (
                               <Space>
                                   <AnnouncementForm
-                                      onUpdate={() => setRefresh(refresh + 1)}
+                                      onUpdate={refreshTable}
                                       announcement={announcement}
                                   />
 
