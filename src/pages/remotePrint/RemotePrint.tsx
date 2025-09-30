@@ -1,4 +1,4 @@
-import { Button, Result, Space, Steps, message } from "antd";
+import { Button, Flex, Result, Space, Steps, message } from "antd";
 import UploadFile from "./UploadFile";
 import SelectMaterial from "./SelectMaterial";
 import MoreSettings from "./MoreSettings";
@@ -9,9 +9,11 @@ import { FilamentMoreSettings } from "../../types/Equipment";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth, User } from "../../hooks/AuthContext";
 import axios from "axios";
+import Loading from "../../components/Loading";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [allowPrint, setAllowPrint] = useState(false);
     const [current, setCurrent] = useState(0);
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
@@ -38,6 +40,24 @@ const RemotePrint: React.FC = () => {
             perimeters: 3,
         },
     });
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: {
+            preventDefault: () => void;
+            returnValue: string;
+        }) => {
+            if (isLoading) {
+                event.preventDefault(); // Standard for browsers
+                event.returnValue = ""; // For older browsers
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [isLoading]);
 
     const { user, setUser } = useAuth();
     const navigate = useNavigate();
@@ -96,12 +116,13 @@ const RemotePrint: React.FC = () => {
         try {
             if (user) {
                 // CALL SLICING API
+                setIsLoading(true);
                 const printResponse = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
                         fileName: uploadedFile[0].name,
                         material,
-                        options: settingDetails
+                        options: settingDetails,
                     }
                 );
 
@@ -119,10 +140,14 @@ const RemotePrint: React.FC = () => {
                 );
                 setUser(editedUser);
                 setSubmitted(true);
+                setIsLoading(false);
                 setAllowPrint(false);
             }
         } catch (err: any) {
-            message.error(err.response?.data?.message || "Unable to print at this time. Please try again later.");
+            message.error(
+                err.response?.data?.message ||
+                    "Unable to print at this time. Please try again later."
+            );
             console.error(err);
         }
     };
@@ -193,6 +218,16 @@ const RemotePrint: React.FC = () => {
                         </Button>,
                     ]}
                 />
+            ) : isLoading ? (
+                <Flex
+                    justify="center"
+                    align="center"
+                    vertical
+                    style={{ height: "60vh" }}
+                >
+                    <p>Uploading your print. Please don't close this page.</p>
+                    <Loading />
+                </Flex>
             ) : allowPrint ? (
                 <Space
                     direction="vertical"
