@@ -15,11 +15,7 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
-        if (user) {
-            navigate(location.state?.from || "/");
-        }
-    });
+   
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {

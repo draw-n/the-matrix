@@ -198,9 +198,9 @@ const Shell: React.FC<ShellProps> = ({
 
         // Flatten all menu items to get all leaf keys
         const flattenMenuItems = (items: MenuProps["items"] = []): string[] => {
-            return items.flatMap(item => {
+            return items.flatMap((item) => {
                 if (!item) return [];
-                if ('children' in item && Array.isArray(item.children)) {
+                if ("children" in item && Array.isArray(item.children)) {
                     return flattenMenuItems(item.children);
                 }
                 return typeof item.key === "string" ? [item.key] : [];
@@ -210,7 +210,9 @@ const Shell: React.FC<ShellProps> = ({
         const allKeys = flattenMenuItems(menuItems);
 
         // Find the key(s) that match the current path
-        let selectedPages = allKeys.filter(key => currentPath.startsWith(key));
+        let selectedPages = allKeys.filter((key) =>
+            currentPath.startsWith(key)
+        );
         if (selectedPages.length > 1) {
             selectedPages = selectedPages.filter((item) => item !== "/");
         }
@@ -245,7 +247,9 @@ const Shell: React.FC<ShellProps> = ({
                         />
                     </div>
                 </Flex>
-                <Divider style={{ margin: "auto", width: "80%" }} />
+                <Flex justify="center" style={{ padding: "0 20px" }}>
+                    <Divider style={{ margin: "auto" }} />
+                </Flex>
                 <Menu
                     theme="light"
                     selectedKeys={getSelectedKeys()}
