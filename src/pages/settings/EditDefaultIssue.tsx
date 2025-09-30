@@ -34,8 +34,7 @@ const EditDefaultIssue: React.FC<EditDefaultIssueProps> = ({
                         size="small"
                         icon={<SaveOutlined />}
                         onClick={() => {
-                            updateCategory();
-                            setEditMode(false);
+                            issue.trim() !== "" && updateCategory() && setEditMode(false);
                         }}
                     />
                 </Tooltip>

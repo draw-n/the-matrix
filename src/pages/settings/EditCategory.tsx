@@ -60,6 +60,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     }, [category]);
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
+    
+        // Update the issue at the specified index
         setDefaultIssues((prevIssues) => {
             if (prevIssues) {
                 const updatedIssues = [...prevIssues];
@@ -115,7 +117,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${
                     category._id
                 }`,
-                { ...category, defaultIssues }
+                { ...category, defaultIssues: defaultIssues.filter((issue) => issue.length != 0) }
             );
         } catch (error) {
             console.error(error);
@@ -142,7 +144,11 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     />
                     <ConfirmAction
                         target={
-                            <Button icon={<DeleteOutlined />} size="small" danger>
+                            <Button
+                                icon={<DeleteOutlined />}
+                                size="small"
+                                danger
+                            >
                                 Delete
                             </Button>
                         }
