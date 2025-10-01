@@ -2,8 +2,32 @@ import { Card, Flex, Space } from "antd";
 import MaterialForm from "../../components/forms/MaterialForm";
 import HasAccess from "../../components/rbac/HasAccess";
 import MaterialTable from "../../components/tables/MaterialTable";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Material } from "../../types/Material";
 
 const MaterialTab: React.FC = () => {
+    const [materials, setMaterials] = useState<Material[]>([]);
+    const fetchData = async () => {
+        try {
+            const responseUpdates = await axios.get<Material[]>(
+                `${import.meta.env.VITE_BACKEND_URL}/materials`
+            );
+
+            const formattedData = responseUpdates.data.map((item) => ({
+                ...item,
+                key: item._id,
+            }));
+            setMaterials(formattedData);
+        } catch (error) {
+            console.error("Fetching updates or issues failed:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Flex
@@ -13,10 +37,10 @@ const MaterialTab: React.FC = () => {
             >
                 <h2>MATERIALS</h2>
                 <HasAccess roles={["admin", "moderator"]}>
-                    <MaterialForm onUpdate={() => {}} />
+                    <MaterialForm onUpdate={fetchData} />
                 </HasAccess>
             </Flex>
-            <MaterialTable refresh={0} setRefresh={() => {}} />
+            <MaterialTable refreshTable={fetchData} materials={materials} />
         </Space>
     );
 };

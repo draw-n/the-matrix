@@ -1,10 +1,13 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Card, Space, Flex, Button, Typography } from "antd";
 import PrintingChart from "./PrintingChart";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const RemotePrintCard: React.FC = () => {
+    const navigate = useNavigate();
+
     return (
         <Card>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
@@ -19,7 +22,7 @@ const RemotePrintCard: React.FC = () => {
                         shape="round"
                         iconPosition="end"
                         icon={<PlusOutlined />}
-                        href="/upload"
+                        onClick={() => navigate("/upload")}
                     >
                         New Print
                     </Button>

@@ -1,6 +1,7 @@
 import {
     Button,
     Flex,
+    message,
     Popconfirm,
     Table,
     TableProps,
@@ -17,6 +18,7 @@ import { checkAccess } from "../rbac/HasAccess";
 import AutoAvatar from "../AutoAvatar";
 import { geekblue, gold, green, red } from "@ant-design/colors";
 import EditIssueForm from "../forms/EditIssueForm";
+import { useNavigate } from "react-router-dom";
 
 interface TableIssue extends Issue {
     key: string;
@@ -34,30 +36,31 @@ interface EquipmentInfo {
 }
 
 interface IssueTableProps {
-    equipmentFilter?: string;
-    refresh: number;
-    setRefresh: (numValue: number) => void;
+    refreshTable: () => void;
+    issues: Issue[];
 }
 
 const IssueTable: React.FC<IssueTableProps> = ({
-    equipmentFilter,
-    refresh,
-    setRefresh,
+    refreshTable,
+    issues,
 }: IssueTableProps) => {
-    const [issues, setIssues] = useState<TableIssue[]>([]);
     const [users, setUsers] = useState<Record<string, UserInfo>>({});
     const [equipment, setEquipment] = useState<Record<string, EquipmentInfo>>(
         {}
     );
+
+    const navigate = useNavigate();
 
     const deleteIssue = async (_id: string) => {
         try {
             await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/issues/${_id}`
             );
-            setRefresh(refresh + 1);
+            message.success("Issue deleted successfully");
+            refreshTable();
         } catch (error) {
-            console.error("Error deleting equipment:", error);
+            console.error("Error deleting issue:", error);
+            message.error("Error deleting issue");
         }
     };
 
@@ -68,40 +71,13 @@ const IssueTable: React.FC<IssueTableProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
                 editedIssue
             );
-            setRefresh(refresh + 1);
+            refreshTable();
         } catch (error) {
             console.error("Issue archiving issue", error);
         }
     };
 
-
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let response;
-
-                if (equipmentFilter) {
-                    response = await axios.get<Issue[]>(
-                        `${
-                            import.meta.env.VITE_BACKEND_URL
-                        }/issues?status=open,in-progress,completed&equipment=${equipmentFilter}`
-                    );
-                } else {
-                    response = await axios.get<Issue[]>(
-                        `${import.meta.env.VITE_BACKEND_URL}/issues`
-                    );
-                }
-
-                let formattedData = response.data.map((item) => ({
-                    ...item,
-                    key: item._id, // or item.id if you have a unique identifier
-                }));
-
-                setIssues(formattedData);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-        };
         const fetchUserData = async () => {
             try {
                 const responseUsers = await axios.get<User[]>(
@@ -150,8 +126,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
         };
         fetchEquipmentData();
         fetchUserData();
-        fetchData();
-    }, [refresh]);
+    }, [issues]);
 
     const statuses = [
         {
@@ -182,7 +157,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     routePath: "",
                 };
                 return (
-                    <a href={`/makerspace/${routePath}`}>
+                    <a onClick={() => navigate(`/makerspace/${routePath}`)}>
                         {name}
                     </a>
                 );
@@ -277,7 +252,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                           <Flex gap="small">
                               <EditIssueForm
                                   issue={item}
-                                  onUpdate={() => setRefresh(refresh + 1)}
+                                  onUpdate={refreshTable}
                               />
                               <Tooltip title="Delete">
                                   <Popconfirm
@@ -304,7 +279,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
 
     const numRows = 5;
 
-    const finalData = issues.map((row) => {
+    const finalData = issues?.map((row) => {
         const userInfo = users[row.createdBy] || {
             fullName: "Loading...",
             email: "Loading...",

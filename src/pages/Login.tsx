@@ -100,7 +100,7 @@ const Login: React.FC = () => {
                     </Form>
 
                     <p style={{ textAlign: "center" }}>
-                        First time user? <a href="/signup">Signup</a>
+                        First time user? <a onClick={() => navigate("/signup")}>Signup</a>
                     </p>
                 </Flex>
             </Flex>

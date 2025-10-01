@@ -13,6 +13,7 @@ import { Announcement } from "../../types/Announcement";
 import axios from "axios";
 import { EditOutlined, DesktopOutlined } from "@ant-design/icons";
 import HasAccess from "../../components/rbac/HasAccess";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -20,6 +21,8 @@ const AnnouncementCard: React.FC = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(0);
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,7 +53,7 @@ const AnnouncementCard: React.FC = () => {
                     <HasAccess roles={["admin", "moderator"]}>
                         <Tooltip title="Edit Announcements">
                             <Button
-                                href="/edit"
+                                onClick={() => navigate("/edit")}
                                 size="middle"
                                 type="primary"
                                 shape="circle"
@@ -62,7 +65,7 @@ const AnnouncementCard: React.FC = () => {
 
                     <Tooltip title="Kiosk Mode">
                         <Button
-                            href="/kiosk"
+                            onClick={() => navigate("/kiosk")}
                             size="middle"
                             type="primary"
                             shape="circle"

@@ -27,7 +27,11 @@ interface FieldType {
     description: string;
 }
 
-const CreateIssueForm: React.FC = () => {
+interface CreateIssueFormProps {
+    onUpdate: () => void;
+}
+
+const CreateIssueForm: React.FC<CreateIssueFormProps> = ({ onUpdate }: CreateIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -69,6 +73,7 @@ const CreateIssueForm: React.FC = () => {
                 newIssue
             );
             setIsModalOpen(false);
+            onUpdate();
         } catch (error) {
             console.error("Problem creating an issue: ", error);
         }

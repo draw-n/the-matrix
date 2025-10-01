@@ -1,4 +1,4 @@
-import { Flex, Dropdown, Button, Row, Col, Empty } from "antd";
+import { Flex, Dropdown, Button, Row, Col, Empty, Space } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
@@ -45,38 +45,40 @@ const EquipmentTab = () => {
         fetchData();
     }, [filter]);
     return (
-        <>
-            {" "}
-            <h2>Equipment</h2>
-            <Flex gap="middle">
-                {categories.length > 0 && (
-                    <Dropdown
-                        menu={{
-                            items: categories?.map((category) => ({
-                                key: category._id,
-                                label: category.name,
-                            })),
-                            onClick: ({ key }) => {
-                                setFilter(key);
-                            },
-                        }}
-                        placement="bottom"
-                    >
-                        <Button
-                            variant="solid"
-                            size="small"
-                            style={{ width: 200 }}
+        <Space size="middle" direction="vertical" style={{ width: "100%" }}>
+            <Flex gap="middle" align="center" justify="space-between">
+                <h2>EQUIPMENT</h2>
+                <Flex gap="middle" align="center">
+                    {categories.length > 0 && (
+                        <Dropdown
+                            menu={{
+                                items: categories?.map((category) => ({
+                                    key: category._id,
+                                    label: category.name,
+                                })),
+                                onClick: ({ key }) => {
+                                    setFilter(key);
+                                },
+                            }}
+                            placement="bottom"
                         >
-                            {
-                                categories?.find((item) => item._id === filter)
-                                    ?.name
-                            }
-                        </Button>
-                    </Dropdown>
-                )}
-                <HasAccess roles={["admin", "moderator"]}>
-                    <CreateEquipmentForm onUpdate={() => {}} />
-                </HasAccess>
+                            <Button
+                                variant="solid"
+                                size="small"
+                                style={{ width: 200 }}
+                            >
+                                {
+                                    categories?.find(
+                                        (item) => item._id === filter
+                                    )?.name
+                                }
+                            </Button>
+                        </Dropdown>
+                    )}
+                    <HasAccess roles={["admin", "moderator"]}>
+                        <CreateEquipmentForm onUpdate={() => {}} />
+                    </HasAccess>
+                </Flex>
             </Flex>
             {equipments.length > 0 ? (
                 <Row gutter={[16, 16]}>
@@ -91,7 +93,7 @@ const EquipmentTab = () => {
             ) : (
                 <Empty style={{ width: "100%" }} />
             )}
-        </>
+        </Space>
     );
 };
 

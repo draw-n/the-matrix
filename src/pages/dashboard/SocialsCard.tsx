@@ -4,6 +4,7 @@ import {
     YoutubeFilled,
 } from "@ant-design/icons";
 import { Button, Card, Flex } from "antd";
+import { useNavigate } from "react-router";
 
 const socials = [
     { icon: <MailOutlined />, link: "mailto:david.c.florian@vanderbilt.edu" },
@@ -15,6 +16,8 @@ const socials = [
 ];
 
 const SocialsCard: React.FC = () => {
+    const navigate = useNavigate();
+
     return (
         <Card>
             <Flex vertical gap="middle">
@@ -27,7 +30,7 @@ const SocialsCard: React.FC = () => {
                             variant="filled"
                             shape="circle"
                             icon={social.icon}
-                            href={social.link}
+                            onClick={() => navigate(social.link)}
                         />
                     ))}
                 </Flex>

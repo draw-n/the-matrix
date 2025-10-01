@@ -24,22 +24,21 @@ interface TableMaterial extends Material {
 }
 
 interface MaterialTableProps {
-    refresh: number;
-    setRefresh: (numValue: number) => void;
+    refreshTable: () => void;
+    materials: Material[];
 }
 
 const MaterialTable: React.FC<MaterialTableProps> = ({
-    refresh,
-    setRefresh,
+    refreshTable,
+    materials,
 }: MaterialTableProps) => {
-    const [materials, setMaterials] = useState<TableMaterial[]>([]);
     const [categories, setCategories] = useState<Category[]>();
     const deleteMaterial = async (_id: string) => {
         try {
             await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/materials/${_id}`
             );
-            setRefresh(refresh + 1);
+            refreshTable();
         } catch (error) {
             console.error("Error deleting material:", error);
         }
@@ -47,20 +46,6 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const responseUpdates = await axios.get<Material[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials`
-                );
-
-                const formattedData = responseUpdates.data.map((item) => ({
-                    ...item,
-                    key: item._id,
-                }));
-                setMaterials(formattedData);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-
             try {
                 const response = await axios.get<Category[]>(
                     `${import.meta.env.VITE_BACKEND_URL}/categories`
@@ -71,7 +56,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             }
         };
         fetchData();
-    }, [refresh]);
+    }, [materials]);
 
     const updateColumns: TableProps["columns"] = [
         {
@@ -140,7 +125,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                           material._id && (
                               <Space>
                                   <MaterialForm
-                                      onUpdate={() => setRefresh(refresh + 1)}
+                                      onUpdate={refreshTable}
                                       material={material}
                                   />
 

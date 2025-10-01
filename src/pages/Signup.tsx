@@ -147,7 +147,7 @@ const Signup: React.FC = () => {
 
                     <p style={{ textAlign: "center" }}>
                         Already a user?{"  "}
-                        <a href="/login">Login</a>
+                        <a onClick={() => navigate("/login")}>Login</a>
                     </p>
                 </Flex>
             </Flex>

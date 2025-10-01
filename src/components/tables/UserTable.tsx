@@ -13,7 +13,7 @@ const UserTable: React.FC = () => {
                 const responseUpdates = await axios.get<User[]>(
                     `${
                         import.meta.env.VITE_BACKEND_URL
-                    }/users?role=admin,moderator`
+                    }/users?access=admin,moderator`
                 );
 
                 const formattedData = responseUpdates.data.map((item) => ({

@@ -13,6 +13,7 @@ import {
 import { gold, gray, green, purple, red } from "@ant-design/colors";
 import type { Equipment } from "../../types/Equipment";
 import type { Category } from "../../types/Category";
+import { useNavigate } from "react-router-dom";
 
 interface EquipmentCardProps {
     equipment: Equipment;
@@ -53,7 +54,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
 }: EquipmentCardProps) => {
     const [category, setCategory] = useState<Category>();
     const [isLoading, setIsLoading] = useState(true);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get<Category>(
@@ -134,7 +135,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                 variant="outlined"
                                 size="small"
                                 icon={<EyeOutlined />}
-                                href={`/makerspace/${equipment.routePath}`}
+                                onClick={() => navigate(`/makerspace/${equipment.routePath}`)}
                             >
                                 More
                             </Button>

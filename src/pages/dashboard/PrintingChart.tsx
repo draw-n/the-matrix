@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 import { geekblueDark, red } from "@ant-design/colors";
-import { Flex, Radio, Segmented } from "antd";
+import { Empty, Flex, Radio, Segmented, Typography } from "antd";
 import { CheckboxGroupProps } from "antd/es/checkbox";
 import { useAuth } from "../../hooks/AuthContext";
 import { useMemo, useState } from "react";
@@ -36,7 +36,6 @@ const PrintingChart: React.FC = () => {
             dateMap[dateKey] = 0;
         }
 
-        // 2. Count remotePrints by date
         user.remotePrints.forEach(({ date }) => {
             const parsed = dayjs(date).startOf("day");
 
@@ -51,13 +50,6 @@ const PrintingChart: React.FC = () => {
                 }
             }
         });
-        console.log(
-            Object.entries(dateMap).map(([date, count]) => ({
-                date: dayjs(date).format("MMM D"), // e.g., "Apr 15"
-                count,
-            }))
-        );
-        // 3. Convert to recharts format
         return Object.entries(dateMap).map(([date, count]) => ({
             date: dayjs(date).format("MMM D"), // e.g., "Apr 15"
             count,
@@ -68,50 +60,60 @@ const PrintingChart: React.FC = () => {
         <>
             <Flex vertical gap="middle">
                 <ResponsiveContainer width="100%" height={200}>
-                    <AreaChart
-                        data={chartData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                        <defs>
-                            <linearGradient
-                                id="count"
-                                x1="0"
-                                y1="0"
-                                x2="0"
-                                y2="1"
-                            >
-                                <stop
-                                    offset="5%"
-                                    stopColor={red[5]}
-                                    stopOpacity={0.8}
-                                />
-                                <stop
-                                    offset="95%"
-                                    stopColor={red[5]}
-                                    stopOpacity={0}
-                                />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" tickLine={false} />
-                        <YAxis
-                            width={5}
-                            allowDecimals={false}
-                            type="number"
-                            interval="preserveStartEnd"
-                            domain={[0, "dataMax + 5"]}
+                    {chartData.length === 0 ? (
+                        <Empty
+                            description={
+                                <Typography.Text>
+                                    No prints found for the selected date range.
+                                </Typography.Text>
+                            }
                         />
-                        <Tooltip />
-                        <Area
-                            fill="url(#count)"
-                            type="monotone"
-                            dataKey="count"
-                            name="Number of Prints"
-                            stroke={red[5]}
-                            strokeWidth={2}
-                            dot={false}
-                        />
-                    </AreaChart>
+                    ) : (
+                        <AreaChart
+                            data={chartData}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        >
+                            <defs>
+                                <linearGradient
+                                    id="count"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop
+                                        offset="5%"
+                                        stopColor={red[5]}
+                                        stopOpacity={0.8}
+                                    />
+                                    <stop
+                                        offset="95%"
+                                        stopColor={red[5]}
+                                        stopOpacity={0}
+                                    />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" tickLine={false} />
+                            <YAxis
+                                width={5}
+                                allowDecimals={false}
+                                type="number"
+                                interval="preserveStartEnd"
+                                domain={[0, "dataMax + 5"]}
+                            />
+                            <Tooltip />
+                            <Area
+                                fill="url(#count)"
+                                type="monotone"
+                                dataKey="count"
+                                name="Number of Prints"
+                                stroke={red[5]}
+                                strokeWidth={2}
+                                dot={false}
+                            />
+                        </AreaChart>
+                    )}
                 </ResponsiveContainer>
             </Flex>
         </>
