@@ -26,21 +26,19 @@ import NotFound from "./components/NotFound";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
-    const [refreshEquipment, setRefreshEquipment] = useState<number>(0);
-
+    const fetchData = async () => {
+        try {
+            const response = await axios.get<Equipment[]>(
+                `${import.meta.env.VITE_BACKEND_URL}/equipment`
+            );
+            setEquipments(response.data as Equipment[]);
+        } catch (error) {
+            console.error("Error fetching routes:", error);
+        }
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Equipment[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment`
-                );
-                setEquipments(response.data as Equipment[]);
-            } catch (error) {
-                console.error("Error fetching routes:", error);
-            }
-        };
         fetchData();
-    }, [refreshEquipment]);
+    }, []);
 
     return (
         <>
@@ -67,15 +65,7 @@ const App: React.FC = () => {
                                                 children={
                                                     <EquipmentProfile
                                                         equipment={equipment}
-                                                        refreshEquipment={
-                                                            refreshEquipment
-                                                        }
-                                                        setRefreshEquipment={() =>
-                                                            setRefreshEquipment(
-                                                                refreshEquipment +
-                                                                    1
-                                                            )
-                                                        }
+                                                        refreshTable={fetchData}
                                                     />
                                                 }
                                             />
@@ -179,16 +169,7 @@ const App: React.FC = () => {
                                             "admin",
                                         ]}
                                         title="Makerspace"
-                                        children={
-                                            <Makerspace
-                                                refreshEquipment={
-                                                    refreshEquipment
-                                                }
-                                                setRefreshEquipment={
-                                                    setRefreshEquipment
-                                                }
-                                            />
-                                        }
+                                        children={<Makerspace refreshEquipment={fetchData} />}
                                     />
                                 }
                             />

@@ -27,21 +27,15 @@ import EquipmentTab from "./EquipmentTab";
 import MaterialTab from "./MaterialTab";
 
 interface MakerspaceProps {
-    refreshEquipment: number;
-    setRefreshEquipment: (item: number) => void;
+    refreshEquipment: () => void;
 }
 
-const Makerspace: React.FC<MakerspaceProps> = ({
-    refreshEquipment,
-    setRefreshEquipment,
-}) => {
-    const [refreshMaterials, setRefreshMaterials] = useState<number>(0);
-
+const Makerspace: React.FC<MakerspaceProps> = ({ refreshEquipment }) => {
     const items: TabsProps["items"] = [
         {
             key: "1",
             label: "Equipment",
-            children: <EquipmentTab />,
+            children: <EquipmentTab refreshEquipment={refreshEquipment} />,
         },
         {
             key: "2",
@@ -58,7 +52,6 @@ const Makerspace: React.FC<MakerspaceProps> = ({
                 carry for all your creative needs!
             </p>
             <Tabs defaultActiveKey="1" items={items} />
-
         </Space>
     );
 };

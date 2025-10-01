@@ -18,21 +18,21 @@ import ConfirmAction from "../../components/ConfirmAction";
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
 import { useNavigate } from "react-router-dom";
+import { Issue } from "../../types/Issue";
+import { ref } from "process";
 
 const { Paragraph, Title } = Typography;
 
 interface EquipmentProfileProps {
     equipment: Equipment;
-    refreshEquipment: number;
-    setRefreshEquipment: () => void;
+    refreshTable: () => void;
 }
 
 const { TextArea } = Input;
 
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
-    refreshEquipment,
-    setRefreshEquipment,
+    refreshTable,
 }: EquipmentProfileProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -43,7 +43,37 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
 
-    const navigate = useNavigate()
+    const [issues, setIssues] = useState<Issue[]>([]);
+
+    const navigate = useNavigate();
+    const fetchIssueData = async () => {
+        try {
+            let response;
+
+            if (equipment) {
+                response = await axios.get<Issue[]>(
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/issues?status=open,in-progress,completed&equipment=${
+                        equipment._id
+                    }`
+                );
+            } else {
+                response = await axios.get<Issue[]>(
+                    `${import.meta.env.VITE_BACKEND_URL}/issues`
+                );
+            }
+
+            let formattedData = response.data.map((item) => ({
+                ...item,
+                key: item._id, // or item.id if you have a unique identifier
+            }));
+
+            setIssues(formattedData);
+        } catch (error) {
+            console.error("Fetching updates or issues failed:", error);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -58,7 +88,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
             }
         };
         fetchData();
-    });
+        fetchIssueData();
+    }, []);
 
     const handleClick = () => {
         if (editMode) {
@@ -85,7 +116,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 }`,
                 editedEquipment
             );
-            setRefreshEquipment();
+            refreshTable();
         } catch (error) {
             console.error("Issue updating equipment", error);
         }
@@ -96,7 +127,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
             const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipment._id}`
             );
-            setRefreshEquipment();
+            refreshTable();
             navigate("/makerspace");
         } catch (error) {
             console.error("Issue deleting equipment", error);
@@ -154,11 +185,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             <Title
                                 level={2}
                             >{`${equipment.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
-                            <IssueTable
-                                refresh={refreshEquipment}
-                                setRefresh={setRefreshEquipment}
-                                equipmentFilter={equipment._id}
-                            />
+                            <IssueTable issues={issues} refreshTable={fetchIssueData} />
                         </Card>
                     </Col>
                     {editMode && (

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 interface EquipmentCardProps {
     equipment: Equipment;
+    
 }
 
 type EquipmentStatus = "available" | "error" | "paused" | "busy" | "offline";

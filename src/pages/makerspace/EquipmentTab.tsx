@@ -7,41 +7,45 @@ import { Category } from "../../types/Category";
 import { Equipment } from "../../types/Equipment";
 import EquipmentCard from "./EquipmentCard";
 
-const EquipmentTab = () => {
+const EquipmentTab = ({
+    refreshEquipment,
+}: {
+    refreshEquipment: () => void;
+}) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [filter, setFilter] = useState<string>("");
 
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
+        try {
+            const response = await axios.get<Category[]>(
+                `${import.meta.env.VITE_BACKEND_URL}/categories`
+            );
+            setCategories(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (filter) {
             try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
+                const response = await axios.get<Equipment[]>(
+                    `${
+                        import.meta.env.VITE_BACKEND_URL
+                    }/equipment?category=${filter}`
                 );
-                setCategories(response.data);
+                setEquipments(response.data);
             } catch (error) {
-                console.error(error);
+                console.error("Fetching equipment failed:", error);
             }
+        } else {
+            setFilter(categories[0]?._id);
+        }
+        setIsLoading(false);
+    };
 
-            if (filter) {
-                try {
-                    const response = await axios.get<Equipment[]>(
-                        `${
-                            import.meta.env.VITE_BACKEND_URL
-                        }/equipment?category=${filter}`
-                    );
-                    setEquipments(response.data);
-                } catch (error) {
-                    console.error("Fetching equipment failed:", error);
-                }
-            } else {
-                setFilter(categories[0]?._id);
-            }
-            setIsLoading(false);
-        };
-
+    useEffect(() => {
         fetchData();
     }, [filter]);
     return (
@@ -76,7 +80,12 @@ const EquipmentTab = () => {
                         </Dropdown>
                     )}
                     <HasAccess roles={["admin", "moderator"]}>
-                        <CreateEquipmentForm onUpdate={() => {}} />
+                        <CreateEquipmentForm
+                            onUpdate={() => {
+                                refreshEquipment();
+                                fetchData();
+                            }}
+                        />
                     </HasAccess>
                 </Flex>
             </Flex>
