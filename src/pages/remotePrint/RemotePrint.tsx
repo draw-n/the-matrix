@@ -79,7 +79,6 @@ const RemotePrint: React.FC = () => {
     useEffect(() => {
         setAllowPrint(false);
         if (user) {
-            console.log(user);
             if (user.remotePrints) {
                 const format = user.remotePrints.sort(
                     (a, b) =>

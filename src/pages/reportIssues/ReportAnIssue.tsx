@@ -93,16 +93,11 @@ const ReportAnIssue: React.FC = () => {
             vertical
             style={{ height: "80vh" }}
         >
-            {equipment}
-            {category}
-            {initialDescription}
-            {description}
             {renderStep()}
             <Flex
                 style={{ marginTop: 20 }}
                 justify="center"
                 align="center"
-            
                 gap="small"
             >
                 {stepIndex > 0 && stepIndex < 4 && (

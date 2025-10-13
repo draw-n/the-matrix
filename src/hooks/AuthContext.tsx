@@ -70,7 +70,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     withCredentials: true,
                 }
             );
-            console.log("Login response:", response.data);
 
             if (response.data.user) {
                 setUser(response.data.user);

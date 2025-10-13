@@ -8,6 +8,7 @@ import { Button, Flex, Form, message, Space, Upload, UploadProps } from "antd";
 import type { UploadFile } from "antd";
 import axios, { AxiosRequestConfig } from "axios";
 import { useState } from "react";
+import ViewModel from "./components/ViewModel";
 const { Dragger } = Upload;
 
 interface UploadFileProps {
@@ -56,9 +57,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
             });
             setUploadedFile(newFileList);
         },
-        onDrop(e) {
-            console.log("Dropped files", e.dataTransfer.files);
-        },
+
         customRequest: async (options: any) => {
             const data = new FormData();
             data.append("file", options.file);
@@ -75,7 +74,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     options.onSuccess(response.data, options.file);
                 })
                 .catch((err: Error) => {
-                    console.log(err);
+                    console.error(err);
                     message.error("Upload failed.");
                     options.onError(err);
                 });
@@ -98,15 +97,16 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     fileList={uploadedFile}
                     style={{ width: "100%" }}
                 >
-                    <p
-                        className="ant-upload-drag-icon"
-                    >
+                    <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                     </p>
                     <p className="ant-upload-text">
                         Click or drag file to this area to upload
                     </p>
                 </Dragger>
+                {uploadedFile.length > 0 && (
+                    <ViewModel file={uploadedFile[0]} />
+                )}
                 <Flex justify="center" style={{ width: "100%" }}>
                     <Button
                         type="primary"

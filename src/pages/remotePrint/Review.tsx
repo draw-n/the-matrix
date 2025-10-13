@@ -146,12 +146,10 @@ const Review: React.FC<ReviewProps> = ({
                                 }}
                                 customRequest={({ file, onSuccess }) => {
                                     // Simulating file upload
-                                    console.log(file);
                                 }}
                             >
                                 {/* The button won't be visible, and the upload list will still be shown */}
                             </Upload>
-                            <ViewModel file={uploadedFile[0]} />
                         </Card>
                     </Col>
                 </Row>
