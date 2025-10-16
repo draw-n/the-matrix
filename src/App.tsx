@@ -23,9 +23,17 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import "./App.css";
 import FirstTime from "./pages/login/FirstTime";
 import NotFound from "./components/NotFound";
+import { ConfigProvider } from "antd";
+import { AuthProvider } from "./hooks/AuthContext";
+import { lightTheme, darkTheme } from "./theme.ts";
 
 const App: React.FC = () => {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
+    const [theme, setTheme] = useState<"light" | "dark">("light");
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    };
     const fetchData = async () => {
         try {
             const response = await axios.get<Equipment[]>(
@@ -42,19 +50,61 @@ const App: React.FC = () => {
 
     return (
         <>
-            <BrowserRouter>
-                <Routes>
-                    {Array.isArray(equipments) &&
-                        equipments.length > 0 &&
-                        equipments.map((equipment) => (
+            <ConfigProvider theme={theme === "light" ? lightTheme : darkTheme}>
+                <AuthProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            {Array.isArray(equipments) &&
+                                equipments.length > 0 &&
+                                equipments.map((equipment) => (
+                                    <Route
+                                        key={equipment._id}
+                                        path={`/makerspace/${equipment.routePath}`}
+                                        element={
+                                            <PrivateRoute
+                                                element={
+                                                    <Shell
+                                                        themeMode={theme}
+                                                        toggleTheme={
+                                                            toggleTheme
+                                                        }
+                                                        title={equipment.name}
+                                                        contentAccess={[
+                                                            "novice",
+                                                            "proficient",
+                                                            "expert",
+                                                            "moderator",
+                                                            "admin",
+                                                        ]}
+                                                        children={
+                                                            <EquipmentProfile
+                                                                equipment={
+                                                                    equipment
+                                                                }
+                                                                refreshTable={
+                                                                    fetchData
+                                                                }
+                                                            />
+                                                        }
+                                                    />
+                                                }
+                                            />
+                                        }
+                                    />
+                                ))}
+
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/signup" element={<Signup />} />
+
+                            <Route path="/first-time" element={<FirstTime />} />
                             <Route
-                                key={equipment._id}
-                                path={`/makerspace/${equipment.routePath}`}
+                                index
                                 element={
                                     <PrivateRoute
                                         element={
                                             <Shell
-                                                title={equipment.name}
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
                                                 contentAccess={[
                                                     "novice",
                                                     "proficient",
@@ -62,10 +112,96 @@ const App: React.FC = () => {
                                                     "moderator",
                                                     "admin",
                                                 ]}
+                                                title="Dashboard"
+                                                children={<Dashboard />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+
+                            <Route
+                                path="/settings"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                title="Settings"
+                                                contentAccess={["admin"]}
+                                                children={<Settings />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+
+                            <Route
+                                path="/upload"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                title="Remote Print"
+                                                children={<RemotePrint />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/profile"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                title="User Profile"
+                                                children={<Profile />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/makerspace"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                title="Makerspace"
                                                 children={
-                                                    <EquipmentProfile
-                                                        equipment={equipment}
-                                                        refreshTable={fetchData}
+                                                    <Makerspace
+                                                        refreshEquipment={
+                                                            fetchData
+                                                        }
                                                     />
                                                 }
                                             />
@@ -73,162 +209,71 @@ const App: React.FC = () => {
                                     />
                                 }
                             />
-                        ))}
+                            <Route
+                                path="/edit"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                title="Edit Updates"
+                                                contentAccess={[
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                children={<EditUpdates />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
 
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
+                            <Route
+                                path="/report"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                title="Report an Issue"
+                                                children={<ReportAnIssue />}
+                                            />
+                                        }
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/directory"
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                contentAccess={["admin"]}
+                                                children={<UserDirectory />}
+                                                title="User Directory"
+                                            />
+                                        }
+                                    />
+                                }
+                            />
 
-                    <Route path="/first-time" element={<FirstTime />} />
-                    <Route
-                        index
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={[
-                                            "novice",
-                                            "proficient",
-                                            "expert",
-                                            "moderator",
-                                            "admin",
-                                        ]}
-                                        title="Dashboard"
-                                        children={<Dashboard />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-
-                    <Route
-                        path="/settings"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        title="Settings"
-                                        contentAccess={["admin"]}
-                                        children={<Settings />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-
-                    <Route
-                        path="/upload"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={[
-                                            "novice",
-                                            "proficient",
-                                            "expert",
-                                            "moderator",
-                                            "admin",
-                                        ]}
-                                        title="Remote Print"
-                                        children={<RemotePrint />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-                    <Route
-                        path="/profile"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={[
-                                            "novice",
-                                            "proficient",
-                                            "expert",
-                                            "moderator",
-                                            "admin",
-                                        ]}
-                                        title="User Profile"
-                                        children={<Profile />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-                    <Route
-                        path="/makerspace"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={[
-                                            "novice",
-                                            "proficient",
-                                            "expert",
-                                            "moderator",
-                                            "admin",
-                                        ]}
-                                        title="Makerspace"
-                                        children={<Makerspace refreshEquipment={fetchData} />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-                    <Route
-                        path="/edit"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        title="Edit Updates"
-                                        contentAccess={["moderator", "admin"]}
-                                        children={<EditUpdates />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-
-                    <Route
-                        path="/report"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={[
-                                            "novice",
-                                            "proficient",
-                                            "expert",
-                                            "moderator",
-                                            "admin",
-                                        ]}
-                                        title="Report an Issue"
-                                        children={<ReportAnIssue />}
-                                    />
-                                }
-                            />
-                        }
-                    />
-                    <Route
-                        path="/directory"
-                        element={
-                            <PrivateRoute
-                                element={
-                                    <Shell
-                                        contentAccess={["admin"]}
-                                        children={<UserDirectory />}
-                                        title="User Directory"
-                                    />
-                                }
-                            />
-                        }
-                    />
-
-                    <Route path="/kiosk" element={<Kiosk />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
+                            <Route path="/kiosk" element={<Kiosk />} />
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                    </BrowserRouter>
+                </AuthProvider>
+            </ConfigProvider>
         </>
     );
 };

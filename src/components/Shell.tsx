@@ -156,12 +156,16 @@ interface ShellProps {
     children?: React.ReactNode;
     contentAccess: string[];
     title?: string;
+    toggleTheme?: () => void;
+    themeMode?: "light" | "dark";
 }
 
 const Shell: React.FC<ShellProps> = ({
     children,
     contentAccess,
     title,
+    toggleTheme,
+    themeMode
 }: ShellProps) => {
     const location = useLocation();
     const { user } = useAuth();
@@ -283,7 +287,7 @@ const Shell: React.FC<ShellProps> = ({
                             {title && <Title level={1}>{title}</Title>}
                         </Flex>
 
-                        <ProfileDropdown />
+                        <ProfileDropdown toggleTheme={toggleTheme} theme={themeMode} />
                     </Flex>
                 </Header>
                 <Content>
