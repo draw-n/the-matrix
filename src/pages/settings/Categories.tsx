@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Flex, Input, Tabs, Tooltip } from "antd";
+import { Button, Flex, Input, Space, Tabs, Tooltip } from "antd";
 import CategoryForm from "./CategoryForm";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import EditCategory from "./EditCategory";
@@ -104,7 +104,8 @@ const Categories: React.FC = () => {
     };
 
     return (
-        <>
+        <Space size="middle" direction="vertical" style={{ width: "100%" }}>
+            <h2>CATEGORIES</h2>
             <Tabs
                 type="editable-card"
                 onChange={onChange}
@@ -117,7 +118,7 @@ const Categories: React.FC = () => {
                 isModalOpen={isModalOpen}
                 onUpdate={() => setRefreshCategories(refreshCategories + 1)}
             />
-        </>
+        </Space>
     );
 };
 

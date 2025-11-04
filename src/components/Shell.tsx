@@ -255,7 +255,7 @@ const Shell: React.FC<ShellProps> = ({
                     <Divider style={{ margin: "auto" }} />
                 </Flex>
                 <Menu
-                    theme="light"
+                    theme={themeMode}
                     selectedKeys={getSelectedKeys()}
                     defaultSelectedKeys={[location.pathname]}
                     mode="inline"

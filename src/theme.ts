@@ -76,9 +76,7 @@ const darkTheme: ThemeConfig = {
         },
         Menu: {
             itemBg: "#141a1f",
-
-            darkItemBg: geekblueDark[1],
-            darkItemHoverBg: geekblueDark[3],
+            darkItemBg: "#141a1f",
             itemSelectedBg: geekblue[1],
             darkItemSelectedBg: geekblue[5],
             itemBorderRadius: 0,
