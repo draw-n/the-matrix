@@ -8,7 +8,7 @@ import { Flex, Input } from "antd";
 
 const { TextArea } = Input;
 
-const CategorySelection: React.FC<CardSelectionProps> = ({
+const MoreDetails: React.FC<CardSelectionProps> = ({
     value,
     onChange,
 }: CardSelectionProps) => {
@@ -27,4 +27,4 @@ const CategorySelection: React.FC<CardSelectionProps> = ({
     );
 };
 
-export default CategorySelection;
+export default MoreDetails;

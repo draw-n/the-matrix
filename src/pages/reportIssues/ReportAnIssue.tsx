@@ -93,10 +93,6 @@ const ReportAnIssue: React.FC = () => {
             vertical
             style={{ height: "80vh" }}
         >
-            {equipment}
-            {category}
-            {initialDescription}
-            {description}
             {renderStep()}
             <Flex
                 style={{ marginTop: 20 }}
