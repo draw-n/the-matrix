@@ -253,10 +253,10 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                 "temperature"
                             ) ? (
                                 <Row gutter={[16, 16]}>
-                                    <Col span={4}>
+                                    <Col xs={24} lg={4}>
                                         <p>Extruder</p>
                                     </Col>
-                                    <Col span={10}>
+                                    <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>First layer:</p>
                                             <Form.Item<FieldType>
@@ -291,7 +291,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                             </Form.Item>
                                         </Flex>
                                     </Col>
-                                    <Col span={10}>
+                                    <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>Other layers:</p>
                                             <Form.Item<FieldType>
@@ -326,10 +326,10 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                             </Form.Item>
                                         </Flex>
                                     </Col>
-                                    <Col span={4}>
+                                    <Col xs={24} lg={4}>
                                         <p>Bed</p>
                                     </Col>
-                                    <Col span={10}>
+                                    <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>First layer:</p>
                                             <Form.Item<FieldType>
@@ -364,7 +364,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                             </Form.Item>
                                         </Flex>
                                     </Col>
-                                    <Col span={10}>
+                                    <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>Other layers:</p>
                                             <Form.Item<FieldType>

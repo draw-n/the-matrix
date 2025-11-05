@@ -39,18 +39,18 @@ const Review: React.FC<ReviewProps> = ({
             label: "Advanced Settings",
             children: (
                 <Row gutter={[16, 16]}>
-                    <Col span={8}>
+                    <Col xs={24} lg={8}>
                         <h3>Supports</h3>
                         <p>{settingDetails?.supports}</p>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} lg={8}>
                         <h3>Vertical Shell</h3>
                         <p>
                             Perimeters:{" "}
                             {`${settingDetails?.verticalShell.perimeters}`}
                         </p>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} lg={8}>
                         <h3>Horizontal Shell</h3>
                         <Flex gap="10px">
                             <p>

@@ -138,7 +138,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         <>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
                 <Row gutter={[16, 16]}>
-                    <Col span={18}>
+                    <Col xs={24} lg={18}>
                         <HeaderCard
                             equipment={equipment}
                             category={
@@ -149,7 +149,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             handleClick={handleClick}
                         />
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} lg={6}>
                         <StatusCard equipment={equipment} />
                     </Col>
                 </Row>

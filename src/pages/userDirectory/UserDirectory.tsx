@@ -110,7 +110,7 @@ const UserDirectory: React.FC = () => {
                     <Row gutter={[16, 16]}>
                         {users?.map((user: User) => {
                             return (
-                                <Col span={8} key={user._id}>
+                                <Col xs={24} lg={8} key={user._id}>
                                     <UserCard
                                         deleteUser={deleteUser}
                                         cardUser={user}
