@@ -20,11 +20,11 @@ const lightTheme: ThemeConfig = {
             bodyBg: "#f8f9fa",
             lightSiderBg: "#eef3f8",
         },
+        Drawer: {
+            colorBgElevated: "#eef3f8",
+        },
         Menu: {
             itemBg: "#eef3f8",
-
-            darkItemBg: geekblueDark[1],
-            darkItemHoverBg: geekblueDark[3],
             itemSelectedBg: geekblue[1],
             darkItemSelectedBg: geekblue[5],
             itemBorderRadius: 0,
@@ -73,6 +73,9 @@ const darkTheme: ThemeConfig = {
             headerBg: "#1f2228",
             bodyBg: "#1f2228",
             lightSiderBg: "#141a1f",
+        },
+        Drawer: {
+            colorBgBase: "#141a1f",
         },
         Menu: {
             itemBg: "#141a1f",
