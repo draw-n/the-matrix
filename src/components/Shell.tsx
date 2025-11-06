@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
     Button,
     Divider,
+    Drawer,
     Flex,
     Image,
     Layout,
@@ -10,6 +11,7 @@ import {
     theme,
     Typography,
     MenuProps,
+    Grid,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
@@ -156,18 +158,25 @@ interface ShellProps {
     children?: React.ReactNode;
     contentAccess: string[];
     title?: string;
+    toggleTheme?: () => void;
+    themeMode?: "light" | "dark";
 }
 
 const Shell: React.FC<ShellProps> = ({
     children,
     contentAccess,
     title,
+    toggleTheme,
+    themeMode,
 }: ShellProps) => {
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
-
-    const navigate = useNavigate()
+    // inside the Shell component, alongside other hooks
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens?.md; // true on xs, sm
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const navigate = useNavigate();
     const { colorPrimary } = theme.useToken().token;
     const menuItems: MenuProps["items"] = allPages
         .filter((item) => checkAccess(item.access))
@@ -221,46 +230,48 @@ const Shell: React.FC<ShellProps> = ({
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Sider
-                breakpoint="lg"
-                trigger={null}
-                collapsible
-                collapsed={collapsed}
-                className="shell-sider"
-                theme="light"
-            >
-                <Flex justify="center" style={{ padding: "20px" }}>
-                    <div
-                        style={{
-                            borderRadius: "1000px",
-                            backgroundColor: colorPrimary,
-                            padding: "7px",
-                        }}
-                    >
-                        <Image
-                            style={{
-                                width: 40,
-                                height: 40,
-                                objectFit: "contain",
-                            }}
-                            src={vandyLogoSmall}
-                        />
-                    </div>
-                </Flex>
-                <Flex justify="center" style={{ padding: "0 20px" }}>
-                    <Divider style={{ margin: "auto" }} />
-                </Flex>
-                <Menu
+            {!isMobile && (
+                <Sider
+                    breakpoint="lg"
+                    trigger={null}
+                    collapsible
+                    collapsed={collapsed}
+                    className="shell-sider"
                     theme="light"
-                    selectedKeys={getSelectedKeys()}
-                    defaultSelectedKeys={[location.pathname]}
-                    mode="inline"
-                    items={menuItems}
-                    onClick={({ key }) => {
-                        navigate(key);
-                    }}
-                />
-            </Sider>
+                >
+                    <Flex justify="center" style={{ padding: "20px", width: "100%" }}>
+                        <div
+                            style={{
+                                borderRadius: "1000px",
+                                backgroundColor: colorPrimary,
+                                padding: "7px",
+                            }}
+                        >
+                            <Image
+                                style={{
+                                    width: 40,
+                                    height: 40,
+                                    objectFit: "contain",
+                                }}
+                                src={vandyLogoSmall}
+                            />
+                        </div>
+                    </Flex>
+                    <Flex justify="center" style={{ padding: "0 20px" }}>
+                        <Divider style={{ margin: "auto" }} />
+                    </Flex>
+                    <Menu
+                        theme={themeMode}
+                        selectedKeys={getSelectedKeys()}
+                        defaultSelectedKeys={[location.pathname]}
+                        mode="inline"
+                        items={menuItems}
+                        onClick={({ key }) => {
+                            navigate(key as string);
+                        }}
+                    />
+                </Sider>
+            )}
             <Layout>
                 <Header>
                     <Flex
@@ -272,20 +283,52 @@ const Shell: React.FC<ShellProps> = ({
                             <Button
                                 type="text"
                                 icon={
-                                    collapsed ? (
-                                        <MenuOutlined />
-                                    ) : (
-                                        <CloseOutlined />
-                                    )
+                                    isMobile
+                                        ? <MenuOutlined />
+                                        : collapsed
+                                        ? <MenuOutlined />
+                                        : <CloseOutlined />
                                 }
-                                onClick={() => setCollapsed(!collapsed)}
+                                onClick={() => (isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed))}
                             />
                             {title && <Title level={1}>{title}</Title>}
                         </Flex>
 
-                        <ProfileDropdown />
+                        <ProfileDropdown toggleTheme={toggleTheme} theme={themeMode} />
                     </Flex>
                 </Header>
+
+                {/* Drawer for mobile navigation */}
+                <Drawer
+                    title={
+                        <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: 12 }}>
+                            <div style={{ borderRadius: 1000, backgroundColor: colorPrimary, padding: 7 }}>
+                                <Image
+                                    preview={false}
+                                    src={vandyLogoSmall}
+                                    style={{ width: 40, height: 40, objectFit: "contain" }}
+                                />
+                            </div>
+                        </div>
+                    }
+                    placement="left"
+                    closable
+                    onClose={() => setDrawerOpen(false)}
+                    open={drawerOpen}
+                    width={260}
+                >
+                    <Menu
+                        theme={themeMode}
+                        selectedKeys={getSelectedKeys()}
+                        mode="inline"
+                        items={menuItems}
+                        onClick={({ key }) => {
+                            navigate(key as string);
+                            setDrawerOpen(false);
+                        }}
+                    />
+                </Drawer>
+
                 <Content>
                     <div style={{ padding: "30px 50px" }}>
                         {user &&

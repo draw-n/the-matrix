@@ -16,7 +16,6 @@ import AdminCard from "./AdminCard";
 import RemotePrintCard from "./RemotePrintCard";
 import { useAuth } from "../../hooks/AuthContext";
 
-
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
 
@@ -37,13 +36,13 @@ const Dashboard: React.FC = () => {
                             </h2>
                         </Card>
                     </Col>
-                    <Col span={16}>
+                    <Col xs={24} lg={16}>
                         <Flex vertical gap={16}>
-                           <RemotePrintCard />
+                            <RemotePrintCard />
                             <AdminCard />
                         </Flex>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} lg={8}>
                         <Flex vertical gap={16}>
                             <AnnouncementCard />
                             <SocialsCard />

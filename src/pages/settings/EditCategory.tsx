@@ -5,7 +5,7 @@ import {
     SaveOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
-import { Button, Collapse, Flex, List, message, Tag } from "antd";
+import { Button, Typography, Collapse, Flex, List, message, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { Category } from "../../types/Category";
 import axios from "axios";
@@ -19,6 +19,8 @@ interface EditCategoryProps {
     category: Category;
     onUpdate: () => void;
 }
+
+const { Title } = Typography;
 
 const EditCategory: React.FC<EditCategoryProps> = ({
     category,
@@ -127,7 +129,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     return (
         <Flex vertical gap="middle">
             <Flex justify="space-between">
-                <h2>{category.name}</h2>
+                <Title level={4}>{category.name}</Title>
                 <Flex justify="end" gap="middle">
                     <Button
                         onClick={() => setIsModalOpen(true)}

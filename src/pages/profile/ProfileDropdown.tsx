@@ -13,15 +13,25 @@ import {
     BellOutlined,
     CaretDownFilled,
     LogoutOutlined,
+    MoonFilled,
+    SunFilled,
     UserOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../../hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const ProfileDropdown: React.FC = () => {
+interface ProfileDropdownProps {
+    toggleTheme?: () => void;
+    theme?: "light" | "dark";
+}
+
+const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
+    toggleTheme,
+    theme,
+}) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    
+
     const logOut = () => {
         logout();
         navigate("/login");
@@ -63,11 +73,9 @@ const ProfileDropdown: React.FC = () => {
 
     return (
         <Flex align="center" gap="middle">
-            <Badge count={5}>
-                <Button size="middle" variant="outlined" shape="circle">
-                    <BellFilled />
-                </Button>
-            </Badge>
+            <Button size="middle" onClick={toggleTheme} variant="outlined" shape="circle">
+                {theme == "light" ? <SunFilled /> : <MoonFilled />}
+            </Button>
 
             <Dropdown
                 arrow

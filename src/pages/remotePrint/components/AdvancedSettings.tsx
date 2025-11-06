@@ -44,275 +44,148 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                     size="middle"
                 >
                     <h3>Temperatures</h3>
+
+                    {/**
+                     * Render temperature groups (extruder, bed) using a small descriptor array.
+                     * Each group renders three columns: label, first layer input, other layers input.
+                     */}
                     <Row gutter={[16, 16]}>
-                        <Col span={8}>
-                            <p>Extruder</p>
-                        </Col>
-                        <Col span={8}>
-                            <Flex gap="10px" justify="end">
-                                <p>First layer:</p>
-                                <InputNumber
-                                    min={
-                                        (material?.temperatures?.extruder
-                                            .firstLayer || 210) - 10
-                                    }
-                                    max={
-                                        (material?.temperatures?.extruder
-                                            .firstLayer || 210) + 10
-                                    }
-                                    value={
-                                        settingDetails.temperatures.extruder
-                                            .firstLayer
-                                    }
-                                    formatter={(value) => `${value} °C`}
-                                    parser={(value) =>
-                                        value?.replace(
-                                            " °C",
-                                            ""
-                                        ) as unknown as number
-                                    }
-                                    onChange={(value) =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                extruder: {
-                                                    ...settingDetails
-                                                        .temperatures.extruder,
-                                                    firstLayer:
-                                                        value ||
-                                                        settingDetails
-                                                            .temperatures
-                                                            .extruder
-                                                            .firstLayer,
-                                                },
-                                            },
-                                        })
-                                    }
-                                />
-                                <Button
-                                    onClick={() =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                extruder: {
-                                                    ...settingDetails
-                                                        .temperatures.extruder,
-                                                    firstLayer:
-                                                        material?.temperatures
-                                                            ?.extruder
-                                                            .firstLayer ||
-                                                        settingDetails
-                                                            .temperatures
-                                                            .extruder
-                                                            .firstLayer,
-                                                },
-                                            },
-                                        })
-                                    }
-                                    icon={<RedoOutlined />}
-                                />
-                            </Flex>
-                        </Col>
-                        <Col span={8}>
-                            <Flex gap="10px" justify="end">
-                                <p>Other layers:</p>
-                                <InputNumber
-                                    min={
-                                        (material?.temperatures?.extruder
-                                            .otherLayers || 210) - 10
-                                    }
-                                    max={
-                                        (material?.temperatures?.extruder
-                                            .otherLayers || 210) + 10
-                                    }
-                                    value={
-                                        settingDetails.temperatures.extruder
-                                            .otherLayers
-                                    }
-                                    formatter={(value) => `${value} °C`}
-                                    parser={(value) =>
-                                        value?.replace(
-                                            " °C",
-                                            ""
-                                        ) as unknown as number
-                                    }
-                                    onChange={(value) =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                extruder: {
-                                                    ...settingDetails
-                                                        .temperatures.extruder,
-                                                    otherLayers:
-                                                        value ||
-                                                        settingDetails
-                                                            .temperatures
-                                                            .extruder
-                                                            .otherLayers,
-                                                },
-                                            },
-                                        })
-                                    }
-                                />
-                                <Button
-                                    onClick={() =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                extruder: {
-                                                    ...settingDetails
-                                                        .temperatures.extruder,
-                                                    otherLayers:
-                                                        material?.temperatures
-                                                            ?.extruder
-                                                            .otherLayers ||
-                                                        settingDetails
-                                                            .temperatures
-                                                            .extruder
-                                                            .otherLayers,
-                                                },
-                                            },
-                                        })
-                                    }
-                                    icon={<RedoOutlined />}
-                                />
-                            </Flex>
-                        </Col>
-                        <Col span={8}>
-                            <p>Bed</p>
-                        </Col>
-                        <Col span={8}>
-                            <Flex gap="10px" justify="end" align="center">
-                                <p>First layer:</p>
-                                <InputNumber
-                                    min={
-                                        (material?.temperatures?.bed
-                                            .firstLayer || 65) - 10
-                                    }
-                                    max={
-                                        (material?.temperatures?.bed
-                                            .firstLayer || 65) + 10
-                                    }
-                                    value={
-                                        settingDetails.temperatures.bed
-                                            .firstLayer
-                                    }
-                                    formatter={(value) => `${value} °C`}
-                                    parser={(value) =>
-                                        value?.replace(
-                                            " °C",
-                                            ""
-                                        ) as unknown as number
-                                    }
-                                    onChange={(value) =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                bed: {
-                                                    ...settingDetails
-                                                        .temperatures.bed,
-                                                    firstLayer:
-                                                        value ||
-                                                        settingDetails
-                                                            .temperatures.bed
-                                                            .firstLayer,
-                                                },
-                                            },
-                                        })
-                                    }
-                                />
-                                <Button
-                                    onClick={() =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                bed: {
-                                                    ...settingDetails
-                                                        .temperatures.bed,
-                                                    firstLayer:
-                                                        material?.temperatures
-                                                            ?.bed.firstLayer ||
-                                                        settingDetails
-                                                            .temperatures.bed
-                                                            .firstLayer,
-                                                },
-                                            },
-                                        })
-                                    }
-                                    icon={<RedoOutlined />}
-                                />
-                            </Flex>
-                        </Col>
-                        <Col span={8}>
-                            <Flex gap="10px" justify="end" align="center">
-                                <p>Other layers:</p>
-                                <InputNumber
-                                    min={
-                                        (material?.temperatures?.bed
-                                            .otherLayers || 65) - 10
-                                    }
-                                    max={
-                                        (material?.temperatures?.bed
-                                            .otherLayers || 65) + 10
-                                    }
-                                    value={
-                                        settingDetails.temperatures.bed
-                                            .otherLayers
-                                    }
-                                    formatter={(value) => `${value} °C`}
-                                    parser={(value) =>
-                                        value?.replace(
-                                            " °C",
-                                            ""
-                                        ) as unknown as number
-                                    }
-                                    onChange={(value) =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                bed: {
-                                                    ...settingDetails
-                                                        .temperatures.bed,
-                                                    otherLayers:
-                                                        value ||
-                                                        settingDetails
-                                                            .temperatures.bed
-                                                            .otherLayers,
-                                                },
-                                            },
-                                        })
-                                    }
-                                />
-                                <Button
-                                    onClick={() =>
-                                        setSettingDetails({
-                                            ...settingDetails,
-                                            temperatures: {
-                                                ...settingDetails.temperatures,
-                                                bed: {
-                                                    ...settingDetails
-                                                        .temperatures.bed,
-                                                    otherLayers:
-                                                        material?.temperatures
-                                                            ?.bed.otherLayers ||
-                                                        settingDetails
-                                                            .temperatures.bed
-                                                            .otherLayers,
-                                                },
-                                            },
-                                        })
-                                    }
-                                    icon={<RedoOutlined />}
-                                />
-                            </Flex>
-                        </Col>
+                        {[
+                            {
+                                key: "extruder",
+                                label: "Extruder",
+                                defaults: {
+                                    firstLayer:
+                                        material?.temperatures?.extruder
+                                            ?.firstLayer ?? 210,
+                                    otherLayers:
+                                        material?.temperatures?.extruder
+                                            ?.otherLayers ?? 210,
+                                },
+                            },
+                            {
+                                key: "bed",
+                                label: "Bed",
+                                defaults: {
+                                    firstLayer:
+                                        material?.temperatures?.bed
+                                            ?.firstLayer ?? 65,
+                                    otherLayers:
+                                        material?.temperatures?.bed
+                                            ?.otherLayers ?? 65,
+                                },
+                            },
+                        ].map((group) => {
+                            const key = group.key as "extruder" | "bed";
+                            const typedKey = key as keyof typeof settingDetails.temperatures;
+                            const values = settingDetails.temperatures[typedKey] as any;
+
+                            return (
+                                <>
+                                    <Col xs={24} lg={8} key={`${key}-label`}>
+                                        <p>{group.label}</p>
+                                    </Col>
+
+                                    <Col xs={24} lg={8} key={`${key}-first`}>
+                                        <Flex gap="10px" justify="end">
+                                            <p>First layer:</p>
+                                            <InputNumber
+                                                min={group.defaults.firstLayer - 10}
+                                                max={group.defaults.firstLayer + 10}
+                                                value={values.firstLayer}
+                                                formatter={(value) => `${value} °C`}
+                                                parser={(value) =>
+                                                    (value?.replace(
+                                                        " °C",
+                                                        ""
+                                                    ) as unknown) as number
+                                                }
+                                                onChange={(value) =>
+                                                    setSettingDetails({
+                                                        ...settingDetails,
+                                                        temperatures: {
+                                                            ...settingDetails.temperatures,
+                                                            [typedKey]: {
+                                                                ...settingDetails.temperatures[typedKey],
+                                                                firstLayer:
+                                                                    (value as number) ??
+                                                                    settingDetails.temperatures[typedKey].firstLayer,
+                                                            },
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                            <Button
+                                                onClick={() =>
+                                                    setSettingDetails({
+                                                        ...settingDetails,
+                                                        temperatures: {
+                                                            ...settingDetails.temperatures,
+                                                            [typedKey]: {
+                                                                ...settingDetails.temperatures[typedKey],
+                                                                firstLayer:
+                                                                    group.defaults.firstLayer ||
+                                                                    settingDetails.temperatures[typedKey].firstLayer,
+                                                            },
+                                                        },
+                                                    })
+                                                }
+                                                icon={<RedoOutlined />}
+                                            />
+                                        </Flex>
+                                    </Col>
+
+                                    <Col span={8} key={`${key}-other`}>
+                                        <Flex gap="10px" justify="end">
+                                            <p>Other layers:</p>
+                                            <InputNumber
+                                                min={group.defaults.otherLayers - 10}
+                                                max={group.defaults.otherLayers + 10}
+                                                value={values.otherLayers}
+                                                formatter={(value) => `${value} °C`}
+                                                parser={(value) =>
+                                                    (value?.replace(
+                                                        " °C",
+                                                        ""
+                                                    ) as unknown) as number
+                                                }
+                                                onChange={(value) =>
+                                                    setSettingDetails({
+                                                        ...settingDetails,
+                                                        temperatures: {
+                                                            ...settingDetails.temperatures,
+                                                            [typedKey]: {
+                                                                ...settingDetails.temperatures[typedKey],
+                                                                otherLayers:
+                                                                    (value as number) ??
+                                                                    settingDetails.temperatures[typedKey].otherLayers,
+                                                            },
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                            <Button
+                                                onClick={() =>
+                                                    setSettingDetails({
+                                                        ...settingDetails,
+                                                        temperatures: {
+                                                            ...settingDetails.temperatures,
+                                                            [typedKey]: {
+                                                                ...settingDetails.temperatures[typedKey],
+                                                                otherLayers:
+                                                                    group.defaults.otherLayers ||
+                                                                    settingDetails.temperatures[typedKey].otherLayers,
+                                                            },
+                                                        },
+                                                    })
+                                                }
+                                                icon={<RedoOutlined />}
+                                            />
+                                        </Flex>
+                                    </Col>
+                                </>
+                            );
+                        })}
                     </Row>
                 </Space>
                 <Space
