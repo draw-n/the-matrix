@@ -305,8 +305,18 @@ const detectMajorFaces = (
 
         // Build orthonormal basis (u,v) in the plane
         const arbitrary = Math.abs(c.normal.dot(new THREE.Vector3(1, 0, 0))) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
-        const u = new THREE.Vector3().crossVectors(arbitrary, c.normal).normalize();
-        const v2 = new THREE.Vector3().crossVectors(c.normal, u).normalize();
+    const u = new THREE.Vector3().crossVectors(arbitrary, c.normal).normalize();
+    const v2 = new THREE.Vector3().crossVectors(c.normal, u).normalize();
+
+    // compute an in-plane rotation so the ellipse X-axis aligns with u
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), c.normal.clone().normalize());
+    const qX = new THREE.Vector3(1, 0, 0).applyQuaternion(q);
+    const qX_proj = qX.clone().sub(c.normal.clone().multiplyScalar(qX.dot(c.normal)));
+    if (qX_proj.length() > 1e-12) qX_proj.normalize();
+    const uNorm = u.clone().normalize();
+    const sinTheta = new THREE.Vector3().crossVectors(qX_proj, uNorm).dot(c.normal);
+    const cosTheta = qX_proj.dot(uNorm);
+    const ellipseRotation = Math.atan2(sinTheta, cosTheta);
 
         let minX = Infinity,
             maxX = -Infinity,
@@ -341,6 +351,7 @@ const detectMajorFaces = (
             overlapArea: totalOverlap,
             bottomVertex,
             ellipseRadii: [rx, ry],
+            ellipseRotation,
         } as any);
     }
 
@@ -359,6 +370,8 @@ function SelectableFaces({
         centroid: THREE.Vector3;
         bottomVertex: THREE.Vector3;
         overlapArea?: number;
+        ellipseRadii?: [number, number];
+        ellipseRotation?: number;
     }[];
     onSelect: (face: {
         normal: THREE.Vector3;
@@ -372,10 +385,16 @@ function SelectableFaces({
         <>
             {faces.map((f, i) => {
                 const normal = f.normal.clone().normalize();
-                const quat = new THREE.Quaternion().setFromUnitVectors(
+                const baseQuat = new THREE.Quaternion().setFromUnitVectors(
                     new THREE.Vector3(0, 0, 1),
                     normal
                 );
+
+                // apply in-plane rotation if provided so ellipse aligns to hull face
+                const rot = (f as any).ellipseRotation as number | undefined;
+                const quat = rot
+                    ? new THREE.Quaternion().setFromAxisAngle(normal, rot).multiply(baseQuat)
+                    : baseQuat;
 
                 const area = f.overlapArea ?? 1;
                 const planeSize = Math.max(markerSize, Math.sqrt(area));
@@ -662,6 +681,7 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
             bottomVertex: THREE.Vector3;
             overlapArea?: number;
             ellipseRadii?: [number, number];
+            ellipseRotation?: number;
         }[]
     >([]);
 
@@ -687,6 +707,7 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                 bottomVertex: c.bottomVertex.clone(),
                 overlapArea: c.overlapArea,
                 ellipseRadii: (c as any).ellipseRadii as [number, number] | undefined,
+                ellipseRotation: (c as any).ellipseRotation as number | undefined,
             }));
 
             console.log("Detected convex-hull candidates:", transformed);
