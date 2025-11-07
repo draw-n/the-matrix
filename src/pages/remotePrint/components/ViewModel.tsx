@@ -6,7 +6,8 @@ import {
     STLExporter,
 } from "three/examples/jsm/Addons.js";
 import { useEffect, useMemo, useState, Suspense, useRef } from "react";
-import { UploadFile } from "antd";
+import { UploadFile, message } from "antd";
+import axios from "axios";
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry.js";
@@ -14,9 +15,12 @@ import { geekblueDark } from "@ant-design/colors";
 
 interface ViewModelProps {
     file: UploadFile;
+    setFile?: (files: UploadFile[]) => void;
+    // Registration callback so parents can receive an exported API without needing a ref
+    onRegister?: (api: { exportAndReplace: () => Promise<any> } | null) => void;
 }
 
-function exportAsSTL(mesh: THREE.Mesh) {
+function exportAsSTL(mesh: THREE.Mesh, originalName?: string) {
     const exporter = new STLExporter();
     const bakedMesh = getExportableMesh(mesh);
 
@@ -25,7 +29,9 @@ function exportAsSTL(mesh: THREE.Mesh) {
 
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "exported_model.stl";
+    const base = originalName || "exported_model";
+    const filename = base.toLowerCase().endsWith(".stl") ? base : `${base}.stl`;
+    a.download = filename;
     a.click();
 
     URL.revokeObjectURL(a.href);
@@ -710,7 +716,8 @@ function HandleContextLoss() {
     return null;
 }
 
-const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
+function ViewModel(props: ViewModelProps) {
+    const { file, setFile, onRegister } = props;
     const isSTL = file?.name?.toLowerCase().endsWith(".stl");
     const is3MF = file?.name?.toLowerCase().endsWith(".3mf");
 
@@ -792,6 +799,56 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
         }
     }, [mesh?.geometry, mesh?.matrixWorld]);
 
+    // Provide an API via onRegister so parents don't need a ref
+    const exportAndReplace = async () => {
+        if (!mesh) {
+            message.error("No mesh loaded to export");
+            throw new Error("No mesh loaded");
+        }
+
+        try {
+            const exporter = new STLExporter();
+            const baked = getExportableMesh(mesh as THREE.Mesh);
+            const stlString = exporter.parse(baked);
+            const blob = new Blob([stlString], { type: "model/stl" });
+            const base = (file && file.name) || "exported_model";
+            const exportName = base.toLowerCase().endsWith(".stl") ? base : `${base}.stl`;
+            const fileObj = new File([blob], exportName, { type: "model/stl" });
+
+            const form = new FormData();
+            form.append("file", fileObj);
+
+            const action = `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`;
+            const resp = await axios.post(action, form, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            const url = resp.data?.url || resp.data?.fileUrl || resp.data?.location || "";
+
+            const uploadFile: UploadFile = {
+                uid: `${Date.now()}`,
+                name: fileObj.name,
+                status: "done",
+                url,
+                originFileObj: fileObj as any,
+            };
+
+            if (setFile) setFile([uploadFile]);
+            message.success("Exported STL uploaded and replaced successfully");
+            return resp;
+        } catch (err: any) {
+            console.error("Error exporting/uploading STL:", err);
+            message.error("Failed to upload exported STL");
+            throw err;
+        }
+    };
+
+    // Register API with parent on mount and unregister on unmount
+    useEffect(() => {
+        onRegister?.({ exportAndReplace });
+        return () => onRegister?.(null);
+    }, [onRegister, mesh]);
+
     // Clear suppression when the mesh's matrixWorld changes away from the
     // aligned matrix (so overlays reappear after the user rotates/moves the
     // model). Also clear the suppressedFace record.
@@ -828,7 +885,9 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
     return (
         <div style={{ width: "100%", height: "500px" }}>
             {mesh && (
-                <button onClick={() => exportAsSTL(mesh)}>Export as STL</button>
+                <button onClick={() => exportAsSTL(mesh, file?.name)}>
+                    Export as STL
+                </button>
             )}
             <Canvas
                 camera={{ position: [0, 10, 0], up: [0, 0, 1], fov: 50 }}
