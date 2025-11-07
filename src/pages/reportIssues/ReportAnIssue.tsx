@@ -98,7 +98,6 @@ const ReportAnIssue: React.FC = () => {
                 style={{ marginTop: 20 }}
                 justify="center"
                 align="center"
-            
                 gap="small"
             >
                 {stepIndex > 0 && stepIndex < 4 && (

@@ -30,7 +30,8 @@ const SocialsCard: React.FC = () => {
                             variant="filled"
                             shape="circle"
                             icon={social.icon}
-                            onClick={() => navigate(social.link)}
+                            href={social.link}
+                            target="_blank"
                         />
                     ))}
                 </Flex>
