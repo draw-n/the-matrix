@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState, Suspense, useRef } from "react";
 import { UploadFile } from "antd";
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { AxesHelper } from "three";
+import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry.js";
 import { geekblueDark } from "@ant-design/colors";
 
 interface ViewModelProps {
@@ -38,144 +38,390 @@ function getExportableMesh(mesh: THREE.Mesh): THREE.Mesh {
     exportMesh.updateMatrixWorld(true);
 
     // Bake all transforms into geometry
-    const geom = exportMesh.geometry.clone();
+    const geom = (exportMesh.geometry as THREE.BufferGeometry).clone();
     geom.applyMatrix4(exportMesh.matrixWorld);
     geom.computeVertexNormals();
 
     // Create new mesh with baked geometry
     const bakedMesh = new THREE.Mesh(
         geom,
-
         new THREE.MeshStandardMaterial({ color: geekblueDark[6] })
     );
 
     return bakedMesh;
 }
 
+/**
+ * Helper: point-in-triangle using barycentric coordinates.
+ * p, a, b, c are Vector3 in same plane.
+ */
+function pointInTriangle(
+    p: THREE.Vector3,
+    a: THREE.Vector3,
+    b: THREE.Vector3,
+    c: THREE.Vector3
+) {
+    // Using barycentric technique
+    const v0 = c.clone().sub(a);
+    const v1 = b.clone().sub(a);
+    const v2 = p.clone().sub(a);
+
+    const dot00 = v0.dot(v0);
+    const dot01 = v0.dot(v1);
+    const dot02 = v0.dot(v2);
+    const dot11 = v1.dot(v1);
+    const dot12 = v1.dot(v2);
+
+    const denom = dot00 * dot11 - dot01 * dot01;
+    if (Math.abs(denom) < 1e-12) return false;
+
+    const u = (dot11 * dot02 - dot01 * dot12) / denom;
+    const v = (dot00 * dot12 - dot01 * dot02) / denom;
+
+    return u >= -1e-8 && v >= -1e-8 && u + v <= 1 + 1e-8;
+}
+
+/**
+ * detectMajorFaces using convex-hull intersection heuristic:
+ * - Build convex hull geometry from mesh vertices (ConvexGeometry)
+ * - For each hull triangle, compute plane and test mesh triangle centroids:
+ *   if mesh centroid is within plane tolerance and its projection lies inside hull triangle,
+ *   add that mesh triangle area to the hull triangle's overlap area.
+ * - Cluster hull triangles by similar normals (so planar facets are merged).
+ * - Return clusters with averaged normal & centroid (in mesh-local coords) and overlap area.
+ */
 const detectMajorFaces = (
     geometry: THREE.BufferGeometry,
-    angleThreshold = 1
+    options?: {
+        planeDistanceTolFactor?: number; // tolerance relative to bbox diag
+        normalAngleThreshDeg?: number; // clustering hull triangles into facets
+        minOverlapArea?: number; // filter tiny overlaps
+    }
 ) => {
-    const position = geometry.attributes.position;
-    const faces: {
-        normal: THREE.Vector3;
+    const opts = {
+        planeDistanceTolFactor: 1e-3,
+        normalAngleThreshDeg: 3,
+        minOverlapArea: 1e-6,
+        ...(options || {}),
+    };
+
+    const pos = geometry.attributes.position;
+    if (!pos) return [];
+
+    const pts: THREE.Vector3[] = [];
+    for (let i = 0; i < pos.count; i++) {
+        pts.push(new THREE.Vector3().fromBufferAttribute(pos, i));
+    }
+    if (!pts.length) return [];
+
+    const hullGeom = new ConvexGeometry(pts);
+
+    // Precompute mesh triangle centroids & areas
+    const meshFaces: {
         centroid: THREE.Vector3;
-        indices: number[];
         area: number;
+        verts: THREE.Vector3[];
     }[] = [];
-    const vA = new THREE.Vector3(),
-        vB = new THREE.Vector3(),
-        vC = new THREE.Vector3();
-    const edge1 = new THREE.Vector3(),
-        edge2 = new THREE.Vector3(),
-        normal = new THREE.Vector3();
+    const a = new THREE.Vector3(),
+        b = new THREE.Vector3(),
+        c = new THREE.Vector3();
+    const e1 = new THREE.Vector3(),
+        e2 = new THREE.Vector3();
 
-    for (let i = 0; i < position.count; i += 3) {
-        vA.fromBufferAttribute(position, i);
-        vB.fromBufferAttribute(position, i + 1);
-        vC.fromBufferAttribute(position, i + 2);
-
-        edge1.subVectors(vB, vA);
-        edge2.subVectors(vC, vA);
-        normal.crossVectors(edge1, edge2).normalize();
-
+    for (let i = 0; i < pos.count; i += 3) {
+        a.fromBufferAttribute(pos, i);
+        b.fromBufferAttribute(pos, i + 1);
+        c.fromBufferAttribute(pos, i + 2);
+        e1.subVectors(b, a);
+        e2.subVectors(c, a);
+        const area = e1.clone().cross(e2).length() * 0.5;
         const centroid = new THREE.Vector3()
-            .addVectors(vA, vB)
-            .add(vC)
+            .addVectors(a, b)
+            .add(c)
             .divideScalar(3);
-        // Calculate area of triangle
-        const area = edge1.clone().cross(edge2).length() * 0.5;
-        faces.push({
-            normal: normal.clone(),
+        meshFaces.push({
             centroid,
-            indices: [i, i + 1, i + 2],
             area,
+            verts: [a.clone(), b.clone(), c.clone()],
         });
     }
 
-    // Compute bounding box
     geometry.computeBoundingBox();
     const bbox = geometry.boundingBox!;
-    const epsilon =
-        0.01 *
-        Math.max(
-            bbox.max.x - bbox.min.x,
-            bbox.max.y - bbox.min.y,
-            bbox.max.z - bbox.min.z
+    const diag = bbox.getSize(new THREE.Vector3()).length();
+    const planeTol = Math.max(1e-9, diag * opts.planeDistanceTolFactor);
+
+    const hullPos = hullGeom.attributes.position;
+    const hullFaces: {
+        a: THREE.Vector3;
+        b: THREE.Vector3;
+        c: THREE.Vector3;
+        centroid: THREE.Vector3;
+        normal: THREE.Vector3;
+        overlapArea: number;
+        contributors: number[]; // indices of meshFaces that contributed to this hull triangle
+    }[] = [];
+
+    const ha = new THREE.Vector3(),
+        hb = new THREE.Vector3(),
+        hc = new THREE.Vector3();
+    const he1 = new THREE.Vector3(),
+        he2 = new THREE.Vector3(),
+        hnormal = new THREE.Vector3();
+
+    for (let i = 0; i < hullPos.count; i += 3) {
+        ha.fromBufferAttribute(hullPos, i);
+        hb.fromBufferAttribute(hullPos, i + 1);
+        hc.fromBufferAttribute(hullPos, i + 2);
+
+        he1.subVectors(hb, ha);
+        he2.subVectors(hc, ha);
+        hnormal.crossVectors(he1, he2).normalize();
+
+        const hCentroid = new THREE.Vector3()
+            .addVectors(ha, hb)
+            .add(hc)
+            .divideScalar(3);
+
+        let overlap = 0;
+        const contributors: number[] = [];
+        const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(
+            hnormal,
+            ha
         );
+        const proj = new THREE.Vector3();
 
-    const isVertexOnSurface = (v: THREE.Vector3) =>
-        Math.abs(v.x - bbox.min.x) < epsilon ||
-        Math.abs(v.x - bbox.max.x) < epsilon ||
-        Math.abs(v.y - bbox.min.y) < epsilon ||
-        Math.abs(v.y - bbox.max.y) < epsilon ||
-        Math.abs(v.z - bbox.min.z) < epsilon ||
-        Math.abs(v.z - bbox.max.z) < epsilon;
+        for (let j = 0; j < meshFaces.length; j++) {
+            const mf = meshFaces[j];
+            const dist = plane.distanceToPoint(mf.centroid);
+            if (Math.abs(dist) > planeTol) continue;
+            plane.projectPoint(mf.centroid, proj);
+            if (pointInTriangle(proj, ha, hb, hc)) {
+                overlap += mf.area;
+                contributors.push(j);
+            }
+        }
 
-    const outerFaces = faces.filter((f) => {
-        // Reconstruct the three vertices for this face
-        const [iA, iB, iC] = f.indices;
-        const vA = new THREE.Vector3().fromBufferAttribute(position, iA);
-        const vB = new THREE.Vector3().fromBufferAttribute(position, iB);
-        const vC = new THREE.Vector3().fromBufferAttribute(position, iC);
-        // If all three vertices are on the surface, keep the face
-        return (
-            isVertexOnSurface(vA) &&
-            isVertexOnSurface(vB) &&
-            isVertexOnSurface(vC)
-        );
-    });
-
-    // Group by similar normals
-    const threshold = Math.cos(THREE.MathUtils.degToRad(angleThreshold));
-    const clusters: { normal: THREE.Vector3; faces: typeof faces }[] = [];
-
-    for (const f of outerFaces) {
-        const found = clusters.find((c) => c.normal.dot(f.normal) > threshold);
-
-        if (found) found.faces.push(f);
-        else clusters.push({ normal: f.normal.clone(), faces: [f] });
+        hullFaces.push({
+            a: ha.clone(),
+            b: hb.clone(),
+            c: hc.clone(),
+            centroid: hCentroid.clone(),
+            normal: hnormal.clone(),
+            overlapArea: overlap,
+            contributors,
+        });
     }
 
-    // For each cluster, pick the face with the largest area
-    return clusters.map((c) => {
-        const maxFace = c.faces.reduce(
-            (max, f) => (f.area > max.area ? f : max),
-            c.faces[0]
+    // cluster hull triangles by normal
+    const clusters: { faces: typeof hullFaces; normal: THREE.Vector3 }[] = [];
+    const cosThresh = Math.cos(
+        THREE.MathUtils.degToRad(opts.normalAngleThreshDeg)
+    );
+    for (const hf of hullFaces) {
+        let found = false;
+        for (const c of clusters) {
+            if (c.normal.dot(hf.normal) > cosThresh) {
+                c.faces.push(hf);
+                const accum = new THREE.Vector3(0, 0, 0);
+                let totalArea = 0;
+                for (const f of c.faces) {
+                    const e1 = f.b.clone().sub(f.a);
+                    const e2 = f.c.clone().sub(f.a);
+                    const area = e1.cross(e2).length() * 0.5;
+                    accum.addScaledVector(f.normal, area);
+                    totalArea += area;
+                }
+                if (totalArea > 0) accum.normalize();
+                else accum.copy(c.normal);
+                c.normal.copy(accum);
+                found = true;
+                break;
+            }
+        }
+        if (!found) clusters.push({ faces: [hf], normal: hf.normal.clone() });
+    }
+
+    const candidates: {
+        normal: THREE.Vector3;
+        centroid: THREE.Vector3;
+        overlapArea: number;
+        bottomVertex: THREE.Vector3;
+        ellipseRadii?: [number, number];
+    }[] = [];
+
+    for (const c of clusters) {
+        let totalOverlap = 0;
+        const allVerts: THREE.Vector3[] = [];
+        const contributorSet = new Set<number>();
+
+        for (const f of c.faces) {
+            const triE1 = f.b.clone().sub(f.a);
+            const triE2 = f.c.clone().sub(f.a);
+            const triArea = triE1.clone().cross(triE2).length() * 0.5;
+            totalOverlap += f.overlapArea;
+
+            allVerts.push(f.a.clone(), f.b.clone(), f.c.clone());
+
+            // collect contributor indices (if any)
+            if ((f as any).contributors && Array.isArray((f as any).contributors)) {
+                for (const idx of (f as any).contributors) contributorSet.add(idx);
+            }
+        }
+
+        if (totalOverlap < opts.minOverlapArea) continue;
+
+    // Compute a surface centroid from contributor mesh triangle centroids (area-weighted)
+        let surfaceCentroid = new THREE.Vector3();
+        let surfaceAreaSum = 0;
+        if (contributorSet.size > 0) {
+            for (const idx of Array.from(contributorSet)) {
+                const mf = meshFaces[idx];
+                surfaceCentroid.addScaledVector(mf.centroid, mf.area);
+                surfaceAreaSum += mf.area;
+            }
+            if (surfaceAreaSum > 0) surfaceCentroid.divideScalar(surfaceAreaSum);
+        }
+
+        // fallback: average hull verts projected onto plane
+        if (surfaceAreaSum === 0) {
+            const avgCentroid = new THREE.Vector3();
+            allVerts.forEach((v) => avgCentroid.add(v));
+            avgCentroid.divideScalar(allVerts.length || 1);
+
+            const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(
+                c.normal,
+                avgCentroid
+            );
+            surfaceCentroid = plane.projectPoint(avgCentroid, new THREE.Vector3());
+        }
+        // Project all hull vertices onto the plane and compute a 2D bounding box
+        // in the plane basis to derive ellipse radii that fit the convex-hull
+        const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(
+            c.normal,
+            surfaceCentroid
         );
-        return {
-            normal: maxFace.normal,
-            centroid: maxFace.centroid,
-        };
-    });
+        const projected = allVerts.map((v) => plane.projectPoint(v.clone(), new THREE.Vector3()));
+
+        // Build orthonormal basis (u,v) in the plane
+        const arbitrary = Math.abs(c.normal.dot(new THREE.Vector3(1, 0, 0))) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+        const u = new THREE.Vector3().crossVectors(arbitrary, c.normal).normalize();
+        const v2 = new THREE.Vector3().crossVectors(c.normal, u).normalize();
+
+        let minX = Infinity,
+            maxX = -Infinity,
+            minY = Infinity,
+            maxY = -Infinity;
+        for (const p of projected) {
+            const rel = p.clone().sub(surfaceCentroid);
+            const x = rel.dot(u);
+            const y = rel.dot(v2);
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+        }
+
+        const width = (maxX - minX) || 0;
+        const height = (maxY - minY) || 0;
+
+        // radii for ellipse
+        const rx = width * 0.5;
+        const ry = height * 0.5;
+
+        // offset markers slightly along the normal to avoid clipping into the mesh
+        const offsetDistance = Math.max(1e-6, diag * 1e-4);
+        const bottomVertex = surfaceCentroid
+            .clone()
+            .add(c.normal.clone().normalize().multiplyScalar(offsetDistance));
+
+        candidates.push({
+            normal: c.normal.clone().normalize(),
+            centroid: surfaceCentroid.clone(),
+            overlapArea: totalOverlap,
+            bottomVertex,
+            ellipseRadii: [rx, ry],
+        } as any);
+    }
+
+    candidates.sort((a, b) => b.overlapArea - a.overlapArea);
+
+    return candidates;
 };
 
 function SelectableFaces({
     faces,
     onSelect,
+    markerSize = 0.5,
 }: {
-    faces: { normal: THREE.Vector3; centroid: THREE.Vector3 }[];
+    faces: {
+        normal: THREE.Vector3;
+        centroid: THREE.Vector3;
+        bottomVertex: THREE.Vector3;
+        overlapArea?: number;
+    }[];
     onSelect: (face: {
         normal: THREE.Vector3;
         centroid: THREE.Vector3;
+        bottomVertex: THREE.Vector3;
+        overlapArea?: number;
     }) => void;
+    markerSize?: number;
 }) {
     return (
         <>
-            {faces.map((f, i) => (
-                <mesh
-                    key={i}
-                    position={f.centroid}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onSelect(f);
-                    }}
-                    castShadow
-                >
-                    <sphereGeometry args={[1, 16, 16]} />
-                    <meshStandardMaterial color="white" />
-                </mesh>
-            ))}
+            {faces.map((f, i) => {
+                const normal = f.normal.clone().normalize();
+                const quat = new THREE.Quaternion().setFromUnitVectors(
+                    new THREE.Vector3(0, 0, 1),
+                    normal
+                );
+
+                const area = f.overlapArea ?? 1;
+                const planeSize = Math.max(markerSize, Math.sqrt(area));
+
+                // If radii are provided, render an ellipse by scaling a unit circle.
+                const radii = (f as any).ellipseRadii as [number, number] | undefined;
+                const useRx = radii && radii[0] > 1e-9 ? Math.max(radii[0], markerSize) : planeSize;
+                const useRy = radii && radii[1] > 1e-9 ? Math.max(radii[1], markerSize) : planeSize;
+
+                const geom = new THREE.CircleGeometry(1, 64);
+
+                return (
+                    <mesh
+                        key={i}
+                        geometry={geom}
+                        quaternion={quat}
+                        position={f.bottomVertex} // <-- use actual mesh surface point
+                        scale={[useRx, useRy, 1]}
+                        onPointerOver={(e) => {
+                            e.stopPropagation();
+                            (
+                                (e.object as THREE.Mesh)
+                                    .material as THREE.MeshStandardMaterial
+                            ).color.set("orange");
+                        }}
+                        onPointerOut={(e) => {
+                            e.stopPropagation();
+                            (
+                                (e.object as THREE.Mesh)
+                                    .material as THREE.MeshStandardMaterial
+                            ).color.set("white");
+                        }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSelect(f);
+                        }}
+                    >
+                        <meshStandardMaterial
+                            color="white"
+                            transparent
+                            opacity={0.5}
+                            side={THREE.DoubleSide}
+                        />
+                    </mesh>
+                );
+            })}
         </>
     );
 }
@@ -203,8 +449,14 @@ function alignModelToFace(
     // Compute new world centroid of the selected face
     const worldCentroid = centroid.clone().applyMatrix4(mesh.matrixWorld);
 
-    // Offset mesh so the selected face sits flush with the plane (z=0)
-    mesh.position.z -= worldCentroid.z;
+    // Compute a small offset proportional to model size to keep the selectable
+    // plane slightly above the surface (avoid clipping when reorienting).
+    const box = new THREE.Box3().setFromObject(mesh);
+    const diag = box.getSize(new THREE.Vector3()).length();
+    const offsetDistance = Math.max(1e-6, diag * 1e-4);
+
+    // Move mesh so that the selected face world Z becomes `offsetDistance`
+    mesh.position.z -= worldCentroid.z - offsetDistance;
     mesh.updateMatrixWorld(true);
 }
 
@@ -240,7 +492,7 @@ function mergeAllGeometries(root: THREE.Object3D): THREE.BufferGeometry | null {
     root.traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
-            const geom = mesh.geometry.clone();
+            const geom = (mesh.geometry as THREE.BufferGeometry).clone();
             geom.applyMatrix4(mesh.matrixWorld); // bake transform
             geometries.push(geom);
         }
@@ -404,25 +656,43 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
 
     const [mesh, setMesh] = useState<THREE.Mesh | null>(null);
     const [detectedFaces, setDetectedFaces] = useState<
-        { normal: THREE.Vector3; centroid: THREE.Vector3 }[]
+        {
+            normal: THREE.Vector3;
+            centroid: THREE.Vector3;
+            bottomVertex: THREE.Vector3;
+            overlapArea?: number;
+            ellipseRadii?: [number, number];
+        }[]
     >([]);
 
     // Detect faces whenever mesh geometry changes
     useEffect(() => {
         if (mesh?.geometry) {
             mesh.geometry.computeVertexNormals();
-            const faces = detectMajorFaces(mesh.geometry);
+            const rawCandidates = detectMajorFaces(
+                mesh.geometry as THREE.BufferGeometry,
+                {
+                    planeDistanceTolFactor: 1e-3,
+                    normalAngleThreshDeg: 3,
+                    minOverlapArea: 1e-6,
+                }
+            );
 
-            // Apply scale to centroids (if scaled)
-            const scaledFaces = faces.map((f) => ({
-                normal: f.normal,
-                centroid: f.centroid.clone(),
+            // Keep centroids/normals in mesh-local coordinates so child markers
+            // placed under the mesh (inside <primitive object={mesh}>) are
+            // positioned correctly. alignModelToFace expects local coords too.
+            const transformed = rawCandidates.map((c) => ({
+                normal: c.normal.clone().normalize(),
+                centroid: c.centroid.clone(),
+                bottomVertex: c.bottomVertex.clone(),
+                overlapArea: c.overlapArea,
+                ellipseRadii: (c as any).ellipseRadii as [number, number] | undefined,
             }));
-            console.log("Detected faces:", scaledFaces);
 
-            setDetectedFaces(scaledFaces);
+            console.log("Detected convex-hull candidates:", transformed);
+            setDetectedFaces(transformed);
         }
-    }, [mesh]);
+    }, [mesh?.geometry, mesh?.matrixWorld]);
 
     const handleFaceSelect = (face: {
         normal: THREE.Vector3;
@@ -432,6 +702,14 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
             alignModelToFace(mesh, face.normal, face.centroid);
         }
     };
+
+    // compute marker size for SelectableFaces render
+    const markerSizeForRender = (() => {
+        if (!mesh) return 0.5;
+        const bbox = new THREE.Box3().setFromObject(mesh);
+        const size = bbox.getSize(new THREE.Vector3());
+        return Math.max(0.005, Math.min(size.x, size.y, size.z) * 0.03);
+    })();
 
     return (
         <div style={{ width: "100%", height: "500px" }}>
@@ -459,6 +737,7 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                                     <SelectableFaces
                                         faces={detectedFaces}
                                         onSelect={handleFaceSelect}
+                                        markerSize={markerSizeForRender}
                                     />
                                 )}
                             </primitive>
