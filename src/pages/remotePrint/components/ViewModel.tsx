@@ -264,14 +264,18 @@ const detectMajorFaces = (
             allVerts.push(f.a.clone(), f.b.clone(), f.c.clone());
 
             // collect contributor indices (if any)
-            if ((f as any).contributors && Array.isArray((f as any).contributors)) {
-                for (const idx of (f as any).contributors) contributorSet.add(idx);
+            if (
+                (f as any).contributors &&
+                Array.isArray((f as any).contributors)
+            ) {
+                for (const idx of (f as any).contributors)
+                    contributorSet.add(idx);
             }
         }
 
         if (totalOverlap < opts.minOverlapArea) continue;
 
-    // Compute a surface centroid from contributor mesh triangle centroids (area-weighted)
+        // Compute a surface centroid from contributor mesh triangle centroids (area-weighted)
         let surfaceCentroid = new THREE.Vector3();
         let surfaceAreaSum = 0;
         if (contributorSet.size > 0) {
@@ -280,7 +284,8 @@ const detectMajorFaces = (
                 surfaceCentroid.addScaledVector(mf.centroid, mf.area);
                 surfaceAreaSum += mf.area;
             }
-            if (surfaceAreaSum > 0) surfaceCentroid.divideScalar(surfaceAreaSum);
+            if (surfaceAreaSum > 0)
+                surfaceCentroid.divideScalar(surfaceAreaSum);
         }
 
         // fallback: average hull verts projected onto plane
@@ -293,7 +298,10 @@ const detectMajorFaces = (
                 c.normal,
                 avgCentroid
             );
-            surfaceCentroid = plane.projectPoint(avgCentroid, new THREE.Vector3());
+            surfaceCentroid = plane.projectPoint(
+                avgCentroid,
+                new THREE.Vector3()
+            );
         }
         // Project all hull vertices onto the plane and compute a 2D bounding box
         // in the plane basis to derive ellipse radii that fit the convex-hull
@@ -301,22 +309,36 @@ const detectMajorFaces = (
             c.normal,
             surfaceCentroid
         );
-        const projected = allVerts.map((v) => plane.projectPoint(v.clone(), new THREE.Vector3()));
+        const projected = allVerts.map((v) =>
+            plane.projectPoint(v.clone(), new THREE.Vector3())
+        );
 
         // Build orthonormal basis (u,v) in the plane
-        const arbitrary = Math.abs(c.normal.dot(new THREE.Vector3(1, 0, 0))) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
-    const u = new THREE.Vector3().crossVectors(arbitrary, c.normal).normalize();
-    const v2 = new THREE.Vector3().crossVectors(c.normal, u).normalize();
+        const arbitrary =
+            Math.abs(c.normal.dot(new THREE.Vector3(1, 0, 0))) < 0.9
+                ? new THREE.Vector3(1, 0, 0)
+                : new THREE.Vector3(0, 1, 0);
+        const u = new THREE.Vector3()
+            .crossVectors(arbitrary, c.normal)
+            .normalize();
+        const v2 = new THREE.Vector3().crossVectors(c.normal, u).normalize();
 
-    // compute an in-plane rotation so the ellipse X-axis aligns with u
-    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), c.normal.clone().normalize());
-    const qX = new THREE.Vector3(1, 0, 0).applyQuaternion(q);
-    const qX_proj = qX.clone().sub(c.normal.clone().multiplyScalar(qX.dot(c.normal)));
-    if (qX_proj.length() > 1e-12) qX_proj.normalize();
-    const uNorm = u.clone().normalize();
-    const sinTheta = new THREE.Vector3().crossVectors(qX_proj, uNorm).dot(c.normal);
-    const cosTheta = qX_proj.dot(uNorm);
-    const ellipseRotation = Math.atan2(sinTheta, cosTheta);
+        // compute an in-plane rotation so the ellipse X-axis aligns with u
+        const q = new THREE.Quaternion().setFromUnitVectors(
+            new THREE.Vector3(0, 0, 1),
+            c.normal.clone().normalize()
+        );
+        const qX = new THREE.Vector3(1, 0, 0).applyQuaternion(q);
+        const qX_proj = qX
+            .clone()
+            .sub(c.normal.clone().multiplyScalar(qX.dot(c.normal)));
+        if (qX_proj.length() > 1e-12) qX_proj.normalize();
+        const uNorm = u.clone().normalize();
+        const sinTheta = new THREE.Vector3()
+            .crossVectors(qX_proj, uNorm)
+            .dot(c.normal);
+        const cosTheta = qX_proj.dot(uNorm);
+        const ellipseRotation = Math.atan2(sinTheta, cosTheta);
 
         let minX = Infinity,
             maxX = -Infinity,
@@ -332,15 +354,17 @@ const detectMajorFaces = (
             maxY = Math.max(maxY, y);
         }
 
-        const width = (maxX - minX) || 0;
-        const height = (maxY - minY) || 0;
+        const width = maxX - minX || 0;
+        const height = maxY - minY || 0;
 
         // radii for ellipse
         const rx = width * 0.5;
         const ry = height * 0.5;
 
-        // offset markers slightly along the normal to avoid clipping into the mesh
-        const offsetDistance = Math.max(1e-6, diag * 1e-4);
+        // offset markers by a small fixed padding so they don't clip into the mesh.
+        // Keep this very small and model-unit agnostic (e.g., mm).
+        const FIXED_PADDING = 0.1; // small constant padding (units: model units, default 0.1)
+        const offsetDistance = FIXED_PADDING;
         const bottomVertex = surfaceCentroid
             .clone()
             .add(c.normal.clone().normalize().multiplyScalar(offsetDistance));
@@ -393,16 +417,26 @@ function SelectableFaces({
                 // apply in-plane rotation if provided so ellipse aligns to hull face
                 const rot = (f as any).ellipseRotation as number | undefined;
                 const quat = rot
-                    ? new THREE.Quaternion().setFromAxisAngle(normal, rot).multiply(baseQuat)
+                    ? new THREE.Quaternion()
+                          .setFromAxisAngle(normal, rot)
+                          .multiply(baseQuat)
                     : baseQuat;
 
                 const area = f.overlapArea ?? 1;
                 const planeSize = Math.max(markerSize, Math.sqrt(area));
 
                 // If radii are provided, render an ellipse by scaling a unit circle.
-                const radii = (f as any).ellipseRadii as [number, number] | undefined;
-                const useRx = radii && radii[0] > 1e-9 ? Math.max(radii[0], markerSize) : planeSize;
-                const useRy = radii && radii[1] > 1e-9 ? Math.max(radii[1], markerSize) : planeSize;
+                const radii = (f as any).ellipseRadii as
+                    | [number, number]
+                    | undefined;
+                const useRx =
+                    radii && radii[0] > 1e-9
+                        ? Math.max(radii[0], markerSize)
+                        : planeSize;
+                const useRy =
+                    radii && radii[1] > 1e-9
+                        ? Math.max(radii[1], markerSize)
+                        : planeSize;
 
                 const geom = new THREE.CircleGeometry(1, 64);
 
@@ -467,6 +501,12 @@ function alignModelToFace(
 
     // Compute new world centroid of the selected face
     const worldCentroid = centroid.clone().applyMatrix4(mesh.matrixWorld);
+    // Translate mesh so the selected face centroid (which will sit on the
+    // build plate) lines up with the ground center in X and Y, then adjust
+    // Z so the face sits slightly above the plate.
+    // Shift X/Y so the face centroid moves to world (0,0)
+    mesh.position.x -= worldCentroid.x;
+    mesh.position.y -= worldCentroid.y;
 
     // Compute a small offset proportional to model size to keep the selectable
     // plane slightly above the surface (avoid clipping when reorienting).
@@ -475,6 +515,7 @@ function alignModelToFace(
     const offsetDistance = Math.max(1e-6, diag * 1e-4);
 
     // Move mesh so that the selected face world Z becomes `offsetDistance`
+    // (after X/Y translation above)
     mesh.position.z -= worldCentroid.z - offsetDistance;
     mesh.updateMatrixWorld(true);
 }
@@ -583,7 +624,8 @@ function ModelSTL({
     const [position, setPosition] = useState<[number, number, number]>([
         0, 0, 0,
     ]);
-    const scale = 0.1;
+    // Preserve original model units — do not rescale STLs for display or export
+    const scale = 1;
     const meshRef = useRef<THREE.Mesh>(null); // <-- always at the top
 
     useEffect(() => {
@@ -596,7 +638,8 @@ function ModelSTL({
                 geo.computeBoundingBox();
                 const bbox = geo.boundingBox!;
                 const minZ = bbox.min.z;
-                const offsetZ = -minZ * scale; // flush with ground
+                // Keep original units — offset to ground without changing scale
+                const offsetZ = -minZ; // flush with ground
                 setPosition([0, 0, offsetZ]);
                 setGeometry(geo);
             },
@@ -627,8 +670,6 @@ function ModelSTL({
             geometry={geometry}
             scale={scale}
             position={position}
-            castShadow
-            receiveShadow
         >
             <meshStandardMaterial color={geekblueDark[6]} />
         </mesh>
@@ -684,6 +725,38 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
             ellipseRotation?: number;
         }[]
     >([]);
+    // When we align the model to a face we suppress rendering the overlay for
+    // that specific face so the selected bottom face 'disappears'. We store
+    // the suppressed face (centroid+normal in mesh-local) and the mesh
+    // matrix at the time of suppression so we only hide that face while the
+    // mesh remains in that aligned transform.
+    const [suppressUntilMatrix, setSuppressUntilMatrix] = useState<
+        THREE.Matrix4 | null
+    >(null);
+    const [suppressedFace, setSuppressedFace] = useState<
+        { centroid: THREE.Vector3; normal: THREE.Vector3 } | null
+    >(null);
+
+    const matricesEqual = (m1: THREE.Matrix4 | null, m2: THREE.Matrix4 | null) => {
+        if (!m1 || !m2) return false;
+        const a = m1.elements;
+        const b = m2.elements;
+        for (let i = 0; i < 16; i++) {
+            if (Math.abs(a[i] - b[i]) > 1e-9) return false;
+        }
+        return true;
+    };
+
+    const faceMatches = (
+        a: { centroid: THREE.Vector3; normal: THREE.Vector3 } | undefined,
+        b: { centroid: THREE.Vector3; normal: THREE.Vector3 } | null
+    ) => {
+        if (!a || !b) return false;
+        const dist = a.centroid.distanceTo(b.centroid);
+        if (dist > 1e-3) return false; // centroid tolerance
+        const cos = a.normal.clone().normalize().dot(b.normal.clone().normalize());
+        return cos > Math.cos(THREE.MathUtils.degToRad(5)); // within 5 degrees
+    };
 
     // Detect faces whenever mesh geometry changes
     useEffect(() => {
@@ -706,8 +779,12 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                 centroid: c.centroid.clone(),
                 bottomVertex: c.bottomVertex.clone(),
                 overlapArea: c.overlapArea,
-                ellipseRadii: (c as any).ellipseRadii as [number, number] | undefined,
-                ellipseRotation: (c as any).ellipseRotation as number | undefined,
+                ellipseRadii: (c as any).ellipseRadii as
+                    | [number, number]
+                    | undefined,
+                ellipseRotation: (c as any).ellipseRotation as
+                    | number
+                    | undefined,
             }));
 
             console.log("Detected convex-hull candidates:", transformed);
@@ -715,12 +792,28 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
         }
     }, [mesh?.geometry, mesh?.matrixWorld]);
 
+    // Clear suppression when the mesh's matrixWorld changes away from the
+    // aligned matrix (so overlays reappear after the user rotates/moves the
+    // model). Also clear the suppressedFace record.
+    useEffect(() => {
+        if (!mesh) return;
+        if (suppressUntilMatrix && !matricesEqual(suppressUntilMatrix, mesh.matrixWorld)) {
+            setSuppressUntilMatrix(null);
+            setSuppressedFace(null);
+        }
+    }, [mesh?.matrixWorld]);
+
     const handleFaceSelect = (face: {
         normal: THREE.Vector3;
         centroid: THREE.Vector3;
     }) => {
         if (mesh) {
             alignModelToFace(mesh, face.normal, face.centroid);
+            // After aligning, suppress overlays while the mesh remains in this
+            // aligned transform so the selected bottom face disappears.
+            mesh.updateMatrixWorld(true);
+            setSuppressUntilMatrix(mesh.matrixWorld.clone());
+            setSuppressedFace({ centroid: face.centroid.clone(), normal: face.normal.clone() });
         }
     };
 
@@ -742,7 +835,6 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                 onCreated={({ scene }) => {
                     scene.up.set(0, 0, 1);
                 }}
-                shadows
             >
                 <Suspense fallback={null}>
                     <HandleContextLoss />
@@ -754,23 +846,34 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                         <>
                             <FocusCameraOnLoad mesh={mesh} />
                             <primitive object={mesh}>
-                                {detectedFaces.length > 0 && (
-                                    <SelectableFaces
-                                        faces={detectedFaces}
-                                        onSelect={handleFaceSelect}
-                                        markerSize={markerSizeForRender}
-                                    />
-                                )}
+                                {detectedFaces.length > 0 && (() => {
+                                    // If we have a suppressed face and the mesh is in the
+                                    // same matrix as when we suppressed, filter that
+                                    // single face out; otherwise show all faces.
+                                    if (suppressUntilMatrix && suppressedFace && matricesEqual(suppressUntilMatrix, mesh.matrixWorld)) {
+                                        const visible = detectedFaces.filter((df) => !faceMatches(df, suppressedFace));
+                                        return (
+                                            <SelectableFaces
+                                                faces={visible}
+                                                onSelect={handleFaceSelect}
+                                                markerSize={markerSizeForRender}
+                                            />
+                                        );
+                                    }
+                                    return (
+                                        <SelectableFaces
+                                            faces={detectedFaces}
+                                            onSelect={handleFaceSelect}
+                                            markerSize={markerSizeForRender}
+                                        />
+                                    );
+                                })()}
                             </primitive>
                         </>
                     )}
 
                     {/* Ground plane (slightly below z=0 to avoid z-fighting) */}
-                    <mesh
-                        receiveShadow
-                        rotation={[0, 0, 0]}
-                        position={[0, 0, -0.05]}
-                    >
+                    <mesh rotation={[0, 0, 0]} position={[0, 0, -0.05]}>
                         <planeGeometry args={[200, 200]} />
                         <meshStandardMaterial
                             color="#bbbbbb"
@@ -780,11 +883,7 @@ const ViewModel: React.FC<ViewModelProps> = ({ file }) => {
                 </Suspense>
 
                 <ambientLight intensity={0.3} />
-                <directionalLight
-                    position={[5, 5, 10]}
-                    castShadow
-                    intensity={0.5}
-                />
+                <directionalLight position={[5, 5, 10]} intensity={0.5} />
                 <directionalLight position={[-5, -5, 10]} intensity={0.5} />
                 <hemisphereLight groundColor={"#444444"} intensity={0.6} />
 
