@@ -17,7 +17,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 import ProfileDropdown from "../pages/profile/ProfileDropdown";
 import NoAccess from "./rbac/NoAccess";
-import NotFound from "./NotFound";
 import {
     MenuOutlined,
     CloseOutlined,

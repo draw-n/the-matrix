@@ -5,7 +5,7 @@ import MoreSettings from "./MoreSettings";
 import Review from "./Review";
 import { useEffect, useState } from "react";
 import { Material } from "../../types/Material";
-import { FilamentMoreSettings } from "../../types/Equipment";
+import { FilamentAdvancedSettings } from "../../types/Equipment";
 import { useAuth, User } from "../../hooks/AuthContext";
 import axios from "axios";
 import Loading from "../../components/Loading";
@@ -17,7 +17,7 @@ const RemotePrint: React.FC = () => {
     const [current, setCurrent] = useState(0);
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
     const [material, setMaterial] = useState<Material | null>(null);
-    const [settingDetails, setSettingDetails] = useState<FilamentMoreSettings>({
+    const [settingDetails, setSettingDetails] = useState<FilamentAdvancedSettings>({
         infill: 20,
         layerHeight: 0.2,
         supports: true,

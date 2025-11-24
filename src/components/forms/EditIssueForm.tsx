@@ -1,4 +1,4 @@
-import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import {
     Button,
     Flex,

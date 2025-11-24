@@ -15,6 +15,7 @@ const GradYearSelection: React.FC<GradYearSelectionProps> = ({
     // If it's January to June, the graduation year is the current year
     // If it's July to December, the graduation year is the next year
     const currentYear = new Date().getFullYear() + (currentMonth >= 6 ? 1 : 0);
+    
     return (
         <Flex gap="large" style={{width: "100%"}} vertical align="center" justify="center">
             <p>Select your graduation year.</p>
