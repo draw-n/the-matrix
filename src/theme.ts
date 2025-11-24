@@ -60,6 +60,7 @@ const lightTheme: ThemeConfig = {
 const darkTheme: ThemeConfig = {
     token: {
         colorPrimary: geekblue[4],
+        colorFillSecondary: geekblue[2],
         colorBgContainer: "#1f2228", // Slightly blue hue added to dark container background
         colorBgBase: "#141a1f", // Slightly blue hue added to dark background
         colorBorder: "#434343",
@@ -81,7 +82,7 @@ const darkTheme: ThemeConfig = {
             itemBg: "#141a1f",
             darkItemBg: "#141a1f",
             itemSelectedBg: geekblue[1],
-            darkItemSelectedBg: geekblue[5],
+            darkItemSelectedBg: "#4f6ed5",
             itemBorderRadius: 0,
             activeBarBorderWidth: 0,
             itemMarginInline: 0,

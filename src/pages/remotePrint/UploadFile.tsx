@@ -11,7 +11,7 @@ import {
 import { Button, Flex, message, Upload, UploadProps } from "antd";
 import type { UploadFile } from "antd";
 
-import ViewModel from "./components/ViewModel";
+import MeshViewer from "../../components/meshViewer/MeshViewer";
 const { Dragger } = Upload;
 
 interface UploadFileProps {
@@ -158,7 +158,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     </div>
                 )}
                 {uploadedFile.length > 0 && (
-                    <ViewModel
+                    <MeshViewer
                         onRegister={(api) => (viewModelApiRef.current = api)}
                         file={uploadedFile[0]}
                         setFile={setUploadedFile}

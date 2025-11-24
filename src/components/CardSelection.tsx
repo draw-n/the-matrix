@@ -1,7 +1,6 @@
 // Description: A card selection component that allows users to select from multiple options displayed as cards in a carousel format, with a fade-in effect on mount.
 
-import { geekblueDark } from "@ant-design/colors";
-import { Card, Carousel, Flex } from "antd";
+import { Card, Carousel, Flex, theme } from "antd";
 import { useState, useEffect } from "react";
 import { ControlledValueProps } from "../types/common";
 
@@ -19,7 +18,7 @@ const CardSelection: React.FC<CardSelectionProps> = ({
             onChange(value);
         }
     };
-
+    const colorPrimary = theme.useToken().token.colorPrimary;
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -61,16 +60,16 @@ const CardSelection: React.FC<CardSelectionProps> = ({
                                 height: 175,
                                 color:
                                     value === opt.value
-                                        ? geekblueDark[5]
+                                        ? colorPrimary
                                         : "#797979",
                                 backgroundColor:
                                     value === opt.value
-                                        ? geekblueDark[9]
+                                        ? "#d6e4ff"
                                         : "white",
                                 textAlign: "center",
                                 borderColor:
                                     value === opt.value
-                                        ? geekblueDark[5]
+                                        ? colorPrimary
                                         : "#797979",
                                 cursor: "pointer",
                                 transition: "all 0.2s",

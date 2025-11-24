@@ -10,9 +10,10 @@ import {
     TableProps,
     Tag,
     Tooltip,
+    theme
 } from "antd";
 import { DeleteOutlined, } from "@ant-design/icons";
-import { cyan, geekblue, magenta, purple } from "@ant-design/colors";
+import { cyan, magenta, purple } from "@ant-design/colors";
 
 
 import AnnouncementForm from "../forms/AnnouncementForm";
@@ -20,10 +21,6 @@ import type { User } from "../../types/user";
 import type { Announcement } from "../../types/announcement";
 import { checkAccess } from "../rbac/HasAccess";
 import AutoAvatar from "../AutoAvatar";
-
-interface TableAnnouncement extends Announcement {
-    key: string;
-}
 
 interface UserInfo {
     fullName: string;
@@ -40,7 +37,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
     announcements,
 }) => {
     const [users, setUsers] = useState<Record<string, UserInfo>>({});
-
+    const colorPrimary = theme.useToken().token.colorPrimary;
     const deleteAnnouncement = async (_id: string) => {
         try {
             const response = await axios.delete(
@@ -219,7 +216,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                     <Tag
                         color={
                             types.find((item) => item.value === type)?.color ||
-                            geekblue[4]
+                            colorPrimary
                         }
                         key={type}
                     >

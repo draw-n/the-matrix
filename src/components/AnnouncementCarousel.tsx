@@ -3,12 +3,11 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
-import { Carousel, Empty, Flex, Tag, Typography } from "antd";
+import { Carousel, Empty, Flex, Tag, Typography, theme } from "antd";
 import { CarouselRef } from "antd/es/carousel";
 
 import Loading from "./Loading";
 import type { Announcement } from "../types/announcement";
-import { geekblueDark } from "@ant-design/colors";
 
 interface AnnouncementCarouselProps {
     kioskMode?: boolean;
@@ -22,7 +21,7 @@ const AnnouncementCarousel: React.FC<AnnouncementCarouselProps> = ({
     const [currentSlide, setCurrentSlide] = useState<number>(0);
 
     const carouselRef = useRef<CarouselRef | null>(null); // Ref for the Carousel component
-
+    const colorPrimary = theme.useToken().token.colorPrimary;
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -84,7 +83,7 @@ const AnnouncementCarousel: React.FC<AnnouncementCarouselProps> = ({
             ) : (
                 <Carousel
                     ref={carouselRef}
-                    style={{ background: geekblueDark[4], color: "white" }}
+                    style={{ background: colorPrimary, color: "white" }}
                 >
                     {announcements?.map((announcement: Announcement) => {
                         return (
