@@ -10,6 +10,9 @@ import {
     FrownOutlined,
     PauseCircleOutlined,
 } from "@ant-design/icons";
+
+import { EquipmentStatus } from "../../types/Equipment";
+
 import { gold, gray, green, purple, red } from "@ant-design/colors";
 import type { Equipment } from "../../types/Equipment";
 import type { Category } from "../../types/Category";
@@ -17,10 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 interface EquipmentCardProps {
     equipment: Equipment;
-    
 }
-
-type EquipmentStatus = "available" | "error" | "paused" | "busy" | "offline";
 
 const statusStyles: Record<
     EquipmentStatus,

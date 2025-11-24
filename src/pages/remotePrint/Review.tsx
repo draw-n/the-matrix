@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { useEffect } from "react";
 import { Material } from "../../types/Material";
-import { FilamentMoreSettings } from "../../types/Equipment";
+import { FilamentAdvancedSettings } from "../../types/Equipment";
 import ConfirmAction from "../../components/ConfirmAction";
 import ViewModel from "./components/ViewModel";
 
@@ -22,7 +22,7 @@ interface ReviewProps {
     prev: () => void;
     uploadedFile: UploadFile[];
     material: Material | null;
-    settingDetails: FilamentMoreSettings | null;
+    settingDetails: FilamentAdvancedSettings | null;
     handleSubmit: () => void;
 }
 

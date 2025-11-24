@@ -1,3 +1,5 @@
+// Description: App settings, only available to admins
+
 import { Input, Space, Form, Tabs, TabsProps } from "antd";
 import Categories from "./Categories";
 import AccessCodes from "./AccessCodes";

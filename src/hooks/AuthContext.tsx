@@ -6,18 +6,7 @@ import React, {
     ReactNode,
     useEffect,
 } from "react";
-import { RemotePrint } from "../types/Equipment";
-
-export interface User {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    access: string;
-    status: string;
-    graduationDate?: Date;
-    remotePrints?: RemotePrint[];
-}
+import { User } from "../types/User";
 
 interface AuthContextType {
     setUser: (item: User) => void;

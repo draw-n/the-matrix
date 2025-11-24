@@ -6,14 +6,26 @@ export interface Equipment {
     routePath: string;
     headline?: string;
     category: string;
-    properties?: { nozzle?: Number; materials?: string[] };
+    properties?: EquipmentProperties;
     status: string;
     description: string;
     imgSrc?: string;
     ipUrl?: string;
 }
 
-export interface FilamentMoreSettings {
+export type EquipmentStatus =
+    | "available"
+    | "paused"
+    | "busy"
+    | "error"
+    | "offline";
+
+export type EquipmentProperties = {
+    nozzle?: number;
+    material?: string;
+};
+
+export interface FilamentAdvancedSettings {
     infill: number;
     layerHeight: number;
     supports: boolean;
@@ -25,9 +37,4 @@ export interface FilamentMoreSettings {
     verticalShell: {
         perimeters: number;
     };
-}
-
-export interface RemotePrint {
-    date: Date,
-    fileName: string
 }

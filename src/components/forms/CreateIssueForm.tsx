@@ -3,8 +3,6 @@ import {
     Form,
     Select,
     Input,
-    Result,
-    Flex,
     message,
     FormProps,
     Tooltip,

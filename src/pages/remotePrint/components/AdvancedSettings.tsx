@@ -8,13 +8,13 @@ import {
     Space,
     Switch,
 } from "antd";
-import { FilamentMoreSettings } from "../../../types/Equipment";
+import { FilamentAdvancedSettings } from "../../../types/Equipment";
 import { Material } from "../../../types/Material";
 import { CaretDownFilled, RedoOutlined } from "@ant-design/icons";
 
 interface AdvancedSettingsProps {
-    settingDetails: FilamentMoreSettings;
-    setSettingDetails: (item: FilamentMoreSettings) => void;
+    settingDetails: FilamentAdvancedSettings;
+    setSettingDetails: (item: FilamentAdvancedSettings) => void;
     material: Material | null;
 }
 

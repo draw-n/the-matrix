@@ -1,3 +1,4 @@
+// Description: Signup page for new users
 import { Button, Flex, Form, FormProps, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "../hooks/AuthContext";

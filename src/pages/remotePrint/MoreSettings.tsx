@@ -3,7 +3,7 @@ import type { CollapseProps, InputNumberProps } from "antd";
 import InfillSlider from "./components/InfillSlider";
 import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 import AdvancedSettings from "./components/AdvancedSettings";
-import { FilamentMoreSettings } from "../../types/Equipment";
+import { FilamentAdvancedSettings } from "../../types/Equipment";
 import { Material } from "../../types/Material";
 import { useAuth } from "../../hooks/AuthContext";
 import HasAccess from "../../components/rbac/HasAccess";
