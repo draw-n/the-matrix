@@ -3,7 +3,11 @@
 import axios from "axios";
 import { useRef } from "react";
 
-import { CaretRightOutlined, InboxOutlined } from "@ant-design/icons";
+import {
+    CaretRightOutlined,
+    DeleteOutlined,
+    InboxOutlined,
+} from "@ant-design/icons";
 import { Button, Flex, message, Upload, UploadProps } from "antd";
 import type { UploadFile } from "antd";
 
@@ -53,13 +57,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
         headers: {
             authorization: "authorization-text",
         },
-        beforeUpload: (file: any) => {
-            const isFile = file.type === "model/3mf" || "model/stl";
-            if (!isFile) {
-                message.error(`${file.name} is not a STL or 3MF file.`);
-            }
-            return isFile || Upload.LIST_IGNORE;
-        },
+
         onChange: (info) => {
             let newFileList = [...info.fileList];
 
@@ -110,8 +108,9 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     in-person to print.
                 </p>
                 <Dragger
+                    disabled={uploadedFile.length > 0}
                     {...props}
-                    fileList={uploadedFile}
+                    fileList={[]}
                     style={{ width: "100%" }}
                 >
                     <p className="ant-upload-drag-icon">
@@ -121,6 +120,43 @@ const UploadFile: React.FC<UploadFileProps> = ({
                         Click or drag file to this area to upload
                     </p>
                 </Dragger>
+                {uploadedFile.length > 0 && (
+                    <div style={{ width: "100%", marginTop: 4 }}>
+                        <ul
+                            style={{ listStyle: "none", padding: 0, margin: 0 }}
+                        >
+                            {uploadedFile.map((f) => (
+                                <li
+                                    key={f.uid}
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        padding: "8px 0",
+                                        borderBottom: "1px solid #eee",
+                                    }}
+                                >
+                                    <span>{f.name}</span>
+                                    <div>
+                                        <Button
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            type="link"
+                                            onClick={() => {
+                                                setUploadedFile([]);
+
+                                                if (viewModelApiRef.current) {
+                                                    viewModelApiRef.current =
+                                                        null;
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
                 {uploadedFile.length > 0 && (
                     <ViewModel
                         onRegister={(api) => (viewModelApiRef.current = api)}
