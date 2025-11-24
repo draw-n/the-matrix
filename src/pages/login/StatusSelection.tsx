@@ -1,12 +1,8 @@
 import { Flex } from "antd";
 import CardSelection from "../../components/CardSelection";
+import { ControlledValueProps } from "../../types/common";
 
-interface StatusSelectionProps {
-    value?: string;
-    onChange?: (value: string) => void;
-}
-
-const StatusSelection: React.FC<StatusSelectionProps> = ({
+const StatusSelection: React.FC<ControlledValueProps<string>> = ({
     value,
     onChange,
 }) => {

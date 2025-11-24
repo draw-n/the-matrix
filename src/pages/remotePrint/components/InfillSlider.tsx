@@ -1,16 +1,12 @@
 // Description: InfillSlider component for adjusting infill percentage in remote printing settings.
 
 import { Flex, InputNumber, Slider } from "antd";
+import { ControlledValueProps } from "../../../types/common";
 
-interface InfillSliderProps {
-    infill: number;
-    onChange: (value: any) => void;
-}
-
-const InfillSlider: React.FC<InfillSliderProps> = ({
-    infill,
+const InfillSlider: React.FC<ControlledValueProps<number | null>> = ({
+    value,
     onChange,
-}: InfillSliderProps) => {
+}) => {
     return (
         <>
             <Flex style={{ width: "100%" }} justify="space-between" gap="10px">
@@ -18,7 +14,7 @@ const InfillSlider: React.FC<InfillSliderProps> = ({
                     min={10}
                     max={50}
                     onChange={onChange}
-                    value={typeof infill === "number" ? infill : 0}
+                    value={typeof value === "number" ? value : 0}
                     step={1}
                     style={{ width: "100%" }}
                 />
@@ -30,7 +26,7 @@ const InfillSlider: React.FC<InfillSliderProps> = ({
                     parser={(value) =>
                         value?.replace("%", "") as unknown as number
                     }
-                    value={infill}
+                    value={value}
                     onChange={onChange}
                 />
             </Flex>

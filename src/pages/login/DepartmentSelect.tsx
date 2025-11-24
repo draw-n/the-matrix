@@ -1,15 +1,12 @@
 import { Flex, Select } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ControlledValueProps } from "../../types/common";
 
-interface DepartmentSelectProps {
-    onChange?: (value: string[]) => void;
-    value?: string[];
-}
-const DepartmentSelect: React.FC<DepartmentSelectProps> = ({
+const DepartmentSelect: React.FC<ControlledValueProps<string[]>> = ({
     onChange,
     value,
-}: DepartmentSelectProps) => {
+}) => {
     const [departments, setDepartments] = useState<string[]>([]);
     useEffect(() => {
         const fetchDepartments = async () => {
@@ -25,7 +22,7 @@ const DepartmentSelect: React.FC<DepartmentSelectProps> = ({
         fetchDepartments();
     }, []);
     return (
-        <Flex gap="large"  vertical align="center" justify="center">
+        <Flex gap="large" vertical align="center" justify="center">
             <p>Select the department(s)/major(s) you are affiliated with.</p>
 
             <Select

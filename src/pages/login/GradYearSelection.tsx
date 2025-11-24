@@ -1,13 +1,8 @@
 import { Flex } from "antd";
 import CardSelection from "../../components/CardSelection";
-import { useState } from "react";
+import { ControlledValueProps } from "../../types/common";
 
-interface GradYearSelectionProps {
-    value?: string;
-    onChange?: (value: string) => void;
-}
-
-const GradYearSelection: React.FC<GradYearSelectionProps> = ({
+const GradYearSelection: React.FC<ControlledValueProps<string>> = ({
     value,
     onChange,
 }) => {

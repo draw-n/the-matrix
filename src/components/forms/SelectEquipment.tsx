@@ -8,18 +8,16 @@ import Loading from "../../components/Loading";
 import type { Equipment } from "../../types/equipment";
 
 import "./issues.css";
+import { ControlledValueProps } from "../../types/common";
 
-interface SelectEquipmentProps {
+interface SelectEquipmentProps extends ControlledValueProps<string> {
     category: string;
-    value?: string;
-    onChange?: (value: string) => void;
 }
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
     category,
     value,
     onChange,
-    ...rest
 }: SelectEquipmentProps) => {
     const [showEquipment, setShowEquipment] = useState<Equipment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);

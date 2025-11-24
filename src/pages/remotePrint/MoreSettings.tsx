@@ -1,6 +1,5 @@
 // Description: MoreSettings component for configuring additional 3D printing settings such as infill density and layer height.
 
-import { useAuth } from "../../hooks/AuthContext";
 import HasAccess from "../../components/rbac/HasAccess";
 
 import {
@@ -35,7 +34,6 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
     settingDetails,
     setSettingDetails,
 }: MoreSettingsProps) => {
-    const { user } = useAuth();
 
     const onChange: InputNumberProps["onChange"] = (value) => {
         if (Number.isNaN(value)) {
@@ -73,7 +71,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         strength and weight.
                     </p>
                     <InfillSlider
-                        infill={settingDetails.infill}
+                        value={settingDetails.infill}
                         onChange={onChange}
                     />
                 </Space>
