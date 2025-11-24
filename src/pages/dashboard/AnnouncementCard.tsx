@@ -82,7 +82,7 @@ const AnnouncementCard: React.FC = () => {
                 announcements.slice(page, page + 3).map((announcement) => (
                     <div key={announcement._id} style={{ marginBottom: 16 }}>
                         <Divider />
-                        <Tag>{announcement.type}</Tag>
+                        <Tag style={{textTransform: "uppercase"}}>{announcement.type}</Tag>
                         <Title level={4}>{announcement.title}</Title>
                         <p>{announcement.description}</p>
                     </div>

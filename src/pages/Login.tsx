@@ -1,9 +1,20 @@
 // Description: Login page for users
 
-import { Button,Flex, Form, FormProps, Input, message } from "antd";
+import DFLogo from "../assets/Digital-Fabrication-V.png";
+import {
+    theme,
+    Button,
+    Card,
+    Flex,
+    Form,
+    FormProps,
+    Input,
+    message,
+} from "antd";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import AuthenticationShell from "./login/AuthenticationShell";
 
 interface FieldType {
     email: string;
@@ -13,12 +24,12 @@ interface FieldType {
 
 const Login: React.FC = () => {
     const { user, login } = useAuth();
-    const location = useLocation();
     const navigate = useNavigate();
-
+    const colorPrimary = theme.useToken().token.colorPrimary;
+    const colorTextBase = theme.useToken().token.colorTextBase;
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            await login(values.email, values.password);
+            login(values.email, values.password);
         } catch (error: any) {
             if (error?.response?.data?.message) {
                 message.error(error.response.data.message);
@@ -35,77 +46,65 @@ const Login: React.FC = () => {
     }, [user]);
 
     return (
-        <>
-            <Flex style={{ width: "100vw", height: "100vh" }}>
-                <div className="login-background" style={{ width: "50%" }} />
-
-                <Flex
-                    flex="1"
-                    vertical
-                    justify="center"
-                    style={{ padding: "20px" }}
+        <AuthenticationShell>
+            <h1 style={{ textAlign: "center" }}>LOGIN</h1>
+            <Form
+                style={{ width: "100%" }}
+                layout="vertical"
+                autoComplete="off"
+                preserve={false}
+                onFinish={onFinish}
+            >
+                <Form.Item<FieldType>
+                    label="Vanderbilt Email"
+                    name="email"
+                    rules={[
+                        {
+                            required: true,
+                            message:
+                                "Please type in your Vanderbilt University email address.",
+                        },
+                        {
+                            pattern: /^[a-zA-Z0-9._%+-]+@vanderbilt\.edu$/i,
+                            message:
+                                "Please enter a valid Vanderbilt email address!",
+                        },
+                    ]}
                 >
-                    <h1 style={{ textAlign: "center" }}>LOGIN</h1>
-
-                    <Form
-                        style={{ width: "100%" }}
-                        layout="vertical"
-                        autoComplete="off"
-                        preserve={false}
-                        onFinish={onFinish}
+                    <Input />
+                </Form.Item>
+                <Form.Item<FieldType>
+                    style={{ width: "100%" }}
+                    label="Password"
+                    name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please add your password.",
+                        },
+                    ]}
+                >
+                    <Input.Password />
+                </Form.Item>
+                <Form.Item>
+                    <Button
+                        htmlType="submit"
+                        style={{
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                            width: "100%",
+                        }}
+                        type="primary"
                     >
-                        <Form.Item<FieldType>
-                            label="Email"
-                            name="email"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please type in your Vanderbilt University email address.",
-                                },
-                                {
-                                    pattern:
-                                        /^[a-zA-Z0-9._%+-]+@vanderbilt\.edu$/i,
-                                    message:
-                                        "Please enter a valid Vanderbilt email address!",
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item<FieldType>
-                            style={{ width: "100%" }}
-                            label="Password"
-                            name="password"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please add your password.",
-                                },
-                            ]}
-                        >
-                            <Input.Password />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button
-                                htmlType="submit"
-                                style={{
-                                    marginTop: "10px",
-                                    marginBottom: "10px",
-                                }}
-                                type="primary"
-                            >
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-
-                    <p style={{ textAlign: "center" }}>
-                        First time user? <a onClick={() => navigate("/signup")}>Signup</a>
-                    </p>
-                </Flex>
-            </Flex>
-        </>
+                        Submit
+                    </Button>
+                </Form.Item>
+            </Form>
+            <p style={{ textAlign: "center" }}>
+                First time user?{" "}
+                <a onClick={() => navigate("/signup")}>Signup</a>
+            </p>
+        </AuthenticationShell>
     );
 };
 

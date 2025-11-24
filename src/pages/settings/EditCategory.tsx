@@ -1,16 +1,14 @@
 import {
     DeleteOutlined,
-    EditOutlined,
     PlusOutlined,
-    SaveOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
 import { Button, Typography, Collapse, Flex, List, message, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { Category } from "../../types/Category";
+import { Category } from "../../types/category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
-import { Equipment } from "../../types/Equipment";
+import { Equipment } from "../../types/equipment";
 import { Material } from "../../types/material";
 import ConfirmAction from "../../components/ConfirmAction";
 import CategoryForm from "../../components/forms/CategoryForm";
