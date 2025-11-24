@@ -1,5 +1,6 @@
+// Description: UserDirectory component for displaying and managing the user directory with filtering and deletion capabilities.
 import { useEffect, useState } from "react";
-import { useAuth, type User } from "../../hooks/AuthContext";
+import { User } from "../../types/user";
 import {
     Flex,
     Row,

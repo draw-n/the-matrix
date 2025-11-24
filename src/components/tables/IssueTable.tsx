@@ -1,3 +1,8 @@
+// Description: A table component to display and manage issues reported by users
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 import {
     Button,
     Flex,
@@ -8,17 +13,17 @@ import {
     Tag,
     Tooltip,
 } from "antd";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import type { Issue } from "../../types/Issue";
-import { Equipment } from "../../types/Equipment";
-import { User } from "../../hooks/AuthContext";
-import { DeleteOutlined, FolderOutlined } from "@ant-design/icons";
-import { checkAccess } from "../rbac/HasAccess";
+import { DeleteOutlined } from "@ant-design/icons";
 import AutoAvatar from "../AutoAvatar";
 import { geekblue, gold, green, red } from "@ant-design/colors";
-import EditIssueForm from "../forms/EditIssueForm";
 import { useNavigate } from "react-router-dom";
+
+import type { Issue } from "../../types/issue";
+import type { Equipment } from "../../types/equipment";
+import type { User } from "../../types/user";
+import { checkAccess } from "../rbac/HasAccess";
+
+import EditIssueForm from "../forms/EditIssueForm";
 
 interface TableIssue extends Issue {
     key: string;

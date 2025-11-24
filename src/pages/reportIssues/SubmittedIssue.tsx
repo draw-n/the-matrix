@@ -1,3 +1,5 @@
+// Description: SubmittedIssue component to display a success message after issue submission.
+
 import { Button, Result } from "antd";
 import React from "react";
 

@@ -1,3 +1,5 @@
+// Description: Form component for creating new equipment entries.
+
 import {
     Input,
     Form,
@@ -11,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
-import { Category } from "../../types/Category";
+import { Category } from "../../types/category";
 
 const { TextArea } = Input;
 

@@ -1,10 +1,14 @@
-import { Flex, Dropdown, Button, Row, Col, Empty, Space } from "antd";
+// Description: EquipmentTab component for displaying and managing equipment in the makerspace.
 import axios from "axios";
 import { useEffect, useState } from "react";
+
+import type { Category } from "../../types/category";
+import type { Equipment } from "../../types/equipment";
+
+import { Flex, Dropdown, Button, Row, Col, Empty, Space } from "antd";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
 import HasAccess from "../../components/rbac/HasAccess";
-import { Category } from "../../types/Category";
-import { Equipment } from "../../types/Equipment";
+
 import EquipmentCard from "./EquipmentCard";
 
 const EquipmentTab = ({

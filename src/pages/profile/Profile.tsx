@@ -1,20 +1,21 @@
+// Description: Profile page component for displaying and editing user profile information.
+
+import { useAuth } from "../../hooks/AuthContext";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import {
     Alert,
     Button,
     Card,
-    Col,
     Descriptions,
-    DescriptionsProps,
     Flex,
     Input,
     message,
-    Row,
     Space,
 } from "antd";
-import { useAuth } from "../../hooks/AuthContext";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { ArrowRightOutlined, RightOutlined } from "@ant-design/icons";
+
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 const Profile: React.FC = () => {
     const { user } = useAuth();

@@ -1,16 +1,11 @@
-import {
-    Button,
-    Col,
-    Flex,
-    InputNumber,
-    Row,
-    Select,
-    Space,
-    Switch,
-} from "antd";
-import { FilamentAdvancedSettings } from "../../../types/Equipment";
-import { Material } from "../../../types/Material";
-import { CaretDownFilled, RedoOutlined } from "@ant-design/icons";
+// Description: Advanced settings component for remote printing, allowing users to configure filament settings.
+
+import { Button, Col, Flex, InputNumber, Row, Space, Switch } from "antd";
+
+import { RedoOutlined } from "@ant-design/icons";
+
+import type { FilamentAdvancedSettings } from "../../../types/equipment";
+import type { Material } from "../../../types/material";
 
 interface AdvancedSettingsProps {
     settingDetails: FilamentAdvancedSettings;
@@ -77,8 +72,11 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                             },
                         ].map((group) => {
                             const key = group.key as "extruder" | "bed";
-                            const typedKey = key as keyof typeof settingDetails.temperatures;
-                            const values = settingDetails.temperatures[typedKey] as any;
+                            const typedKey =
+                                key as keyof typeof settingDetails.temperatures;
+                            const values = settingDetails.temperatures[
+                                typedKey
+                            ] as any;
 
                             return (
                                 <>
@@ -90,15 +88,23 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                         <Flex gap="10px" justify="end">
                                             <p>First layer:</p>
                                             <InputNumber
-                                                min={group.defaults.firstLayer - 10}
-                                                max={group.defaults.firstLayer + 10}
+                                                min={
+                                                    group.defaults.firstLayer -
+                                                    10
+                                                }
+                                                max={
+                                                    group.defaults.firstLayer +
+                                                    10
+                                                }
                                                 value={values.firstLayer}
-                                                formatter={(value) => `${value} °C`}
+                                                formatter={(value) =>
+                                                    `${value} °C`
+                                                }
                                                 parser={(value) =>
-                                                    (value?.replace(
+                                                    value?.replace(
                                                         " °C",
                                                         ""
-                                                    ) as unknown) as number
+                                                    ) as unknown as number
                                                 }
                                                 onChange={(value) =>
                                                     setSettingDetails({
@@ -106,10 +112,17 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                                         temperatures: {
                                                             ...settingDetails.temperatures,
                                                             [typedKey]: {
-                                                                ...settingDetails.temperatures[typedKey],
+                                                                ...settingDetails
+                                                                    .temperatures[
+                                                                    typedKey
+                                                                ],
                                                                 firstLayer:
                                                                     (value as number) ??
-                                                                    settingDetails.temperatures[typedKey].firstLayer,
+                                                                    settingDetails
+                                                                        .temperatures[
+                                                                        typedKey
+                                                                    ]
+                                                                        .firstLayer,
                                                             },
                                                         },
                                                     })
@@ -122,10 +135,19 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                                         temperatures: {
                                                             ...settingDetails.temperatures,
                                                             [typedKey]: {
-                                                                ...settingDetails.temperatures[typedKey],
+                                                                ...settingDetails
+                                                                    .temperatures[
+                                                                    typedKey
+                                                                ],
                                                                 firstLayer:
-                                                                    group.defaults.firstLayer ||
-                                                                    settingDetails.temperatures[typedKey].firstLayer,
+                                                                    group
+                                                                        .defaults
+                                                                        .firstLayer ||
+                                                                    settingDetails
+                                                                        .temperatures[
+                                                                        typedKey
+                                                                    ]
+                                                                        .firstLayer,
                                                             },
                                                         },
                                                     })
@@ -139,15 +161,23 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                         <Flex gap="10px" justify="end">
                                             <p>Other layers:</p>
                                             <InputNumber
-                                                min={group.defaults.otherLayers - 10}
-                                                max={group.defaults.otherLayers + 10}
+                                                min={
+                                                    group.defaults.otherLayers -
+                                                    10
+                                                }
+                                                max={
+                                                    group.defaults.otherLayers +
+                                                    10
+                                                }
                                                 value={values.otherLayers}
-                                                formatter={(value) => `${value} °C`}
+                                                formatter={(value) =>
+                                                    `${value} °C`
+                                                }
                                                 parser={(value) =>
-                                                    (value?.replace(
+                                                    value?.replace(
                                                         " °C",
                                                         ""
-                                                    ) as unknown) as number
+                                                    ) as unknown as number
                                                 }
                                                 onChange={(value) =>
                                                     setSettingDetails({
@@ -155,10 +185,17 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                                         temperatures: {
                                                             ...settingDetails.temperatures,
                                                             [typedKey]: {
-                                                                ...settingDetails.temperatures[typedKey],
+                                                                ...settingDetails
+                                                                    .temperatures[
+                                                                    typedKey
+                                                                ],
                                                                 otherLayers:
                                                                     (value as number) ??
-                                                                    settingDetails.temperatures[typedKey].otherLayers,
+                                                                    settingDetails
+                                                                        .temperatures[
+                                                                        typedKey
+                                                                    ]
+                                                                        .otherLayers,
                                                             },
                                                         },
                                                     })
@@ -171,10 +208,19 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                                                         temperatures: {
                                                             ...settingDetails.temperatures,
                                                             [typedKey]: {
-                                                                ...settingDetails.temperatures[typedKey],
+                                                                ...settingDetails
+                                                                    .temperatures[
+                                                                    typedKey
+                                                                ],
                                                                 otherLayers:
-                                                                    group.defaults.otherLayers ||
-                                                                    settingDetails.temperatures[typedKey].otherLayers,
+                                                                    group
+                                                                        .defaults
+                                                                        .otherLayers ||
+                                                                    settingDetails
+                                                                        .temperatures[
+                                                                        typedKey
+                                                                    ]
+                                                                        .otherLayers,
                                                             },
                                                         },
                                                     })

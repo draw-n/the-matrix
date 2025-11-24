@@ -1,12 +1,14 @@
-import { Button, Flex, Form, FormProps, Space } from "antd";
-import NotFound from "../../components/NotFound";
-import CreateIssueForm from "../../components/forms/CreateIssueForm";
+// Description: ReportAnIssue component for guiding users through the multi-step issue reporting process.
+
+import axios from "axios";
+import { useAuth } from "../../hooks/AuthContext";
+
+import { Button, Flex } from "antd";
 import CategorySelection from "./CategorySelection";
 import { useState } from "react";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+
 import EquipmentSelection from "./EquipmentSelection";
-import axios from "axios";
-import { useAuth } from "../../hooks/AuthContext";
 import Description from "./Description";
 import IssueSelection from "./IssueSelection";
 import MoreDetails from "./MoreDetails";

@@ -1,3 +1,5 @@
+// Description: Main application component that sets up routing and theming.
+
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 
 import Shell from "./components/Shell";
@@ -15,7 +17,7 @@ import Settings from "./pages/settings/Settings";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Equipment } from "./types/Equipment";
+import { Equipment } from "./types/equipment";
 import Signup from "./pages/Signup";
 import RemotePrint from "./pages/remotePrint/RemotePrint";
 import Dashboard from "./pages/dashboard/Dashboard";

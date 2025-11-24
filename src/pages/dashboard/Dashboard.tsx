@@ -1,20 +1,19 @@
+// Description: Dashboard page displaying user greeting and various dashboard cards.
+import { useAuth } from "../../hooks/AuthContext";
+
 import {
     Flex,
-    Button,
     Space,
     Row,
     Col,
     Card,
-    Tooltip,
     theme,
-    Typography,
 } from "antd";
 
 import AnnouncementCard from "./AnnouncementCard";
 import SocialsCard from "./SocialsCard";
 import AdminCard from "./AdminCard";
 import RemotePrintCard from "./RemotePrintCard";
-import { useAuth } from "../../hooks/AuthContext";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();

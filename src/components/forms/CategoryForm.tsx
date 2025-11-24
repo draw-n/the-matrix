@@ -1,5 +1,6 @@
+// Description: CategoryForm component for adding and editing categories in the settings page.
+
 import {
-    Button,
     ColorPicker,
     Flex,
     Form,
@@ -10,8 +11,7 @@ import {
     Select,
 } from "antd";
 import axios from "axios";
-import { useState } from "react";
-import { Category } from "../../types/Category";
+import { Category, CategoryProperties } from "../../types/category";
 import randomColor from "randomcolor";
 
 interface CategoryFormProps {
@@ -23,7 +23,7 @@ interface CategoryFormProps {
 
 interface FieldType {
     name: string;
-    properties: string[];
+    properties: CategoryProperties[];
     color: string;
 }
 

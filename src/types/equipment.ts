@@ -1,4 +1,4 @@
-import { FilamentTemperatures } from "./Material";
+import { FilamentTemperatures } from "./material";
 
 export interface Equipment {
     _id: string;

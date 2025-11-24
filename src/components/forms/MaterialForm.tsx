@@ -1,3 +1,6 @@
+import axios from "axios";
+
+
 import React, { useEffect, useState } from "react";
 import {
     Button,
@@ -14,10 +17,9 @@ import {
     message,
     Tooltip,
 } from "antd";
-import axios from "axios";
-import { FilamentTemperatures, Material } from "../../types/Material";
+import { FilamentTemperatures, Material } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Category } from "../../types/Category";
+import { Category } from "../../types/category";
 
 interface MaterialFormProps {
     material?: Material;

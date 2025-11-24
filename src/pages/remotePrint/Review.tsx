@@ -1,4 +1,6 @@
-import { CaretLeftFilled, CaretLeftOutlined } from "@ant-design/icons";
+// Description: Review component for summarizing and confirming 3D print job details before submission.
+
+import { CaretLeftOutlined } from "@ant-design/icons";
 import {
     Button,
     Card,
@@ -12,11 +14,9 @@ import {
     Upload,
     UploadFile,
 } from "antd";
-import { useEffect } from "react";
-import { Material } from "../../types/Material";
-import { FilamentAdvancedSettings } from "../../types/Equipment";
+import { Material } from "../../types/material";
+import { FilamentAdvancedSettings } from "../../types/equipment";
 import ConfirmAction from "../../components/ConfirmAction";
-import ViewModel from "./components/ViewModel";
 
 interface ReviewProps {
     prev: () => void;

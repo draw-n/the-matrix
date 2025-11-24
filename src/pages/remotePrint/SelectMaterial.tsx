@@ -1,9 +1,10 @@
-import { Button, Flex, List, Skeleton, Space, Tag } from "antd";
-import { Material } from "../../types/Material";
+// Description: SelectMaterial component for choosing a material for 3D printing from a list of available options.
+
+import { Button, Flex, Skeleton, Space, Tag } from "antd";
+import { Material } from "../../types/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Loading from "../../components/Loading";
-import { CaretLeftFilled, CaretLeftOutlined } from "@ant-design/icons";
+import { CaretLeftOutlined } from "@ant-design/icons";
 
 interface SelectMaterialProps {
     next: () => void;

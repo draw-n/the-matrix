@@ -1,3 +1,5 @@
+// Description: DownloadEmails component for downloading user email addresses as a text file.
+
 import { DownloadOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import axios from "axios";

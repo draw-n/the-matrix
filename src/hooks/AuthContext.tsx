@@ -1,3 +1,5 @@
+// Description: A React context for managing user authentication state, including login, logout, and fetching the current user.
+
 import axios from "axios";
 import React, {
     createContext,
@@ -6,7 +8,7 @@ import React, {
     ReactNode,
     useEffect,
 } from "react";
-import { User } from "../types/User";
+import { User } from "../types/user";
 
 interface AuthContextType {
     setUser: (item: User) => void;

@@ -1,3 +1,5 @@
+// Description: EditDefaultIssue component for editing, saving, and deleting default issues in the settings page.
+
 import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Button, Flex, Input, Popconfirm, Tooltip } from "antd";
 import React, { useState } from "react";

@@ -1,10 +1,13 @@
-import { Carousel, Empty, Flex, Tag, Typography } from "antd";
-import { CarouselRef } from "antd/es/carousel";
+// Description: A carousel component to display announcements fetched from the backend API
 
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+
+import { Carousel, Empty, Flex, Tag, Typography } from "antd";
+import { CarouselRef } from "antd/es/carousel";
+
 import Loading from "./Loading";
-import type { Announcement } from "../types/Announcement";
+import type { Announcement } from "../types/announcement";
 import { geekblueDark } from "@ant-design/colors";
 
 interface AnnouncementCarouselProps {

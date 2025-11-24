@@ -1,5 +1,8 @@
+// Description: UserCard component for displaying and editing user information in the user directory.
+
 import { Button, Card, Flex, Popconfirm, Select, Space } from "antd";
-import { useAuth, type User } from "../../hooks/AuthContext";
+import { useAuth } from "../../hooks/AuthContext";
+import { User } from "../../types/user";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -7,7 +10,6 @@ import {
     DeleteOutlined,
     EditOutlined,
     SaveOutlined,
-    UserSwitchOutlined,
 } from "@ant-design/icons";
 
 interface UserCardProps {

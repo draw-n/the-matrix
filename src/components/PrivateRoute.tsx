@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// Description: A higher-order component that protects routes by checking user authentication status and redirects unauthenticated users to the login page.
+import React, { useEffect } from "react";
 import { useAuth } from "../hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
 

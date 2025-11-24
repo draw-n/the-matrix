@@ -1,13 +1,20 @@
+// Description: RemotePrint page for managing the remote 3D printing workflow including file upload, material selection, settings configuration, and review.
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { Button, Flex, Result, Space, Steps, message } from "antd";
+
 import UploadFile from "./UploadFile";
 import SelectMaterial from "./SelectMaterial";
 import MoreSettings from "./MoreSettings";
 import Review from "./Review";
-import { useEffect, useState } from "react";
-import { Material } from "../../types/Material";
-import { FilamentAdvancedSettings } from "../../types/Equipment";
-import { useAuth, User } from "../../hooks/AuthContext";
-import axios from "axios";
+
+import { Material } from "../../types/material";
+import type { FilamentAdvancedSettings } from "../../types/equipment";
+import { useAuth } from "../../hooks/AuthContext";
+import { User } from "../../types/user";
+
 import Loading from "../../components/Loading";
 
 const RemotePrint: React.FC = () => {
@@ -17,28 +24,29 @@ const RemotePrint: React.FC = () => {
     const [current, setCurrent] = useState(0);
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
     const [material, setMaterial] = useState<Material | null>(null);
-    const [settingDetails, setSettingDetails] = useState<FilamentAdvancedSettings>({
-        infill: 20,
-        layerHeight: 0.2,
-        supports: true,
-        temperatures: {
-            extruder: {
-                firstLayer: 240,
-                otherLayers: 240,
+    const [settingDetails, setSettingDetails] =
+        useState<FilamentAdvancedSettings>({
+            infill: 20,
+            layerHeight: 0.2,
+            supports: true,
+            temperatures: {
+                extruder: {
+                    firstLayer: 240,
+                    otherLayers: 240,
+                },
+                bed: {
+                    firstLayer: 65,
+                    otherLayers: 65,
+                },
             },
-            bed: {
-                firstLayer: 65,
-                otherLayers: 65,
+            horizontalShell: {
+                topLayers: 3,
+                bottomLayers: 3,
             },
-        },
-        horizontalShell: {
-            topLayers: 3,
-            bottomLayers: 3,
-        },
-        verticalShell: {
-            perimeters: 3,
-        },
-    });
+            verticalShell: {
+                perimeters: 3,
+            },
+        });
 
     useEffect(() => {
         const handleBeforeUnload = (event: {

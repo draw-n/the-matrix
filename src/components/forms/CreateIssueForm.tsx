@@ -1,3 +1,9 @@
+// Description: Form component for creating new issue reports.
+
+import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/AuthContext";
+import axios from "axios";
+
 import {
     Button,
     Form,
@@ -8,13 +14,12 @@ import {
     Tooltip,
     Modal,
 } from "antd";
-import { useEffect, useState } from "react";
-import SelectEquipment from "./SelectEquipment";
-import { useAuth } from "../../hooks/AuthContext";
-import "./issues.css";
-import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
-import { Category } from "../../types/Category";
+
+import SelectEquipment from "./SelectEquipment";
+
+import { Category } from "../../types/category";
+import "./issues.css";
 
 const { TextArea } = Input;
 
@@ -29,7 +34,9 @@ interface CreateIssueFormProps {
     onUpdate: () => void;
 }
 
-const CreateIssueForm: React.FC<CreateIssueFormProps> = ({ onUpdate }: CreateIssueFormProps) => {
+const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
+    onUpdate,
+}: CreateIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
 

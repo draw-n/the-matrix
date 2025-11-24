@@ -1,18 +1,11 @@
-import {
-    Card,
-    Flex,
-    Tag,
-    Skeleton,
-    Input,
-    theme,
-    Space,
-    Divider,
-    Button,
-} from "antd";
-import { Equipment } from "../../types/Equipment";
+// Description: HeaderCard component for displaying equipment header information.
 import React from "react";
-import HasAccess from "../../components/rbac/HasAccess";
+import { Card, Flex, Tag, theme, Button } from "antd";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
+
+import { Equipment } from "../../types/equipment";
+
+import HasAccess from "../../components/rbac/HasAccess";
 
 interface HeaderCardProps {
     equipment: Equipment;

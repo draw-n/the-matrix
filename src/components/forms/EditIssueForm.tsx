@@ -1,19 +1,14 @@
-import { EditOutlined } from "@ant-design/icons";
-import {
-    Button,
-    Flex,
-    Form,
-    FormProps,
-    Input,
-    Modal,
-    Select,
-    Tooltip,
-} from "antd";
+// Description: Form component for editing existing issue reports.
+
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Issue } from "../../types/Issue";
-import { User } from "../../hooks/AuthContext";
+
+import { Button, Form, FormProps, Input, Modal, Select, Tooltip } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+
 import HasAccess from "../rbac/HasAccess";
+import { Issue, IssueStatus } from "../../types/issue";
+import { User } from "../../types/user";
 
 const { TextArea } = Input;
 
@@ -23,7 +18,7 @@ interface EditIssueFormProps {
 }
 
 interface FieldType {
-    status: string;
+    status: IssueStatus;
     description: string;
     assignedTo: string[];
 }
@@ -127,7 +122,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                                     label: "Open",
                                 },
                                 {
-                                    value: "in progress",
+                                    value: "in-progress",
                                     label: "In Progress",
                                 },
                                 {

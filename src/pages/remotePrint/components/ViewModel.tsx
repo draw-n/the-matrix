@@ -1,3 +1,5 @@
+// Description: ViewModel component for rendering and manipulating 3D models in STL and 3MF formats.
+
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import {
