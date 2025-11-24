@@ -1,9 +1,12 @@
-import { Card, Flex, Space } from "antd";
-import AnnouncementForm from "../../components/forms/AnnouncementForm";
-import AnnouncementTable from "../../components/tables/AnnouncementTable";
+// Description: AnnouncementTab component for managing and displaying announcements.
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Announcement } from "../../types/Announcement";
+
+import {  Flex, Space } from "antd";
+import AnnouncementForm from "../../components/forms/AnnouncementForm";
+import AnnouncementTable from "../../components/tables/AnnouncementTable";
+
+import { Announcement } from "../../types/announcement";
 
 const AnnouncementTab: React.FC = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);

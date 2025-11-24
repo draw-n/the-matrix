@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { User } from "../../hooks/AuthContext";
+// Description: A table component to display a list of users with their names and email addresses
+
 import axios from "axios";
+
+import React, { useEffect, useState } from "react";
+import { User } from "../../types/user";
+
 import { Table, TableProps } from "antd";
 
 const UserTable: React.FC = () => {
-    // Component code here
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -45,7 +48,6 @@ const UserTable: React.FC = () => {
                 return <a href={`mailto:${record.email}`}>{record.email}</a>;
             },
         },
-
     ];
     const numRows = 5;
     return (

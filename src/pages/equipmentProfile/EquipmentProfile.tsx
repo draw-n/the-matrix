@@ -1,3 +1,8 @@
+// Description: EquipmentProfile component for displaying and editing equipment details.
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import {
     Button,
     Card,
@@ -9,17 +14,17 @@ import {
     Space,
     Typography,
 } from "antd";
-import { Equipment } from "../../types/Equipment";
+import { Equipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Category } from "../../types/Category";
+
+import type { Category } from "../../types/category";
 import ConfirmAction from "../../components/ConfirmAction";
+
+import { useNavigate } from "react-router-dom";
+import type { Issue } from "../../types/issue";
+
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
-import { useNavigate } from "react-router-dom";
-import { Issue } from "../../types/Issue";
-import { ref } from "process";
 
 const { Paragraph, Title } = Typography;
 
@@ -46,6 +51,11 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [issues, setIssues] = useState<Issue[]>([]);
 
     const navigate = useNavigate();
+
+    /**
+     * Fetches issue data for the equipment.
+     */
+
     const fetchIssueData = async () => {
         try {
             let response;
@@ -90,14 +100,18 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         fetchData();
         fetchIssueData();
     }, []);
-
+    /**
+     * Toggles edit mode and saves changes if exiting edit mode.
+     */
     const handleClick = () => {
         if (editMode) {
             saveEquipmentChanges();
         }
         setEditMode((prev) => !prev);
     };
-
+    /**
+     * Saves the equipment changes made in edit mode.
+     */
     const saveEquipmentChanges = async () => {
         try {
             const editedEquipment = {
@@ -121,7 +135,9 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
             console.error("Issue updating equipment", error);
         }
     };
-
+    /**
+     * Deletes the equipment and navigates back to the makerspace page.
+     */
     const deleteEquipment = async () => {
         try {
             const response = await axios.delete(

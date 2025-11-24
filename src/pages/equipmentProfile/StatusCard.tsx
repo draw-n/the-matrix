@@ -1,8 +1,7 @@
+// Description: StatusCard component for displaying equipment status.
 import { Card, Flex, Typography } from "antd";
-import TextArea from "antd/es/input/TextArea";
-import Paragraph from "antd/es/skeleton/Paragraph";
 
-import { Equipment } from "../../types/Equipment";
+import { Equipment } from "../../types/equipment";
 
 interface StatusCardProps {
     equipment: Equipment;

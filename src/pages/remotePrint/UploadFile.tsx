@@ -1,8 +1,12 @@
-import { CaretRightOutlined, InboxOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, message, Space, Upload, UploadProps } from "antd";
-import type { UploadFile } from "antd";
+// Description: UploadFile component for uploading and previewing 3D model files before proceeding to material selection.
+
 import axios from "axios";
 import { useRef } from "react";
+
+import { CaretRightOutlined, InboxOutlined } from "@ant-design/icons";
+import { Button, Flex, message, Upload, UploadProps } from "antd";
+import type { UploadFile } from "antd";
+
 import ViewModel from "./components/ViewModel";
 const { Dragger } = Upload;
 
@@ -18,7 +22,9 @@ const UploadFile: React.FC<UploadFileProps> = ({
     setUploadedFile,
 }: UploadFileProps) => {
     // store the small API object registered by ViewModel (avoids forwarded refs)
-    const viewModelApiRef = useRef<{ exportAndReplace?: () => Promise<any> } | null>(null);
+    const viewModelApiRef = useRef<{
+        exportAndReplace?: () => Promise<any>;
+    } | null>(null);
 
     const handleSubmit = async () => {
         if (uploadedFile.length === 0) {
@@ -26,7 +32,8 @@ const UploadFile: React.FC<UploadFileProps> = ({
         } else {
             try {
                 if (viewModelApiRef.current?.exportAndReplace) {
-                    const resp = await viewModelApiRef.current.exportAndReplace();
+                    const resp =
+                        await viewModelApiRef.current.exportAndReplace();
                     if (resp) {
                         next();
                     }

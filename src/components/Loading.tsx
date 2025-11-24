@@ -1,3 +1,4 @@
+// Description: A simple loading spinner component using Ant Design's Spin and Flex components to center the spinner.
 import React from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Flex, Spin } from "antd";

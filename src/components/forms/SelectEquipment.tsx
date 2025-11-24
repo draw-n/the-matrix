@@ -1,8 +1,11 @@
-import { Card, Space, Row, Col, Typography, Flex, Empty } from "antd";
+// Description: A component to select equipment based on category
 import axios from "axios";
 import { useEffect, useState } from "react";
+
+import { Row, Col, Typography, Flex, Empty } from "antd";
+
 import Loading from "../../components/Loading";
-import type { Equipment } from "../../types/Equipment";
+import type { Equipment } from "../../types/equipment";
 
 import "./issues.css";
 

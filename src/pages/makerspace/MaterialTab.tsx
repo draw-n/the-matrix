@@ -1,10 +1,12 @@
-import { Card, Flex, Space } from "antd";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+import { Flex, Space } from "antd";
 import MaterialForm from "../../components/forms/MaterialForm";
 import HasAccess from "../../components/rbac/HasAccess";
 import MaterialTable from "../../components/tables/MaterialTable";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Material } from "../../types/Material";
+
+import { Material } from "../../types/material";
 
 const MaterialTab: React.FC = () => {
     const [materials, setMaterials] = useState<Material[]>([]);

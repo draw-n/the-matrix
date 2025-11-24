@@ -1,3 +1,6 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 import {
     Button,
     Popconfirm,
@@ -7,16 +10,17 @@ import {
     Tag,
     Tooltip,
 } from "antd";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import type { Material } from "../../types/Material";
-import MaterialForm from "../forms/MaterialForm";
+
 import {
     CheckOutlined,
     CloseOutlined,
     DeleteOutlined,
 } from "@ant-design/icons";
-import { Category } from "../../types/Category";
+
+import type { Material } from "../../types/material";
+import MaterialForm from "../forms/MaterialForm";
+
+import { Category } from "../../types/category";
 import { checkAccess } from "../rbac/HasAccess";
 
 interface TableMaterial extends Material {

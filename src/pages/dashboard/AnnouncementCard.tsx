@@ -1,3 +1,8 @@
+// Description: AnnouncementCard component displaying announcements with pagination and action buttons.
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import {
     Button,
     Card,
@@ -8,12 +13,10 @@ import {
     Tooltip,
     Typography,
 } from "antd";
-import { useEffect, useState } from "react";
-import { Announcement } from "../../types/Announcement";
-import axios from "axios";
 import { EditOutlined, DesktopOutlined } from "@ant-design/icons";
+
+import { Announcement } from "../../types/announcement";
 import HasAccess from "../../components/rbac/HasAccess";
-import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -22,7 +25,7 @@ const AnnouncementCard: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(0);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {

@@ -1,22 +1,21 @@
+// Description: PrintingChart component displaying a chart of remote prints over the past month.
+
+import { useAuth } from "../../hooks/AuthContext";
+import { useMemo, useState } from "react";
+import dayjs from "dayjs";
+
 import {
     Area,
     AreaChart,
     CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
     YAxis,
 } from "recharts";
+import { Empty, Flex, Typography } from "antd";
 
-import { geekblueDark, red } from "@ant-design/colors";
-import { Empty, Flex, Radio, Segmented, Typography } from "antd";
-import { CheckboxGroupProps } from "antd/es/checkbox";
-import { useAuth } from "../../hooks/AuthContext";
-import { useMemo, useState } from "react";
-import dayjs from "dayjs";
+import { red } from "@ant-design/colors";
 
 const PrintingChart: React.FC = () => {
     const { user } = useAuth();

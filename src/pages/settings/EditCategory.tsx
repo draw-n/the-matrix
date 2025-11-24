@@ -11,9 +11,9 @@ import { Category } from "../../types/Category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
 import { Equipment } from "../../types/Equipment";
-import { Material } from "../../types/Material";
+import { Material } from "../../types/material";
 import ConfirmAction from "../../components/ConfirmAction";
-import CategoryForm from "./CategoryForm";
+import CategoryForm from "../../components/forms/CategoryForm";
 
 interface EditCategoryProps {
     category: Category;

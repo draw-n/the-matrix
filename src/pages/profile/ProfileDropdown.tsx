@@ -1,24 +1,14 @@
+import { useAuth } from "../../hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+import { Dropdown, Button, MenuProps, Flex } from "antd";
 import {
-    Dropdown,
-    Tooltip,
-    Button,
-    MenuProps,
-    Flex,
-    Avatar,
-    Badge,
-} from "antd";
-import React from "react";
-import {
-    BellFilled,
-    BellOutlined,
     CaretDownFilled,
     LogoutOutlined,
     MoonFilled,
     SunFilled,
     UserOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../../hooks/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 interface ProfileDropdownProps {
     toggleTheme?: () => void;
@@ -73,7 +63,12 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
 
     return (
         <Flex align="center" gap="middle">
-            <Button size="middle" onClick={toggleTheme} variant="outlined" shape="circle">
+            <Button
+                size="middle"
+                onClick={toggleTheme}
+                variant="outlined"
+                shape="circle"
+            >
                 {theme == "light" ? <SunFilled /> : <MoonFilled />}
             </Button>
 

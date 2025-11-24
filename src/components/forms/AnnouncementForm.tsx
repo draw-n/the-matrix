@@ -1,3 +1,5 @@
+// Description: Announcement form component for creating and editing announcements.
+
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../hooks/AuthContext";
@@ -14,7 +16,7 @@ import {
 } from "antd";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-import type { Announcement } from "../../types/Announcement";
+import type { Announcement, AnnouncementType } from "../../types/announcement";
 
 const { TextArea } = Input;
 
@@ -24,7 +26,7 @@ interface AnnouncementFormProps {
 }
 
 interface FieldType {
-    type: string;
+    type: AnnouncementType;
     title: string;
     description: string;
 }

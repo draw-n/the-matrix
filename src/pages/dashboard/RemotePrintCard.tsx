@@ -1,3 +1,4 @@
+// Description: RemotePrintCard component displaying remote printing occurrences with a button to initiate a new print.
 import { PlusOutlined } from "@ant-design/icons";
 import { Card, Space, Flex, Button, Typography } from "antd";
 import PrintingChart from "./PrintingChart";

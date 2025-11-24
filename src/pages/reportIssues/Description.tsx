@@ -1,7 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Category } from "../../types/Category";
-import CardSelection from "../../components/CardSelection";
+// Description: Description component providing information about the issue reporting form for the Digital Fabrication Lab.
 import { Flex } from "antd";
 
 const Description: React.FC = () => {

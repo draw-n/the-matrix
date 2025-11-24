@@ -1,19 +1,31 @@
-import { Button, Collapse, Flex, Slider, Space } from "antd";
-import type { CollapseProps, InputNumberProps } from "antd";
-import InfillSlider from "./components/InfillSlider";
-import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
-import AdvancedSettings from "./components/AdvancedSettings";
-import { FilamentAdvancedSettings } from "../../types/Equipment";
-import { Material } from "../../types/Material";
+// Description: MoreSettings component for configuring additional 3D printing settings such as infill density and layer height.
+
 import { useAuth } from "../../hooks/AuthContext";
 import HasAccess from "../../components/rbac/HasAccess";
+
+import {
+    Button,
+    Collapse,
+    Flex,
+    Slider,
+    Space,
+    type CollapseProps,
+    type InputNumberProps,
+} from "antd";
+import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
+
+import AdvancedSettings from "./components/AdvancedSettings";
+import type { FilamentAdvancedSettings } from "../../types/equipment";
+import type { Material } from "../../types/material";
+
+import InfillSlider from "./components/InfillSlider";
 
 interface MoreSettingsProps {
     prev: () => void;
     next: () => void;
     material: Material | null;
-    settingDetails: FilamentMoreSettings;
-    setSettingDetails: (item: FilamentMoreSettings) => void;
+    settingDetails: FilamentAdvancedSettings;
+    setSettingDetails: (item: FilamentAdvancedSettings) => void;
 }
 
 const MoreSettings: React.FC<MoreSettingsProps> = ({

@@ -1,3 +1,4 @@
+// Description: A layout component that provides a responsive shell with sidebar navigation, header, and content area, incorporating role-based access control for different pages.
 import React, { useState } from "react";
 
 import {

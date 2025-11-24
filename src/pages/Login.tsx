@@ -1,7 +1,6 @@
 // Description: Login page for users
 
-import { Button, Divider, Flex, Form, FormProps, Input, message } from "antd";
-import axios from "axios";
+import { Button,Flex, Form, FormProps, Input, message } from "antd";
 import { useAuth } from "../hooks/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";

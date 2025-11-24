@@ -1,3 +1,5 @@
+// Description: A component that conditionally renders its children based on user roles
+
 import React from "react";
 import { useAuth } from "../../hooks/AuthContext";
 

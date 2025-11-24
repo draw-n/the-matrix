@@ -1,7 +1,7 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Category } from "../../types/Category";
-import CardSelection, {
+// Description: MoreDetails component for providing additional information about the reported issue.
+
+import React from "react";
+import  {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex, Input } from "antd";

@@ -1,11 +1,12 @@
+// Description: A card selection component that allows users to select from multiple options displayed as cards in a carousel format, with a fade-in effect on mount.
+
 import { geekblueDark } from "@ant-design/colors";
 import { Card, Carousel, Flex } from "antd";
 import { useState, useEffect } from "react";
+import { ControlledValueProps } from "../types/common";
 
-export interface CardSelectionProps {
+export interface CardSelectionProps extends ControlledValueProps<string>{
     options?: { label: string; value: string }[];
-    value?: string;
-    onChange?: (value: string) => void;
 }
 
 const CardSelection: React.FC<CardSelectionProps> = ({

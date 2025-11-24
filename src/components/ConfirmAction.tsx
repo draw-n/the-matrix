@@ -1,3 +1,4 @@
+// Description: A reusable confirmation modal component that prompts users to confirm or cancel an action, executing corresponding callbacks based on user choice.
 import { Modal, Space } from "antd";
 import React, { useState } from "react";
 

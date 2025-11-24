@@ -1,3 +1,4 @@
+// Description: AdminCard component displaying a help section with a user table.
 import { Card, Flex } from "antd";
 import React from "react";
 import UserTable from "../../components/tables/UserTable";

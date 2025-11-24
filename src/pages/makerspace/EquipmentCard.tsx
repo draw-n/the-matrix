@@ -1,3 +1,5 @@
+// Description: EquipmentCard component for displaying equipment information in a card format.
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -11,11 +13,9 @@ import {
     PauseCircleOutlined,
 } from "@ant-design/icons";
 
-import { EquipmentStatus } from "../../types/Equipment";
-
 import { gold, gray, green, purple, red } from "@ant-design/colors";
-import type { Equipment } from "../../types/Equipment";
-import type { Category } from "../../types/Category";
+import type { Equipment, EquipmentStatus } from "../../types/equipment";
+import type { Category } from "../../types/category";
 import { useNavigate } from "react-router-dom";
 
 interface EquipmentCardProps {

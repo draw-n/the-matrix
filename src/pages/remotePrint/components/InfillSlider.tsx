@@ -1,6 +1,6 @@
-import { Col, Flex, InputNumber, Row, Slider } from "antd";
-import type { InputNumberProps } from "antd";
-import { useState } from "react";
+// Description: InfillSlider component for adjusting infill percentage in remote printing settings.
+
+import { Flex, InputNumber, Slider } from "antd";
 
 interface InfillSliderProps {
     infill: number;

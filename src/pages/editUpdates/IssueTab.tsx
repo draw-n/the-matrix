@@ -1,19 +1,20 @@
-import { Card, Flex, Space } from "antd";
-import MaterialForm from "../../components/forms/MaterialForm";
-import HasAccess from "../../components/rbac/HasAccess";
-import IssueTable from "../../components/tables/IssueTable";
-import CreateIssueForm from "../../components/forms/CreateIssueForm";
+// Description: IssueTab component for managing and displaying issues.
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Issue } from "../../types/Issue";
+import { Flex, Space } from "antd";
+
+import { Issue } from "../../types/issue";
+import IssueTable from "../../components/tables/IssueTable";
+import CreateIssueForm from "../../components/forms/CreateIssueForm";
 
 const IssueTab: React.FC = () => {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [equipmentFilter, setEquipmentFilter] = useState<string>("");
+    
     const fetchData = async () => {
         try {
             let response;
-
             if (equipmentFilter) {
                 response = await axios.get<Issue[]>(
                     `${

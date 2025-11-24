@@ -1,3 +1,5 @@
+// Description: A React component that generates an avatar with a random bright background color and adjusts text color for readability based on background brightness.
+
 import { Avatar } from "antd";
 import randomColor from "randomcolor";
 

@@ -1,5 +1,6 @@
+// Description: Kiosk page component that displays an announcement carousel and auto-refreshes every hour.
+
 import React, { useEffect } from "react";
-import Updates from "../components/AnnouncementCarousel";
 import AnnouncementCarousel from "../components/AnnouncementCarousel";
 
 const Kiosk: React.FC = () => {

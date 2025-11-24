@@ -1,10 +1,11 @@
+// Description: Categories component for managing and editing categories in the settings page.
+
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Flex, Input, Space, Tabs, Tooltip } from "antd";
-import CategoryForm from "./CategoryForm";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Space, Tabs } from "antd";
+import CategoryForm from "../../components/forms/CategoryForm";
 import EditCategory from "./EditCategory";
 import axios from "axios";
-import { Category } from "../../types/Category";
+import { Category } from "../../types/category";
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 

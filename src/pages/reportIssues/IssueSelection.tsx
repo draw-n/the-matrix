@@ -1,11 +1,12 @@
+// Description: IssueSelection component for selecting specific issues related to a chosen category when reporting problems.
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Category } from "../../types/Category";
+import { Category } from "../../types/category";
 import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex } from "antd";
-import { Equipment } from "../../types/Equipment";
 
 interface IssueSelectionProps extends CardSelectionProps {
     categoryId: string;
