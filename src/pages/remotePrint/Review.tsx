@@ -17,6 +17,7 @@ import {
 import { Material } from "../../types/material";
 import { FilamentAdvancedSettings } from "../../types/equipment";
 import ConfirmAction from "../../components/ConfirmAction";
+import MeshViewer from "../../components/meshViewer/MeshViewer";
 
 interface ReviewProps {
     prev: () => void;
@@ -147,9 +148,10 @@ const Review: React.FC<ReviewProps> = ({
                                 customRequest={({ file, onSuccess }) => {
                                     // Simulating file upload
                                 }}
-                            >
-                                {/* The button won't be visible, and the upload list will still be shown */}
-                            </Upload>
+                            />
+                            <MeshViewer
+                                file={uploadedFile[0]}
+                            />
                         </Card>
                     </Col>
                 </Row>

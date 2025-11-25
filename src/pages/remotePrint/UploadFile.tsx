@@ -159,6 +159,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 )}
                 {uploadedFile.length > 0 && (
                     <MeshViewer
+                        allowFaceSelection
                         onRegister={(api) => (viewModelApiRef.current = api)}
                         file={uploadedFile[0]}
                         setFile={setUploadedFile}

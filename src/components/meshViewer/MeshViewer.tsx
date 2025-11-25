@@ -1,18 +1,12 @@
 // Description: MeshViewer component for rendering and manipulating 3D models in STL and 3MF formats.
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import {
-    STLLoader,
-    ThreeMFLoader,
-    STLExporter,
-} from "three/examples/jsm/Addons.js";
-import { useEffect, useMemo, useState, Suspense, useRef } from "react";
+import { STLExporter } from "three/examples/jsm/Addons.js";
+import { useEffect, useState, Suspense } from "react";
 import { Card, UploadFile, message } from "antd";
 import axios from "axios";
 import * as THREE from "three";
-import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry.js";
-import { geekblueDark } from "@ant-design/colors";
 import detectMajorFaces from "./faces/detectMajorFaces";
 import getExportableMesh from "./utils/getExportableMesh";
 import alignModelToFace from "./faces/alignModelToFace";
@@ -23,15 +17,15 @@ import FocusCameraOnLoad from "./camera/FocusCameraOnLoad";
 import SelectableFaces from "./faces/SelectableFaces";
 
 interface MeshViewerProps {
+    allowFaceSelection?: boolean;
     file: UploadFile;
     setFile?: (files: UploadFile[]) => void;
     // Registration callback so parents can receive an exported API without needing a ref
     onRegister?: (api: { exportAndReplace: () => Promise<any> } | null) => void;
 }
 
-
 const MeshViewer = (props: MeshViewerProps) => {
-    const { file, setFile, onRegister } = props;
+    const { file, setFile, onRegister, allowFaceSelection } = props;
     const isSTL = file?.name?.toLowerCase().endsWith(".stl");
     const is3MF = file?.name?.toLowerCase().endsWith(".3mf");
 
@@ -162,7 +156,7 @@ const MeshViewer = (props: MeshViewerProps) => {
             };
 
             if (setFile) setFile([uploadFile]);
-            message.success("Exported STL uploaded and replaced successfully");
+            message.success("Mesh pre-processed and uploaded successfully.");
             return resp;
         } catch (err: any) {
             console.error("Error exporting/uploading STL:", err);
@@ -216,13 +210,10 @@ const MeshViewer = (props: MeshViewerProps) => {
         return Math.max(0.005, Math.min(size.x, size.y, size.z) * 0.03);
     })();
 
-    function exportAsSTL(mesh: THREE.Mesh<THREE.BufferGeometry<THREE.NormalBufferAttributes, THREE.BufferGeometryEventMap>, THREE.Material | THREE.Material[], THREE.Object3DEventMap>, name: string): void {
-        throw new Error("Function not implemented.");
-    }
+   
 
     return (
         <Card style={{ width: "100%", height: "500px" }}>
-          
             <Canvas
                 camera={{ position: [0, 10, 0], up: [0, 0, 1], fov: 50 }}
                 onCreated={({ scene }) => {
@@ -233,8 +224,22 @@ const MeshViewer = (props: MeshViewerProps) => {
                     <HandleContextLoss />
 
                     {/* Load model */}
-                    {file && isSTL && <ModelSTL file={file} onLoad={setMesh} />}
-                    {file && is3MF && <Model3MF file={file} onLoad={setMesh} />}
+                    {file && isSTL && (
+                        <ModelSTL
+                            file={file}
+                            onLoad={(mesh) => {
+                                setMesh(mesh);
+                            }}
+                        />
+                    )}
+                    {file && is3MF && (
+                        <Model3MF
+                            file={file}
+                            onLoad={(mesh) => {
+                                setMesh(mesh);
+                            }}
+                        />
+                    )}
                     {mesh && (
                         <>
                             <FocusCameraOnLoad mesh={mesh} />
@@ -261,21 +266,29 @@ const MeshViewer = (props: MeshViewerProps) => {
                                                         )
                                                 );
                                             return (
+                                                allowFaceSelection && (
+                                                    <SelectableFaces
+                                                        faces={visible}
+                                                        onSelect={
+                                                            handleFaceSelect
+                                                        }
+                                                        markerSize={
+                                                            markerSizeForRender
+                                                        }
+                                                    />
+                                                )
+                                            );
+                                        }
+                                        return (
+                                            allowFaceSelection && (
                                                 <SelectableFaces
-                                                    faces={visible}
+                                                    faces={detectedFaces}
                                                     onSelect={handleFaceSelect}
                                                     markerSize={
                                                         markerSizeForRender
                                                     }
                                                 />
-                                            );
-                                        }
-                                        return (
-                                            <SelectableFaces
-                                                faces={detectedFaces}
-                                                onSelect={handleFaceSelect}
-                                                markerSize={markerSizeForRender}
-                                            />
+                                            )
                                         );
                                     })()}
                             </primitive>
@@ -301,6 +314,6 @@ const MeshViewer = (props: MeshViewerProps) => {
             </Canvas>
         </Card>
     );
-}
+};
 
 export default MeshViewer;
