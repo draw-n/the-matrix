@@ -83,10 +83,12 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
             <Tooltip title="Add Equipment" placement="topLeft">
                 <Button
                     type="primary"
-                    size="small"
+                    size="middle"
+                    iconPosition="end"
                     icon={<PlusOutlined />}
                     onClick={showModal}
-                />
+                    shape="round"
+                >Add New Equipment</Button>
             </Tooltip>
 
             <Modal

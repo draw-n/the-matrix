@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import type { Category } from "../../types/category";
 import type { Equipment } from "../../types/equipment";
 
-import { Flex, Dropdown, Button, Row, Col, Empty, Space } from "antd";
+import { Flex, Dropdown, Button, Row, Col, Empty, Space, Select } from "antd";
 import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
 import HasAccess from "../../components/rbac/HasAccess";
 
 import EquipmentCard from "./EquipmentCard";
+import CaretDownFilled from "@ant-design/icons/lib/icons/CaretDownFilled";
 
 const EquipmentTab = ({
     refreshEquipment,
@@ -58,30 +59,17 @@ const EquipmentTab = ({
                 <h2>EQUIPMENT</h2>
                 <Flex gap="middle" align="center">
                     {categories.length > 0 && (
-                        <Dropdown
-                            menu={{
-                                items: categories?.map((category) => ({
-                                    key: category._id,
-                                    label: category.name,
-                                })),
-                                onClick: ({ key }) => {
-                                    setFilter(key);
-                                },
-                            }}
-                            placement="bottom"
-                        >
-                            <Button
-                                variant="solid"
-                                size="small"
-                                style={{ width: 200 }}
-                            >
-                                {
-                                    categories?.find(
-                                        (item) => item._id === filter
-                                    )?.name
-                                }
-                            </Button>
-                        </Dropdown>
+                        <Select
+                            popupMatchSelectWidth={false}
+                            value={filter}
+                            onChange={(e) => setFilter(e)}
+                            size="middle"
+                            suffixIcon={<CaretDownFilled />}
+                            options={categories?.map((category) => ({
+                                label: category.name,
+                                value: category._id,
+                            }))}
+                        />
                     )}
                     <HasAccess roles={["admin", "moderator"]}>
                         <CreateEquipmentForm

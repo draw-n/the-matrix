@@ -15,7 +15,11 @@ import {
     Space,
 } from "antd";
 
-import { ArrowRightOutlined } from "@ant-design/icons";
+import {
+    ArrowRightOutlined,
+    EditOutlined,
+    SaveOutlined,
+} from "@ant-design/icons";
 
 const Profile: React.FC = () => {
     const { user } = useAuth();
@@ -99,9 +103,19 @@ const Profile: React.FC = () => {
                     >
                         <Flex justify="space-between" style={{ width: "100%" }}>
                             <h2>Personal Information</h2>
-                            <Button onClick={handleClick}>
-                                {editMode ? "Save" : "Edit"}
-                            </Button>
+                            <Button
+                                onClick={handleClick}
+                                shape="circle"
+                                variant="filled"
+                                type="primary"
+                                icon={
+                                    editMode ? (
+                                        <SaveOutlined />
+                                    ) : (
+                                        <EditOutlined />
+                                    )
+                                }
+                            />
                         </Flex>
                         <Descriptions
                             layout="vertical"
