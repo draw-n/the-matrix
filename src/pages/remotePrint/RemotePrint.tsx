@@ -128,6 +128,7 @@ const RemotePrint: React.FC = () => {
                         fileName: uploadedFile[0].name,
                         material,
                         options: settingDetails,
+                        userId: user._id,
                     }
                 );
 
