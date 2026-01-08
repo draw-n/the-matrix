@@ -122,6 +122,8 @@ const RemotePrint: React.FC = () => {
             if (user) {
                 // CALL SLICING API
                 setIsLoading(true);
+                console.log(user);
+                console.log(user._id)
                 const printResponse = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
