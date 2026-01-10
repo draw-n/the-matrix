@@ -7,26 +7,13 @@ import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex } from "antd";
+import { useAllCategories } from "../../hooks/category";
 
 const CategorySelection: React.FC<CardSelectionProps> = ({
     value,
     onChange,
 }: CardSelectionProps) => {
-    const [categories, setCategories] = useState<Category[]>();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
+    const {data: categories} = useAllCategories();
 
     return (
         <Flex gap="large" style={{width: "100%"}} vertical align="center" justify="center">

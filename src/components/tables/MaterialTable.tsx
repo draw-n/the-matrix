@@ -22,21 +22,18 @@ import MaterialForm from "../forms/MaterialForm";
 
 import { Category } from "../../types/category";
 import { checkAccess } from "../rbac/HasAccess";
-
-interface TableMaterial extends Material {
-    key: string;
-}
+import { useAllCategories } from "../../hooks/category";
 
 interface MaterialTableProps {
     refreshTable: () => void;
-    materials: Material[];
+    materials?: Material[];
 }
 
 const MaterialTable: React.FC<MaterialTableProps> = ({
     refreshTable,
     materials,
 }: MaterialTableProps) => {
-    const [categories, setCategories] = useState<Category[]>();
+    const {data: categories} = useAllCategories();
     const deleteMaterial = async (_id: string) => {
         try {
             await axios.delete(
@@ -47,20 +44,6 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             console.error("Error deleting material:", error);
         }
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [materials]);
 
     const updateColumns: TableProps["columns"] = [
         {

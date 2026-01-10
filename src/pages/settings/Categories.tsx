@@ -6,6 +6,7 @@ import CategoryForm from "../../components/forms/CategoryForm";
 import EditCategory from "./EditCategory";
 import axios from "axios";
 import { Category } from "../../types/category";
+import { useAllCategories } from "../../hooks/category";
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 
@@ -21,7 +22,7 @@ const initialItems = [
 const Categories: React.FC = () => {
     const [activeKey, setActiveKey] = useState("0");
     const [items, setItems] = useState(initialItems);
-    const [refreshCategories, setRefreshCategories] = useState(0);
+    const { data: categories, refetch } = useAllCategories();
     const newTabIndex = useRef(0);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,33 +32,22 @@ const Categories: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                const formattedData = response.data.map(
-                    (category: any, index: number) => ({
-                        label: category.name,
-                        children: (
-                            <EditCategory
-                                onUpdate={() =>
-                                    setRefreshCategories(refreshCategories + 1)
-                                }
-                                category={category}
-                            />
-                        ),
-                        key: String(index),
-                        closable: false,
-                    })
-                );
-                setItems(formattedData);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [refreshCategories]);
+        if (!categories || categories.length === 0) {
+            setItems(initialItems);
+            return;
+        }
+        const formattedData = categories.map(
+            (category: any, index: number) => ({
+                label: category.name,
+                children: (
+                    <EditCategory onUpdate={refetch} category={category} />
+                ),
+                key: String(index),
+                closable: false,
+            })
+        );
+        setItems(formattedData);
+    }, [categories]);
 
     const add = () => {
         setIsModalOpen(true);
@@ -117,7 +107,7 @@ const Categories: React.FC = () => {
             <CategoryForm
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
-                onUpdate={() => setRefreshCategories(refreshCategories + 1)}
+                onUpdate={refetch}
             />
         </Space>
     );

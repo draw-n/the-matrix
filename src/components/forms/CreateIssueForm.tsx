@@ -20,6 +20,7 @@ import SelectEquipment from "./SelectEquipment";
 
 import { Category } from "../../types/category";
 import "./issues.css";
+import { useAllCategories } from "../../hooks/category";
 
 const { TextArea } = Input;
 
@@ -38,28 +39,15 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
     onUpdate,
 }: CreateIssueFormProps) => {
     const [form] = Form.useForm();
+    const {data: categories} = useAllCategories();
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
     };
-    const [categories, setCategories] = useState<Category[]>();
 
     const { user } = useAuth();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
 
     const onFinishFailed = () => {
         message.error("Missing one or more fields.");

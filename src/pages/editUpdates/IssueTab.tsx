@@ -7,40 +7,14 @@ import { Flex, Space } from "antd";
 import { Issue } from "../../types/issue";
 import IssueTable from "../../components/tables/IssueTable";
 import CreateIssueForm from "../../components/forms/CreateIssueForm";
+import { useAllIssues } from "../../hooks/issue";
 
 const IssueTab: React.FC = () => {
-    const [issues, setIssues] = useState<Issue[]>([]);
     const [equipmentFilter, setEquipmentFilter] = useState<string>("");
-    
-    const fetchData = async () => {
-        try {
-            let response;
-            if (equipmentFilter) {
-                response = await axios.get<Issue[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/issues?status=open,in-progress,completed&equipment=${equipmentFilter}`
-                );
-            } else {
-                response = await axios.get<Issue[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/issues`
-                );
-            }
-
-            let formattedData = response.data.map((item) => ({
-                ...item,
-                key: item._id, // or item.id if you have a unique identifier
-            }));
-
-            setIssues(formattedData);
-        } catch (error) {
-            console.error("Fetching updates or issues failed:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [equipmentFilter]);
+    const {data: issues, refetch} = useAllIssues(
+        equipmentFilter ? ["open", "in-progress", "completed"] : undefined,
+        equipmentFilter ? equipmentFilter : undefined
+    );
 
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -50,9 +24,9 @@ const IssueTab: React.FC = () => {
                 align="center"
             >
                 <h2>ISSUES</h2>
-                <CreateIssueForm onUpdate={fetchData} />
+                <CreateIssueForm onUpdate={refetch} />
             </Flex>
-            <IssueTable refreshTable={fetchData} issues={issues} />
+            <IssueTable refreshTable={refetch} issues={issues} />
         </Space>
     );
 };

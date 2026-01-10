@@ -11,54 +11,23 @@ import HasAccess from "../../components/rbac/HasAccess";
 
 import EquipmentCard from "./EquipmentCard";
 import CaretDownFilled from "@ant-design/icons/lib/icons/CaretDownFilled";
+import { useAllEquipment } from "../../hooks/equipment";
+import { useAllCategories } from "../../hooks/category";
 
-const EquipmentTab = ({
-    refreshEquipment,
-}: {
-    refreshEquipment: () => void;
-}) => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [filter, setFilter] = useState<string>("");
+const EquipmentTab = () => {
+    const { data: categories } = useAllCategories();
+    const [filter, setFilter] = useState<string>(
+        categories ? categories[0]._id : ""
+    );
 
-    const [equipments, setEquipments] = useState<Equipment[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
+    const { data: equipments, isLoading, refetch } = useAllEquipment(filter);
 
-    const fetchData = async () => {
-        try {
-            const response = await axios.get<Category[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/categories`
-            );
-            setCategories(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-
-        if (filter) {
-            try {
-                const response = await axios.get<Equipment[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/equipment?category=${filter}`
-                );
-                setEquipments(response.data);
-            } catch (error) {
-                console.error("Fetching equipment failed:", error);
-            }
-        } else {
-            setFilter(categories[0]?._id);
-        }
-        setIsLoading(false);
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [filter]);
     return (
         <Space size="middle" direction="vertical" style={{ width: "100%" }}>
             <Flex gap="middle" align="center" justify="space-between">
                 <h2>EQUIPMENT</h2>
                 <Flex gap="middle" align="center">
-                    {categories.length > 0 && (
+                    {categories && categories.length > 0 && (
                         <Select
                             popupMatchSelectWidth={false}
                             value={filter}
@@ -74,14 +43,13 @@ const EquipmentTab = ({
                     <HasAccess roles={["admin", "moderator"]}>
                         <CreateEquipmentForm
                             onUpdate={() => {
-                                refreshEquipment();
-                                fetchData();
+                                refetch();
                             }}
                         />
                     </HasAccess>
                 </Flex>
             </Flex>
-            {equipments.length > 0 ? (
+            {equipments && equipments.length > 0 ? (
                 <Row gutter={[16, 16]}>
                     {equipments.map((equipment: Equipment, index) => {
                         return (

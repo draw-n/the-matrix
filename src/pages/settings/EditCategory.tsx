@@ -12,6 +12,8 @@ import { Equipment } from "../../types/equipment";
 import { Material } from "../../types/material";
 import ConfirmAction from "../../components/ConfirmAction";
 import CategoryForm from "../../components/forms/CategoryForm";
+import { useAllEquipment } from "../../hooks/equipment";
+import { useAllMaterials } from "../../hooks/material";
 
 interface EditCategoryProps {
     category: Category;
@@ -29,35 +31,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({
         category.defaultIssues || []
     );
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [equipment, setEquipment] = useState<Equipment[]>([]);
-    const [materials, setMaterials] = useState<Material[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment?category=${
-                        category._id
-                    }`
-                );
-                setEquipment(response.data);
-                setIsLoading(true);
-            } catch (error) {
-                console.error(error);
-            }
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials?category=${
-                        category._id
-                    }`
-                );
-                setMaterials(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [category]);
+   const {data: equipment} = useAllEquipment(category._id);
+   const {data: materials} = useAllMaterials(category._id);
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
     

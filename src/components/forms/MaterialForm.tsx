@@ -20,6 +20,7 @@ import {
 import { FilamentTemperatures, Material } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/category";
+import { useAllCategories } from "../../hooks/category";
 
 interface MaterialFormProps {
     material?: Material;
@@ -43,7 +44,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     onUpdate,
 }: MaterialFormProps) => {
     const [form] = Form.useForm();
-    const [categories, setCategories] = useState<Category[]>();
+    const {data: categories} = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -53,20 +54,6 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     const handleOk = async () => {
         form.submit();
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {

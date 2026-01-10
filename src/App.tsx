@@ -28,28 +28,17 @@ import NotFound from "./components/NotFound";
 import { ConfigProvider } from "antd";
 import { AuthProvider } from "./hooks/AuthContext";
 import { lightTheme, darkTheme } from "./theme.ts";
+import { useAllEquipment } from "./hooks/equipment.ts";
 
 const App: React.FC = () => {
-    const [equipments, setEquipments] = useState<Equipment[]>([]);
+    const {data: equipments, refetch} = useAllEquipment();
+
     const [theme, setTheme] = useState<"light" | "dark">("light");
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
-    const fetchData = async () => {
-        try {
-            const response = await axios.get<Equipment[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment`
-            );
-            setEquipments(response.data as Equipment[]);
-        } catch (error) {
-            console.error("Error fetching routes:", error);
-        }
-    };
-    useEffect(() => {
-        fetchData();
-    }, []);
-
+    
     return (
         <>
             <ConfigProvider theme={theme === "light" ? lightTheme : darkTheme}>
@@ -84,7 +73,7 @@ const App: React.FC = () => {
                                                                     equipment
                                                                 }
                                                                 refreshTable={
-                                                                    fetchData
+                                                                    refetch
                                                                 }
                                                             />
                                                         }
@@ -202,7 +191,7 @@ const App: React.FC = () => {
                                                 children={
                                                     <Makerspace
                                                         refreshEquipment={
-                                                            fetchData
+                                                            refetch
                                                         }
                                                     />
                                                 }

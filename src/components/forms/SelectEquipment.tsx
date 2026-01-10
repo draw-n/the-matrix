@@ -1,6 +1,4 @@
 // Description: A component to select equipment based on category
-import axios from "axios";
-import { useEffect, useState } from "react";
 
 import { Row, Col, Typography, Flex, Empty } from "antd";
 
@@ -9,6 +7,7 @@ import type { Equipment } from "../../types/equipment";
 
 import "./issues.css";
 import { ControlledValueProps } from "../../types/common";
+import { useAllEquipment } from "../../hooks/equipment";
 
 interface SelectEquipmentProps extends ControlledValueProps<string> {
     category: string;
@@ -19,28 +18,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
     value,
     onChange,
 }: SelectEquipmentProps) => {
-    const [showEquipment, setShowEquipment] = useState<Equipment[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Equipment[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/equipment?category=${category}`
-                );
-                setShowEquipment(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-        };
-        if (onChange) {
-            onChange("");
-        } //TODO: this causes the form to auto create this every time, maybe make it less intense
-        fetchData();
-    }, [category]);
+    const {data: equipments, isLoading} = useAllEquipment(category);
 
     const handleSelect = (value: string) => {
         if (onChange) {
@@ -54,7 +32,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                 <Loading />
             ) : (
                 <>
-                    {showEquipment.length == 0 && (
+                    {(!equipments || equipments.length === 0) && (
                         <Flex
                             align="center"
                             justify="center"
@@ -74,7 +52,7 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                     )}
 
                     <Row gutter={[20, 20]}>
-                        {showEquipment.map((equipment: Equipment) => {
+                        {equipments && equipments.map((equipment: Equipment) => {
                             return (
                                 <Col key={equipment._id} lg={8} xs={24}>
                                     <div

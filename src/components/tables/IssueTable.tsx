@@ -42,7 +42,7 @@ interface EquipmentInfo {
 
 interface IssueTableProps {
     refreshTable: () => void;
-    issues: Issue[];
+    issues?: Issue[];
 }
 
 const IssueTable: React.FC<IssueTableProps> = ({

@@ -25,6 +25,8 @@ import type { Issue } from "../../types/issue";
 
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
+import { useAllCategories } from "../../hooks/category";
+import { useAllIssues } from "../../hooks/issue";
 
 const { Paragraph, Title } = Typography;
 
@@ -39,67 +41,19 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
     refreshTable,
 }: EquipmentProfileProps) => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [categories, setCategories] = useState<Category[]>();
+    const { data: categories, isLoading } = useAllCategories();
     const [name, setName] = useState(equipment.name);
     const [type, setType] = useState(equipment.category);
     const [headline, setHeadline] = useState(equipment.headline);
     const [properties, setProperties] = useState(equipment.properties);
     const [description, setDescription] = useState(equipment.description);
 
-    const [issues, setIssues] = useState<Issue[]>([]);
-
+    const { data: issues, refetch } = useAllIssues(
+        equipment ? ["open", "in-progress", "completed"] : undefined,
+        equipment ? equipment._id : undefined
+    );
     const navigate = useNavigate();
-
-    /**
-     * Fetches issue data for the equipment.
-     */
-
-    const fetchIssueData = async () => {
-        try {
-            let response;
-
-            if (equipment) {
-                response = await axios.get<Issue[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/issues?status=open,in-progress,completed&equipment=${
-                        equipment._id
-                    }`
-                );
-            } else {
-                response = await axios.get<Issue[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/issues`
-                );
-            }
-
-            let formattedData = response.data.map((item) => ({
-                ...item,
-                key: item._id, // or item.id if you have a unique identifier
-            }));
-
-            setIssues(formattedData);
-        } catch (error) {
-            console.error("Fetching updates or issues failed:", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-        fetchIssueData();
-    }, []);
     /**
      * Toggles edit mode and saves changes if exiting edit mode.
      */
@@ -201,7 +155,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             <Title
                                 level={2}
                             >{`${equipment.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
-                            <IssueTable issues={issues} refreshTable={fetchIssueData} />
+                            <IssueTable
+                                issues={issues}
+                                refreshTable={refetch}
+                            />
                         </Card>
                     </Col>
                     {editMode && (

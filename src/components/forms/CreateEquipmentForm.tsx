@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/category";
+import { useAllCategories } from "../../hooks/category";
 
 const { TextArea } = Input;
 
@@ -34,22 +35,8 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
     onUpdate,
 }: CreateEquipmentFormProps) => {
     const [form] = Form.useForm();
-    const [categories, setCategories] = useState<Category[]>();
+    const {data: categories} = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
 
     const showModal = () => {
         setIsModalOpen(true);

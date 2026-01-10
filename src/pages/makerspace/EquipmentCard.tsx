@@ -17,6 +17,7 @@ import { gold, gray, green, purple, red } from "@ant-design/colors";
 import type { Equipment, EquipmentStatus } from "../../types/equipment";
 import type { Category } from "../../types/category";
 import { useNavigate } from "react-router-dom";
+import { useCategory } from "../../hooks/category";
 
 interface EquipmentCardProps {
     equipment: Equipment;
@@ -53,21 +54,9 @@ const { Paragraph } = Typography;
 const EquipmentCard: React.FC<EquipmentCardProps> = ({
     equipment,
 }: EquipmentCardProps) => {
-    const [category, setCategory] = useState<Category>();
-    const [isLoading, setIsLoading] = useState(true);
+    const { data: category, isLoading } = useCategory(equipment.category);
+
     const navigate = useNavigate();
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get<Category>(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                    equipment.category
-                }`
-            );
-            setCategory(response.data);
-            setIsLoading(false);
-        };
-        fetchData();
-    }, [equipment]);
 
     return (
         <>
@@ -136,7 +125,11 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                 variant="outlined"
                                 size="small"
                                 icon={<EyeOutlined />}
-                                onClick={() => navigate(`/makerspace/${equipment.routePath}`)}
+                                onClick={() =>
+                                    navigate(
+                                        `/makerspace/${equipment.routePath}`
+                                    )
+                                }
                             >
                                 More
                             </Button>

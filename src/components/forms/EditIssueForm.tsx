@@ -9,6 +9,7 @@ import { EditOutlined } from "@ant-design/icons";
 import HasAccess from "../rbac/HasAccess";
 import { Issue, IssueStatus } from "../../types/issue";
 import { User } from "../../types/user";
+import { useAllUsers } from "../../hooks/user";
 
 const { TextArea } = Input;
 
@@ -29,18 +30,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
 }: EditIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [users, setUsers] = useState<User[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get<User[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/users?access=admin`
-            );
-            setUsers(response.data);
-        };
-        fetchData();
-    }, []);
-
+    const { data: users } = useAllUsers();
     const showModal = () => {
         setIsModalOpen(true);
     };

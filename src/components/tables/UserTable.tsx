@@ -6,30 +6,10 @@ import React, { useEffect, useState } from "react";
 import { User } from "../../types/user";
 
 import { Table, TableProps } from "antd";
+import { useAllUsers } from "../../hooks/user";
 
 const UserTable: React.FC = () => {
-    const [users, setUsers] = useState<User[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const responseUpdates = await axios.get<User[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/users?access=admin,moderator`
-                );
-
-                const formattedData = responseUpdates.data.map((item) => ({
-                    ...item,
-                    key: item._id,
-                }));
-                setUsers(formattedData);
-            } catch (error) {
-                console.error("Fetching users failed:", error);
-            }
-        };
-        fetchData();
-    }, []);
+    const { data: users } = useAllUsers(["admin", "moderator"]);
 
     const columns: TableProps["columns"] = [
         {
