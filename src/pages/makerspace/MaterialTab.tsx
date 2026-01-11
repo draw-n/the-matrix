@@ -21,10 +21,10 @@ const MaterialTab: React.FC = () => {
             >
                 <h2>MATERIALS</h2>
                 <HasAccess roles={["admin", "moderator"]}>
-                    <MaterialForm onUpdate={refetch} />
+                    <MaterialForm onSubmit={refetch} />
                 </HasAccess>
             </Flex>
-            <MaterialTable refreshTable={refetch} materials={materials} />
+            <MaterialTable refresh={refetch} materials={materials} />
         </Space>
     );
 };

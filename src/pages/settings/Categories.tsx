@@ -40,7 +40,7 @@ const Categories: React.FC = () => {
             (category: any, index: number) => ({
                 label: category.name,
                 children: (
-                    <EditCategory onUpdate={refetch} category={category} />
+                    <EditCategory onSubmit={refetch} category={category} />
                 ),
                 key: String(index),
                 closable: false,
@@ -107,7 +107,7 @@ const Categories: React.FC = () => {
             <CategoryForm
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
-                onUpdate={refetch}
+                onSubmit={refetch}
             />
         </Space>
     );

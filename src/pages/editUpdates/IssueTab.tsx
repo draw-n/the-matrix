@@ -24,9 +24,9 @@ const IssueTab: React.FC = () => {
                 align="center"
             >
                 <h2>ISSUES</h2>
-                <CreateIssueForm onUpdate={refetch} />
+                <CreateIssueForm onSubmit={refetch} />
             </Flex>
-            <IssueTable refreshTable={refetch} issues={issues} />
+            <IssueTable refresh={refetch} issues={issues} />
         </Space>
     );
 };
