@@ -14,13 +14,10 @@ import {
 } from "@ant-design/icons";
 
 import { gold, gray, green, purple, red } from "@ant-design/colors";
-import type { Equipment, EquipmentStatus } from "../../types/equipment";
+import type { Equipment, EquipmentStatus, WithEquipment } from "../../types/equipment";
 import type { Category } from "../../types/category";
 import { useNavigate } from "react-router-dom";
-
-interface EquipmentCardProps {
-    equipment: Equipment;
-}
+import { useCategory } from "../../hooks/category";
 
 const statusStyles: Record<
     EquipmentStatus,
@@ -50,24 +47,12 @@ const statusStyles: Record<
 
 const { Paragraph } = Typography;
 
-const EquipmentCard: React.FC<EquipmentCardProps> = ({
+const EquipmentCard: React.FC<WithEquipment> = ({
     equipment,
-}: EquipmentCardProps) => {
-    const [category, setCategory] = useState<Category>();
-    const [isLoading, setIsLoading] = useState(true);
+}) => {
+    const { data: category, isLoading } = useCategory(equipment?.categoryId);
+
     const navigate = useNavigate();
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get<Category>(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                    equipment.category
-                }`
-            );
-            setCategory(response.data);
-            setIsLoading(false);
-        };
-        fetchData();
-    }, [equipment]);
 
     return (
         <>
@@ -103,10 +88,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                         margin: 0,
                                     }}
                                 >
-                                    {equipment.name}
+                                    {equipment?.name}
                                 </Paragraph>
                             </h3>
-                            <p>{equipment.headline}</p>
+                            <p>{equipment?.headline}</p>
                         </Space>
                         <Flex
                             justify="space-between"
@@ -117,26 +102,30 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({
                                 style={{ textTransform: "capitalize" }}
                                 color={
                                     statusStyles[
-                                        (equipment.status as EquipmentStatus) ||
+                                        (equipment?.status as EquipmentStatus) ||
                                             "offline"
                                     ].color
                                 }
                                 bordered
                                 icon={
                                     statusStyles[
-                                        (equipment.status as EquipmentStatus) ||
+                                        (equipment?.status as EquipmentStatus) ||
                                             "offline"
                                     ].icon
                                 }
                             >
-                                {equipment.status}
+                                {equipment?.status}
                             </Tag>
 
                             <Button
                                 variant="outlined"
                                 size="small"
                                 icon={<EyeOutlined />}
-                                onClick={() => navigate(`/makerspace/${equipment.routePath}`)}
+                                onClick={() =>
+                                    navigate(
+                                        `/makerspace/${equipment?.routePath}`
+                                    )
+                                }
                             >
                                 More
                             </Button>

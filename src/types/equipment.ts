@@ -1,16 +1,29 @@
 import { FilamentTemperatures } from "./material";
 
 export interface Equipment {
-    _id: string;
+    uuid: string;
     name: string;
     routePath: string;
     headline?: string;
-    category: string;
+    categoryId: string;
     properties?: EquipmentProperties;
     status: string;
     description: string;
     imgSrc?: string;
     ipUrl?: string;
+    cameraUrl?: string;
+}
+
+export interface WithEquipment {
+    equipment?: Equipment;
+}
+
+export interface WithEquipments {
+    equipments?: Equipment[];
+}
+
+export interface WithEquipmentId {
+    equipmentId?: string;
 }
 
 export type EquipmentStatus =

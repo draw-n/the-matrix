@@ -1,15 +1,9 @@
 // Description: Parent shell for authentication pages
 
+import { PropsWithChildren } from "react";
 import DFLogo from "../../assets/Digital-Fabrication-V.png";
 import { theme, Card, Flex, Row, Col } from "antd";
-
-interface AuthenticationShellProps {
-    children: React.ReactNode;
-}
-
-const AuthenticationShell: React.FC<AuthenticationShellProps> = ({
-    children,
-}) => {
+const AuthenticationShell: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     const colorPrimary = theme.useToken().token.colorPrimary;
     const colorTextBase = theme.useToken().token.colorTextBase;
 
@@ -26,7 +20,10 @@ const AuthenticationShell: React.FC<AuthenticationShellProps> = ({
                 align="center"
                 justify="center"
             >
-                <Row gutter={[100, 100]} style={{ width: "100%", maxWidth: "90vw" }}>
+                <Row
+                    gutter={[100, 100]}
+                    style={{ width: "100%", maxWidth: "90vw" }}
+                >
                     <Col md={10} span={24}>
                         <Flex
                             justify="center"
@@ -36,7 +33,7 @@ const AuthenticationShell: React.FC<AuthenticationShellProps> = ({
                             <img
                                 src={DFLogo}
                                 alt="Digital Fabrication Lab Logo"
-                                style={{ maxWidth: "50vw", width: "100%"}}
+                                style={{ maxWidth: "50vw", width: "100%" }}
                             />
                         </Flex>
                     </Col>

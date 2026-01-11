@@ -14,54 +14,30 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/category";
+import { useAllCategories } from "../../hooks/category";
+import { CommonFormProps } from "../../types/common";
+import { Equipment } from "../../types/equipment";
 
 const { TextArea } = Input;
 
-interface CreateEquipmentFormProps {
-    onUpdate: () => void;
-}
-
-interface FieldType {
-    name: string;
-    headline?: string;
-    category: string;
-    description: string;
-    routePath: string;
-    ipUrl: string;
-}
-
-const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
-    onUpdate,
-}: CreateEquipmentFormProps) => {
+const CreateEquipmentForm: React.FC<CommonFormProps> = ({
+    onSubmit,
+}) => {
     const [form] = Form.useForm();
-    const [categories, setCategories] = useState<Category[]>();
+    const {data: categories} = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
 
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
                 values
             );
-            onUpdate();
+            onSubmit();
             setIsModalOpen(false);
             form.resetFields();
         } catch (error) {
@@ -108,7 +84,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                     autoComplete="off"
                     preserve={false}
                 >
-                    <Form.Item<FieldType>
+                    <Form.Item<Equipment>
                         style={{ width: "100%" }}
                         label="Name"
                         name="name"
@@ -122,14 +98,14 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                     >
                         <Input size="small" />
                     </Form.Item>
-                    <Form.Item<FieldType>
+                    <Form.Item<Equipment>
                         style={{ width: "100%" }}
                         label="Headline"
                         name="headline"
                     >
                         <Input size="small" />
                     </Form.Item>
-                       <Form.Item<FieldType>
+                       <Form.Item<Equipment>
                         style={{ width: "100%" }}
                         label="IP Address or URL"
                         name="ipUrl"
@@ -137,7 +113,7 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                         <Input size="small" />
                     </Form.Item>
                     <Flex gap="small">
-                        <Form.Item<FieldType>
+                        <Form.Item<Equipment>
                             style={{ width: "100%" }}
                             label="Route Path"
                             name="routePath"
@@ -151,10 +127,10 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                         >
                             <Input addonBefore="/makerspace/" size="small" />
                         </Form.Item>
-                        <Form.Item<FieldType>
+                        <Form.Item<Equipment>
                             style={{ width: "100%" }}
                             label="Category"
-                            name="category"
+                            name="categoryId"
                             rules={[
                                 {
                                     required: true,
@@ -166,14 +142,14 @@ const CreateEquipmentForm: React.FC<CreateEquipmentFormProps> = ({
                                 size="small"
                                 suffixIcon={<CaretDownFilled />}
                                 options={categories?.map((category) => ({
-                                    value: category._id,
+                                    value: category.uuid,
                                     label: category.name,
                                 }))}
                             />
                         </Form.Item>
                     </Flex>
 
-                    <Form.Item<FieldType>
+                    <Form.Item<Equipment>
                         style={{ width: "100%" }}
                         label="Description"
                         name="description"

@@ -11,27 +11,24 @@ import {
     Select,
 } from "antd";
 import axios from "axios";
-import { Category, CategoryProperties } from "../../types/category";
+import {
+    Category,
+    CategoryProperties,
+    WithCategory,
+} from "../../types/category";
 import randomColor from "randomcolor";
+import { CommonFormProps } from "../../types/common";
 
-interface CategoryFormProps {
-    category?: Category;
+interface CategoryFormProps extends CommonFormProps, WithCategory {
     isModalOpen: boolean;
     setIsModalOpen: (item: boolean) => void;
-    onUpdate: () => void;
-}
-
-interface FieldType {
-    name: string;
-    properties: CategoryProperties[];
-    color: string;
 }
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
     category,
     isModalOpen,
     setIsModalOpen,
-    onUpdate,
+    onSubmit,
 }: CategoryFormProps) => {
     const [form] = Form.useForm();
 
@@ -39,17 +36,17 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         form.submit();
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Category>["onFinish"] = async (values) => {
         try {
             if (category) {
                 const editedCategory: Category = {
-                    _id: category._id,
-                    defaultIssues: category.defaultIssues,
                     ...values,
+                    uuid: category.uuid,
+                    defaultIssues: category.defaultIssues,
                 };
                 const response = await axios.put(
                     `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                        category._id
+                        category.uuid
                     }`,
                     editedCategory
                 );
@@ -64,7 +61,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
             }
 
             setIsModalOpen(false);
-            onUpdate();
+            onSubmit();
         } catch (err) {
             console.error(err);
         }
@@ -100,7 +97,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 }
             >
                 <Flex style={{ width: "100%" }} justify="space-between">
-                    <Form.Item<FieldType>
+                    <Form.Item<Category>
                         style={{ width: "50%" }}
                         name="name"
                         rules={[
@@ -113,7 +110,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                     >
                         <Input size="small" />
                     </Form.Item>
-                    <Form.Item<FieldType>
+                    <Form.Item<Category>
                         name="color"
                         label="Color"
                         rules={[
@@ -134,7 +131,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                     </Form.Item>
                 </Flex>
 
-                <Form.Item<FieldType> name="properties" label="Properties">
+                <Form.Item<Category> name="properties" label="Properties">
                     <Select
                         size="small"
                         mode="multiple"

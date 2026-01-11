@@ -17,7 +17,7 @@ import SubmittedIssue from "./SubmittedIssue";
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
     const [equipment, setEquipment] = useState<string>("");
-    const [category, setCategory] = useState<string>("");
+    const [categoryId, setCategoryId] = useState<string>("");
     const [initialDescription, setInitialDescription] = useState<string>("");
     const [description, setDescription] = useState<string>("");
 
@@ -27,9 +27,9 @@ const ReportAnIssue: React.FC = () => {
         try {
             const newIssue = {
                 equipment,
-                category,
+                categoryId,
                 description: initialDescription + "\n" + description,
-                createdBy: user?._id,
+                createdBy: user?.uuid,
                 dateCreated: new Date(),
             };
             await axios.post(
@@ -37,7 +37,7 @@ const ReportAnIssue: React.FC = () => {
                 newIssue
             );
             setEquipment("");
-            setCategory("");
+            setCategoryId("");
             setInitialDescription("");
             setDescription("");
             setStepIndex(stepIndex + 1);
@@ -53,14 +53,14 @@ const ReportAnIssue: React.FC = () => {
             case 1:
                 return (
                     <CategorySelection
-                        value={category}
-                        onChange={setCategory}
+                        value={categoryId}
+                        onChange={setCategoryId}
                     />
                 );
             case 2:
                 return (
                     <EquipmentSelection
-                        category={category}
+                        categoryId={categoryId}
                         value={equipment}
                         onChange={setEquipment}
                     />
@@ -68,7 +68,7 @@ const ReportAnIssue: React.FC = () => {
             case 3:
                 return (
                     <IssueSelection
-                        categoryId={category}
+                        categoryId={categoryId}
                         value={initialDescription}
                         onChange={setInitialDescription}
                     />
@@ -102,7 +102,7 @@ const ReportAnIssue: React.FC = () => {
                 align="center"
                 gap="small"
             >
-                {stepIndex > 0 && stepIndex < 4 && (
+                {stepIndex > 0 && stepIndex < 5 && (
                     <Button
                         variant="filled"
                         type="primary"
@@ -113,18 +113,18 @@ const ReportAnIssue: React.FC = () => {
                         Back
                     </Button>
                 )}
-                {stepIndex < 4 && (
+                {stepIndex < 5 && (
                     <Button
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        onClick={() => setStepIndex(Math.min(stepIndex + 1, 4))}
+                        onClick={() => setStepIndex(Math.min(stepIndex + 1, 5))}
                     >
                         Next
                     </Button>
                 )}
-                {stepIndex === 4 && (
+                {stepIndex === 5 && (
                     <Button
                         variant="filled"
                         type="primary"

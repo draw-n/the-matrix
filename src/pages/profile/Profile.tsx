@@ -47,14 +47,14 @@ const Profile: React.FC = () => {
     const saveUserChanges = async () => {
         try {
             const editedUser = {
-                _id: user?._id,
+                uuid: user?.uuid,
                 firstName: firstName,
                 lastName: lastName,
                 email: user?.email,
                 access: user?.access,
             };
             await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${user?._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
                 editedUser
             );
         } catch (error) {

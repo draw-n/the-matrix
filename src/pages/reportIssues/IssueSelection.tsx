@@ -2,45 +2,21 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Category } from "../../types/category";
+import { Category, WithCategoryId } from "../../types/category";
 import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex } from "antd";
+import { useCategory } from "../../hooks/category";
 
-interface IssueSelectionProps extends CardSelectionProps {
-    categoryId: string;
-}
+type IssueSelectionProps = CardSelectionProps & WithCategoryId;
 
 const IssueSelection: React.FC<IssueSelectionProps> = ({
     categoryId,
     value,
     onChange,
 }: IssueSelectionProps) => {
-    const [category, setCategory] = useState<Category>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/categories/${categoryId}`
-                );
-                setCategory(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-        };
-        if (onChange) {
-            onChange("");
-        }
-        if (categoryId) {
-            fetchData();
-        }
-    }, [categoryId]);
+    const {data: category, isLoading} = useCategory(categoryId);
 
     return (
         <Flex

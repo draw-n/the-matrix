@@ -16,24 +16,20 @@ import {
 } from "antd";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-import type { Announcement, AnnouncementType } from "../../types/announcement";
+import type {
+    Announcement,
+    AnnouncementType,
+    WithAnnouncement,
+} from "../../types/announcement";
+import { CommonFormProps } from "../../types/common";
 
 const { TextArea } = Input;
 
-interface AnnouncementFormProps {
-    announcement?: Announcement;
-    onUpdate: () => void;
-}
-
-interface FieldType {
-    type: AnnouncementType;
-    title: string;
-    description: string;
-}
+type AnnouncementFormProps = WithAnnouncement & CommonFormProps;
 
 const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
     announcement,
-    onUpdate,
+    onSubmit,
 }: AnnouncementFormProps) => {
     const [form] = Form.useForm();
     const { user } = useAuth();
@@ -48,30 +44,30 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
         form.submit();
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
         try {
             if (announcement) {
                 const editedAnnouncement: Announcement = {
                     ...values,
-                    _id: announcement._id,
+                    uuid: announcement.uuid,
                     createdBy: announcement.createdBy,
                     dateCreated: announcement.dateCreated,
-                    lastUpdatedBy: user?._id || announcement.createdBy,
+                    lastUpdatedBy: user?.uuid || announcement.createdBy,
                     dateLastUpdated: new Date(),
                     status: announcement.status,
                 };
                 const response = await axios.put<Announcement>(
                     `${import.meta.env.VITE_BACKEND_URL}/announcements/${
-                        announcement._id
+                        announcement.uuid
                     }`,
                     editedAnnouncement
                 );
             } else {
                 const announcement = {
-                    createdBy: user?._id,
+                    ...values,
+                    createdBy: user?.uuid,
                     dateCreated: new Date(),
                     status: "posted",
-                    ...values,
                 };
                 const response = await axios.post<Announcement>(
                     `${import.meta.env.VITE_BACKEND_URL}/announcements`,
@@ -79,7 +75,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                 );
                 form.resetFields();
             }
-            onUpdate();
+            onSubmit();
 
             setIsModalOpen(false);
         } catch (error) {
@@ -144,14 +140,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                     }
                 >
                     <Flex justify="space-between" gap="small">
-                        <Form.Item<FieldType>
+                        <Form.Item<Announcement>
                             style={{ width: "50%" }}
                             name="title"
                             label="Title"
                         >
                             <Input size="small" />
                         </Form.Item>
-                        <Form.Item<FieldType>
+                        <Form.Item<Announcement>
                             style={{ width: "50%" }}
                             label="Type"
                             name="type"
@@ -174,7 +170,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                         </Form.Item>
                     </Flex>
 
-                    <Form.Item<FieldType>
+                    <Form.Item<Announcement>
                         label="Description"
                         name="description"
                         rules={[

@@ -36,14 +36,14 @@ const UserCard: React.FC<UserCardProps> = ({
     const changeUserAccess = async () => {
         try {
             const editedUser = {
-                _id: cardUser._id,
+                uuid: cardUser.uuid,
                 firstName: cardUser.firstName,
                 lastName: cardUser.lastName,
                 access: editAccess,
                 email: cardUser.email,
             };
             await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${cardUser._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/users/${cardUser.uuid}`,
                 editedUser
             );
         } catch (error) {
@@ -86,7 +86,7 @@ const UserCard: React.FC<UserCardProps> = ({
                             <Popconfirm
                                 title="Delete User"
                                 description="Are you sure you want to delete this user?"
-                                onConfirm={() => deleteUser(cardUser._id)}
+                                onConfirm={() => deleteUser(cardUser.uuid)}
                                 okText="Yes"
                                 cancelText="No"
                             >
@@ -99,7 +99,7 @@ const UserCard: React.FC<UserCardProps> = ({
                                 </Button>
                             </Popconfirm>
                         )}
-                        {user?._id != cardUser._id && (
+                        {user?.uuid != cardUser.uuid && (
                             <Button
                                 size="small"
                                 onClick={handleClick}

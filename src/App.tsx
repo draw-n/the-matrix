@@ -28,27 +28,16 @@ import NotFound from "./components/NotFound";
 import { ConfigProvider } from "antd";
 import { AuthProvider } from "./hooks/AuthContext";
 import { lightTheme, darkTheme } from "./theme.ts";
+import { useAllEquipment } from "./hooks/equipment.ts";
 
 const App: React.FC = () => {
-    const [equipments, setEquipments] = useState<Equipment[]>([]);
+    const { data: equipments, refetch } = useAllEquipment();
+
     const [theme, setTheme] = useState<"light" | "dark">("light");
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
-    const fetchData = async () => {
-        try {
-            const response = await axios.get<Equipment[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment`
-            );
-            setEquipments(response.data as Equipment[]);
-        } catch (error) {
-            console.error("Error fetching routes:", error);
-        }
-    };
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     return (
         <>
@@ -60,7 +49,7 @@ const App: React.FC = () => {
                                 equipments.length > 0 &&
                                 equipments.map((equipment) => (
                                     <Route
-                                        key={equipment._id}
+                                        key={equipment.uuid}
                                         path={`/makerspace/${equipment.routePath}`}
                                         element={
                                             <PrivateRoute
@@ -82,9 +71,6 @@ const App: React.FC = () => {
                                                             <EquipmentProfile
                                                                 equipment={
                                                                     equipment
-                                                                }
-                                                                refreshTable={
-                                                                    fetchData
                                                                 }
                                                             />
                                                         }
@@ -199,13 +185,7 @@ const App: React.FC = () => {
                                                     "admin",
                                                 ]}
                                                 title="Makerspace"
-                                                children={
-                                                    <Makerspace
-                                                        refreshEquipment={
-                                                            fetchData
-                                                        }
-                                                    />
-                                                }
+                                                children={<Makerspace />}
                                             />
                                         }
                                     />

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 import React, { useEffect, useState } from "react";
 import {
     Button,
@@ -17,33 +16,21 @@ import {
     message,
     Tooltip,
 } from "antd";
-import { FilamentTemperatures, Material } from "../../types/material";
+import { Material, WithMaterial } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Category } from "../../types/category";
+import { useAllCategories } from "../../hooks/category";
+import { CommonFormProps } from "../../types/common";
 
-interface MaterialFormProps {
-    material?: Material;
-    onUpdate: () => void;
-}
-
-interface FieldType {
-    name: string;
-    shortName: string;
-    category: string;
-    properties: string[];
-    description: string;
-    remotePrintAvailable: boolean;
-    temperatures?: FilamentTemperatures;
-}
+type MaterialFormProps = WithMaterial & CommonFormProps;
 
 const { TextArea } = Input;
 
 const MaterialForm: React.FC<MaterialFormProps> = ({
     material,
-    onUpdate,
+    onSubmit,
 }: MaterialFormProps) => {
     const [form] = Form.useForm();
-    const [categories, setCategories] = useState<Category[]>();
+    const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -54,30 +41,16 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
         form.submit();
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Category[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`
-                );
-                setCategories(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, []);
-
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Material>["onFinish"] = async (values) => {
         try {
             if (material) {
                 const editedMaterial: Material = {
-                    _id: material._id,
                     ...values,
+                    uuid: material.uuid,
                 };
                 const response = await axios.put(
                     `${import.meta.env.VITE_BACKEND_URL}/materials/${
-                        material._id
+                        material.uuid
                     }`,
                     editedMaterial
                 );
@@ -91,10 +64,10 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                 form.resetFields();
             }
 
-            onUpdate();
+            onSubmit();
             setIsModalOpen(false);
         } catch (error) {
-            console.error("Issue editing update", error);
+            console.error("Material editing update", error);
         }
     };
 
@@ -116,7 +89,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={showModal}
                     iconPosition="end"
-                    shape={material? "circle" : "round"}
+                    shape={material ? "circle" : "round"}
                 >
                     {material ? null : "Add New Material"}
                 </Button>
@@ -141,7 +114,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             ? {
                                   name: material.name,
                                   shortName: material.shortName,
-                                  category: material.category,
+                                  categoryId: material.categoryId,
                                   description: material.description,
                                   temperatures: material.temperatures,
                                   properties: material.properties,
@@ -151,7 +124,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             : {
                                   name: "",
                                   shortName: "",
-                                  category: null,
+                                  categoryId: null,
                                   description: "",
                                   properties: [],
                                   temperatures: undefined,
@@ -159,7 +132,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                               }
                     }
                 >
-                    <Form.Item<FieldType>
+                    <Form.Item<Material>
                         label="Name"
                         name="name"
                         rules={[
@@ -172,7 +145,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         <Input size="small" placeholder="ex. Polylactic Acid" />
                     </Form.Item>
                     <Flex gap="10px">
-                        <Form.Item<FieldType>
+                        <Form.Item<Material>
                             name="shortName"
                             style={{ width: "50%" }}
                             label="Short Name"
@@ -186,8 +159,8 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         >
                             <Input size="small" placeholder="ex. PLA" />
                         </Form.Item>
-                        <Form.Item<FieldType>
-                            name="category"
+                        <Form.Item<Material>
+                            name="categoryId"
                             style={{ width: "50%" }}
                             label="Category"
                             rules={[
@@ -202,13 +175,13 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                 size="small"
                                 suffixIcon={<CaretDownFilled />}
                                 options={categories?.map((category) => ({
-                                    value: category._id,
+                                    value: category.uuid,
                                     label: category.name,
                                 }))}
                             />
                         </Form.Item>
                     </Flex>
-                    <Form.Item<FieldType>
+                    <Form.Item<Material>
                         label="Properties"
                         name="properties"
                         rules={[
@@ -228,7 +201,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                             suffixIcon={null}
                         />
                     </Form.Item>
-                    <Form.Item<FieldType>
+                    <Form.Item<Material>
                         name="description"
                         label="Description"
                         rules={[
@@ -244,12 +217,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                     <Form.Item
                         noStyle
                         shouldUpdate={(prevValues, currentValues) =>
-                            prevValues.category !== currentValues.category
+                            prevValues.categoryId !== currentValues.categoryId
                         }
                     >
                         {({ getFieldValue }) => {
                             const category = categories?.find(
-                                (item) => item._id == getFieldValue("category")
+                                (item) => item.uuid == getFieldValue("categoryId")
                             );
                             return category?.properties?.includes(
                                 "temperature"
@@ -261,7 +234,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                     <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>First layer:</p>
-                                            <Form.Item<FieldType>
+                                            <Form.Item<Material>
                                                 name={[
                                                     "temperatures",
                                                     "extruder",
@@ -296,7 +269,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                     <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>Other layers:</p>
-                                            <Form.Item<FieldType>
+                                            <Form.Item<Material>
                                                 name={[
                                                     "temperatures",
                                                     "extruder",
@@ -334,7 +307,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                     <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>First layer:</p>
-                                            <Form.Item<FieldType>
+                                            <Form.Item<Material>
                                                 name={[
                                                     "temperatures",
                                                     "bed",
@@ -369,7 +342,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                     <Col xs={24} lg={10}>
                                         <Flex gap="10px" justify="end">
                                             <p>Other layers:</p>
-                                            <Form.Item<FieldType>
+                                            <Form.Item<Material>
                                                 name={[
                                                     "temperatures",
                                                     "bed",
@@ -406,7 +379,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         }}
                     </Form.Item>
 
-                    <Form.Item<FieldType>
+                    <Form.Item<Material>
                         name="remotePrintAvailable"
                         label="Will it be available for remote printing?"
                         layout="horizontal"

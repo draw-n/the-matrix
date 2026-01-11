@@ -7,28 +7,10 @@ import HasAccess from "../../components/rbac/HasAccess";
 import MaterialTable from "../../components/tables/MaterialTable";
 
 import { Material } from "../../types/material";
+import { useAllMaterials } from "../../hooks/material";
 
 const MaterialTab: React.FC = () => {
-    const [materials, setMaterials] = useState<Material[]>([]);
-    const fetchData = async () => {
-        try {
-            const responseUpdates = await axios.get<Material[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/materials`
-            );
-
-            const formattedData = responseUpdates.data.map((item) => ({
-                ...item,
-                key: item._id,
-            }));
-            setMaterials(formattedData);
-        } catch (error) {
-            console.error("Fetching updates or issues failed:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const {data: materials, refetch} = useAllMaterials();
 
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -39,10 +21,10 @@ const MaterialTab: React.FC = () => {
             >
                 <h2>MATERIALS</h2>
                 <HasAccess roles={["admin", "moderator"]}>
-                    <MaterialForm onUpdate={fetchData} />
+                    <MaterialForm onUpdate={refetch} />
                 </HasAccess>
             </Flex>
-            <MaterialTable refreshTable={fetchData} materials={materials} />
+            <MaterialTable refreshTable={refetch} materials={materials} />
         </Space>
     );
 };

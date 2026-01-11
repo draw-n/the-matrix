@@ -7,58 +7,41 @@ import { Button, Form, FormProps, Input, Modal, Select, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import HasAccess from "../rbac/HasAccess";
-import { Issue, IssueStatus } from "../../types/issue";
+import { Issue, IssueStatus, WithIssue } from "../../types/issue";
 import { User } from "../../types/user";
+import { useAllUsers } from "../../hooks/user";
+import { CommonFormProps } from "../../types/common";
 
 const { TextArea } = Input;
 
-interface EditIssueFormProps {
-    issue: Issue;
-    onUpdate: () => void;
-}
-
-interface FieldType {
-    status: IssueStatus;
-    description: string;
-    assignedTo: string[];
-}
+type EditIssueFormProps = WithIssue & CommonFormProps;
 
 const EditIssueForm: React.FC<EditIssueFormProps> = ({
     issue,
-    onUpdate,
+    onSubmit,
 }: EditIssueFormProps) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [users, setUsers] = useState<User[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get<User[]>(
-                `${import.meta.env.VITE_BACKEND_URL}/users?access=admin`
-            );
-            setUsers(response.data);
-        };
-        fetchData();
-    }, []);
-
+    const { data: users } = useAllUsers();
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Issue>["onFinish"] = async (values) => {
         try {
+            if (!issue) return;
             const editedIssue: Issue = {
-                _id: issue._id,
-                equipment: issue.equipment,
-                createdBy: issue.createdBy,
-                dateCreated: issue.dateCreated,
                 ...values,
+                uuid: issue?.uuid,
+                equipmentId: issue?.equipmentId,
+                createdBy: issue?.createdBy,
+                dateCreated: issue?.dateCreated,
             };
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue.uuid}`,
                 editedIssue
             );
-            onUpdate();
+            onSubmit();
             setIsModalOpen(false);
         } catch (error) {
             console.error("Error creating new update:", error);
@@ -98,20 +81,20 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                     layout="vertical"
                     style={{ width: "100%" }}
                     initialValues={{
-                        status: issue.status,
-                        description: issue.description,
+                        status: issue?.status,
+                        description: issue?.description,
                     }}
                     autoComplete="off"
                     preserve={false}
                 >
-                    <Form.Item<FieldType>
+                    <Form.Item<Issue>
                         style={{ width: "100%" }}
                         label="Status"
                         name="status"
                         rules={[
                             {
                                 required: true,
-                                message: "Please select a category type.",
+                                message: "Please select a status.",
                             },
                         ]}
                     >
@@ -133,7 +116,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                         />
                     </Form.Item>
                     <HasAccess roles={["admin"]}>
-                        <Form.Item<FieldType>
+                        <Form.Item<Issue>
                             name="assignedTo"
                             label="Assigned To"
                         >
@@ -145,14 +128,14 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                                 style={{ width: "100%" }}
                                 placeholder="Please select"
                                 options={users?.map((user) => ({
-                                    value: user._id,
+                                    value: user.uuid,
                                     label: `${user.firstName} ${user.lastName}`,
                                 }))}
                             />
                         </Form.Item>
                     </HasAccess>
-
-                    <Form.Item<FieldType>
+                    
+                    <Form.Item<Issue>
                         style={{ width: "100%" }}
                         label="Description"
                         name="description"
@@ -160,7 +143,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                             {
                                 required: true,
                                 message:
-                                    "Please add a description to the equipment.",
+                                    "Please add a description to the issue.",
                             },
                         ]}
                     >

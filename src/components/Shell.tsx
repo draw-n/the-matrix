@@ -1,5 +1,5 @@
 // Description: A layout component that provides a responsive shell with sidebar navigation, header, and content area, incorporating role-based access control for different pages.
-import React, { useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 
 import {
     Button,
@@ -154,8 +154,7 @@ const allPages: PageItem[] = [
     },
 ];
 
-interface ShellProps {
-    children?: React.ReactNode;
+interface ShellProps extends PropsWithChildren {
     contentAccess: string[];
     title?: string;
     toggleTheme?: () => void;

@@ -8,6 +8,7 @@ import { CarouselRef } from "antd/es/carousel";
 
 import Loading from "./Loading";
 import type { Announcement } from "../types/announcement";
+import { useAllAnnouncements } from "../hooks/announcement";
 
 interface AnnouncementCarouselProps {
     kioskMode?: boolean;
@@ -16,33 +17,12 @@ interface AnnouncementCarouselProps {
 const AnnouncementCarousel: React.FC<AnnouncementCarouselProps> = ({
     kioskMode,
 }: AnnouncementCarouselProps) => {
-    const [announcements, setAnnouncements] = useState<Announcement[]>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const {data: announcements, isLoading} = useAllAnnouncements(['posted']);
+  
     const [currentSlide, setCurrentSlide] = useState<number>(0);
 
     const carouselRef = useRef<CarouselRef | null>(null); // Ref for the Carousel component
     const colorPrimary = theme.useToken().token.colorPrimary;
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Announcement[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/announcements?status=posted`
-                );
-                const formattedData = response.data.map((item) => ({
-                    ...item,
-                    key: item._id, // or item.id if you have a unique identifier
-                }));
-                setAnnouncements(formattedData);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Internal Server Error: ", error);
-            }
-        };
-
-        fetchData();
-    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {

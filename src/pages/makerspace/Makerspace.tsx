@@ -6,16 +6,12 @@ import "./equipment.css";
 import EquipmentTab from "./EquipmentTab";
 import MaterialTab from "./MaterialTab";
 
-interface MakerspaceProps {
-    refreshEquipment: () => void;
-}
-
-const Makerspace: React.FC<MakerspaceProps> = ({ refreshEquipment }) => {
+const Makerspace: React.FC = () => {
     const items: TabsProps["items"] = [
         {
             key: "1",
             label: "Equipment",
-            children: <EquipmentTab refreshEquipment={refreshEquipment} />,
+            children: <EquipmentTab />,
         },
         {
             key: "2",

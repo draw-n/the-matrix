@@ -23,7 +23,7 @@ const RemotePrint: React.FC = () => {
     const [allowPrint, setAllowPrint] = useState(false);
     const [current, setCurrent] = useState(0);
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
-    const [material, setMaterial] = useState<Material | null>(null);
+    const [material, setMaterial] = useState<Material>();
     const [settingDetails, setSettingDetails] =
         useState<FilamentAdvancedSettings>({
             infill: 20,
@@ -84,30 +84,6 @@ const RemotePrint: React.FC = () => {
         });
     }, [material]);
 
-    useEffect(() => {
-        setAllowPrint(false);
-        if (user) {
-            if (user.remotePrints) {
-                const format = user.remotePrints.sort(
-                    (a, b) =>
-                        new Date(b.date).valueOf() - new Date(a.date).valueOf()
-                );
-                if (format.length === 0) {
-                    setAllowPrint(true);
-                } else {
-                    const latestDate = format[0];
-                    const timeDifference = Math.abs(
-                        new Date(latestDate.date).valueOf() -
-                            new Date().valueOf()
-                    );
-                    setAllowPrint(true);
-                    //setAllowPrint(timeDifference >= 86400000);
-                }
-            } else {
-                setAllowPrint(true);
-            }
-        }
-    }, [user]);
 
     const next = () => {
         setCurrent(current + 1);
@@ -123,30 +99,21 @@ const RemotePrint: React.FC = () => {
                 // CALL SLICING API
                 setIsLoading(true);
                 console.log(user);
-                console.log(user._id)
+                console.log(user.uuid)
                 const printResponse = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
                         fileName: uploadedFile[0].name,
                         material,
                         options: settingDetails,
-                        userId: user._id,
+                        userId: user.uuid,
                     }
                 );
 
-                const editedRemotePrints = [
-                    ...(user?.remotePrints || []),
-                    { date: new Date(), fileName: uploadedFile[0].name },
-                ];
-                const editedUser: User = {
-                    ...user,
-                    remotePrints: editedRemotePrints,
-                };
+            
                 const userResponse = await axios.put<User>(
-                    `${import.meta.env.VITE_BACKEND_URL}/users/${user?._id}`,
-                    editedUser
+                    `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
                 );
-                setUser(editedUser);
                 setSubmitted(true);
                 setIsLoading(false);
                 setAllowPrint(false);
