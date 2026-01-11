@@ -14,15 +14,14 @@ import {
     Upload,
     UploadFile,
 } from "antd";
-import { Material } from "../../types/material";
+import { Material, WithMaterial } from "../../types/material";
 import { FilamentAdvancedSettings } from "../../types/equipment";
 import ConfirmAction from "../../components/ConfirmAction";
 import MeshViewer from "../../components/meshViewer/MeshViewer";
 
-interface ReviewProps {
+interface ReviewProps extends WithMaterial {
     prev: () => void;
     uploadedFile: UploadFile[];
-    material: Material | null;
     settingDetails: FilamentAdvancedSettings | null;
     handleSubmit: () => void;
 }

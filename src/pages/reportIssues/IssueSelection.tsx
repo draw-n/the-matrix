@@ -2,16 +2,14 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Category } from "../../types/category";
+import { Category, WithCategoryId } from "../../types/category";
 import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex } from "antd";
 import { useCategory } from "../../hooks/category";
 
-interface IssueSelectionProps extends CardSelectionProps {
-    categoryId: string;
-}
+type IssueSelectionProps = CardSelectionProps & WithCategoryId;
 
 const IssueSelection: React.FC<IssueSelectionProps> = ({
     categoryId,

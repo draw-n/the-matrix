@@ -10,41 +10,41 @@ import {
     TableProps,
     Tag,
     Tooltip,
-    theme
+    theme,
 } from "antd";
-import { DeleteOutlined, } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { cyan, magenta, purple } from "@ant-design/colors";
-
 
 import AnnouncementForm from "../forms/AnnouncementForm";
 import type { User } from "../../types/user";
-import type { Announcement } from "../../types/announcement";
+import type { Announcement, WithAnnouncements } from "../../types/announcement";
 import { checkAccess } from "../rbac/HasAccess";
 import AutoAvatar from "../AutoAvatar";
+import { CommonTableProps } from "../../types/common";
 
 interface UserInfo {
     fullName: string;
     email: string;
 }
 
-interface AnnouncementTableProps {
-    refreshTable: () => void;
-    announcements: Announcement[];
-}
+type AnnouncementTableProps = WithAnnouncements & CommonTableProps;
+
 
 const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
-    refreshTable,
+    refresh,
     announcements,
 }) => {
     const [users, setUsers] = useState<Record<string, UserInfo>>({});
     const colorPrimary = theme.useToken().token.colorPrimary;
-    const deleteAnnouncement = async (_id: string) => {
+    const deleteAnnouncement = async (announcementId: string) => {
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/announcements/${_id}`
+                `${
+                    import.meta.env.VITE_BACKEND_URL
+                }/announcements/${announcementId}`
             );
             message.success(response.data.message);
-            refreshTable();
+            refresh();
         } catch (error: any) {
             message.error(error.response?.data?.message || "Unknown Error.");
             console.error("Error deleting announcement:", error);
@@ -59,7 +59,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 );
                 const usersMap = response.data.reduce(
                     (acc: Record<string, UserInfo>, user: User) => {
-                        acc[user._id] = {
+                        acc[user.uuid] = {
                             fullName: `${user.firstName} ${user.lastName}`,
                             email: user.email,
                         };
@@ -91,7 +91,6 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
         },
     ];
 
-   
     const updateColumns: TableProps["columns"] = [
         {
             title: "Created By",
@@ -111,12 +110,12 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 return (
                     <Tooltip title={fullName}>
                         <a href={`mailto:${email}`}>
-                            <AutoAvatar seed={fullName}>
-                                {fullName
+                            <AutoAvatar
+                                text={fullName
                                     .split(" ")
                                     .map((item) => item.charAt(0))
                                     .join("")}
-                            </AutoAvatar>
+                            />
                         </a>
                     </Tooltip>
                 );
@@ -159,12 +158,12 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                 return (
                     <Tooltip title={fullName}>
                         <a href={`mailto:${email}`}>
-                            <AutoAvatar seed={fullName}>
-                                {fullName
+                            <AutoAvatar text= {fullName
                                     .split(" ")
                                     .map((item) => item.charAt(0))
-                                    .join("")}
-                            </AutoAvatar>
+                                    .join("")} />
+                               
+                          
                         </a>
                     </Tooltip>
                 );
@@ -230,10 +229,10 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                       title: "Actions",
                       key: "action",
                       render: (announcement: Announcement) =>
-                          announcement._id && (
+                          announcement.uuid && (
                               <Space>
                                   <AnnouncementForm
-                                      onUpdate={refreshTable}
+                                      onSubmit={refresh}
                                       announcement={announcement}
                                   />
 
@@ -243,7 +242,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                                           description="Are you sure you want to delete this announcement?"
                                           onConfirm={() =>
                                               deleteAnnouncement(
-                                                  announcement._id
+                                                  announcement.uuid
                                               )
                                           }
                                           okText="Yes"
@@ -264,7 +263,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
             : []),
     ];
 
-    const finalData = announcements.map((row) => {
+    const finalData = announcements?.map((row) => {
         const userInfo = users[row.createdBy] || {
             fullName: "Loading...",
             email: "Loading...",

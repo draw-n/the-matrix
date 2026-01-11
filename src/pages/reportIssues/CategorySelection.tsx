@@ -22,7 +22,7 @@ const CategorySelection: React.FC<CardSelectionProps> = ({
                 value={value}
                 onChange={onChange}
                 options={
-                    categories?.map((c) => ({ label: c.name, value: c._id })) ||
+                    categories?.map((c) => ({ label: c.name, value: c.uuid })) ||
                     []
                 }
             />

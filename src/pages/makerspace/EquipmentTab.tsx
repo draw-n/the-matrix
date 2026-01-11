@@ -17,7 +17,7 @@ import { useAllCategories } from "../../hooks/category";
 const EquipmentTab = () => {
     const { data: categories } = useAllCategories();
     const [filter, setFilter] = useState<string>(
-        categories ? categories[0]._id : ""
+        categories ? categories[0].uuid : ""
     );
 
     const { data: equipments, isLoading, refetch } = useAllEquipment(filter);
@@ -36,13 +36,13 @@ const EquipmentTab = () => {
                             suffixIcon={<CaretDownFilled />}
                             options={categories?.map((category) => ({
                                 label: category.name,
-                                value: category._id,
+                                value: category.uuid,
                             }))}
                         />
                     )}
                     <HasAccess roles={["admin", "moderator"]}>
                         <CreateEquipmentForm
-                            onUpdate={() => {
+                            onSubmit={() => {
                                 refetch();
                             }}
                         />

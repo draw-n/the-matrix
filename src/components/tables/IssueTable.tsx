@@ -18,16 +18,13 @@ import AutoAvatar from "../AutoAvatar";
 import { geekblue, gold, green, red } from "@ant-design/colors";
 import { useNavigate } from "react-router-dom";
 
-import type { Issue } from "../../types/issue";
+import type { Issue, WithIssues } from "../../types/issue";
 import type { Equipment } from "../../types/equipment";
 import type { User } from "../../types/user";
 import { checkAccess } from "../rbac/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
-
-interface TableIssue extends Issue {
-    key: string;
-}
+import { CommonTableProps } from "../../types/common";
 
 interface UserInfo {
     fullName: string;
@@ -40,13 +37,10 @@ interface EquipmentInfo {
     type: string;
 }
 
-interface IssueTableProps {
-    refreshTable: () => void;
-    issues?: Issue[];
-}
+type IssueTableProps = WithIssues & CommonTableProps;
 
 const IssueTable: React.FC<IssueTableProps> = ({
-    refreshTable,
+    refresh,
     issues,
 }: IssueTableProps) => {
     const [users, setUsers] = useState<Record<string, UserInfo>>({});
@@ -56,13 +50,13 @@ const IssueTable: React.FC<IssueTableProps> = ({
 
     const navigate = useNavigate();
 
-    const deleteIssue = async (_id: string) => {
+    const deleteIssue = async (issueId: string) => {
         try {
             await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${_id}`
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${issueId}`
             );
             message.success("Issue deleted successfully");
-            refreshTable();
+            refresh();
         } catch (error) {
             console.error("Error deleting issue:", error);
             message.error("Error deleting issue");
@@ -73,10 +67,10 @@ const IssueTable: React.FC<IssueTableProps> = ({
         try {
             const editedIssue = { ...issue, status };
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue.uuid}`,
                 editedIssue
             );
-            refreshTable();
+            refresh();
         } catch (error) {
             console.error("Issue archiving issue", error);
         }
@@ -90,7 +84,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                 );
                 const usersMap = responseUsers.data.reduce(
                     (acc: Record<string, UserInfo>, user: User) => {
-                        acc[user._id] = {
+                        acc[user.uuid] = {
                             fullName: `${user.firstName} ${user.lastName}`,
                             email: user.email,
                         };
@@ -114,10 +108,10 @@ const IssueTable: React.FC<IssueTableProps> = ({
                         acc: Record<string, EquipmentInfo>,
                         equipment: Equipment
                     ) => {
-                        acc[equipment._id] = {
+                        acc[equipment.uuid] = {
                             name: equipment.name,
                             routePath: equipment.routePath,
-                            type: equipment.category,
+                            type: equipment.categoryId,
                         };
                         return acc;
                     },
@@ -186,11 +180,12 @@ const IssueTable: React.FC<IssueTableProps> = ({
                 return (
                     <Tooltip title={fullName}>
                         <a href={`mailto:${email}`}>
-                            <AutoAvatar seed={fullName}>
-                                {fullName
+                            <AutoAvatar
+                                text={fullName
                                     .split(" ")
-                                    .map((item: string) => item.charAt(0))}
-                            </AutoAvatar>
+                                    .map((item: string) => item.charAt(0))
+                                    .join("")}
+                            />
                         </a>
                     </Tooltip>
                 );
@@ -257,13 +252,13 @@ const IssueTable: React.FC<IssueTableProps> = ({
                           <Flex gap="small">
                               <EditIssueForm
                                   issue={item}
-                                  onUpdate={refreshTable}
+                                  onSubmit={refresh}
                               />
                               <Tooltip title="Delete">
                                   <Popconfirm
                                       title="Delete Issue"
                                       description="Are you sure you want to delete this issue?"
-                                      onConfirm={() => deleteIssue(item._id)}
+                                      onConfirm={() => deleteIssue(item.uuid)}
                                       okText="Yes"
                                       cancelText="No"
                                   >
@@ -289,7 +284,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
             fullName: "Loading...",
             email: "Loading...",
         };
-        const equipmentInfo = equipment[row.equipment] || {
+        const equipmentInfo = equipment[row.equipmentId] || {
             name: "Loading...",
             type: "Loading...",
             routePath: "Loading...",

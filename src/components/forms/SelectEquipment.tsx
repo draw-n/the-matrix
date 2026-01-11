@@ -8,18 +8,16 @@ import type { Equipment } from "../../types/equipment";
 import "./issues.css";
 import { ControlledValueProps } from "../../types/common";
 import { useAllEquipment } from "../../hooks/equipment";
+import { WithCategoryId } from "../../types/category";
 
-interface SelectEquipmentProps extends ControlledValueProps<string> {
-    category: string;
-}
+type SelectEquipmentProps = WithCategoryId & ControlledValueProps<string>;
 
 const SelectEquipment: React.FC<SelectEquipmentProps> = ({
-    category,
+    categoryId,
     value,
     onChange,
 }: SelectEquipmentProps) => {
-    const {data: equipments, isLoading} = useAllEquipment(category);
-
+    const {data: equipments, isLoading} = useAllEquipment(categoryId);
     const handleSelect = (value: string) => {
         if (onChange) {
             onChange(value);
@@ -54,14 +52,14 @@ const SelectEquipment: React.FC<SelectEquipmentProps> = ({
                     <Row gutter={[20, 20]}>
                         {equipments && equipments.map((equipment: Equipment) => {
                             return (
-                                <Col key={equipment._id} lg={8} xs={24}>
+                                <Col key={equipment.uuid} lg={8} xs={24}>
                                     <div
                                         className={`select-card ${
-                                            equipment._id === value &&
+                                            equipment.uuid === value &&
                                             "select-active"
                                         }`}
                                         onClick={() =>
-                                            handleSelect(equipment._id)
+                                            handleSelect(equipment.uuid)
                                         }
                                     >
                                         <p>{equipment.name}</p>

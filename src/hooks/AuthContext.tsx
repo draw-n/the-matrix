@@ -7,6 +7,7 @@ import React, {
     useContext,
     ReactNode,
     useEffect,
+    PropsWithChildren,
 } from "react";
 import { User } from "../types/user";
 
@@ -20,9 +21,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-    children?: ReactNode;
-}
+type AuthProviderProps = PropsWithChildren<{}>;
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);

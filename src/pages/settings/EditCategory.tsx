@@ -5,7 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Typography, Collapse, Flex, List, message, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { Category } from "../../types/category";
+import { Category, WithCategory } from "../../types/category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
 import { Equipment } from "../../types/equipment";
@@ -14,25 +14,24 @@ import ConfirmAction from "../../components/ConfirmAction";
 import CategoryForm from "../../components/forms/CategoryForm";
 import { useAllEquipment } from "../../hooks/equipment";
 import { useAllMaterials } from "../../hooks/material";
+import { CommonFormProps } from "../../types/common";
 
-interface EditCategoryProps {
-    category: Category;
-    onUpdate: () => void;
-}
+type EditCategoryProps = WithCategory & CommonFormProps;
+
 
 const { Title } = Typography;
 
 const EditCategory: React.FC<EditCategoryProps> = ({
     category,
-    onUpdate,
+    onSubmit,
 }: EditCategoryProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [defaultIssues, setDefaultIssues] = useState<string[]>(
-        category.defaultIssues || []
+        category?.defaultIssues || []
     );
     const [isModalOpen, setIsModalOpen] = useState(false);
-   const {data: equipment} = useAllEquipment(category._id);
-   const {data: materials} = useAllMaterials(category._id);
+   const {data: equipment} = useAllEquipment(category?.uuid);
+   const {data: materials} = useAllMaterials(category?.uuid);
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
     
@@ -73,10 +72,10 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     const deleteCategory = async () => {
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${category._id}`
+                `${import.meta.env.VITE_BACKEND_URL}/categories/${category?.uuid}`
             );
             message.success(response.data.message);
-            onUpdate();
+            onSubmit();
         } catch (error) {
             console.error(error);
         }
@@ -90,7 +89,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
         try {
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                    category._id
+                    category?.uuid
                 }`,
                 { ...category, defaultIssues: defaultIssues.filter((issue) => issue.length != 0) }
             );
@@ -102,7 +101,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     return (
         <Flex vertical gap="middle">
             <Flex justify="space-between">
-                <Title level={4}>{category.name}</Title>
+                <Title level={4}>{category?.name}</Title>
                 <Flex justify="end" gap="middle">
                     <Button
                         onClick={() => setIsModalOpen(true)}
@@ -112,7 +111,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                         Settings
                     </Button>
                     <CategoryForm
-                        onUpdate={onUpdate}
+                        onSubmit={onSubmit}
                         isModalOpen={isModalOpen}
                         setIsModalOpen={setIsModalOpen}
                         category={category}
@@ -128,9 +127,9 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                             </Button>
                         }
                         actionSuccess={deleteCategory}
-                        title={`Delete the ${category.name} Category`}
+                        title={`Delete the ${category?.name} Category`}
                         headlineText="Deleting this category will also delete its associated equipment and materials."
-                        confirmText={`Are you sure you wish to delete the ${category.name} category?`}
+                        confirmText={`Are you sure you wish to delete the ${category?.name} category?`}
                         children={
                             <Collapse
                                 size="small"

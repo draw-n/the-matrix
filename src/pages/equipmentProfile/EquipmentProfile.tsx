@@ -14,7 +14,7 @@ import {
     Space,
     Typography,
 } from "antd";
-import { Equipment } from "../../types/equipment";
+import { Equipment, WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
 
 import type { Category } from "../../types/category";
@@ -27,31 +27,28 @@ import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
 import { useAllCategories } from "../../hooks/category";
 import { useAllIssues } from "../../hooks/issue";
+import { CommonTableProps } from "../../types/common";
+import { useAllEquipment } from "../../hooks/equipment";
 
 const { Paragraph, Title } = Typography;
-
-interface EquipmentProfileProps {
-    equipment: Equipment;
-    refreshTable: () => void;
-}
+type EquipmentProfileProps = WithEquipment;
 
 const { TextArea } = Input;
 
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
-    refreshTable,
 }: EquipmentProfileProps) => {
+    const {refetch: equipmentRefresh} = useAllEquipment();
     const [editMode, setEditMode] = useState<boolean>(false);
     const { data: categories, isLoading } = useAllCategories();
-    const [name, setName] = useState(equipment.name);
-    const [type, setType] = useState(equipment.category);
-    const [headline, setHeadline] = useState(equipment.headline);
-    const [properties, setProperties] = useState(equipment.properties);
-    const [description, setDescription] = useState(equipment.description);
-
+    const [name, setName] = useState(equipment?.name);
+    const [type, setType] = useState(equipment?.categoryId);
+    const [headline, setHeadline] = useState(equipment?.headline);
+    const [properties, setProperties] = useState(equipment?.properties);
+    const [description, setDescription] = useState(equipment?.description);
     const { data: issues, refetch } = useAllIssues(
         equipment ? ["open", "in-progress", "completed"] : undefined,
-        equipment ? equipment._id : undefined
+        equipment ? equipment.uuid : undefined
     );
     const navigate = useNavigate();
     /**
@@ -69,22 +66,22 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const saveEquipmentChanges = async () => {
         try {
             const editedEquipment = {
-                _id: equipment._id,
+                uuid: equipment?.uuid,
                 name,
                 category: type,
                 headline,
                 properties,
                 description,
-                status: equipment.status,
-                routePath: equipment.routePath,
+                status: equipment?.status,
+                routePath: equipment?.routePath,
             };
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${
-                    equipment._id
+                    equipment?.uuid
                 }`,
                 editedEquipment
             );
-            refreshTable();
+            equipmentRefresh();
         } catch (error) {
             console.error("Issue updating equipment", error);
         }
@@ -95,9 +92,11 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const deleteEquipment = async () => {
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipment._id}`
+                `${import.meta.env.VITE_BACKEND_URL}/equipment/${
+                    equipment?.uuid
+                }`
             );
-            refreshTable();
+            equipmentRefresh();
             navigate("/makerspace");
         } catch (error) {
             console.error("Issue deleting equipment", error);
@@ -111,10 +110,9 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     <Col xs={24} lg={18}>
                         <HeaderCard
                             equipment={equipment}
-                            category={
-                                categories?.find((item) => item._id === type)
-                                    ?.name
-                            }
+                            category={categories?.find(
+                                (item) => item.uuid === type
+                            )}
                             editMode={editMode}
                             handleClick={handleClick}
                         />
@@ -154,11 +152,8 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                         <Card>
                             <Title
                                 level={2}
-                            >{`${equipment.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
-                            <IssueTable
-                                issues={issues}
-                                refreshTable={refetch}
-                            />
+                            >{`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
+                            <IssueTable issues={issues} refresh={refetch} />
                         </Card>
                     </Col>
                     {editMode && (
@@ -171,14 +166,14 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                             danger
                                             style={{ width: "100%" }}
                                         >
-                                            {`Delete ${equipment.name}`} and its
-                                            associated data
+                                            {`Delete ${equipment?.name}`} and
+                                            its associated data
                                         </Button>
                                     }
                                     actionSuccess={deleteEquipment}
-                                    title={`Delete the ${equipment.name} Equipment`}
+                                    title={`Delete the ${equipment?.name} Equipment`}
                                     headlineText="Deleting this equipment will also delete its associated issues."
-                                    confirmText={`Are you sure you wish to delete the ${equipment.name} equipment?`}
+                                    confirmText={`Are you sure you wish to delete the ${equipment?.name} equipment?`}
                                 />
                             </Card>
                         </Col>

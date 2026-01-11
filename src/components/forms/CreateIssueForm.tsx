@@ -21,23 +21,15 @@ import SelectEquipment from "./SelectEquipment";
 import { Category } from "../../types/category";
 import "./issues.css";
 import { useAllCategories } from "../../hooks/category";
+import { CommonFormProps } from "../../types/common";
+import { Issue } from "../../types/issue";
 
 const { TextArea } = Input;
 
-interface FieldType {
-    equipment: string;
-    category: string;
-    initialDescription: string;
-    description: string;
-}
 
-interface CreateIssueFormProps {
-    onUpdate: () => void;
-}
-
-const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
-    onUpdate,
-}: CreateIssueFormProps) => {
+const CreateIssueForm: React.FC<CommonFormProps> = ({
+    onSubmit,
+}: CommonFormProps) => {
     const [form] = Form.useForm();
     const {data: categories} = useAllCategories();
     
@@ -53,12 +45,12 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
         message.error("Missing one or more fields.");
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const onFinish: FormProps<Issue>["onFinish"] = async (values) => {
         try {
             const newIssue = {
-                equipment: values.equipment,
+                equipment: values.equipmentId,
                 description: `${values.initialDescription}\n${values.description}`,
-                createdBy: user?._id,
+                createdBy: user?.uuid,
                 dateCreated: new Date(),
             };
             await axios.post(
@@ -66,7 +58,7 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                 newIssue
             );
             setIsModalOpen(false);
-            onUpdate();
+            onSubmit();
         } catch (error) {
             console.error("Problem creating an issue: ", error);
         }
@@ -109,10 +101,10 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
-                    <Form.Item<FieldType>
+                    <Form.Item
                         style={{ width: "100%" }}
                         label="Equipment Category"
-                        name="category"
+                        name="categoryId"
                         rules={[
                             {
                                 required: true,
@@ -124,22 +116,22 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                             size="small"
                             suffixIcon={<CaretDownFilled />}
                             options={categories?.map((category) => ({
-                                value: category._id,
+                                value: category.uuid,
                                 label: category.name,
                             }))}
                         />
                     </Form.Item>
 
-                    <Form.Item<FieldType>
+                    <Form.Item
                         noStyle
                         shouldUpdate={(prevValues, currentValues) =>
-                            prevValues.category !== currentValues.category
+                            prevValues.categoryId !== currentValues.categoryId
                         }
                     >
                         {({ getFieldValue }) => {
-                            const category = getFieldValue("category");
+                            const categoryId = getFieldValue("category");
 
-                            return category ? (
+                            return categoryId ? (
                                 <>
                                     <Form.Item
                                         style={{ width: "100%" }}
@@ -153,9 +145,9 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                                             },
                                         ]}
                                     >
-                                        <SelectEquipment category={category} />
+                                        <SelectEquipment categoryId={categoryId} />
                                     </Form.Item>
-                                    <Form.Item<FieldType>
+                                    <Form.Item<Issue>
                                         style={{ width: "100%" }}
                                         label="What is the issue? Select the one that is the most applicable."
                                         name="initialDescription"
@@ -174,8 +166,8 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                                                 ...(categories
                                                     ?.find(
                                                         (item) =>
-                                                            item._id ===
-                                                            category
+                                                            item.uuid ===
+                                                            categoryId
                                                     )
                                                     ?.defaultIssues?.map(
                                                         (issue) => ({
@@ -195,7 +187,7 @@ const CreateIssueForm: React.FC<CreateIssueFormProps> = ({
                         }}
                     </Form.Item>
 
-                    <Form.Item<FieldType>
+                    <Form.Item<Issue>
                         style={{ width: "100%" }}
                         label="Please Provide More Details About the Issue"
                         name="description"

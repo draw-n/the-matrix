@@ -31,14 +31,14 @@ import { lightTheme, darkTheme } from "./theme.ts";
 import { useAllEquipment } from "./hooks/equipment.ts";
 
 const App: React.FC = () => {
-    const {data: equipments, refetch} = useAllEquipment();
+    const { data: equipments, refetch } = useAllEquipment();
 
     const [theme, setTheme] = useState<"light" | "dark">("light");
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
-    
+
     return (
         <>
             <ConfigProvider theme={theme === "light" ? lightTheme : darkTheme}>
@@ -49,7 +49,7 @@ const App: React.FC = () => {
                                 equipments.length > 0 &&
                                 equipments.map((equipment) => (
                                     <Route
-                                        key={equipment._id}
+                                        key={equipment.uuid}
                                         path={`/makerspace/${equipment.routePath}`}
                                         element={
                                             <PrivateRoute
@@ -71,9 +71,6 @@ const App: React.FC = () => {
                                                             <EquipmentProfile
                                                                 equipment={
                                                                     equipment
-                                                                }
-                                                                refreshTable={
-                                                                    refetch
                                                                 }
                                                             />
                                                         }
@@ -188,13 +185,7 @@ const App: React.FC = () => {
                                                     "admin",
                                                 ]}
                                                 title="Makerspace"
-                                                children={
-                                                    <Makerspace
-                                                        refreshEquipment={
-                                                            refetch
-                                                        }
-                                                    />
-                                                }
+                                                children={<Makerspace />}
                                             />
                                         }
                                     />

@@ -3,13 +3,12 @@ import React from "react";
 import { Card, Flex, Tag, theme, Button } from "antd";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
-import { Equipment } from "../../types/equipment";
+import { Equipment, WithEquipment } from "../../types/equipment";
 
 import HasAccess from "../../components/rbac/HasAccess";
+import { WithCategory} from "../../types/category";
 
-interface HeaderCardProps {
-    equipment: Equipment;
-    category?: string;
+interface HeaderCardProps extends WithEquipment, WithCategory {
     handleClick?: () => void;
     editMode?: boolean;
 }
@@ -42,7 +41,7 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                             display: "inline-block",
                         }}
                     >
-                        {category}
+                        {category?.name.toUpperCase()}
                     </Tag>
                     <h1
                         style={{
@@ -50,10 +49,10 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                             textTransform: "uppercase",
                         }}
                     >
-                        {equipment.name}
+                        {equipment?.name}
                     </h1>
                     <Flex style={{ width: "100%" }} vertical>
-                        <p>{equipment.headline}</p>
+                        <p>{equipment?.headline}</p>
                     </Flex>
                 </Flex>
                 <HasAccess roles={["admin", "moderator"]}>

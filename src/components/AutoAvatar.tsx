@@ -4,13 +4,11 @@ import { Avatar } from "antd";
 import randomColor from "randomcolor";
 
 interface AutoAvatarProps {
-    children: string;
-    seed?: string;
+    text?: string
 }
 
 const AutoAvatar: React.FC<AutoAvatarProps> = ({
-    children,
-    seed,
+    text,
 }: AutoAvatarProps) => {
     const getBrightness = (color: string) => {
         // Convert hex to RGB
@@ -28,7 +26,7 @@ const AutoAvatar: React.FC<AutoAvatarProps> = ({
         return brightness > 128
             ? randomColor({
                   luminosity: "dark",
-                  seed: seed || children,
+                  seed: text,
               })
             : "#FFF"; // Black text for light background, white text for dark
     };
@@ -38,18 +36,18 @@ const AutoAvatar: React.FC<AutoAvatarProps> = ({
             style={{
                 backgroundColor: randomColor({
                     luminosity: "bright",
-                    seed: seed || children,
+                    seed: text,
                 }),
                 color: getAdjustedTextColor(
                     randomColor({
                         luminosity: "bright",
-                        seed: seed || children,
+                        seed: text,
                     })
                 ),
                 textTransform: "uppercase",
             }}
         >
-            {children}
+            {text}
         </Avatar>
     );
 };

@@ -17,29 +17,27 @@ import {
     DeleteOutlined,
 } from "@ant-design/icons";
 
-import type { Material } from "../../types/material";
+import type { Material, WithMaterials } from "../../types/material";
 import MaterialForm from "../forms/MaterialForm";
 
-import { Category } from "../../types/category";
 import { checkAccess } from "../rbac/HasAccess";
 import { useAllCategories } from "../../hooks/category";
+import { CommonTableProps } from "../../types/common";
 
-interface MaterialTableProps {
-    refreshTable: () => void;
-    materials?: Material[];
-}
+type MaterialTableProps = WithMaterials & CommonTableProps;
+
 
 const MaterialTable: React.FC<MaterialTableProps> = ({
-    refreshTable,
+    refresh,
     materials,
 }: MaterialTableProps) => {
     const {data: categories} = useAllCategories();
-    const deleteMaterial = async (_id: string) => {
+    const deleteMaterial = async (materialId: string) => {
         try {
             await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/materials/${_id}`
+                `${import.meta.env.VITE_BACKEND_URL}/materials/${materialId}`
             );
-            refreshTable();
+            refresh();
         } catch (error) {
             console.error("Error deleting material:", error);
         }
@@ -63,7 +61,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             dataIndex: "category",
             filters: categories?.map((category) => ({
                 text: category.name,
-                value: category._id,
+                value: category.uuid,
             })),
 
             onFilter: (value, record) =>
@@ -75,7 +73,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                         color={
                             categories?.find(
                                 (checkCategory) =>
-                                    checkCategory._id === category
+                                    checkCategory.uuid === category
                             )?.color || "geekblue"
                         }
                         key={category}
@@ -83,7 +81,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                         {
                             categories?.find(
                                 (checkCategory) =>
-                                    checkCategory._id === category
+                                    checkCategory.uuid === category
                             )?.name
                         }
                     </Tag>
@@ -109,10 +107,10 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                       title: "Actions",
                       key: "action",
                       render: (material: Material) =>
-                          material._id && (
+                          material.uuid && (
                               <Space>
                                   <MaterialForm
-                                      onUpdate={refreshTable}
+                                      onSubmit={refresh}
                                       material={material}
                                   />
 
@@ -121,7 +119,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                                           title="Delete Material"
                                           description="Are you sure to delete this material?"
                                           onConfirm={() =>
-                                              deleteMaterial(material._id)
+                                              deleteMaterial(material.uuid)
                                           }
                                           okText="Yes"
                                           cancelText="No"

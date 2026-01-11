@@ -17,37 +17,16 @@ import { EditOutlined, DesktopOutlined } from "@ant-design/icons";
 
 import { Announcement } from "../../types/announcement";
 import HasAccess from "../../components/rbac/HasAccess";
+import { useAllAnnouncements } from "../../hooks/announcement";
 
 const { Title } = Typography;
 
 const AnnouncementCard: React.FC = () => {
-    const [announcements, setAnnouncements] = useState<Announcement[]>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { data: announcements, isLoading } = useAllAnnouncements(["posted"]);
     const [page, setPage] = useState<number>(0);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Announcement[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/announcements?status=posted`
-                );
-                const formattedData = response.data.map((item) => ({
-                    ...item,
-                    key: item._id, // or item.id if you have a unique identifier
-                }));
-                setAnnouncements(formattedData);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Internal Server Error: ", error);
-            }
-        };
-
-        fetchData();
-    }, []);
     return (
         <Card>
             <Flex justify={"space-between"} align={"center"}>
@@ -80,9 +59,11 @@ const AnnouncementCard: React.FC = () => {
             </Flex>
             {announcements && announcements.length > 0 ? (
                 announcements.slice(page, page + 3).map((announcement) => (
-                    <div key={announcement._id} style={{ marginBottom: 16 }}>
+                    <div key={announcement.uuid} style={{ marginBottom: 16 }}>
                         <Divider />
-                        <Tag style={{textTransform: "uppercase"}}>{announcement.type}</Tag>
+                        <Tag style={{ textTransform: "uppercase" }}>
+                            {announcement.type}
+                        </Tag>
                         <Title level={4}>{announcement.title}</Title>
                         <p>{announcement.description}</p>
                     </div>

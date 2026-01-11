@@ -23,7 +23,6 @@ const PrintingChart: React.FC = () => {
     const [pastDays, setPastDays] = useState(30);
 
     const chartData = useMemo(() => {
-        if (!user?.remotePrints || user.remotePrints.length === 0) return [];
 
         const today = dayjs().startOf("day");
         const oneMonthAgo = today.subtract(pastDays, "day");
@@ -35,25 +34,12 @@ const PrintingChart: React.FC = () => {
             dateMap[dateKey] = 0;
         }
 
-        user.remotePrints.forEach(({ date }) => {
-            const parsed = dayjs(date).startOf("day");
-
-            if (
-                (parsed.isAfter(oneMonthAgo) && parsed.isBefore(today)) ||
-                parsed.isSame(oneMonthAgo) ||
-                parsed.isSame(today)
-            ) {
-                const key = parsed.format("YYYY-MM-DD");
-                if (dateMap[key] !== undefined) {
-                    dateMap[key]++;
-                }
-            }
-        });
+      
         return Object.entries(dateMap).map(([date, count]) => ({
             date: dayjs(date).format("MMM D"), // e.g., "Apr 15"
             count,
         }));
-    }, [user?.remotePrints, pastDays]);
+    }, [ pastDays]);
 
     return (
         <>

@@ -1,17 +1,12 @@
 // Description: StatusCard component for displaying equipment status.
 import { Card, Flex, Typography } from "antd";
 
-import { Equipment } from "../../types/equipment";
-
-interface StatusCardProps {
-    equipment: Equipment;
-}
-
+import { Equipment, WithEquipment } from "../../types/equipment";
 const { Title } = Typography;
 
-const StatusCard: React.FC<StatusCardProps> = ({
+const StatusCard: React.FC<WithEquipment> = ({
     equipment,
-}: StatusCardProps) => {
+}) => {
     return (
         <Card style={{ height: "100%" }}>
             <Flex
@@ -23,7 +18,7 @@ const StatusCard: React.FC<StatusCardProps> = ({
             >
                 <Title level={2}>Status</Title>
                 <p style={{ textTransform: "capitalize" }}>
-                    {equipment.status}
+                    {equipment?.status}
                 </p>
             </Flex>
         </Card>

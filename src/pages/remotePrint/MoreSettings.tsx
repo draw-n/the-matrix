@@ -15,14 +15,13 @@ import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 
 import AdvancedSettings from "./components/AdvancedSettings";
 import type { FilamentAdvancedSettings } from "../../types/equipment";
-import type { Material } from "../../types/material";
+import type { Material, WithMaterial } from "../../types/material";
 
 import InfillSlider from "./components/InfillSlider";
 
-interface MoreSettingsProps {
+interface MoreSettingsProps extends WithMaterial {
     prev: () => void;
     next: () => void;
-    material: Material | null;
     settingDetails: FilamentAdvancedSettings;
     setSettingDetails: (item: FilamentAdvancedSettings) => void;
 }

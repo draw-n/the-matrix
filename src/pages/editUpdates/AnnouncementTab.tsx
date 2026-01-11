@@ -1,36 +1,13 @@
 // Description: AnnouncementTab component for managing and displaying announcements.
-import axios from "axios";
-import { useEffect, useState } from "react";
-
 import {  Flex, Space } from "antd";
 import AnnouncementForm from "../../components/forms/AnnouncementForm";
 import AnnouncementTable from "../../components/tables/AnnouncementTable";
 
-import { Announcement } from "../../types/announcement";
+import { useAllAnnouncements } from "../../hooks/announcement";
 
 const AnnouncementTab: React.FC = () => {
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const fetchData = async () => {
-        try {
-            const response = await axios.get<Announcement[]>(
-                `${
-                    import.meta.env.VITE_BACKEND_URL
-                }/announcements?status=posted`
-            );
+    const {data: announcements, refetch} = useAllAnnouncements(['posted']);
 
-            const formattedData = response.data.map((item) => ({
-                ...item,
-                key: item._id, // or item.id if you have a unique identifier
-            }));
-            setAnnouncements(formattedData);
-        } catch (error) {
-            console.error("Fetching updates or issues failed:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
 
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -40,10 +17,10 @@ const AnnouncementTab: React.FC = () => {
                 align="center"
             >
                 <h2>ANNOUNCEMENTS</h2>
-                <AnnouncementForm onUpdate={fetchData} />
+                <AnnouncementForm onSubmit={refetch} />
             </Flex>
             <AnnouncementTable
-                refreshTable={fetchData}
+                refresh={refetch}
                 announcements={announcements}
             />
         </Space>

@@ -1,5 +1,5 @@
 export interface Announcement {
-    _id: string;
+    uuid: string;
     title?: string;
     type: AnnouncementType;
     status?: AnnouncementStatus;
@@ -8,6 +8,18 @@ export interface Announcement {
     dateCreated: Date;
     lastUpdatedBy: string;
     dateLastUpdated: Date;
+}
+
+export interface WithAnnouncement {
+    announcement?: Announcement;
+}
+
+export interface WithAnnouncements {
+    announcements?: Announcement[];
+}
+
+export interface WithAnnouncementId {
+    announcementId?: string;
 }
 
 export type AnnouncementType = "event" | "classes" | "other";
