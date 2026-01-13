@@ -20,7 +20,7 @@ import Loading from "../../components/Loading";
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [allowPrint, setAllowPrint] = useState(false);
+    const [allowPrint, setAllowPrint] = useState(true);
     const [current, setCurrent] = useState(0);
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
     const [material, setMaterial] = useState<Material>();
