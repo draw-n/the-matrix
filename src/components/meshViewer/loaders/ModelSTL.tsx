@@ -34,10 +34,10 @@ const ModelSTL = ({
             (geo: any) => {
                 geo.computeBoundingBox();
                 const bbox = geo.boundingBox!;
+                // Center X/Y, flush Z to ground
+                const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
-                // Keep original units — offset to ground without changing scale
-                const offsetZ = -minZ; // flush with ground
-                setPosition([0, 0, offsetZ]);
+                setPosition([-center.x, -center.y, -minZ]);
                 setGeometry(geo);
             },
             undefined,

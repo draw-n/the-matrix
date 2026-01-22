@@ -26,16 +26,15 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
                     return;
                 }
                 merged.computeBoundingBox();
-
                 const bbox = merged.boundingBox!;
-                const offsetZ = -bbox.min.z; // flush with ground
-
+                // Center X/Y, flush Z to ground
+                const center = bbox.getCenter(new THREE.Vector3());
+                const minZ = bbox.min.z;
                 const mesh = new THREE.Mesh(
                     merged,
                     new THREE.MeshStandardMaterial({ color: colorPrimary })
                 );
-                mesh.position.set(0, 0, offsetZ);
-
+                mesh.position.set(-center.x, -center.y, -minZ);
                 setObject(mesh);
                 onLoad?.(mesh);
             },
