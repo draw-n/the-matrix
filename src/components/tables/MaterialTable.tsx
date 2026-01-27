@@ -20,28 +20,18 @@ import {
 import type { Material, WithMaterials } from "../../types/material";
 import MaterialForm from "../forms/MaterialForm";
 
+import { deleteMaterial } from "../../api/material";
 import { checkAccess } from "../rbac/HasAccess";
 import { useAllCategories } from "../../hooks/category";
 import { CommonTableProps } from "../../types/common";
 
 type MaterialTableProps = WithMaterials & CommonTableProps;
 
-
 const MaterialTable: React.FC<MaterialTableProps> = ({
     refresh,
     materials,
 }: MaterialTableProps) => {
-    const {data: categories} = useAllCategories();
-    const deleteMaterial = async (materialId: string) => {
-        try {
-            await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/materials/${materialId}`
-            );
-            refresh();
-        } catch (error) {
-            console.error("Error deleting material:", error);
-        }
-    };
+    const { data: categories } = useAllCategories();
 
     const updateColumns: TableProps["columns"] = [
         {
@@ -118,9 +108,13 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                                       <Popconfirm
                                           title="Delete Material"
                                           description="Are you sure to delete this material?"
-                                          onConfirm={() =>
-                                              deleteMaterial(material.uuid)
-                                          }
+                                          onConfirm={() => {
+                                              deleteMaterial(
+                                                  material.uuid
+                                              ).then(() => {
+                                                  refresh && refresh();
+                                              });
+                                          }}
                                           okText="Yes"
                                           cancelText="No"
                                           placement="topRight"

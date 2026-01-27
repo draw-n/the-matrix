@@ -1,6 +1,6 @@
 // Description: EquipmentProfile component for displaying and editing equipment details.
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import {
@@ -14,20 +14,17 @@ import {
     Space,
     Typography,
 } from "antd";
-import { Equipment, WithEquipment } from "../../types/equipment";
+import {  WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
 
-import type { Category } from "../../types/category";
 import ConfirmAction from "../../components/ConfirmAction";
 
 import { useNavigate } from "react-router-dom";
-import type { Issue } from "../../types/issue";
 
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
 import { useAllCategories } from "../../hooks/category";
 import { useAllIssues } from "../../hooks/issue";
-import { CommonTableProps } from "../../types/common";
 import { useAllEquipment } from "../../hooks/equipment";
 
 const { Paragraph, Title } = Typography;

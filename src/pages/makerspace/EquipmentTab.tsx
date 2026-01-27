@@ -16,9 +16,14 @@ import { useAllCategories } from "../../hooks/category";
 
 const EquipmentTab = () => {
     const { data: categories } = useAllCategories();
-    const [filter, setFilter] = useState<string>(
-        categories ? categories[0].uuid : ""
-    );
+    const [filter, setFilter] = useState<string>("");
+
+    // Set filter to categories[0].uuid when categories are loaded
+    useEffect(() => {
+        if (categories && categories.length > 0) {
+            setFilter(categories[0].uuid);
+        }
+    }, [categories]);
 
     const { data: equipments, isLoading, refetch } = useAllEquipment(filter);
 

@@ -1,7 +1,10 @@
-import axios from "axios"
-import { Issue } from "../types/issue"
+import axios from "axios";
+import { Issue } from "../types/issue";
 
-export const getAllIssues = async (statuses?: string[], equipmentId?: string) => {
+export const getAllIssues = async (
+    statuses?: string[],
+    equipmentId?: string
+) => {
     try {
         let query = "";
 
@@ -14,9 +17,21 @@ export const getAllIssues = async (statuses?: string[], equipmentId?: string) =>
         }
         const response = await axios.get<Issue[]>(
             `${import.meta.env.VITE_BACKEND_URL}/issues${query}`
-        )
-        return response.data
+        );
+        return response.data;
     } catch (error) {
-        console.error("Error fetching issues:", error)
+        console.error("Error fetching issues:", error);
     }
-}
+};
+
+export const createIssue = async (newIssue: Partial<Issue>) => {
+    try {
+        const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/issues`,
+            newIssue
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Problem creating an issue: ", error);
+    }
+};

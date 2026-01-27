@@ -45,55 +45,37 @@ const UploadFile: React.FC<UploadFileProps> = ({
             } catch (error) {
                 console.error("Error exporting and replacing model: ", error);
                 message.error(
-                    "There was an error processing your model. Please try again."
+                    "There was an error processing your model. Please try again.",
                 );
             }
         }
     };
 
     const props: UploadProps = {
-        action: `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
-        name: "file",
-        headers: {
-            authorization: "authorization-text",
-        },
+        beforeUpload: (file) => {
+            // Accept only STL / 3MF
+            const isValid =
+                file.name.toLowerCase().endsWith(".stl") ||
+                file.name.toLowerCase().endsWith(".3mf");
 
-        onChange: (info) => {
-            let newFileList = [...info.fileList];
+            if (!isValid) {
+                message.error("Only STL and 3MF files are supported.");
+                return Upload.LIST_IGNORE;
+            }
 
-            // Limit the number of uploaded files
-            newFileList = newFileList.slice(-1);
-            newFileList = newFileList.map((file) => {
-                if (file.response) {
-                    // Component will show file.url as link
-                    file.url = file.response.url;
-                }
-                return file;
-            });
-            setUploadedFile(newFileList);
-        },
-
-        customRequest: async (options: any) => {
-            const data = new FormData();
-            data.append("file", options.file);
-            const config = {
-                headers: {
-                    "Content-Type": "multipart/form-data",
+            setUploadedFile([
+                {
+                    uid: file.uid,
+                    name: file.name,
+                    status: "done",
+                    originFileObj: file,
                 },
-            };
+            ]);
 
-            await axios
-                .post(options.action, data, config)
-                .then((response: any) => {
-                    message.success(response.data.message);
-                    options.onSuccess(response.data, options.file);
-                })
-                .catch((err: Error) => {
-                    console.error(err);
-                    message.error("Upload failed.");
-                    options.onError(err);
-                });
+            // ❗ Prevent auto upload
+            return false;
         },
+        showUploadList: false,
     };
 
     return (

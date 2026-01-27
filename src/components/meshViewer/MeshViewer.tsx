@@ -7,7 +7,6 @@ import { useEffect, useState, Suspense } from "react";
 import { Card, UploadFile, message } from "antd";
 import axios from "axios";
 import * as THREE from "three";
-import detectMajorFaces from "./faces/detectMajorFaces";
 import getExportableMesh from "./utils/getExportableMesh";
 import alignModelToFace from "./faces/alignModelToFace";
 import HandleContextLoss from "./webgl/HandleContextLoss";
@@ -54,7 +53,7 @@ const MeshViewer = (props: MeshViewerProps) => {
 
     const matricesEqual = (
         m1: THREE.Matrix4 | null,
-        m2: THREE.Matrix4 | null
+        m2: THREE.Matrix4 | null,
     ) => {
         if (!m1 || !m2) return false;
         const a = m1.elements;
@@ -67,7 +66,7 @@ const MeshViewer = (props: MeshViewerProps) => {
 
     const faceMatches = (
         a: { centroid: THREE.Vector3; normal: THREE.Vector3 } | undefined,
-        b: { centroid: THREE.Vector3; normal: THREE.Vector3 } | null
+        b: { centroid: THREE.Vector3; normal: THREE.Vector3 } | null,
     ) => {
         if (!a || !b) return false;
         const dist = a.centroid.distanceTo(b.centroid);
@@ -79,39 +78,114 @@ const MeshViewer = (props: MeshViewerProps) => {
         return cos > Math.cos(THREE.MathUtils.degToRad(5)); // within 5 degrees
     };
 
-    // Detect faces whenever mesh geometry changes
+    // Fetch detected faces from backend for STL/3MF
+    // For STL: fetch faces immediately. For 3MF: wait for mesh to be loaded, then convert and fetch faces.
     useEffect(() => {
-        if (mesh?.geometry) {
-            mesh.geometry.computeVertexNormals();
-            const rawCandidates = detectMajorFaces(
-                mesh.geometry as THREE.BufferGeometry,
-                {
-                    planeDistanceTolFactor: 1e-3,
-                    normalAngleThreshDeg: 3,
-                    minOverlapArea: 1e-6,
-                }
-            );
-
-            // Keep centroids/normals in mesh-local coordinates so child markers
-            // placed under the mesh (inside <primitive object={mesh}>) are
-            // positioned correctly. alignModelToFace expects local coords too.
-            const transformed = rawCandidates.map((c) => ({
-                normal: c.normal.clone().normalize(),
-                centroid: c.centroid.clone(),
-                bottomVertex: c.bottomVertex.clone(),
-                overlapArea: c.overlapArea,
-                ellipseRadii: (c as any).ellipseRadii as
-                    | [number, number]
-                    | undefined,
-                ellipseRotation: (c as any).ellipseRotation as
-                    | number
-                    | undefined,
-            }));
-
-            // console.log("Detected convex-hull candidates:", transformed);
-            setDetectedFaces(transformed);
+        if (!file || !allowFaceSelection) {
+            setDetectedFaces([]);
+            return;
         }
-    }, [mesh?.geometry, mesh?.matrixWorld]);
+
+        // STL: fetch faces immediately
+        if (isSTL) {
+            const fetchFaces = async () => {
+                try {
+                    const form = new FormData();
+                    form.append("file", file.originFileObj as File);
+                    const resp = await axios.post(
+                        `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
+                        form,
+                        { headers: { "Content-Type": "multipart/form-data" } },
+                    );
+                    const faces = resp.data.faces;
+                    const detected = faces.map((f: any) => ({
+                        normal: new THREE.Vector3(...f.normal).normalize(),
+                        centroid: new THREE.Vector3(...f.centroid),
+                        bottomVertex: new THREE.Vector3(...f.bottomVertex),
+                        overlapArea: f.overlapArea,
+                        ellipseRadii: f.ellipseRadii,
+                        ellipseRotation: f.ellipseRotation,
+                    }));
+                    setDetectedFaces(detected);
+                    // Automatically align to largest face
+                    if (detected.length > 0 && mesh) {
+                        const largest = detected.reduce((a: any, b: any) =>
+                            a.overlapArea > b.overlapArea ? a : b,
+                        );
+                        alignModelToFace(
+                            mesh,
+                            largest.normal,
+                            largest.centroid,
+                        );
+                        mesh.updateMatrixWorld(true);
+                        setSuppressUntilMatrix(mesh.matrixWorld.clone());
+                        setSuppressedFace({
+                            centroid: largest.centroid.clone(),
+                            normal: largest.normal.clone(),
+                        });
+                    }
+                } catch (err) {
+                    console.error("Face detection failed:", err);
+                    setDetectedFaces([]);
+                    message.error("Failed to analyze mesh faces.");
+                }
+            };
+            fetchFaces();
+        }
+    }, [file, allowFaceSelection, mesh]);
+
+    // For 3MF: fetch faces only after mesh is loaded
+    useEffect(() => {
+        if (!file || !allowFaceSelection || !is3MF || !mesh) return;
+        const fetchFaces = async () => {
+            try {
+                const exporter = new STLExporter();
+                const baked = getExportableMesh(mesh as THREE.Mesh);
+                const stlBuffer = exporter.parse(baked, { binary: true });
+                const uploadFileObj = new File(
+                    [new Blob([stlBuffer], { type: "model/stl" })],
+                    file.name.replace(/\.3mf$/i, ".stl"),
+                    { type: "model/stl" },
+                );
+
+                const form = new FormData();
+                form.append("file", uploadFileObj);
+                const resp = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
+                    form,
+                    { headers: { "Content-Type": "multipart/form-data" } },
+                );
+                const faces = resp.data.faces;
+                const detected = faces.map((f: any) => ({
+                    normal: new THREE.Vector3(...f.normal).normalize(),
+                    centroid: new THREE.Vector3(...f.centroid),
+                    bottomVertex: new THREE.Vector3(...f.bottomVertex),
+                    overlapArea: f.overlapArea,
+                    ellipseRadii: f.ellipseRadii,
+                    ellipseRotation: f.ellipseRotation,
+                }));
+                setDetectedFaces(detected);
+                // Automatically align to largest face
+                if (detected.length > 0 && mesh) {
+                    const largest = detected.reduce((a: any, b: any) =>
+                        a.overlapArea > b.overlapArea ? a : b,
+                    );
+                    alignModelToFace(mesh, largest.normal, largest.centroid);
+                    mesh.updateMatrixWorld(true);
+                    setSuppressUntilMatrix(mesh.matrixWorld.clone());
+                    setSuppressedFace({
+                        centroid: largest.centroid.clone(),
+                        normal: largest.normal.clone(),
+                    });
+                }
+            } catch (err) {
+                console.error("Face detection failed:", err);
+                setDetectedFaces([]);
+                message.error("Failed to analyze mesh faces.");
+            }
+        };
+        fetchFaces();
+    }, [file, allowFaceSelection, is3MF, mesh]);
 
     // Provide an API via onRegister so parents don't need a ref
     const exportAndReplace = async () => {
@@ -123,8 +197,9 @@ const MeshViewer = (props: MeshViewerProps) => {
         try {
             const exporter = new STLExporter();
             const baked = getExportableMesh(mesh as THREE.Mesh);
-            const stlString = exporter.parse(baked);
-            const blob = new Blob([stlString], { type: "model/stl" });
+            const stlBuffer = exporter.parse(baked, { binary: true });
+            const blob = new Blob([stlBuffer], { type: "model/stl" });
+
             const base = (file && file.name) || "exported_model";
             const exportName = base.toLowerCase().endsWith(".stl")
                 ? base
@@ -210,8 +285,6 @@ const MeshViewer = (props: MeshViewerProps) => {
         return Math.max(0.005, Math.min(size.x, size.y, size.z) * 0.03);
     })();
 
-   
-
     return (
         <Card style={{ width: "100%", height: "500px" }}>
             <Canvas
@@ -246,15 +319,12 @@ const MeshViewer = (props: MeshViewerProps) => {
                             <primitive object={mesh}>
                                 {detectedFaces.length > 0 &&
                                     (() => {
-                                        // If we have a suppressed face and the mesh is in the
-                                        // same matrix as when we suppressed, filter that
-                                        // single face out; otherwise show all faces.
                                         if (
                                             suppressUntilMatrix &&
                                             suppressedFace &&
                                             matricesEqual(
                                                 suppressUntilMatrix,
-                                                mesh.matrixWorld
+                                                mesh.matrixWorld,
                                             )
                                         ) {
                                             const visible =
@@ -262,8 +332,8 @@ const MeshViewer = (props: MeshViewerProps) => {
                                                     (df) =>
                                                         !faceMatches(
                                                             df,
-                                                            suppressedFace
-                                                        )
+                                                            suppressedFace,
+                                                        ),
                                                 );
                                             return (
                                                 allowFaceSelection && (

@@ -1,23 +1,32 @@
 import * as THREE from "three";
 import { geekblueDark } from "@ant-design/colors";
-
+import { BufferGeometryUtils } from "three/examples/jsm/Addons.js";
 const getExportableMesh = (mesh: THREE.Mesh): THREE.Mesh => {
-    const exportMesh = mesh.clone();
-    // Force update of matrices
-    exportMesh.updateMatrixWorld(true);
+    const clone = mesh.clone(true);
 
-    // Bake all transforms into geometry
-    const geom = (exportMesh.geometry as THREE.BufferGeometry).clone();
-    geom.applyMatrix4(exportMesh.matrixWorld);
+    // Bake world transform into geometry
+    clone.updateMatrixWorld(true);
+    clone.geometry = clone.geometry.clone();
+    clone.geometry.applyMatrix4(clone.matrixWorld);
+
+    // Reset transform so STL is in world space
+    clone.position.set(0, 0, 0);
+    clone.rotation.set(0, 0, 0);
+    clone.scale.set(1, 1, 1);
+    clone.updateMatrixWorld(true);
+
+    // Ensure BufferGeometry
+    let geom = clone.geometry as THREE.BufferGeometry;
+
+    // Ensure non-indexed (STL prefers this)
+    if (geom.index) {
+        geom = geom.toNonIndexed();
+    }
+
     geom.computeVertexNormals();
 
-    // Use a stable color (no hooks) for export preview material
-    const bakedMesh = new THREE.Mesh(
-        geom,
-        new THREE.MeshStandardMaterial({ color: geekblueDark[6] })
-    );
-
-    return bakedMesh;
+    clone.geometry = geom;
+    return clone;
 };
 
 export default getExportableMesh;

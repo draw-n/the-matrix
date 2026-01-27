@@ -25,14 +25,16 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
                     console.warn("No geometries found in 3MF");
                     return;
                 }
+                merged.computeVertexNormals();
                 merged.computeBoundingBox();
                 const bbox = merged.boundingBox!;
                 // Center X/Y, flush Z to ground
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
+                // Always use a solid blue color for 3MF meshes
                 const mesh = new THREE.Mesh(
                     merged,
-                    new THREE.MeshStandardMaterial({ color: colorPrimary })
+                    new THREE.MeshStandardMaterial({ color: '#1677ff' }) // Ant Design default blue
                 );
                 mesh.position.set(-center.x, -center.y, -minZ);
                 setObject(mesh);
@@ -47,8 +49,8 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
         };
     }, [objectUrl, onLoad]);
 
-    if (!object) return null;
-    return <primitive object={object} />;
+    // Only set mesh, do not render anything here
+    return null;
 };
 
 export default Model3MF;

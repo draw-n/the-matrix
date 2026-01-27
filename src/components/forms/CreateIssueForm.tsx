@@ -23,16 +23,16 @@ import "./issues.css";
 import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
 import { Issue } from "../../types/issue";
+import { createIssue } from "../../api/issue";
 
 const { TextArea } = Input;
-
 
 const CreateIssueForm: React.FC<CommonFormProps> = ({
     onSubmit,
 }: CommonFormProps) => {
     const [form] = Form.useForm();
-    const {data: categories} = useAllCategories();
-    
+    const { data: categories } = useAllCategories();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -46,22 +46,15 @@ const CreateIssueForm: React.FC<CommonFormProps> = ({
     };
 
     const onFinish: FormProps<Issue>["onFinish"] = async (values) => {
-        try {
-            const newIssue = {
-                equipment: values.equipmentId,
-                description: `${values.initialDescription}\n${values.description}`,
-                createdBy: user?.uuid,
-                dateCreated: new Date(),
-            };
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/issues`,
-                newIssue
-            );
-            setIsModalOpen(false);
-            onSubmit();
-        } catch (error) {
-            console.error("Problem creating an issue: ", error);
-        }
+        const newIssue = {
+            equipmentId: values.equipmentId,
+            description: `${values.initialDescription}\n${values.description}`,
+            createdBy: user?.uuid,
+            dateCreated: new Date(),
+        };
+        await createIssue(newIssue);
+        setIsModalOpen(false);
+        onSubmit();
     };
 
     const handleOk = async () => {
@@ -145,7 +138,9 @@ const CreateIssueForm: React.FC<CommonFormProps> = ({
                                             },
                                         ]}
                                     >
-                                        <SelectEquipment categoryId={categoryId} />
+                                        <SelectEquipment
+                                            categoryId={categoryId}
+                                        />
                                     </Form.Item>
                                     <Form.Item<Issue>
                                         style={{ width: "100%" }}
