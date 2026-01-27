@@ -140,7 +140,8 @@ const MeshViewer = (props: MeshViewerProps) => {
         const fetchFaces = async () => {
             try {
                 const exporter = new STLExporter();
-                const baked = getExportableMesh(mesh as THREE.Mesh);
+                // For 3MF, skip transform bake since it's already baked during merge
+                const baked = getExportableMesh(mesh as THREE.Mesh, true);
                 const stlBuffer = exporter.parse(baked, { binary: true });
                 const uploadFileObj = new File(
                     [new Blob([stlBuffer], { type: "model/stl" })],

@@ -31,12 +31,14 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
                 // Center X/Y, flush Z to ground
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
-                // Always use a solid blue color for 3MF meshes
+                // Bake position into geometry
+                merged.applyMatrix4(new THREE.Matrix4().makeTranslation(-center.x, -center.y, -minZ));
+                // Use Ant Design's colorPrimary token for 3MF meshes (matches STL)
                 const mesh = new THREE.Mesh(
                     merged,
-                    new THREE.MeshStandardMaterial({ color: '#1677ff' }) // Ant Design default blue
+                    new THREE.MeshStandardMaterial({ color: colorPrimary })
                 );
-                mesh.position.set(-center.x, -center.y, -minZ);
+                mesh.position.set(0, 0, 0); // Reset position
                 setObject(mesh);
                 onLoad?.(mesh);
             },

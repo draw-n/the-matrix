@@ -58,12 +58,15 @@ const SelectableFaces = ({
 
                 const geom = new THREE.CircleGeometry(1, 64);
 
+                // Offset overlay slightly along normal to prevent z-fighting/clipping
+                const offset = normal.clone().multiplyScalar(Math.max(0.2, markerSize * 0.01));
+                const overlayPos = f.bottomVertex.clone().add(offset);
                 return (
                     <mesh
                         key={i}
                         geometry={geom}
                         quaternion={quat}
-                        position={f.bottomVertex} // <-- use actual mesh surface point
+                        position={overlayPos}
                         scale={[useRx, useRy, 1]}
                         onPointerOver={(e) => {
                             e.stopPropagation();
