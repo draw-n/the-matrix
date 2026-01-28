@@ -1,9 +1,8 @@
 import * as THREE from "three";
 import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
 import mergeAllGeometries from "../utils/mergeAllGeometries";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { UploadFile, theme } from "antd";
-import { useMemo } from "react";
 
 const Model3MF = ({
     file,
@@ -12,10 +11,23 @@ const Model3MF = ({
     file: UploadFile;
     onLoad?: (mesh: THREE.Mesh) => void;
 }) => {
+    // FIX: Handle both Remote (URL) and Local (Blob) files
     const objectUrl = useMemo(() => {
         if (!file) return null;
-        return URL.createObjectURL(file.originFileObj as Blob);
+        
+        // 1. If it's a remote file from the server (Review Step), use the URL directly
+        if (file.url) {
+            return file.url;
+        }
+
+        // 2. If it's a local file upload (Upload Step), create a Blob URL
+        if (file.originFileObj) {
+            return URL.createObjectURL(file.originFileObj as Blob);
+        }
+
+        return null;
     }, [file]);
+
     const colorPrimary = theme.useToken().token.colorPrimary;
     const [object, setObject] = useState<THREE.Object3D | null>(null);
 
@@ -26,10 +38,9 @@ const Model3MF = ({
         loader.load(
             objectUrl,
             (obj: any) => {
-                // --- FIX: RESET ROTATION ---
+                // --- RESET ROTATION ---
                 // ThreeMFLoader automatically rotates 3MFs to Y-up (rotation.x = -PI/2).
-                // Since your Python script reads raw Z-up data, and your Canvas is Z-up,
-                // we must undo this rotation before merging to match the coordinates.
+                // We undo this to match our Z-up world.
                 obj.rotation.set(0, 0, 0);
                 obj.scale.set(1, 1, 1);
                 obj.position.set(0, 0, 0);
@@ -44,9 +55,11 @@ const Model3MF = ({
                 merged.computeVertexNormals();
                 merged.computeBoundingBox();
                 const bbox = merged.boundingBox!;
+                
                 // Center X/Y, flush Z to ground
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
+                
                 // Bake position into geometry
                 merged.applyMatrix4(
                     new THREE.Matrix4().makeTranslation(
@@ -55,12 +68,14 @@ const Model3MF = ({
                         -minZ,
                     ),
                 );
+                
                 // Use Ant Design's colorPrimary token for 3MF meshes (matches STL)
                 const mesh = new THREE.Mesh(
                     merged,
                     new THREE.MeshStandardMaterial({ color: colorPrimary }),
                 );
                 mesh.position.set(0, 0, 0); // Reset position
+                
                 setObject(mesh);
                 onLoad?.(mesh);
             },
@@ -69,12 +84,14 @@ const Model3MF = ({
         );
 
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            // Only revoke if it was a blob URL we created
+            if (objectUrl && objectUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(objectUrl);
+            }
         };
-    }, [objectUrl, onLoad]);
+    }, [objectUrl, onLoad, colorPrimary]);
 
-    // Only set mesh, do not render anything here
-    return null;
+    return null; 
 };
 
 export default Model3MF;

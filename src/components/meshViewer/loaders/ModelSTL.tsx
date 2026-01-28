@@ -1,8 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/Addons.js";
 import { UploadFile, theme } from "antd";
-import { useEffect, useState, useRef } from "react";
 
 const ModelSTL = ({
     file,
@@ -11,17 +10,27 @@ const ModelSTL = ({
     file: UploadFile;
     onLoad?: (mesh: THREE.Mesh) => void;
 }) => {
+    // FIX: Handle both Remote (URL) and Local (Blob) files
     const objectUrl = useMemo(() => {
         if (!file) return null;
-        return URL.createObjectURL(file.originFileObj as Blob);
+        
+        // 1. If it's a remote file from the server (Review Step), use the URL directly
+        if (file.url) {
+            return file.url;
+        }
+
+        // 2. If it's a local file upload (Upload Step), create a Blob URL
+        if (file.originFileObj) {
+            return URL.createObjectURL(file.originFileObj as Blob);
+        }
+
+        return null;
     }, [file]);
 
     const colorPrimary = theme.useToken().token.colorPrimary;
-
     const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-    // REMOVED: const [position, setPosition] ... we don't need this state anymore
     
-    // Preserve original model units — do not rescale STLs for display or export
+    // Preserve original model units
     const scale = 1;
     const meshRef = useRef<THREE.Mesh>(null); 
 
@@ -38,11 +47,8 @@ const ModelSTL = ({
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
 
-                // --- THE FIX ---
-                // Instead of setting state, we physically move the vertices.
-                // This 'bakes' the centering into the geometry data.
+                // Move vertices to center
                 geo.translate(-center.x, -center.y, -minZ);
-                // ----------------
                 
                 setGeometry(geo);
             },
@@ -53,8 +59,11 @@ const ModelSTL = ({
             }
         );
 
+        // Clean up ONLY if we created a Blob URL
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            if (objectUrl && objectUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(objectUrl);
+            }
             if (geometry) geometry.dispose();
         };
     }, [objectUrl]);
@@ -72,7 +81,6 @@ const ModelSTL = ({
             ref={meshRef}
             geometry={geometry}
             scale={scale}
-            // REMOVED: position={position} <-- The mesh stays at 0,0,0
         >
             <meshStandardMaterial color={colorPrimary} />
         </mesh>
