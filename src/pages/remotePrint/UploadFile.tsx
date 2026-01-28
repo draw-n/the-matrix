@@ -1,7 +1,7 @@
 // Description: UploadFile component for uploading and previewing 3D model files before proceeding to material selection.
 
 import axios from "axios";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import {
     CaretRightOutlined,
@@ -25,7 +25,10 @@ const UploadFile: React.FC<UploadFileProps> = ({
     uploadedFile,
     setUploadedFile,
 }: UploadFileProps) => {
-    // store the small API object registered by ViewModel (avoids forwarded refs)
+    // Loading state for the network request
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    // Store the API object registered by MeshViewer
     const viewModelApiRef = useRef<{
         exportAndReplace?: () => Promise<any>;
     } | null>(null);
@@ -33,67 +36,67 @@ const UploadFile: React.FC<UploadFileProps> = ({
     const handleSubmit = async () => {
         if (uploadedFile.length === 0) {
             message.error("You must upload a file!");
-        } else {
-            try {
-                if (viewModelApiRef.current?.exportAndReplace) {
-                    const resp =
-                        await viewModelApiRef.current.exportAndReplace();
-                    if (resp) {
-                        next();
-                    }
+            return;
+        }
+
+        setIsProcessing(true);
+
+        try {
+            if (viewModelApiRef.current?.exportAndReplace) {
+                const resp = await viewModelApiRef.current.exportAndReplace();
+
+                if (resp) {
+                    // --- FIX: Update the file state to point to the backend ---
+                    // This ensures the Review step downloads the NEW rotated file
+                    // instead of showing the OLD local blob.
+
+                    // Construct the URL to your file on the backend
+                    // You might need an endpoint to serve meshes, e.g., /meshes/filename.stl
+                    const serverFileUrl = `${import.meta.env.VITE_BACKEND_URL}/meshes/${uploadedFile[0].name}`;
+
+                    const updatedFile = {
+                        ...uploadedFile[0],
+                        url: serverFileUrl, // React components prefer 'url'
+                        originFileObj: undefined, // Clear the local blob so viewers are forced to fetch URL
+                    };
+
+                    setUploadedFile([updatedFile]);
+
+                    next();
                 }
-            } catch (error) {
-                console.error("Error exporting and replacing model: ", error);
-                message.error(
-                    "There was an error processing your model. Please try again."
-                );
+            } else {
+                next();
             }
+        } catch (error) {
+            console.error("Error processing model: ", error);
+        } finally {
+            setIsProcessing(false);
         }
     };
-
+    
     const props: UploadProps = {
-        action: `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
-        name: "file",
-        headers: {
-            authorization: "authorization-text",
-        },
+        beforeUpload: (file) => {
+            const isValid =
+                file.name.toLowerCase().endsWith(".stl") ||
+                file.name.toLowerCase().endsWith(".3mf");
 
-        onChange: (info) => {
-            let newFileList = [...info.fileList];
+            if (!isValid) {
+                message.error("Only STL and 3MF files are supported.");
+                return Upload.LIST_IGNORE;
+            }
 
-            // Limit the number of uploaded files
-            newFileList = newFileList.slice(-1);
-            newFileList = newFileList.map((file) => {
-                if (file.response) {
-                    // Component will show file.url as link
-                    file.url = file.response.url;
-                }
-                return file;
-            });
-            setUploadedFile(newFileList);
-        },
-
-        customRequest: async (options: any) => {
-            const data = new FormData();
-            data.append("file", options.file);
-            const config = {
-                headers: {
-                    "Content-Type": "multipart/form-data",
+            setUploadedFile([
+                {
+                    uid: file.uid,
+                    name: file.name,
+                    status: "done",
+                    originFileObj: file,
                 },
-            };
+            ]);
 
-            await axios
-                .post(options.action, data, config)
-                .then((response: any) => {
-                    message.success(response.data.message);
-                    options.onSuccess(response.data, options.file);
-                })
-                .catch((err: Error) => {
-                    console.error(err);
-                    message.error("Upload failed.");
-                    options.onError(err);
-                });
+            return false; // Prevent auto upload
         },
+        showUploadList: false,
     };
 
     return (
@@ -144,7 +147,6 @@ const UploadFile: React.FC<UploadFileProps> = ({
                                             type="link"
                                             onClick={() => {
                                                 setUploadedFile([]);
-
                                                 if (viewModelApiRef.current) {
                                                     viewModelApiRef.current =
                                                         null;
@@ -157,6 +159,8 @@ const UploadFile: React.FC<UploadFileProps> = ({
                         </ul>
                     </div>
                 )}
+
+                {/* MeshViewer Component */}
                 {uploadedFile.length > 0 && (
                     <MeshViewer
                         allowFaceSelection
@@ -165,12 +169,14 @@ const UploadFile: React.FC<UploadFileProps> = ({
                         setFile={setUploadedFile}
                     />
                 )}
+
                 <Flex justify="center" style={{ width: "100%" }}>
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}
                         iconPosition="end"
                         onClick={handleSubmit}
+                        loading={isProcessing} // <--- Shows loading state during backend rotation
                     >
                         Select Material
                     </Button>

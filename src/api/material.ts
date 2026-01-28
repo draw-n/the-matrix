@@ -15,3 +15,14 @@ export const getAllMaterials = async (categoryId?: string) => {
         console.error("Error fetching issues:", error);
     }
 };
+
+export const deleteMaterial = async (materialId: string) => {
+    try {
+        const response = await axios.delete(
+            `${import.meta.env.VITE_BACKEND_URL}/materials/${materialId}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting material:", error);
+    }
+};

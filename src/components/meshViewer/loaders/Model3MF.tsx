@@ -1,15 +1,33 @@
 import * as THREE from "three";
 import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
 import mergeAllGeometries from "../utils/mergeAllGeometries";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { UploadFile, theme } from "antd";
-import { useMemo } from "react";
 
-const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Mesh) => void }) => {
+const Model3MF = ({
+    file,
+    onLoad,
+}: {
+    file: UploadFile;
+    onLoad?: (mesh: THREE.Mesh) => void;
+}) => {
+    // FIX: Handle both Remote (URL) and Local (Blob) files
     const objectUrl = useMemo(() => {
         if (!file) return null;
-        return URL.createObjectURL(file.originFileObj as Blob);
+        
+        // 1. If it's a remote file from the server (Review Step), use the URL directly
+        if (file.url) {
+            return file.url;
+        }
+
+        // 2. If it's a local file upload (Upload Step), create a Blob URL
+        if (file.originFileObj) {
+            return URL.createObjectURL(file.originFileObj as Blob);
+        }
+
+        return null;
     }, [file]);
+
     const colorPrimary = theme.useToken().token.colorPrimary;
     const [object, setObject] = useState<THREE.Object3D | null>(null);
 
@@ -20,36 +38,60 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
         loader.load(
             objectUrl,
             (obj: any) => {
+                // --- RESET ROTATION ---
+                // ThreeMFLoader automatically rotates 3MFs to Y-up (rotation.x = -PI/2).
+                // We undo this to match our Z-up world.
+                obj.rotation.set(0, 0, 0);
+                obj.scale.set(1, 1, 1);
+                obj.position.set(0, 0, 0);
+                obj.updateMatrixWorld(true);
+                // ---------------------------
+
                 const merged = mergeAllGeometries(obj);
                 if (!merged) {
                     console.warn("No geometries found in 3MF");
                     return;
                 }
+                merged.computeVertexNormals();
                 merged.computeBoundingBox();
-
                 const bbox = merged.boundingBox!;
-                const offsetZ = -bbox.min.z; // flush with ground
-
+                
+                // Center X/Y, flush Z to ground
+                const center = bbox.getCenter(new THREE.Vector3());
+                const minZ = bbox.min.z;
+                
+                // Bake position into geometry
+                merged.applyMatrix4(
+                    new THREE.Matrix4().makeTranslation(
+                        -center.x,
+                        -center.y,
+                        -minZ,
+                    ),
+                );
+                
+                // Use Ant Design's colorPrimary token for 3MF meshes (matches STL)
                 const mesh = new THREE.Mesh(
                     merged,
-                    new THREE.MeshStandardMaterial({ color: colorPrimary })
+                    new THREE.MeshStandardMaterial({ color: colorPrimary }),
                 );
-                mesh.position.set(0, 0, offsetZ);
-
+                mesh.position.set(0, 0, 0); // Reset position
+                
                 setObject(mesh);
                 onLoad?.(mesh);
             },
             undefined,
-            (err: any) => console.error("Error loading 3MF:", err)
+            (err: any) => console.error("Error loading 3MF:", err),
         );
 
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            // Only revoke if it was a blob URL we created
+            if (objectUrl && objectUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(objectUrl);
+            }
         };
-    }, [objectUrl, onLoad]);
+    }, [objectUrl, onLoad, colorPrimary]);
 
-    if (!object) return null;
-    return <primitive object={object} />;
+    return null; 
 };
 
 export default Model3MF;

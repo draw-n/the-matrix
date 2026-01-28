@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/Addons.js";
 import { UploadFile, theme } from "antd";
-import { useEffect, useState, useRef } from "react";
+
 const ModelSTL = ({
     file,
     onLoad,
@@ -10,20 +10,29 @@ const ModelSTL = ({
     file: UploadFile;
     onLoad?: (mesh: THREE.Mesh) => void;
 }) => {
+    // FIX: Handle both Remote (URL) and Local (Blob) files
     const objectUrl = useMemo(() => {
         if (!file) return null;
-        return URL.createObjectURL(file.originFileObj as Blob);
+        
+        // 1. If it's a remote file from the server (Review Step), use the URL directly
+        if (file.url) {
+            return file.url;
+        }
+
+        // 2. If it's a local file upload (Upload Step), create a Blob URL
+        if (file.originFileObj) {
+            return URL.createObjectURL(file.originFileObj as Blob);
+        }
+
+        return null;
     }, [file]);
 
     const colorPrimary = theme.useToken().token.colorPrimary;
-
     const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-    const [position, setPosition] = useState<[number, number, number]>([
-        0, 0, 0,
-    ]);
-    // Preserve original model units — do not rescale STLs for display or export
+    
+    // Preserve original model units
     const scale = 1;
-    const meshRef = useRef<THREE.Mesh>(null); // <-- always at the top
+    const meshRef = useRef<THREE.Mesh>(null); 
 
     useEffect(() => {
         if (!objectUrl) return;
@@ -34,10 +43,13 @@ const ModelSTL = ({
             (geo: any) => {
                 geo.computeBoundingBox();
                 const bbox = geo.boundingBox!;
+                // Center X/Y, flush Z to ground
+                const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
-                // Keep original units — offset to ground without changing scale
-                const offsetZ = -minZ; // flush with ground
-                setPosition([0, 0, offsetZ]);
+
+                // Move vertices to center
+                geo.translate(-center.x, -center.y, -minZ);
+                
                 setGeometry(geo);
             },
             undefined,
@@ -47,8 +59,11 @@ const ModelSTL = ({
             }
         );
 
+        // Clean up ONLY if we created a Blob URL
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            if (objectUrl && objectUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(objectUrl);
+            }
             if (geometry) geometry.dispose();
         };
     }, [objectUrl]);
@@ -66,7 +81,6 @@ const ModelSTL = ({
             ref={meshRef}
             geometry={geometry}
             scale={scale}
-            position={position}
         >
             <meshStandardMaterial color={colorPrimary} />
         </mesh>
