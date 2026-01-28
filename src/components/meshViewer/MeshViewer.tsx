@@ -3,7 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { STLExporter } from "three/examples/jsm/Addons.js";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { Card, UploadFile, message } from "antd";
 import axios from "axios";
 import * as THREE from "three";
@@ -28,22 +28,24 @@ const MeshViewer = (props: MeshViewerProps) => {
     const isSTL = file?.name?.toLowerCase().endsWith(".stl");
     const is3MF = file?.name?.toLowerCase().endsWith(".3mf");
 
+    // Refs to track API call deduplication
+    const analysisRequestId = useRef<string | null>(null);
+
     const [mesh, setMesh] = useState<THREE.Mesh | null>(null);
     const [detectedFaces, setDetectedFaces] = useState<
         {
             normal: THREE.Vector3;
             centroid: THREE.Vector3;
+            ellipseAxis?: THREE.Vector3;
+            ellipseCenter: THREE.Vector3; // Visual center for the ellipse
             bottomVertex: THREE.Vector3;
             overlapArea?: number;
             ellipseRadii?: [number, number];
             ellipseRotation?: number;
         }[]
     >([]);
-    // When we align the model to a face we suppress rendering the overlay for
-    // that specific face so the selected bottom face 'disappears'. We store
-    // the suppressed face (centroid+normal in mesh-local) and the mesh
-    // matrix at the time of suppression so we only hide that face while the
-    // mesh remains in that aligned transform.
+
+    // State for suppressing the selected bottom face overlay when aligned
     const [suppressUntilMatrix, setSuppressUntilMatrix] =
         useState<THREE.Matrix4 | null>(null);
     const [suppressedFace, setSuppressedFace] = useState<{
@@ -78,107 +80,71 @@ const MeshViewer = (props: MeshViewerProps) => {
         return cos > Math.cos(THREE.MathUtils.degToRad(5)); // within 5 degrees
     };
 
-    // Fetch detected faces from backend for STL/3MF
-    // For STL: fetch faces immediately. For 3MF: wait for mesh to be loaded, then convert and fetch faces.
-    useEffect(() => {
-        if (!file || !allowFaceSelection) {
-            setDetectedFaces([]);
-            return;
-        }
+    // Helper to parse face data from backend
+    const parseFaceData = (f: any) => ({
+        normal: new THREE.Vector3(f.normal.x, f.normal.y, f.normal.z),
+        centroid: new THREE.Vector3(f.centroid.x, f.centroid.y, f.centroid.z),
+        ellipseAxis: f.ellipseAxis
+            ? new THREE.Vector3(
+                  f.ellipseAxis.x,
+                  f.ellipseAxis.y,
+                  f.ellipseAxis.z,
+              )
+            : undefined,
+        // Use ellipseCenter if provided by backend (Visual Center), otherwise fallback to Centroid
+        ellipseCenter: f.ellipseCenter
+            ? new THREE.Vector3(
+                  f.ellipseCenter.x,
+                  f.ellipseCenter.y,
+                  f.ellipseCenter.z,
+              )
+            : new THREE.Vector3(f.centroid.x, f.centroid.y, f.centroid.z),
+        bottomVertex: new THREE.Vector3(
+            f.bottomVertex.x,
+            f.bottomVertex.y,
+            f.bottomVertex.z,
+        ),
+        overlapArea: f.area, // Map backend 'area' to local 'overlapArea'
+        ellipseRadii: f.ellipseRadii,
+        ellipseRotation: f.ellipseRotation,
+    });
 
-        // STL: fetch faces immediately
-        if (isSTL) {
-            const fetchFaces = async () => {
-                try {
-                    const form = new FormData();
-                    form.append("file", file.originFileObj as File);
-                    const resp = await axios.post(
-                        `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
-                        form,
-                        { headers: { "Content-Type": "multipart/form-data" } },
-                    );
-                    const faces = resp.data.faces;
-                    const detected = faces.map((f: any) => ({
-                        normal: new THREE.Vector3(...f.normal).normalize(),
-                        centroid: new THREE.Vector3(...f.centroid),
-                        bottomVertex: new THREE.Vector3(...f.bottomVertex),
-                        overlapArea: f.overlapArea,
-                        ellipseRadii: f.ellipseRadii,
-                        ellipseRotation: f.ellipseRotation,
-                    }));
-                    setDetectedFaces(detected);
-                    // Automatically align to largest face
-                    if (detected.length > 0 && mesh) {
-                        const largest = detected.reduce((a: any, b: any) =>
-                            a.overlapArea > b.overlapArea ? a : b,
-                        );
-                        alignModelToFace(
-                            mesh,
-                            largest.normal,
-                            largest.centroid,
-                        );
-                        mesh.updateMatrixWorld(true);
-                        setSuppressUntilMatrix(mesh.matrixWorld.clone());
-                        setSuppressedFace({
-                            centroid: largest.centroid.clone(),
-                            normal: largest.normal.clone(),
-                        });
-                    }
-                } catch (err) {
-                    console.error("Face detection failed:", err);
-                    setDetectedFaces([]);
-                    message.error("Failed to analyze mesh faces.");
-                }
-            };
-            fetchFaces();
-        }
-    }, [file, allowFaceSelection, mesh]);
-
-    // For 3MF: fetch faces only after mesh is loaded
+    // --- EFFECT: RESET STATE ON NEW FILE ---
     useEffect(() => {
-        if (!file || !allowFaceSelection || !is3MF || !mesh) return;
+        setMesh(null);
+        setDetectedFaces([]);
+        setSuppressUntilMatrix(null);
+        setSuppressedFace(null);
+        // Do NOT reset analysisRequestId here; we handle it in the specific effect checks
+        // or by letting the new file UID trigger the new request naturally.
+    }, [file]);
+
+
+
+    // --- EFFECT: FETCH FACES (3MF ONLY) ---
+    // Depends on 'mesh' because 3MF needs to be loaded/baked first
+  useEffect(() => {
+        if (!file || !allowFaceSelection || !mesh) return;
+
+        // Deduplication for 3MF
+        if (analysisRequestId.current === file.uid) return;
+        analysisRequestId.current = file.uid;
+
         const fetchFaces = async () => {
             try {
-                const exporter = new STLExporter();
-                // For 3MF, skip transform bake since it's already baked during merge
-                const baked = getExportableMesh(mesh as THREE.Mesh, true);
-                const stlBuffer = exporter.parse(baked, { binary: true });
-                const uploadFileObj = new File(
-                    [new Blob([stlBuffer], { type: "model/stl" })],
-                    file.name.replace(/\.3mf$/i, ".stl"),
-                    { type: "model/stl" },
-                );
-
                 const form = new FormData();
-                form.append("file", uploadFileObj);
+                // FIX: Send the original 3MF file directly
+                form.append("file", file.originFileObj as File);
+                
                 const resp = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs/pre-process`,
                     form,
                     { headers: { "Content-Type": "multipart/form-data" } },
                 );
+
                 const faces = resp.data.faces;
-                const detected = faces.map((f: any) => ({
-                    normal: new THREE.Vector3(...f.normal).normalize(),
-                    centroid: new THREE.Vector3(...f.centroid),
-                    bottomVertex: new THREE.Vector3(...f.bottomVertex),
-                    overlapArea: f.overlapArea,
-                    ellipseRadii: f.ellipseRadii,
-                    ellipseRotation: f.ellipseRotation,
-                }));
+                const detected = faces.map(parseFaceData);
                 setDetectedFaces(detected);
-                // Automatically align to largest face
-                if (detected.length > 0 && mesh) {
-                    const largest = detected.reduce((a: any, b: any) =>
-                        a.overlapArea > b.overlapArea ? a : b,
-                    );
-                    alignModelToFace(mesh, largest.normal, largest.centroid);
-                    mesh.updateMatrixWorld(true);
-                    setSuppressUntilMatrix(mesh.matrixWorld.clone());
-                    setSuppressedFace({
-                        centroid: largest.centroid.clone(),
-                        normal: largest.normal.clone(),
-                    });
-                }
             } catch (err) {
                 console.error("Face detection failed:", err);
                 setDetectedFaces([]);
@@ -186,7 +152,31 @@ const MeshViewer = (props: MeshViewerProps) => {
             }
         };
         fetchFaces();
-    }, [file, allowFaceSelection, is3MF, mesh]);
+    }, [file, allowFaceSelection, mesh]);
+
+    // --- EFFECT: AUTO-ALIGNMENT ---
+    // Runs when faces are loaded AND mesh is ready.
+    useEffect(() => {
+        if (mesh && detectedFaces.length > 0) {
+            // Check if we are already suppressed (aligned), to prevent loops
+            // If suppressUntilMatrix is null, it means we haven't aligned yet.
+            if (!suppressUntilMatrix) {
+                const largest = detectedFaces.reduce((a: any, b: any) =>
+                    a.overlapArea > b.overlapArea ? a : b,
+                );
+
+                // Align using PHYSICAL centroid
+                alignModelToFace(mesh, largest.normal, largest.centroid);
+                mesh.updateMatrixWorld(true);
+
+                setSuppressUntilMatrix(mesh.matrixWorld.clone());
+                setSuppressedFace({
+                    centroid: largest.centroid.clone(),
+                    normal: largest.normal.clone(),
+                });
+            }
+        }
+    }, [mesh, detectedFaces]);
 
     // Provide an API via onRegister so parents don't need a ref
     const exportAndReplace = async () => {
@@ -248,8 +238,7 @@ const MeshViewer = (props: MeshViewerProps) => {
     }, [onRegister, mesh]);
 
     // Clear suppression when the mesh's matrixWorld changes away from the
-    // aligned matrix (so overlays reappear after the user rotates/moves the
-    // model). Also clear the suppressedFace record.
+    // aligned matrix (so overlays reappear after the user rotates/moves the model).
     useEffect(() => {
         if (!mesh) return;
         if (
@@ -266,9 +255,8 @@ const MeshViewer = (props: MeshViewerProps) => {
         centroid: THREE.Vector3;
     }) => {
         if (mesh) {
+            // Align using PHYSICAL centroid
             alignModelToFace(mesh, face.normal, face.centroid);
-            // After aligning, suppress overlays while the mesh remains in this
-            // aligned transform so the selected bottom face disappears.
             mesh.updateMatrixWorld(true);
             setSuppressUntilMatrix(mesh.matrixWorld.clone());
             setSuppressedFace({
@@ -320,6 +308,7 @@ const MeshViewer = (props: MeshViewerProps) => {
                             <primitive object={mesh}>
                                 {detectedFaces.length > 0 &&
                                     (() => {
+                                        // Filter out the "suppressed" face if aligned
                                         if (
                                             suppressUntilMatrix &&
                                             suppressedFace &&
@@ -350,6 +339,7 @@ const MeshViewer = (props: MeshViewerProps) => {
                                                 )
                                             );
                                         }
+                                        // Show all faces if not aligned or rotated away
                                         return (
                                             allowFaceSelection && (
                                                 <SelectableFaces
@@ -366,7 +356,7 @@ const MeshViewer = (props: MeshViewerProps) => {
                         </>
                     )}
 
-                    {/* Ground plane (slightly below z=0 to avoid z-fighting) */}
+                    {/* Ground plane */}
                     <mesh rotation={[0, 0, 0]} position={[0, 0, -0.05]}>
                         <planeGeometry args={[200, 200]} />
                         <meshStandardMaterial

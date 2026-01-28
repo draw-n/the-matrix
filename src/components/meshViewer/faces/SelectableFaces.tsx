@@ -1,5 +1,3 @@
-// Description: A React component that renders selectable faces in a 3D mesh viewer using Three.js.
-
 import * as THREE from "three";
 
 const SelectableFaces = ({
@@ -10,57 +8,52 @@ const SelectableFaces = ({
     faces: {
         normal: THREE.Vector3;
         centroid: THREE.Vector3;
+        ellipseCenter?: THREE.Vector3;
+        ellipseAxis?: THREE.Vector3; // <--- NEW PROP
         bottomVertex: THREE.Vector3;
         overlapArea?: number;
         ellipseRadii?: [number, number];
-        ellipseRotation?: number;
     }[];
-    onSelect: (face: {
-        normal: THREE.Vector3;
-        centroid: THREE.Vector3;
-        bottomVertex: THREE.Vector3;
-        overlapArea?: number;
-    }) => void;
+    onSelect: (face: any) => void;
     markerSize?: number;
 }) => {
     return (
         <>
             {faces.map((f, i) => {
-                const normal = f.normal.clone().normalize();
-                const baseQuat = new THREE.Quaternion().setFromUnitVectors(
-                    new THREE.Vector3(0, 0, 1),
-                    normal
-                );
+                // 1. Setup Basis Vectors
+                const normal = f.normal.clone().normalize(); // Z-axis of the face
+                
+                // X-axis: The major axis of the ellipse (lengthwise)
+                // Fallback to a random perp vector if missing
+                let majorAxis = f.ellipseAxis 
+                    ? f.ellipseAxis.clone().normalize()
+                    : new THREE.Vector3(1, 0, 0).applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), normal));
 
-                // apply in-plane rotation if provided so ellipse aligns to hull face
-                const rot = (f as any).ellipseRotation as number | undefined;
-                const quat = rot
-                    ? new THREE.Quaternion()
-                          .setFromAxisAngle(normal, rot)
-                          .multiply(baseQuat)
-                    : baseQuat;
+                // Y-axis: Cross product of Z and X
+                const minorAxis = new THREE.Vector3().crossVectors(normal, majorAxis).normalize();
+                
+                // Re-orthogonalize X to ensure perfect 90 degrees
+                majorAxis.crossVectors(minorAxis, normal).normalize();
 
+                // 2. Create Rotation Matrix
+                const rotationMatrix = new THREE.Matrix4().makeBasis(majorAxis, minorAxis, normal);
+                const quat = new THREE.Quaternion().setFromRotationMatrix(rotationMatrix);
+
+                // 3. Sizing
                 const area = f.overlapArea ?? 1;
                 const planeSize = Math.max(markerSize, Math.sqrt(area));
-
-                // If radii are provided, render an ellipse by scaling a unit circle.
-                const radii = (f as any).ellipseRadii as
-                    | [number, number]
-                    | undefined;
-                const useRx =
-                    radii && radii[0] > 1e-9
-                        ? Math.max(radii[0], markerSize)
-                        : planeSize;
-                const useRy =
-                    radii && radii[1] > 1e-9
-                        ? Math.max(radii[1], markerSize)
-                        : planeSize;
+                const radii = (f as any).ellipseRadii as | [number, number] | undefined;
+                
+                const useRx = radii && radii[0] > 1e-9 ? Math.max(radii[0], markerSize) : planeSize;
+                const useRy = radii && radii[1] > 1e-9 ? Math.max(radii[1], markerSize) : planeSize;
 
                 const geom = new THREE.CircleGeometry(1, 64);
-
-                // Offset overlay slightly along normal to prevent z-fighting/clipping
+                
+                // 4. Positioning
                 const offset = normal.clone().multiplyScalar(Math.max(0.2, markerSize * 0.01));
-                const overlayPos = f.bottomVertex.clone().add(offset);
+                const centerPos = f.ellipseCenter || f.centroid;
+                const overlayPos = centerPos.clone().add(offset);
+
                 return (
                     <mesh
                         key={i}
@@ -70,17 +63,11 @@ const SelectableFaces = ({
                         scale={[useRx, useRy, 1]}
                         onPointerOver={(e) => {
                             e.stopPropagation();
-                            (
-                                (e.object as THREE.Mesh)
-                                    .material as THREE.MeshStandardMaterial
-                            ).color.set("orange");
+                            ((e.object as THREE.Mesh).material as THREE.MeshStandardMaterial).color.set("orange");
                         }}
                         onPointerOut={(e) => {
                             e.stopPropagation();
-                            (
-                                (e.object as THREE.Mesh)
-                                    .material as THREE.MeshStandardMaterial
-                            ).color.set("white");
+                            ((e.object as THREE.Mesh).material as THREE.MeshStandardMaterial).color.set("white");
                         }}
                         onClick={(e) => {
                             e.stopPropagation();

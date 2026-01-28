@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 import { UploadFile, theme } from "antd";
 import { useMemo } from "react";
 
-const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Mesh) => void }) => {
+const Model3MF = ({
+    file,
+    onLoad,
+}: {
+    file: UploadFile;
+    onLoad?: (mesh: THREE.Mesh) => void;
+}) => {
     const objectUrl = useMemo(() => {
         if (!file) return null;
         return URL.createObjectURL(file.originFileObj as Blob);
@@ -20,6 +26,16 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
         loader.load(
             objectUrl,
             (obj: any) => {
+                // --- FIX: RESET ROTATION ---
+                // ThreeMFLoader automatically rotates 3MFs to Y-up (rotation.x = -PI/2).
+                // Since your Python script reads raw Z-up data, and your Canvas is Z-up,
+                // we must undo this rotation before merging to match the coordinates.
+                obj.rotation.set(0, 0, 0);
+                obj.scale.set(1, 1, 1);
+                obj.position.set(0, 0, 0);
+                obj.updateMatrixWorld(true);
+                // ---------------------------
+
                 const merged = mergeAllGeometries(obj);
                 if (!merged) {
                     console.warn("No geometries found in 3MF");
@@ -32,18 +48,24 @@ const Model3MF = ({ file, onLoad }: { file: UploadFile; onLoad?: (mesh: THREE.Me
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
                 // Bake position into geometry
-                merged.applyMatrix4(new THREE.Matrix4().makeTranslation(-center.x, -center.y, -minZ));
+                merged.applyMatrix4(
+                    new THREE.Matrix4().makeTranslation(
+                        -center.x,
+                        -center.y,
+                        -minZ,
+                    ),
+                );
                 // Use Ant Design's colorPrimary token for 3MF meshes (matches STL)
                 const mesh = new THREE.Mesh(
                     merged,
-                    new THREE.MeshStandardMaterial({ color: colorPrimary })
+                    new THREE.MeshStandardMaterial({ color: colorPrimary }),
                 );
                 mesh.position.set(0, 0, 0); // Reset position
                 setObject(mesh);
                 onLoad?.(mesh);
             },
             undefined,
-            (err: any) => console.error("Error loading 3MF:", err)
+            (err: any) => console.error("Error loading 3MF:", err),
         );
 
         return () => {
