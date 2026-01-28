@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/Addons.js";
 import { UploadFile, theme } from "antd";
 import { useEffect, useState, useRef } from "react";
+
 const ModelSTL = ({
     file,
     onLoad,
@@ -18,12 +19,11 @@ const ModelSTL = ({
     const colorPrimary = theme.useToken().token.colorPrimary;
 
     const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-    const [position, setPosition] = useState<[number, number, number]>([
-        0, 0, 0,
-    ]);
+    // REMOVED: const [position, setPosition] ... we don't need this state anymore
+    
     // Preserve original model units — do not rescale STLs for display or export
     const scale = 1;
-    const meshRef = useRef<THREE.Mesh>(null); // <-- always at the top
+    const meshRef = useRef<THREE.Mesh>(null); 
 
     useEffect(() => {
         if (!objectUrl) return;
@@ -37,7 +37,13 @@ const ModelSTL = ({
                 // Center X/Y, flush Z to ground
                 const center = bbox.getCenter(new THREE.Vector3());
                 const minZ = bbox.min.z;
-                setPosition([-center.x, -center.y, -minZ]);
+
+                // --- THE FIX ---
+                // Instead of setting state, we physically move the vertices.
+                // This 'bakes' the centering into the geometry data.
+                geo.translate(-center.x, -center.y, -minZ);
+                // ----------------
+                
                 setGeometry(geo);
             },
             undefined,
@@ -66,7 +72,7 @@ const ModelSTL = ({
             ref={meshRef}
             geometry={geometry}
             scale={scale}
-            position={position}
+            // REMOVED: position={position} <-- The mesh stays at 0,0,0
         >
             <meshStandardMaterial color={colorPrimary} />
         </mesh>
