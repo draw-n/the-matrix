@@ -10,7 +10,6 @@ const SelectableFaces = ({
         centroid: THREE.Vector3;
         ellipseCenter?: THREE.Vector3;
         ellipseAxis?: THREE.Vector3; // <--- NEW PROP
-        bottomVertex: THREE.Vector3;
         overlapArea?: number;
         ellipseRadii?: [number, number];
     }[];
