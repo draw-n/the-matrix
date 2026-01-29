@@ -73,7 +73,6 @@ const MeshViewer = (props: MeshViewerProps) => {
         ellipseCenter: f.ellipseCenter
             ? new THREE.Vector3(f.ellipseCenter.x, f.ellipseCenter.y, f.ellipseCenter.z)
             : new THREE.Vector3(f.centroid.x, f.centroid.y, f.centroid.z),
-        bottomVertex: new THREE.Vector3(f.bottomVertex.x, f.bottomVertex.y, f.bottomVertex.z),
         overlapArea: f.area,
         ellipseRadii: f.ellipseRadii,
         ellipseRotation: f.ellipseRotation,
