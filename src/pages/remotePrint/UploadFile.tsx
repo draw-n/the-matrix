@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRef, useState } from "react";
 
 import {
+    CaretLeftOutlined,
     CaretRightOutlined,
     DeleteOutlined,
     InboxOutlined,
@@ -16,12 +17,14 @@ const { Dragger } = Upload;
 
 interface UploadFileProps {
     next: () => void;
+    prev: () => void;
     uploadedFile: UploadFile[];
     setUploadedFile: (item: UploadFile[]) => void;
 }
 
 const UploadFile: React.FC<UploadFileProps> = ({
     next,
+    prev,
     uploadedFile,
     setUploadedFile,
 }: UploadFileProps) => {
@@ -73,7 +76,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
             setIsProcessing(false);
         }
     };
-    
+
     const props: UploadProps = {
         beforeUpload: (file) => {
             const isValid =
@@ -170,7 +173,14 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     />
                 )}
 
-                <Flex justify="center" style={{ width: "100%" }}>
+                <Flex gap="middle" justify="center" style={{ width: "100%" }}>
+                    <Button
+                        icon={<CaretLeftOutlined />}
+                        iconPosition="start"
+                        onClick={prev}
+                    >
+                        Introduction
+                    </Button>
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}

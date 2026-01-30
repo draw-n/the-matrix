@@ -16,6 +16,7 @@ import { useAuth } from "../../hooks/AuthContext";
 import { User } from "../../types/user";
 
 import Loading from "../../components/Loading";
+import Help from "./Help";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
@@ -129,12 +130,21 @@ const RemotePrint: React.FC = () => {
 
     const steps = [
         {
+            title: "Introduction",
+            content: (
+                <Help
+                    next={next}
+                />
+            ),
+        },
+        {
             title: "Upload File",
             content: (
                 <UploadFile
                     uploadedFile={uploadedFile}
                     setUploadedFile={setUploadedFile}
                     next={next}
+                    prev={prev}
                 />
             ),
         },
