@@ -14,7 +14,7 @@ import {
     Space,
     Typography,
 } from "antd";
-import {  WithEquipment } from "../../types/equipment";
+import { WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
 
 import ConfirmAction from "../../components/ConfirmAction";
@@ -26,6 +26,7 @@ import StatusCard from "./StatusCard";
 import { useAllCategories } from "../../hooks/category";
 import { useAllIssues } from "../../hooks/issue";
 import { useAllEquipment } from "../../hooks/equipment";
+import QueueSystem from "../../components/queueSystem/QueueSystem";
 
 const { Paragraph, Title } = Typography;
 type EquipmentProfileProps = WithEquipment;
@@ -35,7 +36,7 @@ const { TextArea } = Input;
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
 }: EquipmentProfileProps) => {
-    const {refetch: equipmentRefresh} = useAllEquipment();
+    const { refetch: equipmentRefresh } = useAllEquipment();
     const [editMode, setEditMode] = useState<boolean>(false);
     const { data: categories, isLoading } = useAllCategories();
     const [name, setName] = useState(equipment?.name);
@@ -45,7 +46,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     const [description, setDescription] = useState(equipment?.description);
     const { data: issues, refetch } = useAllIssues(
         equipment ? ["open", "in-progress", "completed"] : undefined,
-        equipment ? equipment.uuid : undefined
+        equipment ? equipment.uuid : undefined,
     );
     const navigate = useNavigate();
     /**
@@ -76,7 +77,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${
                     equipment?.uuid
                 }`,
-                editedEquipment
+                editedEquipment,
             );
             equipmentRefresh();
         } catch (error) {
@@ -91,7 +92,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
             const response = await axios.delete(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment/${
                     equipment?.uuid
-                }`
+                }`,
             );
             equipmentRefresh();
             navigate("/makerspace");
@@ -108,7 +109,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                         <HeaderCard
                             equipment={equipment}
                             category={categories?.find(
-                                (item) => item.uuid === type
+                                (item) => item.uuid === type,
                             )}
                             editMode={editMode}
                             handleClick={handleClick}
@@ -143,6 +144,11 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                                     )}
                                 </Flex>
                             )}
+                        </Card>
+                    </Col>
+                    <Col span={24}>
+                        <Card>
+                            <QueueSystem equipmentId={equipment?.uuid} />
                         </Card>
                     </Col>
                     <Col span={24}>

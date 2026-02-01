@@ -148,9 +148,7 @@ const Review: React.FC<ReviewProps> = ({
                                     // Simulating file upload
                                 }}
                             />
-                            <MeshViewer
-                                file={uploadedFile[0]}
-                            />
+                            <MeshViewer file={uploadedFile[0]} />
                         </Card>
                     </Col>
                 </Row>
@@ -163,7 +161,11 @@ const Review: React.FC<ReviewProps> = ({
                     >
                         More Settings
                     </Button>
-                    <ConfirmAction
+                    <Button type="primary" onClick={handleSubmit}>
+                        Submit
+                    </Button>
+                    {/*
+                      <ConfirmAction
                         actionSuccess={handleSubmit}
                         title="Confirm Bed Clear"
                         headlineText="Check the live webcam below."
@@ -177,6 +179,7 @@ const Review: React.FC<ReviewProps> = ({
                             />
                         </div>
                     </ConfirmAction>
+                    */}
                 </Flex>
             </Space>
         </>

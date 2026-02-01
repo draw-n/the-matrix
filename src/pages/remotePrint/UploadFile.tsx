@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRef, useState } from "react";
 
 import {
+    CaretLeftOutlined,
     CaretRightOutlined,
     DeleteOutlined,
     InboxOutlined,
@@ -16,12 +17,14 @@ const { Dragger } = Upload;
 
 interface UploadFileProps {
     next: () => void;
+    prev: () => void;
     uploadedFile: UploadFile[];
     setUploadedFile: (item: UploadFile[]) => void;
 }
 
 const UploadFile: React.FC<UploadFileProps> = ({
     next,
+    prev,
     uploadedFile,
     setUploadedFile,
 }: UploadFileProps) => {
@@ -73,18 +76,28 @@ const UploadFile: React.FC<UploadFileProps> = ({
             setIsProcessing(false);
         }
     };
-    
+
     const props: UploadProps = {
         beforeUpload: (file) => {
-            const isValid =
+            // 1. Validate File Extension
+            const isValidExtension =
                 file.name.toLowerCase().endsWith(".stl") ||
                 file.name.toLowerCase().endsWith(".3mf");
 
-            if (!isValid) {
+            if (!isValidExtension) {
                 message.error("Only STL and 3MF files are supported.");
                 return Upload.LIST_IGNORE;
             }
 
+            // 2. Validate File Size (50MB)
+            const isLt50M = file.size / 1024 / 1024 < 50;
+
+            if (!isLt50M) {
+                message.error("File must be smaller than 50MB.");
+                return Upload.LIST_IGNORE;
+            }
+
+            // 3. Update State
             setUploadedFile([
                 {
                     uid: file.uid,
@@ -170,7 +183,14 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     />
                 )}
 
-                <Flex justify="center" style={{ width: "100%" }}>
+                <Flex gap="middle" justify="center" style={{ width: "100%" }}>
+                    <Button
+                        icon={<CaretLeftOutlined />}
+                        iconPosition="start"
+                        onClick={prev}
+                    >
+                        Introduction
+                    </Button>
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}
