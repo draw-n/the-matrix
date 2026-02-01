@@ -79,15 +79,25 @@ const UploadFile: React.FC<UploadFileProps> = ({
 
     const props: UploadProps = {
         beforeUpload: (file) => {
-            const isValid =
+            // 1. Validate File Extension
+            const isValidExtension =
                 file.name.toLowerCase().endsWith(".stl") ||
                 file.name.toLowerCase().endsWith(".3mf");
 
-            if (!isValid) {
+            if (!isValidExtension) {
                 message.error("Only STL and 3MF files are supported.");
                 return Upload.LIST_IGNORE;
             }
 
+            // 2. Validate File Size (50MB)
+            const isLt50M = file.size / 1024 / 1024 < 50;
+
+            if (!isLt50M) {
+                message.error("File must be smaller than 50MB.");
+                return Upload.LIST_IGNORE;
+            }
+
+            // 3. Update State
             setUploadedFile([
                 {
                     uid: file.uid,
