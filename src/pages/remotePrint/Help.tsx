@@ -125,8 +125,34 @@ const Help: React.FC<HelpProps> = ({ next }: HelpProps) => {
             <Flex vertical style={{ width: "100%" }} gap="large">
                 <h2>INTRODUCTION</h2>
                 <p>
-                    Please ready over this guide carefully before proceeding,
-                    particularly if you are a beginner in 3D printing.
+                    By uploading a file to this server, you acknowledge and
+                    agree to the following terms:
+                </p>
+                <ul>
+                    <li>
+                        Prohibited Content: The upload of inappropriate,
+                        offensive, or malicious 3D models—including but not
+                        limited to weapons, controlled items, or sexually
+                        explicit material—is strictly prohibited.
+                    </li>
+                    <li>
+                        Identity Association: For security and accountability,
+                        all uploads are permanently logged and associated with
+                        your user account.
+                    </li>
+                    <li>
+                        Data Integrity: Please ensure your files are free of
+                        malicious code or corrupt geometry. We reserve the right
+                        to flag or remove any content that violates our safety
+                        guidelines or operational standards.
+                    </li>
+                </ul>
+                <p>
+                    Be mindful of your contributions to the print queue. Misuse
+                    of this service may result in the suspension of your
+                    printing privileges. Please read over this guide carefully
+                    before proceeding, particularly if you are a beginner in 3D
+                    printing.
                 </p>
                 <Collapse items={items} />
                 <Flex justify="center" style={{ width: "100%" }}>

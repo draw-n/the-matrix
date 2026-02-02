@@ -11,7 +11,7 @@ import {
     YAxis,
 } from "recharts";
 import { Empty, Flex, Typography, Spin } from "antd";
-import { red } from "@ant-design/colors";
+import { geekblue } from "@ant-design/colors";
 import { useJobChartData } from "../../hooks/job";
 
 const PrintingChart: React.FC = () => {
@@ -68,8 +68,8 @@ const PrintingChart: React.FC = () => {
                     >
                         <defs>
                             <linearGradient id="countGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={red[5]} stopOpacity={0.3} />
-                                <stop offset="95%" stopColor={red[5]} stopOpacity={0} />
+                                <stop offset="5%" stopColor={geekblue[5]} stopOpacity={0.3} />
+                                <stop offset="95%" stopColor={geekblue[5]} stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -84,6 +84,7 @@ const PrintingChart: React.FC = () => {
                             allowDecimals={false}
                             axisLine={false}
                             tickLine={false}
+                            tick={false}
                             style={{ fontSize: '12px', fill: '#8c8c8c' }}
                             domain={[0, 'auto']}
                         />
@@ -94,7 +95,7 @@ const PrintingChart: React.FC = () => {
                             type="monotone"
                             dataKey="count"
                             name="Prints"
-                            stroke={red[5]}
+                            stroke={geekblue[5]}
                             strokeWidth={2}
                             fillOpacity={1}
                             fill="url(#countGradient)"

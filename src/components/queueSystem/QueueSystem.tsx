@@ -33,6 +33,7 @@ const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
                     hideOnSinglePage: true,
                 }}
                 columns={columns}
+                showHeader={false}
                 dataSource={jobs}
                 size="middle"
             />
