@@ -31,3 +31,14 @@ export const getAllJobs = async (
         console.error("Error fetching jobs:", error);
     }
 };
+
+export const getJobChartData = async (userId?: string) => {
+    try {
+        const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/chart-data?userId=${userId}`,
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching job chart data:", error);
+    }
+};
