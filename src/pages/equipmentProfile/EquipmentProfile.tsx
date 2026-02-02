@@ -148,6 +148,9 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     </Col>
                     <Col span={24}>
                         <Card>
+                            <Title
+                                level={2}
+                            >{`QUEUE TO PRINT ON ${equipment?.name.toUpperCase()}`}</Title>
                             <QueueSystem equipmentId={equipment?.uuid} />
                         </Card>
                     </Col>
