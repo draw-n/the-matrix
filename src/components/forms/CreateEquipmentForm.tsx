@@ -9,6 +9,7 @@ import {
     Tooltip,
     FormProps,
     Flex,
+    Switch,
 } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -17,14 +18,13 @@ import { Category } from "../../types/category";
 import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
 import { Equipment } from "../../types/equipment";
+import HelpField from "./HelpField";
 
 const { TextArea } = Input;
 
-const CreateEquipmentForm: React.FC<CommonFormProps> = ({
-    onSubmit,
-}) => {
+const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
     const [form] = Form.useForm();
-    const {data: categories} = useAllCategories();
+    const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const showModal = () => {
@@ -35,7 +35,7 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-                values
+                values,
             );
             onSubmit();
             setIsModalOpen(false);
@@ -64,7 +64,9 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({
                     icon={<PlusOutlined />}
                     onClick={showModal}
                     shape="round"
-                >Add New Equipment</Button>
+                >
+                    Add New Equipment
+                </Button>
             </Tooltip>
 
             <Modal
@@ -73,12 +75,20 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({
                 onOk={handleOk}
                 onCancel={handleCancel}
                 centered
+                styles={{
+                    body: {
+                        overflowY: "auto",
+                        maxHeight: "calc(100vh - 200px)",
+                        paddingRight: "16px",
+                    },
+                }}
             >
                 <Form
                     onFinish={onFinish}
                     form={form}
                     name="basic"
                     layout="vertical"
+                    colon={false}
                     style={{ width: "100%" }}
                     initialValues={{ remember: true }}
                     autoComplete="off"
@@ -91,31 +101,21 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({
                         rules={[
                             {
                                 required: true,
-                                message:
-                                    "Please add a description to the announcement.",
+                                message: "Please add a name to the equipment.",
                             },
                         ]}
-                    >
-                        <Input size="small" />
-                    </Form.Item>
-                    <Form.Item<Equipment>
-                        style={{ width: "100%" }}
-                        label="Headline"
-                        name="headline"
-                    >
-                        <Input size="small" />
-                    </Form.Item>
-                       <Form.Item<Equipment>
-                        style={{ width: "100%" }}
-                        label="IP Address or URL"
-                        name="ipUrl"
                     >
                         <Input size="small" />
                     </Form.Item>
                     <Flex gap="small">
                         <Form.Item<Equipment>
                             style={{ width: "100%" }}
-                            label="Route Path"
+                            label={
+                                <Flex gap="small" align="center">
+                                    Website Page Route Path
+                                    <HelpField content="Defines the url for the equipment's webpage. (ex. /makerspace/voron-1)" />
+                                </Flex>
+                            }
                             name="routePath"
                             rules={[
                                 {
@@ -148,20 +148,67 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({
                             />
                         </Form.Item>
                     </Flex>
-
                     <Form.Item<Equipment>
                         style={{ width: "100%" }}
-                        label="Description"
+                        label={
+                            <Flex gap="small" align="center">
+                                Headline
+                                <HelpField content="Important information about the equipment. (ex. volume size, special features)" />
+                            </Flex>
+                        }
+                        name="headline"
+                    >
+                        <Input size="small" />
+                    </Form.Item>
+                    <Form.Item<Equipment>
+                        style={{ width: "100%" }}
+                        label={
+                            <Flex gap="small" align="center">
+                                Description
+                                <HelpField content="Provide a detailed description of the equipment." />
+                            </Flex>
+                        }
                         name="description"
                         rules={[
                             {
                                 required: true,
                                 message:
-                                    "Please add a description to the equipment.",
+                                    "Please add a description for the equipment.",
                             },
                         ]}
                     >
                         <TextArea size="small" rows={6} />
+                    </Form.Item>
+                    <Form.Item<Equipment>
+                        style={{ width: "100%" }}
+                        label={
+                            <Flex gap="small" align="center">
+                                IP Address
+                                <HelpField content="The IP address or URL of the equipment. (ex. 10.68.1.176)" />
+                            </Flex>
+                        }
+                        name="ipUrl"
+                    >
+                        <Input size="small" />
+                    </Form.Item>
+                    <Form.Item<Equipment>
+                        style={{ width: "100%" }}
+                        label={
+                            <Flex gap="small" align="center">
+                                Camera URL
+                                <HelpField content="The IP address or URL of the equipment's camera. (ex. 10.68.1.176)" />
+                            </Flex>
+                        }
+                        name="cameraUrl"
+                    >
+                        <Input size="small" />
+                    </Form.Item>
+                    <Form.Item<Equipment>
+                        name="remotePrintAvailable"
+                        label="Will it be available for remote printing?"
+                        layout="horizontal"
+                    >
+                        <Switch />
                     </Form.Item>
                 </Form>
             </Modal>

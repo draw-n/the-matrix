@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Flex, Space } from "antd";
+import { Button, Flex, Space } from "antd";
 
 import { Issue } from "../../types/issue";
 import IssueTable from "../../components/tables/IssueTable";
-import CreateIssueForm from "../../components/forms/CreateIssueForm";
 import { useAllIssues } from "../../hooks/issue";
+import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
+import { useNavigate } from "react-router-dom";
 
 const IssueTab: React.FC = () => {
     const [equipmentFilter, setEquipmentFilter] = useState<string>("");
-    const {data: issues, refetch} = useAllIssues(
+    const { data: issues, refetch } = useAllIssues(
         equipmentFilter ? ["open", "in-progress", "completed"] : undefined,
-        equipmentFilter ? equipmentFilter : undefined
+        equipmentFilter ? equipmentFilter : undefined,
     );
+
+    const navigate = useNavigate();
 
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -24,7 +27,16 @@ const IssueTab: React.FC = () => {
                 align="center"
             >
                 <h2>ISSUES</h2>
-                <CreateIssueForm onSubmit={refetch} />
+                <Button
+                    type="primary"
+                    size="middle"
+                    icon={<PlusOutlined />}
+                    onClick={() => navigate("/report")}
+                    iconPosition="end"
+                    shape={"round"}
+                >
+                    Add New Issue
+                </Button>
             </Flex>
             <IssueTable refresh={refetch} issues={issues} />
         </Space>
