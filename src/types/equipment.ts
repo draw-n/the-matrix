@@ -11,6 +11,7 @@ export interface Equipment {
     description: string;
     imgSrc?: string;
     ipUrl?: string;
+    remotePrintAvailable?: boolean;
     cameraUrl?: string;
 }
 

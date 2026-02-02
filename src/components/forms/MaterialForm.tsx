@@ -20,6 +20,7 @@ import { Material, WithMaterial } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
+import HelpField from "./HelpField";
 
 type MaterialFormProps = WithMaterial & CommonFormProps;
 
@@ -52,13 +53,13 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                     `${import.meta.env.VITE_BACKEND_URL}/materials/${
                         material.uuid
                     }`,
-                    editedMaterial
+                    editedMaterial,
                 );
                 message.success(response.data.message);
             } else {
                 const response = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/materials`,
-                    values
+                    values,
                 );
                 message.success("Material successfully created!");
                 form.resetFields();
@@ -101,6 +102,13 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                 centered
                 onOk={handleOk}
                 onCancel={handleCancel}
+                styles={{
+                    body: {
+                        overflowY: "auto",
+                        maxHeight: "calc(100vh - 200px)",
+                        paddingRight: "16px",
+                    },
+                }}
             >
                 <Form
                     onFinish={onFinish}
@@ -148,12 +156,17 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         <Form.Item<Material>
                             name="shortName"
                             style={{ width: "50%" }}
-                            label="Short Name"
+                            label={
+                                <Flex gap="small" align="center">
+                                    Acryonym/Abbreviation
+                                    <HelpField content="Defines a shorter name for the material. (ex. PLA)" />
+                                </Flex>
+                            }
                             rules={[
                                 {
                                     required: true,
                                     message:
-                                        "Please add a short name/nickname to the material.",
+                                        "Please add an acronym/abbreviation to the material.",
                                 },
                             ]}
                         >
@@ -182,7 +195,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                         </Form.Item>
                     </Flex>
                     <Form.Item<Material>
-                        label="Properties"
+                        label={
+                            <Flex gap="small" align="center">
+                                Properties
+                                <HelpField content="Defines specific characteristics or attributes of the material (ex. flexibility, biodegradability)" />
+                            </Flex>
+                        }
                         name="properties"
                         rules={[
                             {
@@ -203,7 +221,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                     </Form.Item>
                     <Form.Item<Material>
                         name="description"
-                        label="Description"
+                        label={
+                            <Flex gap="small" align="center">
+                                Description
+                                <HelpField content="Provides a detailed description of the material." />
+                            </Flex>
+                        }
                         rules={[
                             {
                                 required: true,
@@ -222,10 +245,11 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                     >
                         {({ getFieldValue }) => {
                             const category = categories?.find(
-                                (item) => item.uuid == getFieldValue("categoryId")
+                                (item) =>
+                                    item.uuid == getFieldValue("categoryId"),
                             );
                             return category?.properties?.includes(
-                                "temperature"
+                                "temperature",
                             ) ? (
                                 <Row gutter={[16, 16]}>
                                     <Col xs={24} lg={4}>
@@ -244,7 +268,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     {
                                                         required:
                                                             category?.properties?.includes(
-                                                                "temperature"
+                                                                "temperature",
                                                             ),
                                                         message:
                                                             "Please add a temperature for the extruder on the first layer.",
@@ -259,7 +283,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     parser={(value) =>
                                                         value?.replace(
                                                             " °C",
-                                                            ""
+                                                            "",
                                                         ) as unknown as number
                                                     }
                                                 />
@@ -279,7 +303,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     {
                                                         required:
                                                             category?.properties?.includes(
-                                                                "temperature"
+                                                                "temperature",
                                                             ),
                                                         message:
                                                             "Please add a temperature for the extruder after the first layer.",
@@ -294,7 +318,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     parser={(value) =>
                                                         value?.replace(
                                                             " °C",
-                                                            ""
+                                                            "",
                                                         ) as unknown as number
                                                     }
                                                 />
@@ -317,7 +341,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     {
                                                         required:
                                                             category?.properties?.includes(
-                                                                "temperature"
+                                                                "temperature",
                                                             ),
                                                         message:
                                                             "Please add a temperature for the bed on the first layer.",
@@ -332,7 +356,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     parser={(value) =>
                                                         value?.replace(
                                                             " °C",
-                                                            ""
+                                                            "",
                                                         ) as unknown as number
                                                     }
                                                 />
@@ -352,7 +376,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     {
                                                         required:
                                                             category?.properties?.includes(
-                                                                "temperature"
+                                                                "temperature",
                                                             ),
                                                         message:
                                                             "Please add a temperature for the bed after the first layer.",
@@ -367,7 +391,7 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
                                                     parser={(value) =>
                                                         value?.replace(
                                                             " °C",
-                                                            ""
+                                                            "",
                                                         ) as unknown as number
                                                     }
                                                 />
