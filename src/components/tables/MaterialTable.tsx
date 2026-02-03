@@ -47,15 +47,15 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
         },
         {
             title: "Category",
-            key: "category",
-            dataIndex: "category",
+            key: "categoryId",
+            dataIndex: "categoryId",
             filters: categories?.map((category) => ({
                 text: category.name,
                 value: category.uuid,
             })),
 
             onFilter: (value, record) =>
-                record.category.indexOf((value as string).toLowerCase()) === 0,
+                record.categoryId.indexOf((value as string).toLowerCase()) === 0,
             render: (category) =>
                 category && (
                     <Tag

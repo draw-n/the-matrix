@@ -13,6 +13,7 @@ import { Button, Flex, message, Upload, UploadProps } from "antd";
 import type { UploadFile } from "antd";
 
 import MeshViewer from "../../components/meshViewer/MeshViewer";
+import { checkAccess } from "../../components/rbac/HasAccess";
 const { Dragger } = Upload;
 
 interface UploadFileProps {
@@ -49,12 +50,6 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 const resp = await viewModelApiRef.current.exportAndReplace();
 
                 if (resp) {
-                    // --- FIX: Update the file state to point to the backend ---
-                    // This ensures the Review step downloads the NEW rotated file
-                    // instead of showing the OLD local blob.
-
-                    // Construct the URL to your file on the backend
-                    // You might need an endpoint to serve meshes, e.g., /meshes/filename.stl
                     const serverFileUrl = `${import.meta.env.VITE_BACKEND_URL}/meshes/${uploadedFile[0].name}`;
 
                     const updatedFile = {
@@ -82,7 +77,9 @@ const UploadFile: React.FC<UploadFileProps> = ({
             // 1. Validate File Extension
             const isValidExtension =
                 file.name.toLowerCase().endsWith(".stl") ||
-                file.name.toLowerCase().endsWith(".3mf");
+                file.name.toLowerCase().endsWith(".3mf") ||
+                (file.name.toLowerCase().endsWith(".gcode") &&
+                    checkAccess(["admin", "moderator"]));
 
             if (!isValidExtension) {
                 message.error("Only STL and 3MF files are supported.");
