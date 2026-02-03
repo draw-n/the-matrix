@@ -10,3 +10,7 @@ export interface CommonFormProps {
 export interface CommonTableProps {
   refresh: () => void;
 }
+
+export interface EditableComponentProps<T> {
+    handleClick?: (editMode: boolean, setEditMode: (editMode: boolean) => void, values?: Partial<T>) => void;
+}

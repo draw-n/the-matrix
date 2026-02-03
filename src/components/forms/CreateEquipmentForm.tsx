@@ -10,8 +10,9 @@ import {
     FormProps,
     Flex,
     Switch,
+    message,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { Category } from "../../types/category";
@@ -40,8 +41,11 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
             onSubmit();
             setIsModalOpen(false);
             form.resetFields();
-        } catch (error) {
-            console.error("Error creating new update:", error);
+        } catch (error: any) {
+            console.error("Error creating new equipment:", error);
+            message.error(
+                error.response?.data?.message || "Error creating equipment.",
+            );
         }
     };
 

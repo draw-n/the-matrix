@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     const colorTextBase = theme.useToken().token.colorTextBase;
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            login(values.email, values.password);
+            await login(values.email, values.password);
         } catch (error: any) {
             if (error?.response?.data?.message) {
                 message.error(error.response.data.message);
