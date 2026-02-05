@@ -15,6 +15,18 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
         if (!loading && !user) {
             navigate("/login");
         }
+
+        if (
+            !loading &&
+            user &&
+            !(
+                user.graduationDate &&
+                user.departments &&
+                user.departments.length > 0 &&
+                user.status
+            )
+        ) {
+        }
     }, [loading, user, navigate]);
 
     if (loading) {

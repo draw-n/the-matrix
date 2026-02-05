@@ -11,6 +11,7 @@ import {
     EditOutlined,
     SaveOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 interface UserCardProps {
     cardUser: User;
@@ -23,7 +24,7 @@ const UserCard: React.FC<UserCardProps> = ({
 }: UserCardProps) => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editAccess, setEditAccess] = useState<string>(cardUser.access);
-
+    const navigate = useNavigate();
     const { user } = useAuth();
 
     const handleClick = () => {
@@ -44,7 +45,7 @@ const UserCard: React.FC<UserCardProps> = ({
             };
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/users/${cardUser.uuid}`,
-                editedUser
+                editedUser,
             );
         } catch (error) {
             console.error("Issue updating user", error);
@@ -99,6 +100,12 @@ const UserCard: React.FC<UserCardProps> = ({
                                 </Button>
                             </Popconfirm>
                         )}
+                        <Button
+                            size="small"
+                            onClick={() => navigate(`/users/${cardUser.uuid}`)}
+                        >
+                            View Profile
+                        </Button>
                         {user?.uuid != cardUser.uuid && (
                             <Button
                                 size="small"
