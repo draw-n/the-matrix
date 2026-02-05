@@ -6,6 +6,7 @@ export interface User {
     access: UserAccess;
     status: UserStatus;
     graduationDate?: Date;
+    departments: string[];
 }
 
 export interface WithUser {

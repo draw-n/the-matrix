@@ -12,7 +12,6 @@ import Login from "./pages/Login";
 import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
 import Makerspace from "./pages/makerspace/Makerspace";
-import EquipmentProfile from "./pages/equipmentProfile/EquipmentProfile";
 import Settings from "./pages/settings/Settings";
 
 import { useEffect, useState } from "react";
@@ -26,13 +25,13 @@ import "./App.css";
 import FirstTime from "./pages/login/FirstTime";
 import NotFound from "./components/NotFound";
 import { ConfigProvider } from "antd";
-import { AuthProvider } from "./hooks/AuthContext";
+import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { lightTheme, darkTheme } from "./theme.ts";
 import { useAllEquipment } from "./hooks/equipment.ts";
+import EquipmentProfileLoader from "./pages/equipmentProfile/EquipmentProfileLoader.tsx";
+import UserProfileLoader from "./pages/profile/UserProfileLoader.tsx";
 
 const App: React.FC = () => {
-    const { data: equipments } = useAllEquipment();
-
     const [theme, setTheme] = useState<"light" | "dark">("light");
 
     const toggleTheme = () => {
@@ -45,41 +44,52 @@ const App: React.FC = () => {
                 <AuthProvider>
                     <BrowserRouter>
                         <Routes>
-                            {Array.isArray(equipments) &&
-                                equipments.length > 0 &&
-                                equipments.map((equipment) => (
-                                    <Route
-                                        key={equipment.uuid}
-                                        path={`/makerspace/${equipment.routePath}`}
+                            <Route
+                                path={`/makerspace/:routePath`}
+                                element={
+                                    <PrivateRoute
                                         element={
-                                            <PrivateRoute
-                                                element={
-                                                    <Shell
-                                                        themeMode={theme}
-                                                        toggleTheme={
-                                                            toggleTheme
-                                                        }
-                                                        title={equipment.name}
-                                                        contentAccess={[
-                                                            "novice",
-                                                            "proficient",
-                                                            "expert",
-                                                            "moderator",
-                                                            "admin",
-                                                        ]}
-                                                        children={
-                                                            <EquipmentProfile
-                                                                equipment={
-                                                                    equipment
-                                                                }
-                                                            />
-                                                        }
-                                                    />
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                title={"Makerspace"}
+                                                contentAccess={[
+                                                    "novice",
+                                                    "proficient",
+                                                    "expert",
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                children={
+                                                    <EquipmentProfileLoader />
                                                 }
                                             />
                                         }
                                     />
-                                ))}
+                                }
+                            />
+
+                            <Route
+                                path={`/users/:userId`}
+                                element={
+                                    <PrivateRoute
+                                        element={
+                                            <Shell
+                                                themeMode={theme}
+                                                toggleTheme={toggleTheme}
+                                                title="User Profile"
+                                                contentAccess={[
+                                                    "moderator",
+                                                    "admin",
+                                                ]}
+                                                children={
+                                                    <UserProfileLoader />
+                                                }
+                                            />
+                                        }
+                                    />
+                                }
+                            />
 
                             <Route path="/login" element={<Login />} />
                             <Route path="/signup" element={<Signup />} />
@@ -163,7 +173,9 @@ const App: React.FC = () => {
                                                     "admin",
                                                 ]}
                                                 title="User Profile"
-                                                children={<Profile />}
+                                                children={
+                                                    <Profile />
+                                                }
                                             />
                                         }
                                     />

@@ -20,9 +20,11 @@ import {
     EditOutlined,
     SaveOutlined,
 } from "@ant-design/icons";
+import { WithUser } from "../../types/user";
 
-const Profile: React.FC = () => {
-    const { user } = useAuth();
+const Profile: React.FC<WithUser> = ({ user: propUser }) => {
+    const { user: currentUser } = useAuth();
+    const user = propUser || currentUser;
     const [editMode, setEditMode] = useState<boolean>(false);
 
     const [firstName, setFirstName] = useState(user?.firstName);
@@ -55,7 +57,7 @@ const Profile: React.FC = () => {
             };
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
-                editedUser
+                editedUser,
             );
         } catch (error) {
             console.error("Issue updating user", error);
@@ -69,7 +71,7 @@ const Profile: React.FC = () => {
                 {
                     currentPassword,
                     newPassword,
-                }
+                },
             );
             message.success("Password changed successfully.");
             setCurrentPassword("");
@@ -90,11 +92,14 @@ const Profile: React.FC = () => {
                     </p>
                     <p>Vanderbilt University</p>
                 </Card>
-                <Alert
-                    message="To have your access role changed, contact Dr. David Florian by email directly."
-                    type="info"
-                    style={{ width: "100%", textAlign: "center" }}
-                />
+                {currentUser?.uuid === user?.uuid && (
+                    <Alert
+                        message="To have your access role changed, contact Dr. David Florian by email directly."
+                        type="info"
+                        style={{ width: "100%", textAlign: "center" }}
+                    />
+                )}
+
                 <Card>
                     <Space
                         style={{ width: "100%" }}
@@ -195,36 +200,40 @@ const Profile: React.FC = () => {
                         />
                     </Space>
                 </Card>
-                <Card>
-                    <Space
-                        style={{ width: "100%" }}
-                        direction="vertical"
-                        size="middle"
-                    >
-                        <h2>Change Password</h2>
-                        <p>Current Password</p>
-                        <Input.Password
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                        />
-                        <p>New Password</p>
-                        <Input.Password
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                        <Flex justify="end" style={{ width: "100%" }}>
-                            <Button
-                                iconPosition="end"
-                                variant="filled"
-                                type="primary"
-                                icon={<ArrowRightOutlined />}
-                                onClick={handleChangePassword}
-                            >
-                                Submit
-                            </Button>
-                        </Flex>
-                    </Space>
-                </Card>
+                {currentUser?.uuid === user?.uuid && (
+                    <Card>
+                        <Space
+                            style={{ width: "100%" }}
+                            direction="vertical"
+                            size="middle"
+                        >
+                            <h2>Change Password</h2>
+                            <p>Current Password</p>
+                            <Input.Password
+                                value={currentPassword}
+                                onChange={(e) =>
+                                    setCurrentPassword(e.target.value)
+                                }
+                            />
+                            <p>New Password</p>
+                            <Input.Password
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                            />
+                            <Flex justify="end" style={{ width: "100%" }}>
+                                <Button
+                                    iconPosition="end"
+                                    variant="filled"
+                                    type="primary"
+                                    icon={<ArrowRightOutlined />}
+                                    onClick={handleChangePassword}
+                                >
+                                    Submit
+                                </Button>
+                            </Flex>
+                        </Space>
+                    </Card>
+                )}
             </Space>
         </>
     );
