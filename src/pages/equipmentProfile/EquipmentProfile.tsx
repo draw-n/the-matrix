@@ -30,6 +30,8 @@ import QueueSystem from "../../components/queueSystem/QueueSystem";
 import { editEquipment } from "../../api/equipment";
 import AdminCard from "./AdminCard";
 import DescriptionCard from "./DescriptionCard";
+import CameraCard from "./CameraCard";
+import HasAccess from "../../components/rbac/HasAccess";
 
 const { Paragraph, Title } = Typography;
 type EquipmentProfileProps = WithEquipment;
@@ -58,7 +60,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         if (equipment && editMode) {
             const editedEquipment: Equipment = {
                 ...equipment,
-                ...values
+                ...values,
             };
             editEquipment(editedEquipment);
             equipmentRefresh();
@@ -83,10 +85,18 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
 
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                       <DescriptionCard equipment={equipment} handleClick={handleEditClick} />
+                        <DescriptionCard
+                            equipment={equipment}
+                            handleClick={handleEditClick}
+                        />
                     </Col>
-                    <Col span={24}>
-                        <Card>
+                    {equipment?.cameraUrl && (
+                        <Col span={14}>
+                            <CameraCard equipment={equipment} handleClick={handleEditClick} />
+                        </Col>
+                    )}
+                    <Col span={equipment?.cameraUrl ? 10 : 24}>
+                        <Card style={{ height: "100%" }}>
                             <Title
                                 level={2}
                             >{`QUEUE TO PRINT ON ${equipment?.name.toUpperCase()}`}</Title>
@@ -101,9 +111,13 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             <IssueTable issues={issues} refresh={refetch} />
                         </Card>
                     </Col>
-                    <Col span={24}>
-                        <AdminCard equipment={equipment} />
-                    </Col>
+                    {
+                        <HasAccess roles={["admin", "moderator"]}>
+                            <Col span={24}>
+                                <AdminCard equipment={equipment} />
+                            </Col>
+                        </HasAccess>
+                    }
                 </Row>
             </Space>
         </>

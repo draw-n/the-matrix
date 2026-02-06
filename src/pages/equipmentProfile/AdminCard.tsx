@@ -16,7 +16,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ equipment, handleClick }) => {
         <>
             <Card>
                 <Flex justify="space-between" align="center">
-                    <h3>Admin Actions</h3>
+                    <h2>Admin Actions</h2>
                     <HasAccess roles={["admin", "moderator"]}>
                         <Button
                             onClick={() =>

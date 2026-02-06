@@ -26,6 +26,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
                 user.status
             )
         ) {
+            navigate("/first-time");
         }
     }, [loading, user, navigate]);
 
