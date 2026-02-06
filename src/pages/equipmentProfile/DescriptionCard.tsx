@@ -12,15 +12,18 @@ import {
 } from "../../types/common";
 import { EditOutlined } from "@ant-design/icons";
 
-type DescriptionCardProps = EditableComponentProps<Equipment> &
-    WithEquipment;
+type DescriptionCardProps = EditableComponentProps<Equipment> & WithEquipment;
 
 const DescriptionCard: React.FC<DescriptionCardProps> = ({
     handleClick,
     equipment,
 }: DescriptionCardProps) => {
     const [editMode, setEditMode] = useState(false);
-    const [description, setDescription] = useState<string>(equipment?.description || "");
+    const [description, setDescription] = useState<string>(
+        equipment?.description || "",
+    );
+    const [properties, setProperties] = useState(equipment?.properties);
+
     return (
         <Card>
             <Flex vertical gap="small">
@@ -30,7 +33,10 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
                         <Button
                             onClick={() =>
                                 handleClick &&
-                                handleClick(editMode, setEditMode, {description})
+                                handleClick(editMode, setEditMode, {
+                                    description,
+                                    properties,
+                                })
                             }
                             shape="circle"
                             variant="outlined"

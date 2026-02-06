@@ -20,10 +20,8 @@ const { Title } = Typography;
 type CameraCardProps = EditableComponentProps<Equipment> & WithEquipment;
 
 const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
-    const [form] = Form.useForm();
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [editMode, setEditMode] = useState(false);
     // uStreamer endpoint
     const streamUrl = `http://${equipment?.cameraUrl}/stream`;
 
@@ -34,56 +32,7 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
 
     return (
         <Card style={{ width: "100%", overflow: "hidden" }}>
-            <Form
-                onFinish={(values) =>
-                    handleClick && handleClick(editMode, setEditMode, values)
-                }
-                colon={false}
-                form={form}
-                initialValues={{
-                    ipUrl: equipment?.ipUrl,
-                    cameraUrl: equipment?.cameraUrl,
-                    remotePrintAvailable: equipment?.remotePrintAvailable,
-                }}
-                layout="horizontal"
-            >
-                <Flex
-                    justify="space-between"
-                    align="center"
-                    style={{ marginBottom: "16px" }}
-                >
-                    <Title level={2}>LIVE PRINTER FEED</Title>
-                    <HasAccess roles={["admin", "moderator"]}>
-                        <Button
-                            shape="circle"
-                            variant="outlined"
-                            type="primary"
-                            htmlType="submit"
-                            icon={
-                                editMode ? <SaveOutlined /> : <EditOutlined />
-                            }
-                        />
-                    </HasAccess>
-                </Flex>
-                <Form.Item
-                    hidden={!editMode}
-                    label="Camera URL"
-                    name="cameraUrl"
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item hidden={!editMode} label="IP URL" name="ipUrl">
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    hidden={!editMode}
-                    name="remotePrintAvailable"
-                    label="Will it be available for remote printing?"
-                    layout="horizontal"
-                >
-                    <Switch />
-                </Form.Item>
-            </Form>
+           <Title level={2} style={{ marginBottom: "16px" }}>LIVE PRINTER FEED</Title>
 
             <div
                 style={{
