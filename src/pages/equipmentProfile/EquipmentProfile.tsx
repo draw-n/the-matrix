@@ -17,8 +17,6 @@ import {
 import { Equipment, WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
 
-import ConfirmAction from "../../components/ConfirmAction";
-
 import { useNavigate } from "react-router-dom";
 
 import HeaderCard from "./HeaderCard";
@@ -33,17 +31,13 @@ import DescriptionCard from "./DescriptionCard";
 import CameraCard from "./CameraCard";
 import HasAccess from "../../components/rbac/HasAccess";
 
-const { Paragraph, Title } = Typography;
+const { Title } = Typography;
 type EquipmentProfileProps = WithEquipment;
-
-const { TextArea } = Input;
 
 const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
     equipment,
 }: EquipmentProfileProps) => {
     const { refetch: equipmentRefresh } = useAllEquipment();
-    const [type, setType] = useState(equipment?.categoryId);
-    const [properties, setProperties] = useState(equipment?.properties);
     const { data: issues, refetch } = useAllIssues(
         equipment ? ["open", "in-progress", "completed"] : undefined,
         equipment ? equipment.uuid : undefined,
@@ -91,18 +85,24 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                         />
                     </Col>
                     {equipment?.cameraUrl && (
-                        <Col span={14}>
-                            <CameraCard equipment={equipment} handleClick={handleEditClick} />
+                        <Col span={equipment?.remotePrintAvailable ? 14 : 24}>
+                            <CameraCard
+                                equipment={equipment}
+                                handleClick={handleEditClick}
+                            />
                         </Col>
                     )}
-                    <Col span={equipment?.cameraUrl ? 10 : 24}>
-                        <Card style={{ height: "100%" }}>
-                            <Title
-                                level={2}
-                            >{`QUEUE TO PRINT ON ${equipment?.name.toUpperCase()}`}</Title>
-                            <QueueSystem equipmentId={equipment?.uuid} />
-                        </Card>
-                    </Col>
+                    {equipment?.remotePrintAvailable && (
+                        <Col span={equipment?.cameraUrl ? 10 : 24}>
+                            <Card style={{ height: "100%" }}>
+                                <Title
+                                    level={2}
+                                >{`QUEUE TO PRINT ON ${equipment?.name.toUpperCase()}`}</Title>
+                                <QueueSystem equipmentId={equipment?.uuid} />
+                            </Card>
+                        </Col>
+                    )}
+
                     <Col span={24}>
                         <Card>
                             <Title
@@ -114,7 +114,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     {
                         <HasAccess roles={["admin", "moderator"]}>
                             <Col span={24}>
-                                <AdminCard equipment={equipment} />
+                                <AdminCard
+                                    equipment={equipment}
+                                    handleClick={handleEditClick}
+                                />
                             </Col>
                         </HasAccess>
                     }
