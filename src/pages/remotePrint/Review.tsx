@@ -164,22 +164,7 @@ const Review: React.FC<ReviewProps> = ({
                     <Button type="primary" onClick={handleSubmit}>
                         Submit
                     </Button>
-                    {/*
-                      <ConfirmAction
-                        actionSuccess={handleSubmit}
-                        title="Confirm Bed Clear"
-                        headlineText="Check the live webcam below."
-                        confirmText="Is the bed clear? If not, please select cancel and try again at another time."
-                        target={<Button type="primary">Submit</Button>}
-                    >
-                        <div id="camera-iframe-container">
-                            <iframe
-                                id="camera-iframe"
-                                src={import.meta.env.VITE_CAMERA_URL}
-                            />
-                        </div>
-                    </ConfirmAction>
-                    */}
+                  
                 </Flex>
             </Space>
         </>
