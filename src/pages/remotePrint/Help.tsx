@@ -35,35 +35,9 @@ const items: CollapseProps["items"] = [
             </>
         ),
     },
+   
     {
         key: "2",
-        label: "Structural Integrity (Anisotropy)",
-        children: (
-            <>
-                <p>
-                    3D prints are Anisotropic, meaning they are not equally
-                    strong in all directions. They are significantly weaker
-                    along the "layer lines."
-                </p>
-                <ul>
-                    <li>
-                        Shear Stress: If your part is a hook or a bracket, never
-                        print it so the weight pulls the layers apart (like
-                        pulling a stack of Oreos apart). Orient it so the
-                        filament "path" wraps around the curve.
-                    </li>
-                    <li>
-                        The Vertical Peg Problem: Never print thin connectors or
-                        pins vertically. They will snap at the layer bond.
-                        Rotate them so they are printed horizontally along the X
-                        or Y axis.
-                    </li>
-                </ul>
-            </>
-        ),
-    },
-    {
-        key: "3",
         label: "Overhangs & Support Optimization",
         children: (
             <>
@@ -91,7 +65,7 @@ const items: CollapseProps["items"] = [
         ),
     },
     {
-        key: "4",
+        key: "3",
         label: "Critical Failures to Avoid",
         children: (
             <>

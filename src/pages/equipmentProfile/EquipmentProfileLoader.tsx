@@ -6,10 +6,10 @@ import NotFound from "../../components/NotFound";
 
 const EquipmentProfileLoader: React.FC = () => {
     const { routePath } = useParams();
-    const { data: equipments, isLoading } = useAllEquipment();
+    const { data: equipments, isLoading, isFetchedAfterMount } = useAllEquipment();
 
     // 1. Show a loading spinner while fetching
-    if (isLoading) {
+    if (isLoading || !isFetchedAfterMount) {
         return null;
     }
 

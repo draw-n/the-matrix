@@ -42,7 +42,6 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         equipment ? ["open", "in-progress", "completed"] : undefined,
         equipment ? equipment.uuid : undefined,
     );
-    const navigate = useNavigate();
     /**
      * Toggles edit mode and saves changes if exiting edit mode.
      */

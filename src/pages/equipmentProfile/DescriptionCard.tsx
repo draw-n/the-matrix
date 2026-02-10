@@ -22,7 +22,6 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
     const [description, setDescription] = useState<string>(
         equipment?.description || "",
     );
-    const [properties, setProperties] = useState(equipment?.properties);
 
     return (
         <Card>
@@ -35,7 +34,6 @@ const DescriptionCard: React.FC<DescriptionCardProps> = ({
                                 handleClick &&
                                 handleClick(editMode, setEditMode, {
                                     description,
-                                    properties,
                                 })
                             }
                             shape="circle"

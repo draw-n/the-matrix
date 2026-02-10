@@ -17,6 +17,7 @@ import { User } from "../../types/user";
 
 import Loading from "../../components/Loading";
 import Help from "./Help";
+import CameraCard from "../equipmentProfile/CameraCard";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
@@ -85,7 +86,6 @@ const RemotePrint: React.FC = () => {
         });
     }, [material]);
 
-
     const next = () => {
         setCurrent(current + 1);
     };
@@ -100,7 +100,7 @@ const RemotePrint: React.FC = () => {
                 // CALL SLICING API
                 setIsLoading(true);
                 console.log(user);
-                console.log(user.uuid)
+                console.log(user.uuid);
                 const printResponse = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
@@ -108,10 +108,9 @@ const RemotePrint: React.FC = () => {
                         material,
                         options: settingDetails,
                         userId: user.uuid,
-                    }
+                    },
                 );
 
-            
                 const userResponse = await axios.put<User>(
                     `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
                 );
@@ -122,7 +121,7 @@ const RemotePrint: React.FC = () => {
         } catch (err: any) {
             message.error(
                 err.response?.data?.message ||
-                    "Unable to print at this time. Please try again later."
+                    "Unable to print at this time. Please try again later.",
             );
             console.error(err);
         }
@@ -131,11 +130,7 @@ const RemotePrint: React.FC = () => {
     const steps = [
         {
             title: "Introduction",
-            content: (
-                <Help
-                    next={next}
-                />
-            ),
+            content: <Help next={next} />,
         },
         {
             title: "Upload File",
@@ -194,9 +189,12 @@ const RemotePrint: React.FC = () => {
                     title="Successfully Sliced and Uploaded Your Print!"
                     subTitle="Please pick up your print between 10 am to 6 pm on the nearest weekday you are available. Pick up location is Olin Hall, 4th Floor, Room 414."
                     extra={[
-                        <Button href="/" type="primary" key="dashboard">
-                            To Dashboard
-                        </Button>,
+                        <>
+                            <Button href="/" type="primary" key="dashboard">
+                                To Dashboard
+                            </Button>
+                            ,
+                        </>,
                     ]}
                 />
             ) : isLoading ? (

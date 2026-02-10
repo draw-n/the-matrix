@@ -3,6 +3,7 @@ export interface Announcement {
     title?: string;
     type: AnnouncementType;
     status?: AnnouncementStatus;
+    imageName?: string;
     description: string;
     createdBy: string;
     dateCreated: Date;
