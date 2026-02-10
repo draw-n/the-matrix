@@ -12,11 +12,11 @@ import React, {
 import { User } from "../types/user";
 
 interface AuthContextType {
-    setUser: (item: User) => void;
     user: User | null;
     login: (email: string, password: string) => void;
     logout: () => void;
     loading: boolean;
+    refreshUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,10 +28,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [loading, setLoading] = useState(true);
     axios.defaults.withCredentials = true;
 
-    const fetchUser = async () => {
+    const refreshUser = async () => {
         try {
             const response = await axios.get(
-                `${import.meta.env.VITE_BACKEND_URL}/users/me`
+                `${import.meta.env.VITE_BACKEND_URL}/users/me`,
             );
             if (response.data.user) {
                 setUser(response.data.user);
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     useEffect(() => {
-        fetchUser();
+        refreshUser();
     }, []);
 
     const login = async (email: string, password: string) => {
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 { email, password },
                 {
                     withCredentials: true,
-                }
+                },
             );
 
             if (response.data.user) {
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = async () => {
         try {
             await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/users/logout`
+                `${import.meta.env.VITE_BACKEND_URL}/users/logout`,
             );
         } finally {
             setUser(null);
@@ -85,7 +85,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ loading, setUser, user, login, logout }}>
+        <AuthContext.Provider
+            value={{ loading, user, login, logout, refreshUser }}
+        >
             {children}
         </AuthContext.Provider>
     );

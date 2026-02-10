@@ -68,7 +68,7 @@ const RemotePrint: React.FC = () => {
         };
     }, [isLoading]);
 
-    const { user, setUser } = useAuth();
+    const { user} = useAuth();
 
     useEffect(() => {
         setSettingDetails({
