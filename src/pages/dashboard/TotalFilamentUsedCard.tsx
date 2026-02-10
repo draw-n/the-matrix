@@ -1,14 +1,17 @@
-// Description: RemotePrintCard component displaying remote printing occurrences with a button to initiate a new print.
+// Description: TotalFilamentUsedCard component displaying total filament used with a button to initiate a new print.
 import { PlusOutlined } from "@ant-design/icons";
 import { Card, Space, Flex, Button, Typography } from "antd";
 import PrintingChart from "./PrintingChart";
 import { useNavigate } from "react-router-dom";
 import { WithUserId } from "../../types/user";
 import { useAuth } from "../../hooks/AuthContext";
+import { useFilamentUsedGrams } from "../../hooks/job";
 
 const { Title } = Typography;
 
-const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
+const TotalFilamentUsedCard: React.FC<WithUserId> = ({ userId }) => {
+    const { data } = useFilamentUsedGrams(userId);
+
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -17,7 +20,7 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
                 <Flex justify="space-between" align="center">
                     <Title level={2} style={{ margin: 0 }}>
-                        REMOTE PRINTING OCCURRENCES
+                        TOTAL FILAMENT USED
                     </Title>
                     {user?.uuid === userId && (
                         <Button
@@ -33,10 +36,18 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                         </Button>
                     )}
                 </Flex>
-                <PrintingChart userId={userId} />
+                <Title
+                    level={1}
+                    style={{
+                        margin: 0,
+                        textTransform: "uppercase",
+                    }}
+                >
+                    {data ? `${data} grams` : "Loading..."}
+                </Title>
             </Space>
         </Card>
     );
 };
 
-export default RemotePrintCard;
+export default TotalFilamentUsedCard;

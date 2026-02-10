@@ -32,13 +32,24 @@ export const getAllJobs = async (
     }
 };
 
-export const getJobChartData = async (userId?: string) => {
+export const getJobChartData = async (userId?: string, days?: number) => {
     try {
         const response = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/jobs/chart-data?userId=${userId}`,
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/chart-data?userId=${userId}&days=${days}`,
         );
         return response.data;
     } catch (error) {
         console.error("Error fetching job chart data:", error);
+    }
+};
+
+export const getFilamentUsedGrams = async (userId?: string) => {
+    try {
+        const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/filament-usage?userId=${userId}`,
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching filament usage data:", error);
     }
 };

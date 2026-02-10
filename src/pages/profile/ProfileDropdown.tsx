@@ -22,42 +22,24 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
-    const logOut = () => {
-        logout();
+    const logOut = async () => {
+        await logout();
         navigate("/login");
     };
 
     const items: MenuProps["items"] = [
         {
             key: "1",
-            label: (
-                <Flex
-                    style={{ width: "100%" }}
-                    justify="space-between"
-                    gap="10px"
-                    align="center"
-                    onClick={() => navigate("/profile")}
-                >
-                    Profile
-                </Flex>
-            ),
+            label: "Profile",
             icon: <UserOutlined />,
+            onClick: () => navigate("/profile"), // Move onClick here
         },
         {
             key: "2",
             danger: true,
-            label: (
-                <Flex
-                    style={{ width: "100%" }}
-                    justify="space-between"
-                    gap="10px"
-                    align="center"
-                    onClick={logOut}
-                >
-                    Logout
-                </Flex>
-            ),
+            label: "Logout",
             icon: <LogoutOutlined />,
+            onClick: logOut, // Move onClick here
         },
     ];
 

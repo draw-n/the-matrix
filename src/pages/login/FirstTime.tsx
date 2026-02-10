@@ -17,7 +17,7 @@ const FirstTime: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
 
     if (
         user &&
@@ -63,6 +63,7 @@ const FirstTime: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/users/first-time`,
                 { status, graduationYear, departments },
             );
+            await refreshUser();
             navigate("/");
         } catch (error) {
             console.error("Error updating user:", error);
