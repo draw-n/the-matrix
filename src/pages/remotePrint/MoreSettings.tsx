@@ -87,7 +87,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                     </p>
                     <Slider
                         min={0.15}
-                        max={0.45}
+                        max={0.40}
                         onChange={(value) =>
                             setSettingDetails({
                                 ...settingDetails,
@@ -97,9 +97,9 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         value={
                             typeof settingDetails.layerHeight === "number"
                                 ? settingDetails.layerHeight
-                                : 0.1
+                                : 0.25
                         }
-                        step={0.1}
+                        step={0.05}
                     />
                 </Space>
                 <HasAccess

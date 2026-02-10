@@ -16,7 +16,7 @@ import SubmittedIssue from "./SubmittedIssue";
 
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
-    const [equipment, setEquipment] = useState<string>("");
+    const [equipmentId, setEquipmentId] = useState<string>("");
     const [categoryId, setCategoryId] = useState<string>("");
     const [initialDescription, setInitialDescription] = useState<string>("");
     const [description, setDescription] = useState<string>("");
@@ -26,7 +26,7 @@ const ReportAnIssue: React.FC = () => {
     const onFinish = async () => {
         try {
             const newIssue = {
-                equipment,
+                equipmentId,
                 categoryId,
                 description: initialDescription + "\n" + description,
                 createdBy: user?.uuid,
@@ -36,7 +36,7 @@ const ReportAnIssue: React.FC = () => {
                 `${import.meta.env.VITE_BACKEND_URL}/issues`,
                 newIssue
             );
-            setEquipment("");
+            setEquipmentId("");
             setCategoryId("");
             setInitialDescription("");
             setDescription("");
@@ -61,8 +61,8 @@ const ReportAnIssue: React.FC = () => {
                 return (
                     <EquipmentSelection
                         categoryId={categoryId}
-                        value={equipment}
-                        onChange={setEquipment}
+                        value={equipmentId}
+                        onChange={setEquipmentId}
                     />
                 );
             case 3:
@@ -113,7 +113,7 @@ const ReportAnIssue: React.FC = () => {
                         Back
                     </Button>
                 )}
-                {stepIndex < 5 && (
+                {stepIndex < 4 && (
                     <Button
                         variant="filled"
                         type="primary"
@@ -124,7 +124,7 @@ const ReportAnIssue: React.FC = () => {
                         Next
                     </Button>
                 )}
-                {stepIndex === 5 && (
+                {stepIndex === 4 && (
                     <Button
                         variant="filled"
                         type="primary"
