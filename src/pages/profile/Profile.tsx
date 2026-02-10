@@ -21,6 +21,8 @@ import {
     SaveOutlined,
 } from "@ant-design/icons";
 import { WithUser } from "../../types/user";
+import RemotePrintCard from "../dashboard/RemotePrintCard";
+import TotalFilamentUsedCard from "../dashboard/TotalFilamentUsedCard";
 
 const Profile: React.FC<WithUser> = ({ user: propUser }) => {
     const { user: currentUser } = useAuth();
@@ -82,6 +84,81 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
         }
     };
 
+    const descriptionsItems = [
+        {
+            key: "1",
+            label: "First Name",
+            children: editMode ? (
+                <Input
+                    size="small"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                />
+            ) : (
+                <p>{firstName ? firstName : user?.firstName}</p>
+            ),
+        },
+        {
+            key: "2",
+            label: "Last Name",
+            children: editMode ? (
+                <Input
+                    size="small"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                />
+            ) : (
+                <p>{lastName ? lastName : user?.lastName}</p>
+            ),
+        },
+        {
+            key: "3",
+            label: "Email",
+            children: <p>{user?.email}</p>,
+        },
+        {
+            key: "4",
+            label: "Status",
+            children: (
+                <p
+                    style={{
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {user?.status}
+                </p>
+            ),
+        },
+        {
+            key: "5",
+            label: "Graduation Year",
+            children: (
+                <p
+                    style={{
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {user && user.graduationDate
+                        ? new Date(user.graduationDate).getFullYear()
+                        : "N/A"}
+                </p>
+            ),
+        },
+        {
+            key: "6",
+            label: "Department(s)",
+            children: (
+                <p
+                    style={{
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {user?.departments?.join(", ") || "N/A"}
+                </p>
+            ),
+        },
+    ];
+
     return (
         <>
             <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -93,158 +170,83 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
                     <p>Vanderbilt University</p>
                 </Card>
                 {currentUser?.uuid === user?.uuid && (
-                    <>
-                        <Alert
-                            message="To have your access role changed, contact Dr. David Florian by email directly."
-                            type="info"
-                            style={{ width: "100%", textAlign: "center" }}
-                        />
-                        <Card>
-                            <Space
-                                style={{ width: "100%" }}
-                                direction="vertical"
-                                size="large"
-                            >
-                                <Flex
-                                    justify="space-between"
-                                    style={{ width: "100%" }}
-                                >
-                                    <h2>Personal Information</h2>
-                                    <Button
-                                        onClick={handleClick}
-                                        shape="circle"
-                                        variant="filled"
-                                        type="primary"
-                                        icon={
-                                            editMode ? (
-                                                <SaveOutlined />
-                                            ) : (
-                                                <EditOutlined />
-                                            )
-                                        }
-                                    />
-                                </Flex>
-                                <Descriptions
-                                    layout="vertical"
-                                    colon={false}
-                                    items={[
-                                        {
-                                            key: "1",
-                                            label: "First Name",
-                                            children: editMode ? (
-                                                <Input
-                                                    size="small"
-                                                    value={firstName}
-                                                    onChange={(e) =>
-                                                        setFirstName(
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                <p>
-                                                    {firstName
-                                                        ? firstName
-                                                        : user?.firstName}
-                                                </p>
-                                            ),
-                                        },
-                                        {
-                                            key: "2",
-                                            label: "Last Name",
-                                            children: editMode ? (
-                                                <Input
-                                                    size="small"
-                                                    value={lastName}
-                                                    onChange={(e) =>
-                                                        setLastName(
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                <p>
-                                                    {lastName
-                                                        ? lastName
-                                                        : user?.lastName}
-                                                </p>
-                                            ),
-                                        },
-                                        {
-                                            key: "3",
-                                            label: "Email",
-                                            children: <p>{user?.email}</p>,
-                                        },
-                                        {
-                                            key: "4",
-                                            label: "Access Role",
-                                            children: (
-                                                <p
-                                                    style={{
-                                                        textTransform:
-                                                            "capitalize",
-                                                    }}
-                                                >
-                                                    {user?.access}
-                                                </p>
-                                            ),
-                                        },
-                                        {
-                                            key: "5",
-                                            label: "Status",
-                                            span: 2,
-                                            children: (
-                                                <p
-                                                    style={{
-                                                        textTransform:
-                                                            "capitalize",
-                                                    }}
-                                                >
-                                                    {user?.status}
-                                                </p>
-                                            ),
-                                        },
-                                    ]}
-                                />
-                            </Space>
-                        </Card>
-                    </>
-                )}
-
-                {currentUser?.uuid === user?.uuid && (
-                    <Card>
+                    <Card hidden={currentUser?.uuid !== user?.uuid}>
                         <Space
                             style={{ width: "100%" }}
                             direction="vertical"
-                            size="middle"
+                            size="large"
                         >
-                            <h2>Change Password</h2>
-                            <p>Current Password</p>
-                            <Input.Password
-                                value={currentPassword}
-                                onChange={(e) =>
-                                    setCurrentPassword(e.target.value)
-                                }
+                            <Alert
+                                message="To have your access role changed, contact Dr. David Florian by email directly."
+                                type="info"
+                                style={{ width: "100%", textAlign: "center" }}
                             />
-                            <p>New Password</p>
-                            <Input.Password
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                            />
-                            <Flex justify="end" style={{ width: "100%" }}>
+                            <Flex
+                                justify="space-between"
+                                style={{ width: "100%" }}
+                            >
+                                <h2>Personal Information</h2>
                                 <Button
-                                    iconPosition="end"
+                                    onClick={handleClick}
+                                    shape="circle"
                                     variant="filled"
                                     type="primary"
-                                    icon={<ArrowRightOutlined />}
-                                    onClick={handleChangePassword}
-                                >
-                                    Submit
-                                </Button>
+                                    icon={
+                                        editMode ? (
+                                            <SaveOutlined />
+                                        ) : (
+                                            <EditOutlined />
+                                        )
+                                    }
+                                />
                             </Flex>
+                            <Descriptions
+                                layout="vertical"
+                                colon={false}
+                                items={descriptionsItems}
+                            />
                         </Space>
                     </Card>
                 )}
+
+                {currentUser?.uuid !== user?.uuid && (
+                    <RemotePrintCard userId={user?.uuid} />
+                )}
+
+                {currentUser?.uuid !== user?.uuid && (
+                    <TotalFilamentUsedCard userId={user?.uuid} />
+                )}
+
+                <Card hidden={currentUser?.uuid !== user?.uuid}>
+                    <Space
+                        style={{ width: "100%" }}
+                        direction="vertical"
+                        size="middle"
+                    >
+                        <h2>Change Password</h2>
+                        <p>Current Password</p>
+                        <Input.Password
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                        />
+                        <p>New Password</p>
+                        <Input.Password
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <Flex justify="end" style={{ width: "100%" }}>
+                            <Button
+                                iconPosition="end"
+                                variant="filled"
+                                type="primary"
+                                icon={<ArrowRightOutlined />}
+                                onClick={handleChangePassword}
+                            >
+                                Submit
+                            </Button>
+                        </Flex>
+                    </Space>
+                </Card>
             </Space>
         </>
     );

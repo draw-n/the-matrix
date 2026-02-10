@@ -18,9 +18,12 @@ import { User } from "../../types/user";
 import Loading from "../../components/Loading";
 import Help from "./Help";
 import CameraCard from "../equipmentProfile/CameraCard";
+import Submitted from "./Submitted";
+import { Job } from "../../types/job";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
+    const [job, setJob] = useState<Job>();
     const [isLoading, setIsLoading] = useState(false);
     const [allowPrint, setAllowPrint] = useState(true);
     const [current, setCurrent] = useState(0);
@@ -68,7 +71,7 @@ const RemotePrint: React.FC = () => {
         };
     }, [isLoading]);
 
-    const { user} = useAuth();
+    const { user } = useAuth();
 
     useEffect(() => {
         setSettingDetails({
@@ -99,9 +102,7 @@ const RemotePrint: React.FC = () => {
             if (user) {
                 // CALL SLICING API
                 setIsLoading(true);
-                console.log(user);
-                console.log(user.uuid);
-                const printResponse = await axios.post(
+                const response = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
                     {
                         fileName: uploadedFile[0].name,
@@ -111,9 +112,7 @@ const RemotePrint: React.FC = () => {
                     },
                 );
 
-                const userResponse = await axios.put<User>(
-                    `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
-                );
+                setJob(response.data.job);
                 setSubmitted(true);
                 setIsLoading(false);
                 setAllowPrint(false);
@@ -184,19 +183,7 @@ const RemotePrint: React.FC = () => {
     return (
         <>
             {submitted ? (
-                <Result
-                    status="success"
-                    title="Successfully Sliced and Uploaded Your Print!"
-                    subTitle="Please pick up your print between 10 am to 6 pm on the nearest weekday you are available. Pick up location is Olin Hall, 4th Floor, Room 414."
-                    extra={[
-                        <>
-                            <Button href="/" type="primary" key="dashboard">
-                                To Dashboard
-                            </Button>
-                            ,
-                        </>,
-                    ]}
-                />
+                <Submitted job={job} />
             ) : isLoading ? (
                 <Flex
                     justify="center"
