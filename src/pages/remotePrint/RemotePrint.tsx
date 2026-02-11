@@ -100,7 +100,6 @@ const RemotePrint: React.FC = () => {
     const handleSubmit = async () => {
         try {
             if (user) {
-                // CALL SLICING API
                 setIsLoading(true);
                 const response = await axios.post(
                     `${import.meta.env.VITE_BACKEND_URL}/jobs`,
@@ -112,12 +111,19 @@ const RemotePrint: React.FC = () => {
                     },
                 );
 
-                setJob(response.data.job);
-                setSubmitted(true);
+                // 1. Ensure the response actually contains the job
+                if (response.data.job) {
+                    setJob(response.data.job);
+                    setSubmitted(true);
+                } else {
+                    throw new Error("Job data missing from server response.");
+                }
+
                 setIsLoading(false);
                 setAllowPrint(false);
             }
         } catch (err: any) {
+            setIsLoading(false); // Make sure to turn off loading on error!
             message.error(
                 err.response?.data?.message ||
                     "Unable to print at this time. Please try again later.",
@@ -125,7 +131,6 @@ const RemotePrint: React.FC = () => {
             console.error(err);
         }
     };
-
     const steps = [
         {
             title: "Introduction",
