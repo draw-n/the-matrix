@@ -1,8 +1,5 @@
 // Description: EquipmentCard component for displaying equipment information in a card format.
 
-import { useEffect, useState } from "react";
-import axios from "axios";
-
 import { Button, Card, Flex, Skeleton, Space, Tag, Typography } from "antd";
 import {
     CheckCircleOutlined,
@@ -14,10 +11,9 @@ import {
 } from "@ant-design/icons";
 
 import { gold, gray, green, purple, red } from "@ant-design/colors";
-import type { Equipment, EquipmentStatus, WithEquipment } from "../../types/equipment";
-import type { Category } from "../../types/category";
+import type { EquipmentStatus, WithEquipment } from "../../types/equipment";
 import { useNavigate } from "react-router-dom";
-import { useCategory } from "../../hooks/category";
+import { useCategoryById } from "../../hooks/category";
 
 const statusStyles: Record<
     EquipmentStatus,
@@ -47,10 +43,10 @@ const statusStyles: Record<
 
 const { Paragraph } = Typography;
 
-const EquipmentCard: React.FC<WithEquipment> = ({
-    equipment,
-}) => {
-    const { data: category, isLoading } = useCategory(equipment?.categoryId);
+const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
+    const { data: category, isLoading } = useCategoryById(
+        equipment ? equipment?.categoryId : "",
+    );
 
     const navigate = useNavigate();
 
@@ -123,7 +119,7 @@ const EquipmentCard: React.FC<WithEquipment> = ({
                                 icon={<EyeOutlined />}
                                 onClick={() =>
                                     navigate(
-                                        `/makerspace/${equipment?.routePath}`
+                                        `/makerspace/${equipment?.routePath}`,
                                     )
                                 }
                             >

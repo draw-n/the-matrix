@@ -23,6 +23,7 @@ import {
 import { WithUser } from "../../types/user";
 import RemotePrintCard from "../dashboard/RemotePrintCard";
 import TotalFilamentUsedCard from "../dashboard/TotalFilamentUsedCard";
+import { editUserById } from "../../api/user";
 
 const Profile: React.FC<WithUser> = ({ user: propUser }) => {
     const { user: currentUser } = useAuth();
@@ -42,28 +43,14 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
     }, [user]);
 
     const handleClick = () => {
-        if (editMode) {
-            saveUserChanges();
+        if (editMode && user) {
+            editUserById(user?.uuid, {
+                ...user,
+                firstName: firstName || "",
+                lastName: lastName || "",
+            });
         }
         setEditMode((prev) => !prev);
-    };
-
-    const saveUserChanges = async () => {
-        try {
-            const editedUser = {
-                uuid: user?.uuid,
-                firstName: firstName,
-                lastName: lastName,
-                email: user?.email,
-                access: user?.access,
-            };
-            await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${user?.uuid}`,
-                editedUser,
-            );
-        } catch (error) {
-            console.error("Issue updating user", error);
-        }
     };
 
     const handleChangePassword = async () => {

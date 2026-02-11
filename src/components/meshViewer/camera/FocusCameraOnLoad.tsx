@@ -1,3 +1,5 @@
+// Description: A React component that focuses the camera on a given mesh when it loads in a Three.js scene using react-three-fiber.
+
 import { useEffect } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";

@@ -2,7 +2,7 @@ import { CaretRightOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Collapse, CollapseProps, Flex } from "antd";
 import { useState } from "react";
 
-interface HelpProps {
+interface IntroductionProps {
     next: () => void;
 }
 
@@ -93,7 +93,7 @@ const items: CollapseProps["items"] = [
     },
 ];
 
-const Help: React.FC<HelpProps> = ({ next }: HelpProps) => {
+const Introduction: React.FC<IntroductionProps> = ({ next }: IntroductionProps) => {
     return (
         <>
             <Flex vertical style={{ width: "100%" }} gap="large">
@@ -144,4 +144,4 @@ const Help: React.FC<HelpProps> = ({ next }: HelpProps) => {
     );
 };
 
-export default Help;
+export default Introduction;

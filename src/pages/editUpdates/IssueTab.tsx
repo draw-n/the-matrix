@@ -1,10 +1,8 @@
 // Description: IssueTab component for managing and displaying issues.
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import {  useState } from "react";
 import { Button, Flex, Space } from "antd";
 
-import { Issue } from "../../types/issue";
 import IssueTable from "../../components/tables/IssueTable";
 import { useAllIssues } from "../../hooks/issue";
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";

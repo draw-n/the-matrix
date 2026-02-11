@@ -7,7 +7,7 @@ import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";
 import { Flex } from "antd";
-import { useCategory } from "../../hooks/category";
+import { useCategoryById } from "../../hooks/category";
 
 type IssueSelectionProps = CardSelectionProps & WithCategoryId;
 
@@ -16,7 +16,7 @@ const IssueSelection: React.FC<IssueSelectionProps> = ({
     value,
     onChange,
 }: IssueSelectionProps) => {
-    const {data: category, isLoading} = useCategory(categoryId);
+    const {data: category, isLoading} = useCategoryById(categoryId ? categoryId : "");
 
     return (
         <Flex

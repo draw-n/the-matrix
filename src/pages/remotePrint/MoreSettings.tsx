@@ -15,7 +15,7 @@ import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons";
 
 import AdvancedSettings from "./components/AdvancedSettings";
 import type { FilamentAdvancedSettings } from "../../types/equipment";
-import type { Material, WithMaterial } from "../../types/material";
+import type { WithMaterial } from "../../types/material";
 
 import InfillSlider from "./components/InfillSlider";
 
@@ -33,7 +33,6 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
     settingDetails,
     setSettingDetails,
 }: MoreSettingsProps) => {
-
     const onChange: InputNumberProps["onChange"] = (value) => {
         if (Number.isNaN(value)) {
             return;
@@ -87,7 +86,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                     </p>
                     <Slider
                         min={0.15}
-                        max={0.40}
+                        max={0.4}
                         onChange={(value) =>
                             setSettingDetails({
                                 ...settingDetails,

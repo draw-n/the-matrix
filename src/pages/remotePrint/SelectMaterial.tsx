@@ -5,6 +5,7 @@ import { Material } from "../../types/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CaretLeftOutlined } from "@ant-design/icons";
+import { useAllMaterials } from "../../hooks/material";
 
 interface SelectMaterialProps {
     next: () => void;
@@ -17,27 +18,7 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
     prev,
     setMaterial,
 }: SelectMaterialProps) => {
-    const [materials, setMaterials] = useState<Material[]>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get<Material[]>(
-                    `${
-                        import.meta.env.VITE_BACKEND_URL
-                    }/materials?remotePrintAvailable=true`
-                );
-
-                setMaterials(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Fetching updates or issues failed:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
+    const {data: materials, isLoading} = useAllMaterials(undefined, true);
 
     const handleSelect = (value: Material) => {
         setMaterial(value);
@@ -53,7 +34,7 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
                     <h2>Select Material</h2>
                     {materials?.map((material: Material) => {
                         return (
-                            <Flex justify="space-between" gap="5rem">
+                            <Flex justify="space-between" gap="5rem" key={material.uuid}>
                                 <Space
                                     direction="vertical"
                                     size="small"

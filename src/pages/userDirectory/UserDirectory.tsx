@@ -1,40 +1,18 @@
 // Description: UserDirectory component for displaying and managing the user directory with filtering and deletion capabilities.
-import { useEffect, useState } from "react";
-import { User } from "../../types/user";
-import {
-    Flex,
-    Row,
-    Col,
-    Space,
-    Empty,
-    Typography,
-    Segmented,
-    message,
-} from "antd";
-import axios from "axios";
+import { useState } from "react";
+import { User, UserAccess } from "../../types/user";
+import { Flex, Row, Col, Space, Empty, Typography, Segmented } from "antd";
 import UserCard from "./UserCard";
 import Loading from "../../components/Loading";
 import DownloadEmails from "./DownloadEmails";
 import { useAllUsers } from "../../hooks/user";
 
 const UserDirectory: React.FC = () => {
-    const [refresh, setRefresh] = useState<number>(0);
-    const [filter, setFilter] = useState<string>("");
-    const {data: users, isLoading} = useAllUsers(filter ? [filter] : undefined);
+    const [filter, setFilter] = useState<UserAccess | "">("");
+    const { data: users, isLoading } = useAllUsers(
+        filter ? [filter] : undefined,
+    );
     const [search, setSearch] = useState<string>("");
-
-    const deleteUser = async (id: string) => {
-        try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${id}`
-            );
-            message.success(response.data.message);
-            setRefresh(refresh + 1);
-        } catch (error) {
-            console.error("Deleting user failed: ", error);
-        }
-    };
-
 
     return (
         <>
@@ -55,7 +33,9 @@ const UserDirectory: React.FC = () => {
                                 { label: "Moderator", value: "moderator" },
                                 { label: "Admin", value: "admin" },
                             ]}
-                            onChange={(value) => setFilter(value)}
+                            onChange={(value) =>
+                                setFilter(value as UserAccess | "")
+                            }
                             defaultValue=""
                         />
 
@@ -87,10 +67,7 @@ const UserDirectory: React.FC = () => {
                         {users?.map((user: User) => {
                             return (
                                 <Col xs={24} lg={8} key={user.uuid}>
-                                    <UserCard
-                                        deleteUser={deleteUser}
-                                        cardUser={user}
-                                    />
+                                    <UserCard user={user} />
                                 </Col>
                             );
                         })}

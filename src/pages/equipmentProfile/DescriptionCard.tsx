@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Skeleton } from "antd";
+import { Button, Card, Flex } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
 import Paragraph from "antd/es/typography/Paragraph";
 import { useState } from "react";
@@ -7,7 +7,6 @@ import TextArea from "antd/es/input/TextArea";
 import HasAccess from "../../components/rbac/HasAccess";
 import SaveOutlined from "@ant-design/icons/lib/icons/SaveOutlined";
 import {
-    ControlledValueProps,
     EditableComponentProps,
 } from "../../types/common";
 import { EditOutlined } from "@ant-design/icons";

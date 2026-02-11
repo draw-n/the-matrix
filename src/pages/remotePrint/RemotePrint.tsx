@@ -16,10 +16,10 @@ import { useAuth } from "../../hooks/AuthContext";
 import { User } from "../../types/user";
 
 import Loading from "../../components/Loading";
-import Help from "./Help";
-import CameraCard from "../equipmentProfile/CameraCard";
+import Introduction from "./Introduction";
 import Submitted from "./Submitted";
 import { Job } from "../../types/job";
+import { createJob } from "../../api/job";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
@@ -98,43 +98,32 @@ const RemotePrint: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        try {
-            if (user) {
-                setIsLoading(true);
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/jobs`,
-                    {
-                        fileName: uploadedFile[0].name,
-                        material,
-                        options: settingDetails,
-                        userId: user.uuid,
-                    },
-                );
+        if (user) {
+            setIsLoading(true);
 
-                // 1. Ensure the response actually contains the job
-                if (response.data.job) {
-                    setJob(response.data.job);
-                    setSubmitted(true);
-                } else {
-                    throw new Error("Job data missing from server response.");
-                }
+            const data = await createJob({
+                fileName: uploadedFile[0].name,
+                material,
+                options: settingDetails,
+                userId: user.uuid,
+            });
 
-                setIsLoading(false);
-                setAllowPrint(false);
+            // 1. Ensure the response actually contains the job
+            if (data.job) {
+                setJob(data.job);
+                setSubmitted(true);
+            } else {
+                throw new Error("Job data missing from server response.");
             }
-        } catch (err: any) {
-            setIsLoading(false); // Make sure to turn off loading on error!
-            message.error(
-                err.response?.data?.message ||
-                    "Unable to print at this time. Please try again later.",
-            );
-            console.error(err);
+
+            setIsLoading(false);
+            setAllowPrint(false);
         }
     };
     const steps = [
         {
             title: "Introduction",
-            content: <Help next={next} />,
+            content: <Introduction next={next} />,
         },
         {
             title: "Upload File",

@@ -1,6 +1,4 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-
+// Description: A React component that renders a table of materials with features such as filtering by category, displaying properties and descriptions in expandable rows, and providing actions for editing and deleting materials based on user access levels. It uses Ant Design components for the UI and integrates with API calls to manage materials.
 import {
     Button,
     Popconfirm,

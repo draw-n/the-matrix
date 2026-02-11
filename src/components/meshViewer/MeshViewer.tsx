@@ -164,8 +164,6 @@ const MeshViewer = (props: MeshViewerProps) => {
         }
     }, [mesh?.matrixWorld]);
 
-    // --- NEW: SERVER-SIDE ROTATION ---
-    // This replaces the old export logic.
     const exportAndReplace = async () => {
         if (!mesh) {
             message.error("No mesh loaded.");

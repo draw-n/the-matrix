@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Space, Tabs } from "antd";
 import CategoryForm from "../../components/forms/CategoryForm";
 import EditCategory from "./EditCategory";
-import axios from "axios";
-import { Category } from "../../types/category";
+
 import { useAllCategories } from "../../hooks/category";
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
@@ -23,7 +22,6 @@ const Categories: React.FC = () => {
     const [activeKey, setActiveKey] = useState("0");
     const [items, setItems] = useState(initialItems);
     const { data: categories, refetch } = useAllCategories();
-    const newTabIndex = useRef(0);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 

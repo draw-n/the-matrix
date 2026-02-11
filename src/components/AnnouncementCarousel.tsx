@@ -1,6 +1,5 @@
 // Description: A carousel component to display announcements fetched from the backend API
 
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
 import { Carousel, Empty, Flex, Tag, Typography, theme } from "antd";

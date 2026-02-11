@@ -1,6 +1,5 @@
 // Description: ReportAnIssue component for guiding users through the multi-step issue reporting process.
 
-import axios from "axios";
 import { useAuth } from "../../hooks/AuthContext";
 
 import { Button, Flex } from "antd";
@@ -13,6 +12,7 @@ import Description from "./Description";
 import IssueSelection from "./IssueSelection";
 import MoreDetails from "./MoreDetails";
 import SubmittedIssue from "./SubmittedIssue";
+import { createIssue } from "../../api/issue";
 
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
@@ -24,26 +24,20 @@ const ReportAnIssue: React.FC = () => {
     const { user } = useAuth();
 
     const onFinish = async () => {
-        try {
-            const newIssue = {
-                equipmentId,
-                categoryId,
-                description: initialDescription + "\n" + description,
-                createdBy: user?.uuid,
-                dateCreated: new Date(),
-            };
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/issues`,
-                newIssue
-            );
-            setEquipmentId("");
-            setCategoryId("");
-            setInitialDescription("");
-            setDescription("");
-            setStepIndex(stepIndex + 1);
-        } catch (error) {
-            console.error("Problem creating an issue: ", error);
-        }
+        const newIssue = {
+            equipmentId,
+            categoryId,
+            description: initialDescription + "\n" + description,
+            createdBy: user?.uuid,
+            dateCreated: new Date(),
+        };
+        await createIssue(newIssue);
+
+        setEquipmentId("");
+        setCategoryId("");
+        setInitialDescription("");
+        setDescription("");
+        setStepIndex(stepIndex + 1);
     };
 
     const renderStep = () => {

@@ -1,6 +1,4 @@
-import axios from "axios";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Button,
     Modal,
@@ -21,6 +19,7 @@ import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
 import HelpField from "./HelpField";
+import { createMaterial, editMaterialById } from "../../api/material";
 
 type MaterialFormProps = WithMaterial & CommonFormProps;
 
@@ -43,37 +42,17 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     };
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
-        try {
-            if (material) {
-                const editedMaterial: Material = {
-                    ...values,
-                    uuid: material.uuid,
-                };
-                const response = await axios.put(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials/${
-                        material.uuid
-                    }`,
-                    editedMaterial,
-                );
-                message.success(response.data.message);
-            } else {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials`,
-                    values,
-                );
-                message.success("Material successfully created!");
-                form.resetFields();
-            }
-
-            onSubmit();
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Material editing update", error);
+        if (material) {
+            await editMaterialById(material.uuid, values);
+            message.success("Material successfully updated!");
+        } else {
+            await createMaterial(values);
+            message.success("Material successfully created!");
+            form.resetFields();
         }
-    };
 
-    const onFinishFailed = () => {
-        message.error("Missing one or more fields.");
+        onSubmit();
+        setIsModalOpen(false);
     };
 
     const handleCancel = () => {
@@ -112,23 +91,19 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             >
                 <Form
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
+                    onFinishFailed={(err: any) =>
+                        message.error(
+                            "Missing or invalid fields. Please check and try again.",
+                        )
+                    }
+                    name="materialForm"
                     layout="vertical"
                     form={form}
                     colon={false}
                     preserve={false}
                     initialValues={
                         material
-                            ? {
-                                  name: material.name,
-                                  shortName: material.shortName,
-                                  categoryId: material.categoryId,
-                                  description: material.description,
-                                  temperatures: material.temperatures,
-                                  properties: material.properties,
-                                  remotePrintAvailable:
-                                      material.remotePrintAvailable,
-                              }
+                            ? material
                             : {
                                   name: "",
                                   shortName: "",

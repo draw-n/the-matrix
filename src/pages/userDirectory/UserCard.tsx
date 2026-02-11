@@ -2,7 +2,7 @@
 
 import { Button, Card, Flex, Popconfirm, Select, Space } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
-import { User } from "../../types/user";
+import {  UserAccess,  WithUser } from "../../types/user";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -12,45 +12,23 @@ import {
     SaveOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { deleteUserById, editUserById } from "../../api/user";
 
-interface UserCardProps {
-    cardUser: User;
-    deleteUser: (id: string) => void;
-}
-
-const UserCard: React.FC<UserCardProps> = ({
-    cardUser,
-    deleteUser,
-}: UserCardProps) => {
+const UserCard: React.FC<WithUser> = ({
+    user: cardUser,
+}) => {
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [editAccess, setEditAccess] = useState<string>(cardUser.access);
+    const [editAccess, setEditAccess] = useState<string>(cardUser?.access || "novice");
     const navigate = useNavigate();
     const { user } = useAuth();
 
     const handleClick = () => {
-        if (editMode) {
-            changeUserAccess();
+        if (editMode && cardUser) {
+            editUserById(cardUser.uuid, {...cardUser, access: editAccess as UserAccess});
         }
         setEditMode((prev) => !prev);
     };
 
-    const changeUserAccess = async () => {
-        try {
-            const editedUser = {
-                uuid: cardUser.uuid,
-                firstName: cardUser.firstName,
-                lastName: cardUser.lastName,
-                access: editAccess,
-                email: cardUser.email,
-            };
-            await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/users/${cardUser.uuid}`,
-                editedUser,
-            );
-        } catch (error) {
-            console.error("Issue updating user", error);
-        }
-    };
 
     return (
         <>
@@ -61,9 +39,9 @@ const UserCard: React.FC<UserCardProps> = ({
                     style={{ width: "100%" }}
                 >
                     <h3 style={{ textTransform: "capitalize" }}>
-                        {cardUser.firstName + " " + cardUser.lastName}
+                        {cardUser?.firstName + " " + cardUser?.lastName}
                     </h3>
-                    <p>Email: {cardUser.email}</p>
+                    <p>Email: {cardUser?.email}</p>
                     <Space style={{ width: "100%" }}>
                         <p>Access:</p>
                         <Select
@@ -87,7 +65,7 @@ const UserCard: React.FC<UserCardProps> = ({
                             <Popconfirm
                                 title="Delete User"
                                 description="Are you sure you want to delete this user?"
-                                onConfirm={() => deleteUser(cardUser.uuid)}
+                                onConfirm={() => deleteUserById(cardUser?.uuid || "")}
                                 okText="Yes"
                                 cancelText="No"
                             >
@@ -102,11 +80,11 @@ const UserCard: React.FC<UserCardProps> = ({
                         )}
                         <Button
                             size="small"
-                            onClick={() => navigate(`/users/${cardUser.uuid}`)}
+                            onClick={() => navigate(`/users/${cardUser?.uuid || ""}`)}
                         >
                             View Profile
                         </Button>
-                        {user?.uuid != cardUser.uuid && (
+                        {user?.uuid != cardUser?.uuid && (
                             <Button
                                 size="small"
                                 onClick={handleClick}

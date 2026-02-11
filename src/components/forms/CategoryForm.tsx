@@ -10,14 +10,10 @@ import {
     Modal,
     Select,
 } from "antd";
-import axios from "axios";
-import {
-    Category,
-    CategoryProperties,
-    WithCategory,
-} from "../../types/category";
+import { Category, WithCategory } from "../../types/category";
 import randomColor from "randomcolor";
 import { CommonFormProps } from "../../types/common";
+import { editCategoryById, createCategory } from "../../api/category";
 
 interface CategoryFormProps extends CommonFormProps, WithCategory {
     isModalOpen: boolean;
@@ -32,51 +28,30 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
 }: CategoryFormProps) => {
     const [form] = Form.useForm();
 
-    const handleOk = async () => {
-        form.submit();
-    };
-
     const onFinish: FormProps<Category>["onFinish"] = async (values) => {
-        try {
-            if (category) {
-                const editedCategory: Category = {
-                    ...values,
-                    uuid: category.uuid,
-                    defaultIssues: category.defaultIssues,
-                };
-                const response = await axios.put(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                        category.uuid
-                    }`,
-                    editedCategory
-                );
-                message.success(response.data.message);
-            } else {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/categories`,
-                    values
-                );
-                message.success("Category successfully created!");
-                form.resetFields();
-            }
-
-            setIsModalOpen(false);
-            onSubmit();
-        } catch (err) {
-            console.error(err);
+        if (category) {
+            const editedCategory: Category = {
+                ...values,
+                uuid: category.uuid,
+                defaultIssues: category.defaultIssues,
+            };
+            await editCategoryById(category.uuid, editedCategory);
+            message.success("Category successfully updated!");
+        } else {
+            await createCategory(values);
+            message.success("Category successfully created!");
+            form.resetFields();
         }
-    };
-
-    const handleCancel = () => {
         setIsModalOpen(false);
+        onSubmit();
     };
 
     return (
         <Modal
-            onOk={handleOk}
+            onOk={() => form.submit()}
             title={category ? "Edit Category" : "Add Category"}
             open={isModalOpen}
-            onCancel={handleCancel}
+            onCancel={() => setIsModalOpen(false)}
         >
             <Form
                 onFinish={onFinish}

@@ -1,19 +1,13 @@
 // Description: Dashboard page displaying user greeting and various dashboard cards.
 import { useAuth } from "../../hooks/AuthContext";
 
-import {
-    Flex,
-    Space,
-    Row,
-    Col,
-    Card,
-    theme,
-} from "antd";
+import { Flex, Space, Row, Col, Card, theme } from "antd";
 
 import AnnouncementCard from "./AnnouncementCard";
 import SocialsCard from "./SocialsCard";
 import AdminCard from "./AdminCard";
 import RemotePrintCard from "./RemotePrintCard";
+import TotalFilamentUsedCard from "./TotalFilamentUsedCard";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
@@ -37,13 +31,17 @@ const Dashboard: React.FC = () => {
                     </Col>
                     <Col xs={24} lg={16}>
                         <Flex vertical gap={16}>
-                            <RemotePrintCard />
+                            <RemotePrintCard userId={user?.uuid} />
+
                             <AdminCard />
                         </Flex>
                     </Col>
                     <Col xs={24} lg={8}>
                         <Flex vertical gap={16}>
                             <AnnouncementCard />
+
+                            <TotalFilamentUsedCard userId={user?.uuid} />
+
                             <SocialsCard />
                         </Flex>
                     </Col>

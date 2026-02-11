@@ -1,3 +1,4 @@
+// Description: A React component that renders selectable faces on a 3D mesh in a Three.js scene using react-three-fiber. Each face is represented by a circular marker that can be clicked to trigger a selection callback. The markers are oriented and sized based on the face's normal, centroid, and optional ellipse parameters.
 import * as THREE from "three";
 
 const SelectableFaces = ({
@@ -9,7 +10,7 @@ const SelectableFaces = ({
         normal: THREE.Vector3;
         centroid: THREE.Vector3;
         ellipseCenter?: THREE.Vector3;
-        ellipseAxis?: THREE.Vector3; // <--- NEW PROP
+        ellipseAxis?: THREE.Vector3; 
         overlapArea?: number;
         ellipseRadii?: [number, number];
     }[];

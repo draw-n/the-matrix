@@ -1,7 +1,6 @@
 // Description: Announcement form component for creating and editing announcements.
 
 import { useState } from "react";
-import axios from "axios";
 import { useAuth } from "../../hooks/AuthContext";
 
 import {
@@ -18,10 +17,14 @@ import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import type {
     Announcement,
-    AnnouncementType,
+    AnnouncementStatus,
     WithAnnouncement,
 } from "../../types/announcement";
 import { CommonFormProps } from "../../types/common";
+import {
+    createAnnouncement,
+    editAnnouncementById,
+} from "../../api/announcement";
 
 const { TextArea } = Input;
 
@@ -33,57 +36,30 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
 }: AnnouncementFormProps) => {
     const [form] = Form.useForm();
     const { user } = useAuth();
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleOk = async () => {
-        form.submit();
-    };
-
     const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
-        try {
-            if (announcement) {
-                const editedAnnouncement: Announcement = {
-                    ...values,
-                    uuid: announcement.uuid,
-                    createdBy: announcement.createdBy,
-                    dateCreated: announcement.dateCreated,
-                    lastUpdatedBy: user?.uuid || announcement.createdBy,
-                    dateLastUpdated: new Date(),
-                    status: announcement.status,
-                };
-                const response = await axios.put<Announcement>(
-                    `${import.meta.env.VITE_BACKEND_URL}/announcements/${
-                        announcement.uuid
-                    }`,
-                    editedAnnouncement
-                );
-            } else {
-                const announcement = {
-                    ...values,
-                    createdBy: user?.uuid,
-                    dateCreated: new Date(),
-                    status: "posted",
-                };
-                const response = await axios.post<Announcement>(
-                    `${import.meta.env.VITE_BACKEND_URL}/announcements`,
-                    announcement
-                );
-                form.resetFields();
-            }
-            onSubmit();
-
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error creating new update:", error);
+        if (announcement) {
+            const editedAnnouncement: Announcement = {
+                ...values,
+                uuid: announcement.uuid,
+                createdBy: announcement.createdBy,
+                dateCreated: announcement.dateCreated,
+                lastUpdatedBy: user?.uuid || announcement.createdBy,
+                dateLastUpdated: new Date(),
+                status: announcement.status,
+            };
+            await editAnnouncementById(announcement.uuid, editedAnnouncement);
+        } else {
+            const announcement = {
+                ...values,
+                createdBy: user?.uuid,
+                dateCreated: new Date(),
+                status: "posted" as AnnouncementStatus,
+            };
+            await createAnnouncement(announcement);
         }
-    };
-
-    const handleCancel = () => {
+        onSubmit();
         setIsModalOpen(false);
     };
 
@@ -97,7 +73,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                     type="primary"
                     size="middle"
                     icon={announcement ? <EditOutlined /> : <PlusOutlined />}
-                    onClick={showModal}
+                    onClick={() => setIsModalOpen(true)}
                     iconPosition="end"
                     shape={announcement ? "circle" : "round"}
                 >
@@ -115,8 +91,8 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                 title={announcement ? "Edit Announcement" : "Add Announcement"}
                 open={isModalOpen}
                 centered
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onOk={() => form.submit()}
+                onCancel={() => setIsModalOpen(false)}
             >
                 <Form
                     onFinish={onFinish}

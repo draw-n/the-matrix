@@ -5,7 +5,7 @@ import { Button, Col, Flex, InputNumber, Row, Space, Switch } from "antd";
 import { RedoOutlined } from "@ant-design/icons";
 
 import type { FilamentAdvancedSettings } from "../../../types/equipment";
-import type { Material, WithMaterial } from "../../../types/material";
+import type {  WithMaterial } from "../../../types/material";
 
 interface AdvancedSettingsProps extends WithMaterial {
     settingDetails: FilamentAdvancedSettings;

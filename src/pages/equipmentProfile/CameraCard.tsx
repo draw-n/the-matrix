@@ -5,15 +5,9 @@ import {
     Button,
     Result,
     Spin,
-    Flex,
-    Form,
-    Switch,
-    Input,
 } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
 import { EditableComponentProps } from "../../types/common";
-import HasAccess from "../../components/rbac/HasAccess";
-import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -21,12 +15,11 @@ type CameraCardProps = EditableComponentProps<Equipment> & WithEquipment;
 
 const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
     const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(true);
-    // uStreamer endpoint
+    const [isLoading, setIsLoading] = useState(true);
     const streamUrl = `http://${equipment?.cameraUrl}/stream`;
 
     const handleRetry = () => {
-        setLoading(true);
+        setIsLoading(true);
         setError(false);
     };
 
@@ -47,7 +40,7 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
                 }}
             >
                 {/* Loading Overlay */}
-                {loading && !error && (
+                {isLoading && !error && (
                     <div style={{ position: "absolute", zIndex: 2 }}>
                         <Spin tip="Connecting to Pi..." />
                     </div>
@@ -73,14 +66,14 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
                             width: "100%",
                             height: "100%",
                             objectFit: "contain",
-                            display: loading ? "none" : "block",
+                            display: isLoading ? "none" : "block",
                         }}
                         // Use anonymous to avoid CORS issues when doing face detection
                         crossOrigin="anonymous"
-                        onLoad={() => setLoading(false)}
+                        onLoad={() => setIsLoading(false)}
                         onError={() => {
                             setError(true);
-                            setLoading(false);
+                            setIsLoading(false);
                         }}
                     />
                 )}
