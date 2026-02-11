@@ -48,7 +48,7 @@ export const getFilamentUsedGrams = async (userId?: string) => {
         const response = await axios.get(
             `${import.meta.env.VITE_BACKEND_URL}/jobs/filament-usage?userId=${userId}`,
         );
-        return response.data;
+        return response.data.totalFilamentUsed;
     } catch (error) {
         console.error("Error fetching filament usage data:", error);
     }
