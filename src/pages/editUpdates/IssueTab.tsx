@@ -36,7 +36,7 @@ const IssueTab: React.FC = () => {
                     Add New Issue
                 </Button>
             </Flex>
-            <IssueTable refresh={refetch} issues={issues} />
+            <IssueTable issues={issues} />
         </Space>
     );
 };
