@@ -82,12 +82,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     )}
                     {equipment?.remotePrintAvailable && (
                         <Col span={equipment?.cameraUrl ? 10 : 24}>
-                            <Card style={{ height: "100%" }}>
-                                <Title
-                                    level={2}
-                                >{`QUEUE TO PRINT ON ${equipment?.name.toUpperCase()}`}</Title>
-                                <QueueSystem equipmentId={equipment?.uuid} />
-                            </Card>
+                            <QueueSystem equipmentId={equipment?.uuid} />
                         </Col>
                     )}
 
