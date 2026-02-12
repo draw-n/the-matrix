@@ -14,7 +14,10 @@ import CategoryForm from "../../components/forms/CategoryForm";
 import { useAllEquipment } from "../../hooks/equipment";
 import { useAllMaterials } from "../../hooks/material";
 import { CommonFormProps } from "../../types/common";
-import { deleteCategoryById, editCategoryById } from "../../api/category";
+import {
+    useDeleteCategoryById,
+    useEditCategoryById,
+} from "../../hooks/category";
 
 type EditCategoryProps = WithCategory & CommonFormProps;
 
@@ -30,6 +33,8 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { data: equipment } = useAllEquipment(category?.uuid);
     const { data: materials } = useAllMaterials(category?.uuid);
+    const { mutateAsync: editCategoryById } = useEditCategoryById();
+    const { mutateAsync: deleteCategoryById } = useDeleteCategoryById();
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
         // Update the issue at the specified index
@@ -66,9 +71,14 @@ const EditCategory: React.FC<EditCategoryProps> = ({
     };
 
     useEffect(() => {
-        editCategoryById(category?.uuid || "", {
-            ...category,
-            defaultIssues: defaultIssues.filter((issue) => issue.length != 0),
+        editCategoryById({
+            categoryId: category?.uuid || "",
+            editedCategory: {
+                ...category,
+                defaultIssues: defaultIssues.filter(
+                    (issue) => issue.length != 0,
+                ),
+            },
         });
     }, [defaultIssues]);
 
@@ -101,7 +111,9 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                             </Button>
                         }
                         actionSuccess={() =>
-                            deleteCategoryById(category?.uuid || "")
+                            deleteCategoryById({
+                                categoryId: category?.uuid || "",
+                            })
                         }
                         title={`Delete the ${category?.name} Category`}
                         headlineText="Deleting this category will also delete its associated equipment and materials."
@@ -159,11 +171,14 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     updateIssue={updateIssueAtIndex}
                     deleteIssue={deleteIssueAtIndex}
                     updateCategory={() =>
-                        editCategoryById(category?.uuid || "", {
-                            ...category,
-                            defaultIssues: defaultIssues.filter(
-                                (issue) => issue.length != 0,
-                            ),
+                        editCategoryById({
+                            categoryId: category?.uuid || "",
+                            editedCategory: {
+                                ...category,
+                                defaultIssues: defaultIssues.filter(
+                                    (issue) => issue.length != 0,
+                                ),
+                            },
                         })
                     }
                 />

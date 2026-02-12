@@ -2,7 +2,7 @@
 
 import { Button, Card, Flex, Popconfirm, Select, Space } from "antd";
 import { useAuth } from "../../hooks/AuthContext";
-import {  UserAccess,  WithUser } from "../../types/user";
+import { UserAccess, WithUser } from "../../types/user";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -12,23 +12,27 @@ import {
     SaveOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { deleteUserById, editUserById } from "../../api/user";
+import { useDeleteUserById, useEditUserById } from "../../hooks/user";
 
-const UserCard: React.FC<WithUser> = ({
-    user: cardUser,
-}) => {
+const UserCard: React.FC<WithUser> = ({ user: cardUser }) => {
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [editAccess, setEditAccess] = useState<string>(cardUser?.access || "novice");
+    const [editAccess, setEditAccess] = useState<string>(
+        cardUser?.access || "novice",
+    );
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { mutateAsync: deleteUserById } = useDeleteUserById();
+    const { mutateAsync: editUserById } = useEditUserById();
 
     const handleClick = () => {
         if (editMode && cardUser) {
-            editUserById(cardUser.uuid, {...cardUser, access: editAccess as UserAccess});
+            editUserById({
+                userId: cardUser.uuid,
+                editedUser: { ...cardUser, access: editAccess as UserAccess },
+            });
         }
         setEditMode((prev) => !prev);
     };
-
 
     return (
         <>
@@ -65,7 +69,11 @@ const UserCard: React.FC<WithUser> = ({
                             <Popconfirm
                                 title="Delete User"
                                 description="Are you sure you want to delete this user?"
-                                onConfirm={() => deleteUserById(cardUser?.uuid || "")}
+                                onConfirm={() =>
+                                    deleteUserById({
+                                        userId: cardUser?.uuid || "",
+                                    })
+                                }
                                 okText="Yes"
                                 cancelText="No"
                             >
@@ -80,7 +88,9 @@ const UserCard: React.FC<WithUser> = ({
                         )}
                         <Button
                             size="small"
-                            onClick={() => navigate(`/users/${cardUser?.uuid || ""}`)}
+                            onClick={() =>
+                                navigate(`/users/${cardUser?.uuid || ""}`)
+                            }
                         >
                             View Profile
                         </Button>

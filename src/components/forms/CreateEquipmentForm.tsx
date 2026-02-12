@@ -10,7 +10,6 @@ import {
     FormProps,
     Flex,
     Switch,
-    message,
 } from "antd";
 import { useState } from "react";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
@@ -18,7 +17,7 @@ import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
 import { Equipment } from "../../types/equipment";
 import HelpField from "./HelpField";
-import { createEquipment, editEquipmentById } from "../../api/equipment";
+import { createEquipment} from "../../api/equipment";
 
 const { TextArea } = Input;
 

@@ -19,7 +19,7 @@ import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
 import { CommonFormProps } from "../../types/common";
 import HelpField from "./HelpField";
-import { createMaterial, editMaterialById } from "../../api/material";
+import { useCreateMaterial, useEditMaterialById } from "../../hooks/material";
 
 type MaterialFormProps = WithMaterial & CommonFormProps;
 
@@ -32,7 +32,8 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     const [form] = Form.useForm();
     const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const { mutateAsync: editMaterialById } = useEditMaterialById();
+    const { mutateAsync: createMaterial } = useCreateMaterial();
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -43,11 +44,12 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
         if (material) {
-            await editMaterialById(material.uuid, values);
-            message.success("Material successfully updated!");
+            await editMaterialById({
+                materialId: material.uuid,
+                editedMaterial: values,
+            });
         } else {
-            await createMaterial(values);
-            message.success("Material successfully created!");
+            await createMaterial({ newMaterial: values });
             form.resetFields();
         }
 

@@ -22,9 +22,9 @@ import type {
 } from "../../types/announcement";
 import { CommonFormProps } from "../../types/common";
 import {
-    createAnnouncement,
-    editAnnouncementById,
-} from "../../api/announcement";
+    useEditAnnouncementById,
+    useCreateAnnouncement,
+} from "../../hooks/announcement";
 
 const { TextArea } = Input;
 
@@ -37,19 +37,19 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
     const [form] = Form.useForm();
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const { mutateAsync: editAnnouncementById } = useEditAnnouncementById();
+    const { mutateAsync: createAnnouncement } = useCreateAnnouncement();
     const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
         if (announcement) {
             const editedAnnouncement: Announcement = {
                 ...values,
-                uuid: announcement.uuid,
-                createdBy: announcement.createdBy,
-                dateCreated: announcement.dateCreated,
                 lastUpdatedBy: user?.uuid || announcement.createdBy,
                 dateLastUpdated: new Date(),
-                status: announcement.status,
             };
-            await editAnnouncementById(announcement.uuid, editedAnnouncement);
+            await editAnnouncementById({
+                announcementId: announcement.uuid,
+                editedAnnouncement: editedAnnouncement,
+            });
         } else {
             const announcement = {
                 ...values,
@@ -58,6 +58,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                 status: "posted" as AnnouncementStatus,
             };
             await createAnnouncement(announcement);
+            form.resetFields();
         }
         onSubmit();
         setIsModalOpen(false);

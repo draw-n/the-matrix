@@ -13,7 +13,7 @@ import {
 import { Category, WithCategory } from "../../types/category";
 import randomColor from "randomcolor";
 import { CommonFormProps } from "../../types/common";
-import { editCategoryById, createCategory } from "../../api/category";
+import { useCreateCategory, useEditCategoryById } from "../../hooks/category";
 
 interface CategoryFormProps extends CommonFormProps, WithCategory {
     isModalOpen: boolean;
@@ -27,7 +27,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     onSubmit,
 }: CategoryFormProps) => {
     const [form] = Form.useForm();
-
+    const { mutateAsync: editCategoryById } = useEditCategoryById();
+    const { mutateAsync: createCategory } = useCreateCategory();
     const onFinish: FormProps<Category>["onFinish"] = async (values) => {
         if (category) {
             const editedCategory: Category = {
@@ -35,11 +36,12 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 uuid: category.uuid,
                 defaultIssues: category.defaultIssues,
             };
-            await editCategoryById(category.uuid, editedCategory);
-            message.success("Category successfully updated!");
+            await editCategoryById({
+                categoryId: category.uuid,
+                editedCategory,
+            });
         } else {
             await createCategory(values);
-            message.success("Category successfully created!");
             form.resetFields();
         }
         setIsModalOpen(false);

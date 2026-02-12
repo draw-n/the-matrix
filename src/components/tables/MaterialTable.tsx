@@ -18,7 +18,7 @@ import {
 import type { Material, WithMaterials } from "../../types/material";
 import MaterialForm from "../forms/MaterialForm";
 
-import { deleteMaterial } from "../../api/material";
+import { useDeleteMaterialById } from "../../hooks/material";
 import { checkAccess } from "../rbac/HasAccess";
 import { useAllCategories } from "../../hooks/category";
 import { CommonTableProps } from "../../types/common";
@@ -30,6 +30,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
     materials,
 }: MaterialTableProps) => {
     const { data: categories } = useAllCategories();
+    const { mutateAsync: deleteMaterialById } = useDeleteMaterialById();
 
     const updateColumns: TableProps["columns"] = [
         {
@@ -106,12 +107,11 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                                       <Popconfirm
                                           title="Delete Material"
                                           description="Are you sure to delete this material?"
-                                          onConfirm={() => {
-                                              deleteMaterial(
-                                                  material.uuid
-                                              ).then(() => {
-                                                  refresh && refresh();
+                                          onConfirm={async () => {
+                                              await deleteMaterialById({
+                                                  materialId: material.uuid || "",
                                               });
+                                              refresh && refresh();
                                           }}
                                           okText="Yes"
                                           cancelText="No"

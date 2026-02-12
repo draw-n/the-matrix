@@ -8,19 +8,22 @@ import { Equipment } from "../types/equipment";
  */
 export const getAllEquipment = async (categoryId?: string) => {
     try {
-        let query = "";
-        if (categoryId) {
-            query = `?categoryId=${categoryId}`;
-        }
         const response = await axios.get<Equipment[]>(
-            `${import.meta.env.VITE_BACKEND_URL}/equipment${query}`,
+            `${import.meta.env.VITE_BACKEND_URL}/equipment`, { params: { categoryId } },
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching equipment:", error);
+        
+        throw new Error(error.response?.data.message || "Failed to retrieve equipment.");
     }
 };
 
+/**
+ * Creates a new piece of equipment with the provided details.
+ * @param newEquipment - An object containing the details of the equipment to be created.
+ * @returns - A promise that resolves to the created Equipment object.
+ */
 export const createEquipment = async (newEquipment: Partial<Equipment>) => {
     try {
         const response = await axios.post(
@@ -28,8 +31,9 @@ export const createEquipment = async (newEquipment: Partial<Equipment>) => {
             newEquipment,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating equipment:", error);
+        throw new Error(error.response?.data.message || "Failed to create equipment.");
     }
 };
 
@@ -44,8 +48,9 @@ export const getEquipmentById = async (equipmentId: string) => {
             `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentId}`,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching equipment by ID:", error);
+        throw new Error(error.response?.data.message || "Failed to fetch equipment by ID.");
     }
 };
 
@@ -61,8 +66,9 @@ export const editEquipmentById = async (equipmentId: string, values: Partial<Equ
             values,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error updating equipment", error);
+        throw new Error(error.response?.data.message || "Failed to update equipment.");
     }
 };
 /**
@@ -76,7 +82,8 @@ export const deleteEquipmentById = async (equipmentId: string) => {
             `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentId}`,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error deleting equipment", error);
+        throw new Error(error.response?.data.message || "Failed to delete equipment.");
     }
 };

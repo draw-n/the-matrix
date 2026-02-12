@@ -22,9 +22,9 @@ import { checkAccess } from "../rbac/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
 import { CommonTableProps } from "../../types/common";
-import { deleteIssueById } from "../../api/issue";
 import { useAllUsers } from "../../hooks/user";
 import { useAllEquipment } from "../../hooks/equipment";
+import { useDeleteIssueById } from "../../hooks/issue";
 
 type IssueTableProps = WithIssues & CommonTableProps;
 
@@ -34,7 +34,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
 }: IssueTableProps) => {
     const { data: users } = useAllUsers();
     const { data: equipment } = useAllEquipment();
-
+    const { mutateAsync: deleteIssueById } = useDeleteIssueById();
     const userMap = useMemo(() => {
         const map: Record<string, any> = {};
         users?.forEach((u) => {
@@ -79,11 +79,11 @@ const IssueTable: React.FC<IssueTableProps> = ({
     const issueColumns: TableProps["columns"] = [
         {
             title: "Equipment",
-            dataIndex: "equipment",
+            dataIndex: "equipmentId",
             key: "equipment",
 
-            render: (a) => {
-                const { name, routePath } = equipmentMap[a.equipmentId] || {
+            render: (equipmentId) => {
+                const { name, routePath } = equipmentMap[equipmentId] || {
                     name: "Loading...",
                     routePath: "",
                 };
@@ -179,15 +179,10 @@ const IssueTable: React.FC<IssueTableProps> = ({
                                   <Popconfirm
                                       title="Delete Issue"
                                       description="Are you sure you want to delete this issue?"
-                                      onConfirm={() =>
-                                          deleteIssueById(item.uuid || "").then(
-                                              () => {
-                                                  message.success(
-                                                      "Issue deleted successfully",
-                                                  );
-                                                  refresh();
-                                              },
-                                          )
+                                      onConfirm={async () =>
+                                          await deleteIssueById({
+                                              issueId: item.uuid || "",
+                                          })
                                       }
                                       okText="Yes"
                                       cancelText="No"

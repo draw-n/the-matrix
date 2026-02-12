@@ -1,24 +1,14 @@
 // Description: EquipmentProfile component for displaying and editing equipment details.
 
-import {
-
-    Card,
-    Col,
-
-    Row,
-    Space,
-    Typography,
-} from "antd";
+import { Card, Col, Row, Space, Typography } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
-
 
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
 import { useAllIssues } from "../../hooks/issue";
-import { useAllEquipment } from "../../hooks/equipment";
+import { useAllEquipment, useEditEquipmentById } from "../../hooks/equipment";
 import QueueSystem from "../../components/queueSystem/QueueSystem";
-import { editEquipmentById } from "../../api/equipment";
 import AdminCard from "./AdminCard";
 import DescriptionCard from "./DescriptionCard";
 import CameraCard from "./CameraCard";
@@ -35,6 +25,9 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         equipment ? ["open", "in-progress", "completed"] : undefined,
         equipment ? equipment.uuid : undefined,
     );
+
+    const { mutateAsync: editEquipmentById } = useEditEquipmentById();
+
     /**
      * Toggles edit mode and saves changes if exiting edit mode.
      */
@@ -48,7 +41,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 ...equipment,
                 ...values,
             };
-            await editEquipmentById(equipment.uuid, editedEquipment);
+            await editEquipmentById({
+                equipmentId: equipment.uuid,
+                editedEquipment,
+            });
             equipmentRefresh();
         }
         setEditMode(!editMode);

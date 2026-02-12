@@ -9,8 +9,7 @@ import HasAccess from "../rbac/HasAccess";
 import { Issue, WithIssue } from "../../types/issue";
 import { useAllUsers } from "../../hooks/user";
 import { CommonFormProps } from "../../types/common";
-import { editIssueById } from "../../api/issue";
-
+import { useEditIssueById } from "../../hooks/issue";
 const { TextArea } = Input;
 
 type EditIssueFormProps = WithIssue & CommonFormProps;
@@ -22,11 +21,11 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { data: users } = useAllUsers();
-
+    const { mutateAsync: editIssueById } = useEditIssueById();
     const onFinish: FormProps<Issue>["onFinish"] = async (values) => {
         if (!issue) return;
 
-        await editIssueById(issue.uuid, values);
+        await editIssueById({ issueId: issue.uuid, editedIssue: values });
 
         onSubmit();
         setIsModalOpen(false);

@@ -23,11 +23,13 @@ import {
 import { WithUser } from "../../types/user";
 import RemotePrintCard from "../dashboard/RemotePrintCard";
 import TotalFilamentUsedCard from "../dashboard/TotalFilamentUsedCard";
-import { editUserById } from "../../api/user";
+import { useEditUserById } from "../../hooks/user";
 
 const Profile: React.FC<WithUser> = ({ user: propUser }) => {
     const { user: currentUser } = useAuth();
     const user = propUser || currentUser;
+    const { mutateAsync: editUserById } = useEditUserById();
+
     const [editMode, setEditMode] = useState<boolean>(false);
 
     const [firstName, setFirstName] = useState(user?.firstName);
@@ -44,10 +46,13 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
 
     const handleClick = () => {
         if (editMode && user) {
-            editUserById(user?.uuid, {
-                ...user,
-                firstName: firstName || "",
-                lastName: lastName || "",
+            editUserById({
+                userId: user?.uuid,
+                editedUser: {
+                    ...user,
+                    firstName: firstName || "",
+                    lastName: lastName || "",
+                },
             });
         }
         setEditMode((prev) => !prev);

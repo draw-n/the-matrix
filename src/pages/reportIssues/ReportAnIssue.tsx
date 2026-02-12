@@ -12,7 +12,7 @@ import Description from "./Description";
 import IssueSelection from "./IssueSelection";
 import MoreDetails from "./MoreDetails";
 import SubmittedIssue from "./SubmittedIssue";
-import { createIssue } from "../../api/issue";
+import { useCreateIssue } from "../../hooks/issue";
 
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
@@ -20,6 +20,8 @@ const ReportAnIssue: React.FC = () => {
     const [categoryId, setCategoryId] = useState<string>("");
     const [initialDescription, setInitialDescription] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+
+    const { mutateAsync: createIssue } = useCreateIssue();
 
     const { user } = useAuth();
 
@@ -31,7 +33,7 @@ const ReportAnIssue: React.FC = () => {
             createdBy: user?.uuid,
             dateCreated: new Date(),
         };
-        await createIssue(newIssue);
+        await createIssue({ newIssue });
 
         setEquipmentId("");
         setCategoryId("");

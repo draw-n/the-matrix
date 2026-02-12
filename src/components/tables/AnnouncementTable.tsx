@@ -18,8 +18,8 @@ import type { Announcement, WithAnnouncements } from "../../types/announcement";
 import { checkAccess } from "../rbac/HasAccess";
 import AutoAvatar from "../AutoAvatar";
 import { CommonTableProps } from "../../types/common";
-import { deleteAnnouncementById } from "../../api/announcement";
 import { useAllUsers } from "../../hooks/user";
+import { useDeleteAnnouncementById } from "../../hooks/announcement";
 
 type AnnouncementTableProps = WithAnnouncements & CommonTableProps;
 
@@ -27,6 +27,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
     refresh,
     announcements,
 }) => {
+    const { mutateAsync: deleteAnnouncementById } = useDeleteAnnouncementById();
     const { data: users } = useAllUsers();
     const colorPrimary = theme.useToken().token.colorPrimary;
 
@@ -110,31 +111,29 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                       title: "Actions",
                       key: "action",
                       render: (_: any, record: Announcement) => (
-                          <Space>
-                              <AnnouncementForm
-                                  onSubmit={refresh}
-                                  announcement={record}
-                              />
-                              <Popconfirm
-                                  title="Delete Announcement"
-                                  onConfirm={() =>
-                                      deleteAnnouncementById(
-                                          record.uuid || "",
-                                      ).then(() => {
-                                          message.success(
-                                              "Deleted successfully",
-                                          );
-                                          refresh();
-                                      })
-                                  }
-                              >
-                                  <Button
-                                      icon={<DeleteOutlined />}
-                                      shape="circle"
-                                      danger
+                          console.log(record.uuid),
+                          (
+                              <Space>
+                                  <AnnouncementForm
+                                      onSubmit={refresh}
+                                      announcement={record}
                                   />
-                              </Popconfirm>
-                          </Space>
+                                  <Popconfirm
+                                      title="Delete Announcement"
+                                      onConfirm={() =>
+                                          deleteAnnouncementById({
+                                              announcementId: record.uuid || "",
+                                          })
+                                      }
+                                  >
+                                      <Button
+                                          icon={<DeleteOutlined />}
+                                          shape="circle"
+                                          danger
+                                      />
+                                  </Popconfirm>
+                              </Space>
+                          )
                       ),
                   },
               ]

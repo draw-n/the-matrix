@@ -27,8 +27,10 @@ export const getAllJobs = async (
             },
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching jobs:", error);
+        
+        throw new Error(error.response?.data.message || "Failed to fetch jobs.");
     }
 };
 
@@ -50,8 +52,9 @@ export const getJobChartData = async (userId?: string, days?: number) => {
             },
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching job chart data:", error);
+        throw new Error(error.response?.data.message || "Failed to fetch job chart data.");
     }
 };
 
@@ -71,8 +74,9 @@ export const getFilamentUsedGrams = async (userId?: string) => {
             },
         );
         return response.data.totalFilamentUsed;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching filament usage data:", error);
+        throw new Error(error.response?.data.message || "Failed to fetch filament usage data.");
     }
 };
 
@@ -93,7 +97,8 @@ export const createJob = async (newJob: {
             newJob,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating job:", error);
+        throw new Error(error.response?.data.message || "Failed to create job.");
     }
 };

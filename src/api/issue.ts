@@ -22,8 +22,10 @@ export const getAllIssues = async (
             },
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching issues:", error);
+        
+        throw new Error(error.response?.data.message || "Failed to retrieve issues.");
     }
 };
 
@@ -39,30 +41,50 @@ export const createIssue = async (newIssue: Partial<Issue>) => {
             newIssue,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Problem creating an issue: ", error);
+        throw new Error(error.response?.data.message || "Failed to create issue.");
     }
 };
 
+/**
+ * Updates an existing issue with the provided values.
+ * @param issueId - The unique identifier of the issue to be updated.
+ * @param updatedIssue - An object containing the updated issue data.
+ * @returns - A promise that resolves to the updated Issue object.
+ */
 export const editIssueById = async (issueId: string, updatedIssue: Partial<Issue>) => {
+    if (issueId === "") {
+        throw new Error("Issue ID not found.");
+    }
     try {
         const response = await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/issues/${issueId}`,
             updatedIssue,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Problem updating an issue: ", error);
+        throw new Error(error.response?.data.message || "Failed to update issue.");
     }
 };
 
+/**
+ * Deletes an issue by its unique identifier.
+ * @param issueId - The unique identifier of the issue to delete.
+ * @returns - A promise that resolves when the issue is deleted.
+ */
 export const deleteIssueById = async (issueId: string) => {
+    if (issueId === "") {
+        throw new Error("Issue ID not found.");
+    }
     try {
         const response = await axios.delete(    
             `${import.meta.env.VITE_BACKEND_URL}/issues/${issueId}`,
         );
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Problem deleting an issue: ", error);
+        throw new Error(error.response?.data.message || "Failed to delete issue.");
     }
 };
