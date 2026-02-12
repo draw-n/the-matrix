@@ -23,8 +23,7 @@ const FirstTime: React.FC = () => {
         user &&
         user.status &&
         user.departments &&
-        user.departments.length > 0 &&
-        user.graduationDate
+        user.departments.length > 0
     ) {
         navigate("/");
     }
