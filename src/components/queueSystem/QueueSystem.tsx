@@ -1,13 +1,15 @@
-import { Table, TableProps, Tag } from "antd";
+import { Card, Table, TableProps, Tag } from "antd";
 import { useAllJobs } from "../../hooks/job";
 import { WithEquipmentId } from "../../types/equipment";
 import { geekblueDark } from "@ant-design/colors";
+import Title from "antd/es/typography/Title";
 
 const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
-    const { data: jobs } = useAllJobs(
-        ["queued", "ready", "printing"],
-        equipmentId,
-    );
+    const {
+        data: jobs,
+        isLoading,
+        refetch,
+    } = useAllJobs(["queued", "ready", "printing"], equipmentId);
     const sortedJobs = jobs?.sort((a, b) => {
         // 1. Define Priority (Lower number = higher priority)
         const priority = {
@@ -64,35 +66,44 @@ const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
 
     const numRows = 5;
     return (
-        <>
-            <Table
-                pagination={{
-                    defaultPageSize: numRows,
-                    hideOnSinglePage: true,
-                }}
-                columns={columns}
-                showHeader={false}
-                dataSource={sortedJobs}
-                size="middle"
-                style={{
-                    borderRadius: "5px",
-                    borderCollapse: "separate",
-                }}
-                rowHoverable={false}
-                onRow={(record) => ({
-                    style: {
+        <Card style={{ height: "100%" }}>
+            <Title level={2}>PRINTING QUEUE</Title>
+            {isLoading ? null : sortedJobs?.length === 0 ? (
+                <Tag color="green" style={{ marginTop: "20px" }}>
+                    No jobs in queue! Add a new print job to get started.
+                </Tag>
+            ) : (
+                <Table
+                    pagination={{
+                        defaultPageSize: numRows,
+                        hideOnSinglePage: true,
+                    }}
+                    columns={columns}
+                    showHeader={false}
+                    dataSource={sortedJobs}
+                    size="middle"
+                    style={{
                         borderRadius: "5px",
-                        backgroundColor:
-                            record.status === "printing"
-                                ? geekblueDark[5]
-                                : undefined,
-                        color:
-                            record.status === "printing" ? "white" : undefined,
-                        cursor: "default",
-                    },
-                })}
-            />
-        </>
+                        borderCollapse: "separate",
+                    }}
+                    rowHoverable={false}
+                    onRow={(record) => ({
+                        style: {
+                            borderRadius: "5px",
+                            backgroundColor:
+                                record.status === "printing"
+                                    ? geekblueDark[5]
+                                    : undefined,
+                            color:
+                                record.status === "printing"
+                                    ? "white"
+                                    : undefined,
+                            cursor: "default",
+                        },
+                    })}
+                />
+            )}
+        </Card>
     );
 };
 

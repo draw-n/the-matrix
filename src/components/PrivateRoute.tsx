@@ -19,12 +19,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
         if (
             !loading &&
             user &&
-            !(
-                user.graduationDate &&
-                user.departments &&
-                user.departments.length > 0 &&
-                user.status
-            )
+            !(user.departments && user.departments.length > 0 && user.status)
         ) {
             navigate("/first-time");
         }
