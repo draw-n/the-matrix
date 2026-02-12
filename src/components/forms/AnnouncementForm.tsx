@@ -20,7 +20,6 @@ import type {
     AnnouncementStatus,
     WithAnnouncement,
 } from "../../types/announcement";
-import { CommonFormProps } from "../../types/common";
 import {
     useEditAnnouncementById,
     useCreateAnnouncement,
@@ -28,12 +27,10 @@ import {
 
 const { TextArea } = Input;
 
-type AnnouncementFormProps = WithAnnouncement & CommonFormProps;
 
-const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
+const AnnouncementForm: React.FC<WithAnnouncement> = ({
     announcement,
-    onSubmit,
-}: AnnouncementFormProps) => {
+}: WithAnnouncement) => {
     const [form] = Form.useForm();
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -60,7 +57,6 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
             await createAnnouncement(announcement);
             form.resetFields();
         }
-        onSubmit();
         setIsModalOpen(false);
     };
 

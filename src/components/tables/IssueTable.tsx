@@ -21,17 +21,14 @@ import type { Issue, WithIssues } from "../../types/issue";
 import { checkAccess } from "../rbac/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
-import { CommonTableProps } from "../../types/common";
 import { useAllUsers } from "../../hooks/user";
 import { useAllEquipment } from "../../hooks/equipment";
 import { useDeleteIssueById } from "../../hooks/issue";
 
-type IssueTableProps = WithIssues & CommonTableProps;
 
-const IssueTable: React.FC<IssueTableProps> = ({
-    refresh,
+const IssueTable: React.FC<WithIssues> = ({
     issues,
-}: IssueTableProps) => {
+}: WithIssues) => {
     const { data: users } = useAllUsers();
     const { data: equipment } = useAllEquipment();
     const { mutateAsync: deleteIssueById } = useDeleteIssueById();
@@ -174,7 +171,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                       key: "action",
                       render: (item: Issue) => (
                           <Flex gap="small">
-                              <EditIssueForm issue={item} onSubmit={refresh} />
+                              <EditIssueForm issue={item} />
                               <Tooltip title="Delete">
                                   <Popconfirm
                                       title="Delete Issue"

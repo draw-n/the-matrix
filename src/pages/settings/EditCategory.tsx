@@ -13,20 +13,17 @@ import ConfirmAction from "../../components/ConfirmAction";
 import CategoryForm from "../../components/forms/CategoryForm";
 import { useAllEquipment } from "../../hooks/equipment";
 import { useAllMaterials } from "../../hooks/material";
-import { CommonFormProps } from "../../types/common";
 import {
     useDeleteCategoryById,
     useEditCategoryById,
 } from "../../hooks/category";
 
-type EditCategoryProps = WithCategory & CommonFormProps;
 
 const { Title } = Typography;
 
-const EditCategory: React.FC<EditCategoryProps> = ({
+const EditCategory: React.FC<WithCategory> = ({
     category,
-    onSubmit,
-}: EditCategoryProps) => {
+}: WithCategory) => {
     const [defaultIssues, setDefaultIssues] = useState<string[]>(
         category?.defaultIssues || [],
     );
@@ -95,7 +92,6 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                         Settings
                     </Button>
                     <CategoryForm
-                        onSubmit={onSubmit}
                         isModalOpen={isModalOpen}
                         setIsModalOpen={setIsModalOpen}
                         category={category}

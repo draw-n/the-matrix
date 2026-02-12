@@ -17,18 +17,12 @@ import {
 import { Material, WithMaterial } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
-import { CommonFormProps } from "../../types/common";
 import HelpField from "./HelpField";
 import { useCreateMaterial, useEditMaterialById } from "../../hooks/material";
 
-type MaterialFormProps = WithMaterial & CommonFormProps;
-
 const { TextArea } = Input;
 
-const MaterialForm: React.FC<MaterialFormProps> = ({
-    material,
-    onSubmit,
-}: MaterialFormProps) => {
+const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [form] = Form.useForm();
     const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,8 +46,6 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             await createMaterial({ newMaterial: values });
             form.resetFields();
         }
-
-        onSubmit();
         setIsModalOpen(false);
     };
 

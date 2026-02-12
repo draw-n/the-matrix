@@ -12,10 +12,9 @@ import {
 } from "antd";
 import { Category, WithCategory } from "../../types/category";
 import randomColor from "randomcolor";
-import { CommonFormProps } from "../../types/common";
 import { useCreateCategory, useEditCategoryById } from "../../hooks/category";
 
-interface CategoryFormProps extends CommonFormProps, WithCategory {
+interface CategoryFormProps extends WithCategory {
     isModalOpen: boolean;
     setIsModalOpen: (item: boolean) => void;
 }
@@ -24,7 +23,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     category,
     isModalOpen,
     setIsModalOpen,
-    onSubmit,
 }: CategoryFormProps) => {
     const [form] = Form.useForm();
     const { mutateAsync: editCategoryById } = useEditCategoryById();
@@ -45,7 +43,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
             form.resetFields();
         }
         setIsModalOpen(false);
-        onSubmit();
     };
 
     return (

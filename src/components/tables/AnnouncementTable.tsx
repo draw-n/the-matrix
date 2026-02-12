@@ -17,14 +17,10 @@ import AnnouncementForm from "../forms/AnnouncementForm";
 import type { Announcement, WithAnnouncements } from "../../types/announcement";
 import { checkAccess } from "../rbac/HasAccess";
 import AutoAvatar from "../AutoAvatar";
-import { CommonTableProps } from "../../types/common";
 import { useAllUsers } from "../../hooks/user";
 import { useDeleteAnnouncementById } from "../../hooks/announcement";
 
-type AnnouncementTableProps = WithAnnouncements & CommonTableProps;
-
-const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
-    refresh,
+const AnnouncementTable: React.FC<WithAnnouncements> = ({
     announcements,
 }) => {
     const { mutateAsync: deleteAnnouncementById } = useDeleteAnnouncementById();
@@ -114,10 +110,7 @@ const AnnouncementTable: React.FC<AnnouncementTableProps> = ({
                           console.log(record.uuid),
                           (
                               <Space>
-                                  <AnnouncementForm
-                                      onSubmit={refresh}
-                                      announcement={record}
-                                  />
+                                  <AnnouncementForm announcement={record} />
                                   <Popconfirm
                                       title="Delete Announcement"
                                       onConfirm={() =>

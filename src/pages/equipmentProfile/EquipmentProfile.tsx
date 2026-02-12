@@ -96,7 +96,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             <Title
                                 level={2}
                             >{`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
-                            <IssueTable issues={issues} refresh={refetch} />
+                            <IssueTable issues={issues} />
                         </Card>
                     </Col>
                     {

@@ -10,7 +10,7 @@ import { Material } from "../../types/material";
 import { useAllMaterials } from "../../hooks/material";
 
 const MaterialTab: React.FC = () => {
-    const {data: materials, refetch} = useAllMaterials();
+    const {data: materials} = useAllMaterials();
 
     return (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -21,10 +21,10 @@ const MaterialTab: React.FC = () => {
             >
                 <h2>MATERIALS</h2>
                 <HasAccess roles={["admin", "moderator"]}>
-                    <MaterialForm onSubmit={refetch} />
+                    <MaterialForm />
                 </HasAccess>
             </Flex>
-            <MaterialTable refresh={refetch} materials={materials} />
+            <MaterialTable materials={materials} />
         </Space>
     );
 };

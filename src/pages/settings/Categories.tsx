@@ -37,12 +37,10 @@ const Categories: React.FC = () => {
         const formattedData = categories.map(
             (category: any, index: number) => ({
                 label: category.name,
-                children: (
-                    <EditCategory onSubmit={refetch} category={category} />
-                ),
+                children: <EditCategory category={category} />,
                 key: String(index),
                 closable: false,
-            })
+            }),
         );
         setItems(formattedData);
     }, [categories]);
@@ -83,7 +81,7 @@ const Categories: React.FC = () => {
 
     const onEdit = (
         targetKey: React.MouseEvent | React.KeyboardEvent | string,
-        action: "add" | "remove"
+        action: "add" | "remove",
     ) => {
         if (action === "add") {
             add();
@@ -105,7 +103,6 @@ const Categories: React.FC = () => {
             <CategoryForm
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
-                onSubmit={refetch}
             />
         </Space>
     );

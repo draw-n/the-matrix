@@ -14,21 +14,19 @@ import {
 import { useState } from "react";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
-import { CommonFormProps } from "../../types/common";
 import { Equipment } from "../../types/equipment";
 import HelpField from "./HelpField";
-import { createEquipment} from "../../api/equipment";
+import { useCreateEquipment } from "../../hooks/equipment";
 
 const { TextArea } = Input;
 
-const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
+const CreateEquipmentForm: React.FC = () => {
     const [form] = Form.useForm();
     const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const { mutateAsync: createEquipment } = useCreateEquipment();
     const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
-        await createEquipment(values);
-        onSubmit();
+        await createEquipment({ newEquipment: values });
         setIsModalOpen(false);
         form.resetFields();
     };

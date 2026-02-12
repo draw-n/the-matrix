@@ -8,16 +8,10 @@ import { EditOutlined } from "@ant-design/icons";
 import HasAccess from "../rbac/HasAccess";
 import { Issue, WithIssue } from "../../types/issue";
 import { useAllUsers } from "../../hooks/user";
-import { CommonFormProps } from "../../types/common";
 import { useEditIssueById } from "../../hooks/issue";
 const { TextArea } = Input;
 
-type EditIssueFormProps = WithIssue & CommonFormProps;
-
-const EditIssueForm: React.FC<EditIssueFormProps> = ({
-    issue,
-    onSubmit,
-}: EditIssueFormProps) => {
+const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { data: users } = useAllUsers();
@@ -27,7 +21,6 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
 
         await editIssueById({ issueId: issue.uuid, editedIssue: values });
 
-        onSubmit();
         setIsModalOpen(false);
     };
 
