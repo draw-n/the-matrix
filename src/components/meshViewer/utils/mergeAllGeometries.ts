@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-function mergeAllGeometries(root: THREE.Object3D): THREE.BufferGeometry | null {
+const mergeAllGeometries = (root: THREE.Object3D): THREE.BufferGeometry | null => {
     const geometries: THREE.BufferGeometry[] = [];
     root.traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
