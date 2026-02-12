@@ -1,7 +1,6 @@
 // Description: A table component to display and manage issues reported by users
 
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 import {
     Button,
@@ -19,113 +18,45 @@ import { geekblue, gold, green, red } from "@ant-design/colors";
 import { useNavigate } from "react-router-dom";
 
 import type { Issue, WithIssues } from "../../types/issue";
-import type { Equipment } from "../../types/equipment";
-import type { User } from "../../types/user";
 import { checkAccess } from "../rbac/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
-import { CommonTableProps } from "../../types/common";
+import { useAllUsers } from "../../hooks/user";
+import { useAllEquipment } from "../../hooks/equipment";
+import { useDeleteIssueById } from "../../hooks/issue";
 
-interface UserInfo {
-    fullName: string;
-    email: string;
-}
 
-interface EquipmentInfo {
-    routePath: string;
-    name: string;
-    type: string;
-}
-
-type IssueTableProps = WithIssues & CommonTableProps;
-
-const IssueTable: React.FC<IssueTableProps> = ({
-    refresh,
+const IssueTable: React.FC<WithIssues> = ({
     issues,
-}: IssueTableProps) => {
-    const [users, setUsers] = useState<Record<string, UserInfo>>({});
-    const [equipment, setEquipment] = useState<Record<string, EquipmentInfo>>(
-        {}
-    );
+}: WithIssues) => {
+    const { data: users } = useAllUsers();
+    const { data: equipment } = useAllEquipment();
+    const { mutateAsync: deleteIssueById } = useDeleteIssueById();
+    const userMap = useMemo(() => {
+        const map: Record<string, any> = {};
+        users?.forEach((u) => {
+            map[u.uuid] = {
+                fullName: `${u.firstName} ${u.lastName}`,
+                email: u.email,
+                initials: `${u.firstName?.charAt(0) || ""}${u.lastName?.charAt(0) || ""}`,
+            };
+        });
+        return map;
+    }, [users]);
+
+    const equipmentMap = useMemo(() => {
+        const map: Record<string, any> = {};
+        equipment?.forEach((e) => {
+            map[e.uuid] = {
+                name: e.name,
+                routePath: e.routePath,
+                type: e.categoryId,
+            };
+        });
+        return map;
+    }, [equipment]);
 
     const navigate = useNavigate();
-
-    const deleteIssue = async (issueId: string) => {
-        try {
-            await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${issueId}`
-            );
-            message.success("Issue deleted successfully");
-            refresh();
-        } catch (error) {
-            console.error("Error deleting issue:", error);
-            message.error("Error deleting issue");
-        }
-    };
-
-    const changeIssueStatus = async (issue: Issue, status: string) => {
-        try {
-            const editedIssue = { ...issue, status };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue.uuid}`,
-                editedIssue
-            );
-            refresh();
-        } catch (error) {
-            console.error("Issue archiving issue", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const responseUsers = await axios.get<User[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/users`
-                );
-                const usersMap = responseUsers.data.reduce(
-                    (acc: Record<string, UserInfo>, user: User) => {
-                        acc[user.uuid] = {
-                            fullName: `${user.firstName} ${user.lastName}`,
-                            email: user.email,
-                        };
-                        return acc;
-                    },
-                    {}
-                );
-
-                setUsers(usersMap);
-            } catch (error) {
-                console.error("importing users failed:", error);
-            }
-        };
-        const fetchEquipmentData = async () => {
-            try {
-                const response = await axios.get<Equipment[]>(
-                    `${import.meta.env.VITE_BACKEND_URL}/equipment`
-                );
-                const equipmentMap = response.data.reduce(
-                    (
-                        acc: Record<string, EquipmentInfo>,
-                        equipment: Equipment
-                    ) => {
-                        acc[equipment.uuid] = {
-                            name: equipment.name,
-                            routePath: equipment.routePath,
-                            type: equipment.categoryId,
-                        };
-                        return acc;
-                    },
-                    {}
-                );
-
-                setEquipment(equipmentMap);
-            } catch (error) {
-                console.error("importing equipment failed:", error);
-            }
-        };
-        fetchEquipmentData();
-        fetchUserData();
-    }, [issues]);
 
     const statuses = [
         {
@@ -145,14 +76,12 @@ const IssueTable: React.FC<IssueTableProps> = ({
     const issueColumns: TableProps["columns"] = [
         {
             title: "Equipment",
-            dataIndex: "equipment",
+            dataIndex: "equipmentId",
             key: "equipment",
 
-            render: (__, record) => {
-                const { equipmentInfo } = record;
-                const { name, type, routePath } = equipmentInfo || {
-                    name: "",
-                    type: "",
+            render: (equipmentId) => {
+                const { name, routePath } = equipmentMap[equipmentId] || {
+                    name: "Loading...",
                     routePath: "",
                 };
                 return (
@@ -166,26 +95,18 @@ const IssueTable: React.FC<IssueTableProps> = ({
             title: "Created By",
             dataIndex: "createdBy",
             key: "createdBy",
-            sorter: {
-                compare: (a, b) =>
-                    a.userInfo.fullName.localeCompare(b.userInfo.fullName),
-                multiple: 2,
+            sorter: (a, b) => {
+                const nameA = userMap[a.createdBy]?.fullName || "";
+                const nameB = userMap[b.createdBy]?.fullName || "";
+                return nameA.localeCompare(nameB);
             },
-            render: (__, record) => {
-                const { userInfo } = record;
-                const { fullName, email } = userInfo || {
-                    fullName: "",
-                    email: "",
-                };
+            render: (userId) => {
+                const info = userMap[userId];
+                const fullName = info?.fullName || "Unknown User";
                 return (
                     <Tooltip title={fullName}>
-                        <a href={`mailto:${email}`}>
-                            <AutoAvatar
-                                text={fullName
-                                    .split(" ")
-                                    .map((item: string) => item.charAt(0))
-                                    .join("")}
-                            />
+                        <a href={`mailto:${info?.email || ""}`}>
+                            <AutoAvatar text={info?.initials || "?"} />
                         </a>
                     </Tooltip>
                 );
@@ -250,15 +171,16 @@ const IssueTable: React.FC<IssueTableProps> = ({
                       key: "action",
                       render: (item: Issue) => (
                           <Flex gap="small">
-                              <EditIssueForm
-                                  issue={item}
-                                  onSubmit={refresh}
-                              />
+                              <EditIssueForm issue={item} />
                               <Tooltip title="Delete">
                                   <Popconfirm
                                       title="Delete Issue"
                                       description="Are you sure you want to delete this issue?"
-                                      onConfirm={() => deleteIssue(item.uuid)}
+                                      onConfirm={async () =>
+                                          await deleteIssueById({
+                                              issueId: item.uuid || "",
+                                          })
+                                      }
                                       okText="Yes"
                                       cancelText="No"
                                   >
@@ -279,22 +201,6 @@ const IssueTable: React.FC<IssueTableProps> = ({
 
     const numRows = 5;
 
-    const finalData = issues?.map((row) => {
-        const userInfo = users[row.createdBy] || {
-            fullName: "Loading...",
-            email: "Loading...",
-        };
-        const equipmentInfo = equipment[row.equipmentId] || {
-            name: "Loading...",
-            type: "Loading...",
-            routePath: "Loading...",
-        };
-        return {
-            ...row,
-            userInfo,
-            equipmentInfo,
-        };
-    });
     return (
         <>
             <Table
@@ -303,7 +209,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
                     hideOnSinglePage: true,
                 }}
                 columns={issueColumns}
-                dataSource={finalData}
+                dataSource={issues}
                 expandable={{
                     expandedRowRender: (record) => (
                         <p style={{ margin: 0 }}>{record.description}</p>

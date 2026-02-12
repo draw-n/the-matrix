@@ -5,36 +5,35 @@ import {
 } from "@ant-design/icons";
 import { Button, Typography, Collapse, Flex, List, message, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { Category, WithCategory } from "../../types/category";
+import { WithCategory } from "../../types/category";
 import axios from "axios";
 import EditDefaultIssue from "./EditDefaultIssue";
-import { Equipment } from "../../types/equipment";
-import { Material } from "../../types/material";
+
 import ConfirmAction from "../../components/ConfirmAction";
 import CategoryForm from "../../components/forms/CategoryForm";
 import { useAllEquipment } from "../../hooks/equipment";
 import { useAllMaterials } from "../../hooks/material";
-import { CommonFormProps } from "../../types/common";
-
-type EditCategoryProps = WithCategory & CommonFormProps;
+import {
+    useDeleteCategoryById,
+    useEditCategoryById,
+} from "../../hooks/category";
 
 
 const { Title } = Typography;
 
-const EditCategory: React.FC<EditCategoryProps> = ({
+const EditCategory: React.FC<WithCategory> = ({
     category,
-    onSubmit,
-}: EditCategoryProps) => {
-    const [isLoading, setIsLoading] = useState(false);
+}: WithCategory) => {
     const [defaultIssues, setDefaultIssues] = useState<string[]>(
-        category?.defaultIssues || []
+        category?.defaultIssues || [],
     );
     const [isModalOpen, setIsModalOpen] = useState(false);
-   const {data: equipment} = useAllEquipment(category?.uuid);
-   const {data: materials} = useAllMaterials(category?.uuid);
+    const { data: equipment } = useAllEquipment(category?.uuid);
+    const { data: materials } = useAllMaterials(category?.uuid);
+    const { mutateAsync: editCategoryById } = useEditCategoryById();
+    const { mutateAsync: deleteCategoryById } = useDeleteCategoryById();
 
     const updateIssueAtIndex = (index: number, newIssue: string) => {
-    
         // Update the issue at the specified index
         setDefaultIssues((prevIssues) => {
             if (prevIssues) {
@@ -52,7 +51,6 @@ const EditCategory: React.FC<EditCategoryProps> = ({
             ...defaultIssues.slice(index + 1),
         ];
         setDefaultIssues(updatedArray);
-        updateCategory();
     };
 
     const addIssue = () => {
@@ -69,34 +67,17 @@ const EditCategory: React.FC<EditCategoryProps> = ({
         });
     };
 
-    const deleteCategory = async () => {
-        try {
-            const response = await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${category?.uuid}`
-            );
-            message.success(response.data.message);
-            onSubmit();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     useEffect(() => {
-        updateCategory();
+        editCategoryById({
+            categoryId: category?.uuid || "",
+            editedCategory: {
+                ...category,
+                defaultIssues: defaultIssues.filter(
+                    (issue) => issue.length != 0,
+                ),
+            },
+        });
     }, [defaultIssues]);
-
-    const updateCategory = async () => {
-        try {
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/categories/${
-                    category?.uuid
-                }`,
-                { ...category, defaultIssues: defaultIssues.filter((issue) => issue.length != 0) }
-            );
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     return (
         <Flex vertical gap="middle">
@@ -111,7 +92,6 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                         Settings
                     </Button>
                     <CategoryForm
-                        onSubmit={onSubmit}
                         isModalOpen={isModalOpen}
                         setIsModalOpen={setIsModalOpen}
                         category={category}
@@ -126,7 +106,11 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                                 Delete
                             </Button>
                         }
-                        actionSuccess={deleteCategory}
+                        actionSuccess={() =>
+                            deleteCategoryById({
+                                categoryId: category?.uuid || "",
+                            })
+                        }
                         title={`Delete the ${category?.name} Category`}
                         headlineText="Deleting this category will also delete its associated equipment and materials."
                         confirmText={`Are you sure you wish to delete the ${category?.name} category?`}
@@ -141,7 +125,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                                             <List
                                                 size="small"
                                                 dataSource={equipment?.map(
-                                                    (item) => item.name
+                                                    (item) => item.name,
                                                 )}
                                                 renderItem={(item) => (
                                                     <List.Item>
@@ -158,7 +142,7 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                                             <List
                                                 size="small"
                                                 dataSource={materials?.map(
-                                                    (item) => item.name
+                                                    (item) => item.name,
                                                 )}
                                                 renderItem={(item) => (
                                                     <List.Item>
@@ -182,7 +166,17 @@ const EditCategory: React.FC<EditCategoryProps> = ({
                     issue={issue}
                     updateIssue={updateIssueAtIndex}
                     deleteIssue={deleteIssueAtIndex}
-                    updateCategory={updateCategory}
+                    updateCategory={() =>
+                        editCategoryById({
+                            categoryId: category?.uuid || "",
+                            editedCategory: {
+                                ...category,
+                                defaultIssues: defaultIssues.filter(
+                                    (issue) => issue.length != 0,
+                                ),
+                            },
+                        })
+                    }
                 />
             ))}
 

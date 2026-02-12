@@ -1,6 +1,4 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-
+// Description: A React component that renders a table of materials with features such as filtering by category, displaying properties and descriptions in expandable rows, and providing actions for editing and deleting materials based on user access levels. It uses Ant Design components for the UI and integrates with API calls to manage materials.
 import {
     Button,
     Popconfirm,
@@ -20,18 +18,15 @@ import {
 import type { Material, WithMaterials } from "../../types/material";
 import MaterialForm from "../forms/MaterialForm";
 
-import { deleteMaterial } from "../../api/material";
+import { useDeleteMaterialById } from "../../hooks/material";
 import { checkAccess } from "../rbac/HasAccess";
 import { useAllCategories } from "../../hooks/category";
-import { CommonTableProps } from "../../types/common";
 
-type MaterialTableProps = WithMaterials & CommonTableProps;
-
-const MaterialTable: React.FC<MaterialTableProps> = ({
-    refresh,
+const MaterialTable: React.FC<WithMaterials> = ({
     materials,
-}: MaterialTableProps) => {
+}: WithMaterials) => {
     const { data: categories } = useAllCategories();
+    const { mutateAsync: deleteMaterialById } = useDeleteMaterialById();
 
     const updateColumns: TableProps["columns"] = [
         {
@@ -55,7 +50,8 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
             })),
 
             onFilter: (value, record) =>
-                record.categoryId.indexOf((value as string).toLowerCase()) === 0,
+                record.categoryId.indexOf((value as string).toLowerCase()) ===
+                0,
             render: (category) =>
                 category && (
                     <Tag
@@ -63,7 +59,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                         color={
                             categories?.find(
                                 (checkCategory) =>
-                                    checkCategory.uuid === category
+                                    checkCategory.uuid === category,
                             )?.color || "geekblue"
                         }
                         key={category}
@@ -71,7 +67,7 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                         {
                             categories?.find(
                                 (checkCategory) =>
-                                    checkCategory.uuid === category
+                                    checkCategory.uuid === category,
                             )?.name
                         }
                     </Tag>
@@ -99,20 +95,16 @@ const MaterialTable: React.FC<MaterialTableProps> = ({
                       render: (material: Material) =>
                           material.uuid && (
                               <Space>
-                                  <MaterialForm
-                                      onSubmit={refresh}
-                                      material={material}
-                                  />
+                                  <MaterialForm material={material} />
 
                                   <Tooltip title="Delete">
                                       <Popconfirm
                                           title="Delete Material"
                                           description="Are you sure to delete this material?"
-                                          onConfirm={() => {
-                                              deleteMaterial(
-                                                  material.uuid
-                                              ).then(() => {
-                                                  refresh && refresh();
+                                          onConfirm={async () => {
+                                              await deleteMaterialById({
+                                                  materialId:
+                                                      material.uuid || "",
                                               });
                                           }}
                                           okText="Yes"

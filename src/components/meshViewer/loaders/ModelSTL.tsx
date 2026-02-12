@@ -1,3 +1,4 @@
+// Description: A React component that loads and processes STL 3D model files using Three.js and react-three-fiber. It handles both local file uploads and remote URLs, applies necessary transformations to align the model with the scene's coordinate system, and creates a mesh with a standard material using a theme color.
 import { useMemo, useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { STLLoader } from "three/examples/jsm/Addons.js";

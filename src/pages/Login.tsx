@@ -1,18 +1,15 @@
 // Description: Login page for users
 
-import DFLogo from "../assets/Digital-Fabrication-V.png";
 import {
     theme,
     Button,
-    Card,
-    Flex,
     Form,
     FormProps,
     Input,
     message,
 } from "antd";
 import { useAuth } from "../hooks/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AuthenticationShell from "./login/AuthenticationShell";
 
@@ -25,8 +22,6 @@ interface FieldType {
 const Login: React.FC = () => {
     const { user, login } = useAuth();
     const navigate = useNavigate();
-    const colorPrimary = theme.useToken().token.colorPrimary;
-    const colorTextBase = theme.useToken().token.colorTextBase;
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
             await login(values.email, values.password);

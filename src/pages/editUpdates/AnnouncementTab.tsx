@@ -17,10 +17,9 @@ const AnnouncementTab: React.FC = () => {
                 align="center"
             >
                 <h2>ANNOUNCEMENTS</h2>
-                <AnnouncementForm onSubmit={refetch} />
+                <AnnouncementForm />
             </Flex>
             <AnnouncementTable
-                refresh={refetch}
                 announcements={announcements}
             />
         </Space>

@@ -2,18 +2,19 @@ import { Button, Card, Col, Flex, Form, Input, Switch } from "antd";
 import ConfirmAction from "../../components/ConfirmAction";
 import { useState } from "react";
 import { Equipment, WithEquipment } from "../../types/equipment";
-import { deleteEquipment } from "../../api/equipment";
 import HasAccess from "../../components/rbac/HasAccess";
 import { EditableComponentProps } from "../../types/common";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { useNavigate } from "react-router-dom";
+import { useDeleteEquipmentById } from "../../hooks/equipment";
 type AdminCardProps = WithEquipment & EditableComponentProps<Equipment>;
 
 const AdminCard: React.FC<AdminCardProps> = ({ equipment, handleClick }) => {
     const [form] = Form.useForm();
     const [editMode, setEditMode] = useState(false);
     const navigate = useNavigate();
+    const { mutateAsync: deleteEquipmentById } = useDeleteEquipmentById();
     return (
         <>
             <Card>
@@ -104,7 +105,13 @@ const AdminCard: React.FC<AdminCardProps> = ({ equipment, handleClick }) => {
                             data
                         </Button>
                     }
-                    actionSuccess={deleteEquipment}
+                    actionSuccess={() =>
+                        equipment
+                            ? deleteEquipmentById({
+                                  equipmentId: equipment?.uuid || "",
+                              })
+                            : undefined
+                    }
                     title={`Delete the ${equipment?.name} Equipment`}
                     headlineText="Deleting this equipment will also delete its associated issues."
                     confirmText={`Are you sure you wish to delete the ${equipment?.name} equipment?`}

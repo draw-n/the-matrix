@@ -1,31 +1,14 @@
 // Description: EquipmentProfile component for displaying and editing equipment details.
 
-import { useState } from "react";
-import axios from "axios";
-
-import {
-    Button,
-    Card,
-    Col,
-    Flex,
-    Input,
-    Row,
-    Skeleton,
-    Space,
-    Typography,
-} from "antd";
+import { Card, Col, Row, Space, Typography } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
 import IssueTable from "../../components/tables/IssueTable";
 
-import { useNavigate } from "react-router-dom";
-
 import HeaderCard from "./HeaderCard";
 import StatusCard from "./StatusCard";
-import { useAllCategories } from "../../hooks/category";
 import { useAllIssues } from "../../hooks/issue";
-import { useAllEquipment } from "../../hooks/equipment";
+import { useAllEquipment, useEditEquipmentById } from "../../hooks/equipment";
 import QueueSystem from "../../components/queueSystem/QueueSystem";
-import { editEquipment } from "../../api/equipment";
 import AdminCard from "./AdminCard";
 import DescriptionCard from "./DescriptionCard";
 import CameraCard from "./CameraCard";
@@ -42,10 +25,13 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
         equipment ? ["open", "in-progress", "completed"] : undefined,
         equipment ? equipment.uuid : undefined,
     );
+
+    const { mutateAsync: editEquipmentById } = useEditEquipmentById();
+
     /**
      * Toggles edit mode and saves changes if exiting edit mode.
      */
-    const handleEditClick = (
+    const handleEditClick = async (
         editMode: boolean,
         setEditMode: (editMode: boolean) => void,
         values: Partial<Equipment> | undefined,
@@ -55,7 +41,10 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                 ...equipment,
                 ...values,
             };
-            editEquipment(editedEquipment);
+            await editEquipmentById({
+                equipmentId: equipment.uuid,
+                editedEquipment,
+            });
             equipmentRefresh();
         }
         setEditMode(!editMode);
@@ -107,7 +96,7 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                             <Title
                                 level={2}
                             >{`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
-                            <IssueTable issues={issues} refresh={refetch} />
+                            <IssueTable issues={issues} />
                         </Card>
                     </Col>
                     {

@@ -1,10 +1,5 @@
 // Description: A table component to display a list of users with their names and email addresses
 
-import axios from "axios";
-
-import React, { useEffect, useState } from "react";
-import { User } from "../../types/user";
-
 import { Table, TableProps } from "antd";
 import { useAllUsers } from "../../hooks/user";
 

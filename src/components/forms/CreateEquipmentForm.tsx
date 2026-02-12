@@ -10,52 +10,25 @@ import {
     FormProps,
     Flex,
     Switch,
-    message,
 } from "antd";
 import { useState } from "react";
-import axios from "axios";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
-import { Category } from "../../types/category";
 import { useAllCategories } from "../../hooks/category";
-import { CommonFormProps } from "../../types/common";
 import { Equipment } from "../../types/equipment";
 import HelpField from "./HelpField";
+import { useCreateEquipment } from "../../hooks/equipment";
 
 const { TextArea } = Input;
 
-const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
+const CreateEquipmentForm: React.FC = () => {
     const [form] = Form.useForm();
     const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
+    const { mutateAsync: createEquipment } = useCreateEquipment();
     const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
-        try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-                values,
-            );
-            onSubmit();
-            setIsModalOpen(false);
-            form.resetFields();
-        } catch (error: any) {
-            console.error("Error creating new equipment:", error);
-            message.error(
-                error.response?.data?.message || "Error creating equipment.",
-            );
-        }
-    };
-
-    const handleOk = async () => {
-        form.submit();
-    };
-
-    const handleCancel = () => {
-        form.resetFields();
+        await createEquipment({ newEquipment: values });
         setIsModalOpen(false);
+        form.resetFields();
     };
 
     return (
@@ -66,7 +39,7 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
                     size="middle"
                     iconPosition="end"
                     icon={<PlusOutlined />}
-                    onClick={showModal}
+                    onClick={() => setIsModalOpen(true)}
                     shape="round"
                 >
                     Add New Equipment
@@ -76,8 +49,8 @@ const CreateEquipmentForm: React.FC<CommonFormProps> = ({ onSubmit }) => {
             <Modal
                 title="Add Equipment"
                 open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onOk={() => form.submit()}
+                onCancel={() => setIsModalOpen(false)}
                 centered
                 styles={{
                     body: {

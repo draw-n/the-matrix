@@ -5,7 +5,6 @@ import React, {
     createContext,
     useState,
     useContext,
-    ReactNode,
     useEffect,
     PropsWithChildren,
 } from "react";
@@ -13,8 +12,8 @@ import { User } from "../types/user";
 
 interface AuthContextType {
     user: User | null;
-    login: (email: string, password: string) => void;
-    logout: () => void;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
     loading: boolean;
     refreshUser: () => void;
 }

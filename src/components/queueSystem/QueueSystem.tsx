@@ -1,11 +1,13 @@
 import { Table, TableProps, Tag } from "antd";
 import { useAllJobs } from "../../hooks/job";
 import { WithEquipmentId } from "../../types/equipment";
-import { Job } from "../../types/job";
 import { geekblueDark } from "@ant-design/colors";
 
 const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
-    const { data: jobs } = useAllJobs(["queued", "printing"], equipmentId);
+    const { data: jobs } = useAllJobs(
+        ["queued", "ready", "printing"],
+        equipmentId,
+    );
     const sortedJobs = jobs?.sort((a, b) => {
         // 1. Define Priority (Lower number = higher priority)
         const priority = {
@@ -49,11 +51,12 @@ const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
             key: "position",
             render: (_: any, record, index: number) => {
                 if (record.status === "printing") return <p>PRINTING</p>;
-
+                if (record.status === "ready") return <p>READY</p>;
                 // Find how many jobs above this one are 'printing'
                 const printingOffset =
-                    sortedJobs?.filter((j) => j.status === "printing").length ||
-                    0;
+                    sortedJobs?.filter(
+                        (j) => j.status === "printing" || j.status === "ready",
+                    ).length || 0;
                 return index - printingOffset + 1;
             },
         },
@@ -83,9 +86,9 @@ const QueueSystem: React.FC<WithEquipmentId> = ({ equipmentId }) => {
                             record.status === "printing"
                                 ? geekblueDark[5]
                                 : undefined,
-                        color: record.status === "printing" ? "white" : undefined,
+                        color:
+                            record.status === "printing" ? "white" : undefined,
                         cursor: "default",
-                        
                     },
                 })}
             />

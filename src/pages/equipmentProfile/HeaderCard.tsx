@@ -6,9 +6,7 @@ import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Equipment, WithEquipment } from "../../types/equipment";
 
 import HasAccess from "../../components/rbac/HasAccess";
-import { WithCategory } from "../../types/category";
 import { EditableComponentProps } from "../../types/common";
-import FormItemLabel from "antd/es/form/FormItemLabel";
 import Title from "antd/es/typography/Title";
 import { useAllCategories } from "../../hooks/category";
 
@@ -24,10 +22,6 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
     } = theme.useToken();
     const [editMode, setEditMode] = useState(false);
     const { data: categories } = useAllCategories();
-    const saveChanges = async () => {
-        handleClick &&
-            handleClick(editMode, setEditMode, form.getFieldsValue());
-    };
 
     const name = Form.useWatch("name", form);
     const headline = Form.useWatch("headline", form);
@@ -49,7 +43,10 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                     categoryId: equipment?.categoryId,
                 }}
                 form={form}
-                onFinish={saveChanges}
+                onFinish={() =>
+                    handleClick &&
+                    handleClick(editMode, setEditMode, form.getFieldsValue())
+                }
             >
                 <Flex
                     style={{ flex: 1 }}

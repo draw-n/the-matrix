@@ -1,6 +1,4 @@
-import axios from "axios";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Button,
     Modal,
@@ -19,21 +17,17 @@ import {
 import { Material, WithMaterial } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/category";
-import { CommonFormProps } from "../../types/common";
 import HelpField from "./HelpField";
-
-type MaterialFormProps = WithMaterial & CommonFormProps;
+import { useCreateMaterial, useEditMaterialById } from "../../hooks/material";
 
 const { TextArea } = Input;
 
-const MaterialForm: React.FC<MaterialFormProps> = ({
-    material,
-    onSubmit,
-}: MaterialFormProps) => {
+const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [form] = Form.useForm();
     const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const { mutateAsync: editMaterialById } = useEditMaterialById();
+    const { mutateAsync: createMaterial } = useCreateMaterial();
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -43,37 +37,16 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
     };
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
-        try {
-            if (material) {
-                const editedMaterial: Material = {
-                    ...values,
-                    uuid: material.uuid,
-                };
-                const response = await axios.put(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials/${
-                        material.uuid
-                    }`,
-                    editedMaterial,
-                );
-                message.success(response.data.message);
-            } else {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BACKEND_URL}/materials`,
-                    values,
-                );
-                message.success("Material successfully created!");
-                form.resetFields();
-            }
-
-            onSubmit();
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Material editing update", error);
+        if (material) {
+            await editMaterialById({
+                materialId: material.uuid,
+                editedMaterial: values,
+            });
+        } else {
+            await createMaterial({ newMaterial: values });
+            form.resetFields();
         }
-    };
-
-    const onFinishFailed = () => {
-        message.error("Missing one or more fields.");
+        setIsModalOpen(false);
     };
 
     const handleCancel = () => {
@@ -112,23 +85,19 @@ const MaterialForm: React.FC<MaterialFormProps> = ({
             >
                 <Form
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
+                    onFinishFailed={(err: any) =>
+                        message.error(
+                            "Missing or invalid fields. Please check and try again.",
+                        )
+                    }
+                    name="materialForm"
                     layout="vertical"
                     form={form}
                     colon={false}
                     preserve={false}
                     initialValues={
                         material
-                            ? {
-                                  name: material.name,
-                                  shortName: material.shortName,
-                                  categoryId: material.categoryId,
-                                  description: material.description,
-                                  temperatures: material.temperatures,
-                                  properties: material.properties,
-                                  remotePrintAvailable:
-                                      material.remotePrintAvailable,
-                              }
+                            ? material
                             : {
                                   name: "",
                                   shortName: "",

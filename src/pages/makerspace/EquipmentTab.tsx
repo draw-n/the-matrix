@@ -46,11 +46,7 @@ const EquipmentTab = () => {
                         />
                     )}
                     <HasAccess roles={["admin", "moderator"]}>
-                        <CreateEquipmentForm
-                            onSubmit={() => {
-                                refetch();
-                            }}
-                        />
+                        <CreateEquipmentForm />
                     </HasAccess>
                 </Flex>
             </Flex>

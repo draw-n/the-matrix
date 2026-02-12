@@ -1,8 +1,6 @@
 // Description: CategorySelection component for selecting equipment categories when reporting issues.
 
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Category } from "../../types/category";
 import CardSelection, {
     CardSelectionProps,
 } from "../../components/CardSelection";

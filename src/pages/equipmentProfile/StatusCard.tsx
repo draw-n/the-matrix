@@ -1,7 +1,7 @@
 // Description: StatusCard component for displaying equipment status.
 import { Card, Flex, Typography } from "antd";
 
-import { Equipment, WithEquipment } from "../../types/equipment";
+import { WithEquipment } from "../../types/equipment";
 const { Title } = Typography;
 
 const StatusCard: React.FC<WithEquipment> = ({

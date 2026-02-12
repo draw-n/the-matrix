@@ -1,3 +1,4 @@
+// Description: A React component that loads and processes 3MF 3D model files using Three.js and react-three-fiber. It handles both local file uploads and remote URLs, applies necessary transformations to align the model with the scene's coordinate system, merges geometries, computes normals and bounding boxes, and creates a mesh with a standard material using a theme color.
 import * as THREE from "three";
 import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
 import mergeAllGeometries from "../utils/mergeAllGeometries";
@@ -11,7 +12,6 @@ const Model3MF = ({
     file: UploadFile;
     onLoad?: (mesh: THREE.Mesh) => void;
 }) => {
-    // FIX: Handle both Remote (URL) and Local (Blob) files
     const objectUrl = useMemo(() => {
         if (!file) return null;
         

@@ -14,9 +14,8 @@ import {
     Upload,
     UploadFile,
 } from "antd";
-import { Material, WithMaterial } from "../../types/material";
+import { WithMaterial } from "../../types/material";
 import { FilamentAdvancedSettings } from "../../types/equipment";
-import ConfirmAction from "../../components/ConfirmAction";
 import MeshViewer from "../../components/meshViewer/MeshViewer";
 
 interface ReviewProps extends WithMaterial {
@@ -164,7 +163,6 @@ const Review: React.FC<ReviewProps> = ({
                     <Button type="primary" onClick={handleSubmit}>
                         Submit
                     </Button>
-                  
                 </Flex>
             </Space>
         </>

@@ -1,61 +1,29 @@
 // Description: Form component for editing existing issue reports.
 
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button, Form, FormProps, Input, Modal, Select, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import HasAccess from "../rbac/HasAccess";
-import { Issue, IssueStatus, WithIssue } from "../../types/issue";
-import { User } from "../../types/user";
+import { Issue, WithIssue } from "../../types/issue";
 import { useAllUsers } from "../../hooks/user";
-import { CommonFormProps } from "../../types/common";
-
+import { useEditIssueById } from "../../hooks/issue";
 const { TextArea } = Input;
 
-type EditIssueFormProps = WithIssue & CommonFormProps;
-
-const EditIssueForm: React.FC<EditIssueFormProps> = ({
-    issue,
-    onSubmit,
-}: EditIssueFormProps) => {
+const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { data: users } = useAllUsers();
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
+    const { mutateAsync: editIssueById } = useEditIssueById();
     const onFinish: FormProps<Issue>["onFinish"] = async (values) => {
-        try {
-            if (!issue) return;
-            const editedIssue: Issue = {
-                ...values,
-                uuid: issue?.uuid,
-                equipmentId: issue?.equipmentId,
-                createdBy: issue?.createdBy,
-                dateCreated: issue?.dateCreated,
-            };
-            const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_URL}/issues/${issue.uuid}`,
-                editedIssue
-            );
-            onSubmit();
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error creating new update:", error);
-        }
-    };
+        if (!issue) return;
 
-    const handleOk = async () => {
-        form.submit();
-    };
+        await editIssueById({ issueId: issue.uuid, editedIssue: values });
 
-    const handleCancel = () => {
-        form.resetFields();
         setIsModalOpen(false);
     };
+
     return (
         <>
             <Tooltip title="Edit Issue" placement="topLeft">
@@ -64,14 +32,14 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                     shape="circle"
                     size="middle"
                     icon={<EditOutlined />}
-                    onClick={showModal}
+                    onClick={() => setIsModalOpen(true)}
                 />
             </Tooltip>
             <Modal
                 title="Edit Issue"
                 open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onOk={() => form.submit()}
+                onCancel={() => setIsModalOpen(false)}
                 centered
             >
                 <Form
@@ -116,10 +84,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                         />
                     </Form.Item>
                     <HasAccess roles={["admin"]}>
-                        <Form.Item<Issue>
-                            name="assignedTo"
-                            label="Assigned To"
-                        >
+                        <Form.Item<Issue> name="assignedTo" label="Assigned To">
                             <Select
                                 size="small"
                                 mode="multiple"
@@ -134,7 +99,7 @@ const EditIssueForm: React.FC<EditIssueFormProps> = ({
                             />
                         </Form.Item>
                     </HasAccess>
-                    
+
                     <Form.Item<Issue>
                         style={{ width: "100%" }}
                         label="Description"

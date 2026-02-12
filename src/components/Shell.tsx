@@ -37,7 +37,6 @@ import { checkAccess } from "./rbac/HasAccess";
 const { Title } = Typography;
 const { Header, Content, Sider } = Layout;
 
-// Custom type for your page definitions (with access)
 interface PageItem {
     label: React.ReactNode;
     key: React.Key;
@@ -171,12 +170,12 @@ const Shell: React.FC<ShellProps> = ({
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState<boolean>(false);
-    // inside the Shell component, alongside other hooks
     const screens = Grid.useBreakpoint();
     const isMobile = !screens?.md; // true on xs, sm
     const [drawerOpen, setDrawerOpen] = useState(false);
     const navigate = useNavigate();
     const { colorPrimary } = theme.useToken().token;
+   
     const menuItems: MenuProps["items"] = allPages
         .filter((item) => checkAccess(item.access))
         .map((item) => {

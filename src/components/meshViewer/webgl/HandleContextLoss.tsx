@@ -1,3 +1,5 @@
+// Description: A React component that handles WebGL context loss and restoration events in a Three.js scene using react-three-fiber.
+
 import { useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 
