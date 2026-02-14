@@ -31,7 +31,7 @@ import {
     TeamOutlined,
 } from "@ant-design/icons";
 
-import vandyLogoSmall from "../assets/images/White_Pinstripe_V.png";
+import vandyLogoSmall from "../../assets/images/White_Pinstripe_V.png";
 import { checkAccess } from "../routing/HasAccess";
 
 const { Header, Content, Sider } = Layout;

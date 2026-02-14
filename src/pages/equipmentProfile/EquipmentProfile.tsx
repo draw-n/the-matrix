@@ -6,7 +6,6 @@ import { useAllEquipment, useEditEquipmentById } from "../../hooks/useEquipment"
 import IssueTable from "../../components/tables/IssueTable";
 import { useAllIssues } from "../../hooks/useIssues";
 
-
 import HeaderCard from "./components/HeaderCard";
 import StatusCard from "./components/StatusCard";
 import QueueCard from "../../components/dashboard/QueueCard";
