@@ -1,7 +1,7 @@
 // Description: Announcement form component for creating and editing announcements.
 
 import { useState } from "react";
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import {
     Input,
@@ -23,9 +23,8 @@ import type {
 import {
     useEditAnnouncementById,
     useCreateAnnouncement,
-} from "../../hooks/announcement";
+} from "../../hooks/useAnnouncements";
 
-const { TextArea } = Input;
 
 
 const AnnouncementForm: React.FC<WithAnnouncement> = ({
@@ -154,7 +153,7 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
                             },
                         ]}
                     >
-                        <TextArea size="small" rows={6} />
+                        <Input.TextArea size="small" rows={6} />
                     </Form.Item>
                 </Form>
             </Modal>

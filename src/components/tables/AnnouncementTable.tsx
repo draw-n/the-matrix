@@ -15,10 +15,10 @@ import { cyan, magenta, purple } from "@ant-design/colors";
 
 import AnnouncementForm from "../forms/AnnouncementForm";
 import type { Announcement, WithAnnouncements } from "../../types/announcement";
-import { checkAccess } from "../rbac/HasAccess";
-import AutoAvatar from "../AutoAvatar";
-import { useAllUsers } from "../../hooks/user";
-import { useDeleteAnnouncementById } from "../../hooks/announcement";
+import { checkAccess } from "../routing/HasAccess";
+import AutoAvatar from "../common/AutoAvatar";
+import { useAllUsers } from "../../hooks/useUsers";
+import { useDeleteAnnouncementById } from "../../hooks/useAnnouncements";
 
 const AnnouncementTable: React.FC<WithAnnouncements> = ({
     announcements,

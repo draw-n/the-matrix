@@ -1,18 +1,18 @@
 // Description: ReportAnIssue component for guiding users through the multi-step issue reporting process.
 
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import { Button, Flex } from "antd";
-import CategorySelection from "./CategorySelection";
+import CategorySelection from "./components/CategorySelection";
 import { useState } from "react";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
-import EquipmentSelection from "./EquipmentSelection";
-import Description from "./Description";
-import IssueSelection from "./IssueSelection";
-import MoreDetails from "./MoreDetails";
-import SubmittedIssue from "./SubmittedIssue";
-import { useCreateIssue } from "../../hooks/issue";
+import EquipmentSelection from "./components/EquipmentSelection";
+import Description from "./components/Description";
+import IssueSelection from "./components/IssueSelection";
+import MoreDetails from "./components/MoreDetails";
+import SubmittedIssue from "./components/SubmittedIssue";
+import { useCreateIssue } from "../../hooks/useIssues";
 
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);

@@ -1,8 +1,8 @@
 // Description: App settings, only available to admins
 
-import { Input, Space, Form, Tabs, TabsProps } from "antd";
-import Categories from "./Categories";
-import AccessCodes from "./AccessCodes";
+import { Space, Form, Tabs, TabsProps } from "antd";
+import Categories from "./components/Categories";
+import AccessCodes from "./components/AccessCodes";
 
 const Settings: React.FC = () => {
 

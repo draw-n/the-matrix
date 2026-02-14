@@ -13,7 +13,7 @@ import {
 import { gold, gray, green, purple, red } from "@ant-design/colors";
 import type { EquipmentStatus, WithEquipment } from "../../types/equipment";
 import { useNavigate } from "react-router-dom";
-import { useCategoryById } from "../../hooks/category";
+import { useCategoryById } from "../../hooks/useCategories";
 
 const statusStyles: Record<
     EquipmentStatus,
@@ -41,8 +41,6 @@ const statusStyles: Record<
     },
 };
 
-const { Paragraph } = Typography;
-
 const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
     const { data: category, isLoading } = useCategoryById(
         equipment ? equipment?.categoryId : "",
@@ -52,7 +50,7 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
 
     return (
         <>
-            <Card className="equipment-card" style={{ height: "100%" }}>
+            <Card  style={{ height: "100%" }}>
                 {isLoading ? (
                     <Skeleton active />
                 ) : (
@@ -76,7 +74,7 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
                             </Tag>
 
                             <h3>
-                                <Paragraph
+                                <Typography.Paragraph
                                     style={{
                                         font: "inherit",
                                         fontFamily: "inherit",
@@ -85,7 +83,7 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
                                     }}
                                 >
                                     {equipment?.name}
-                                </Paragraph>
+                                </Typography.Paragraph>
                             </h3>
                             <p>{equipment?.headline}</p>
                         </Space>

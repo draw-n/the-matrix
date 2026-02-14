@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { User, UserAccess } from "../../types/user";
 import { Flex, Row, Col, Space, Empty, Typography, Segmented } from "antd";
-import UserCard from "./UserCard";
-import Loading from "../../components/Loading";
-import DownloadEmails from "./DownloadEmails";
-import { useAllUsers } from "../../hooks/user";
+import UserCard from "./components/UserCard";
+import Loading from "../../components/routing/Loading";
+import DownloadEmails from "./components/DownloadEmails";
+import { useAllUsers } from "../../hooks/useUsers";
 
 const UserDirectory: React.FC = () => {
     const [filter, setFilter] = useState<UserAccess | "">("");

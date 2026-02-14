@@ -5,19 +5,18 @@ import axios from "axios";
 
 import { Button, Flex, Result, Space, Steps, message } from "antd";
 
-import UploadFile from "./UploadFile";
-import SelectMaterial from "./SelectMaterial";
-import MoreSettings from "./MoreSettings";
-import Review from "./Review";
+import UploadFile from "./components/UploadFile";
+import SelectMaterial from "./components/SelectMaterial";
+import MoreSettings from "./components/MoreSettings";
+import Review from "./components/Review";
 
 import { Material } from "../../types/material";
 import type { FilamentAdvancedSettings } from "../../types/equipment";
-import { useAuth } from "../../hooks/AuthContext";
-import { User } from "../../types/user";
+import { useAuth } from "../../contexts/AuthContext";
 
-import Loading from "../../components/Loading";
-import Introduction from "./Introduction";
-import Submitted from "./Submitted";
+import Loading from "../../components/routing/Loading";
+import Introduction from "./components/Introduction";
+import Submitted from "./components/Submitted";
 import { Job } from "../../types/job";
 import { createJob } from "../../api/job";
 

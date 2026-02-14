@@ -1,18 +1,11 @@
 // Description: CategoryForm component for adding and editing categories in the settings page.
-
-import {
-    ColorPicker,
-    Flex,
-    Form,
-    FormProps,
-    Input,
-    message,
-    Modal,
-    Select,
-} from "antd";
-import { Category, WithCategory } from "../../types/category";
 import randomColor from "randomcolor";
-import { useCreateCategory, useEditCategoryById } from "../../hooks/category";
+import { ColorPicker, Flex, Form, FormProps, Input, Modal, Select } from "antd";
+import { Category, WithCategory } from "../../types/category";
+import {
+    useCreateCategory,
+    useEditCategoryById,
+} from "../../hooks/useCategories";
 
 interface CategoryFormProps extends WithCategory {
     isModalOpen: boolean;

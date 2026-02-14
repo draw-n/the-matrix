@@ -1,13 +1,13 @@
 // Description: Dashboard page displaying user greeting and various dashboard cards.
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import { Flex, Space, Row, Col, Card, theme } from "antd";
 
-import AnnouncementCard from "./AnnouncementCard";
-import SocialsCard from "./SocialsCard";
-import AdminCard from "./AdminCard";
-import RemotePrintCard from "./RemotePrintCard";
-import TotalFilamentUsedCard from "./TotalFilamentUsedCard";
+import AnnouncementCard from "../../components/dashboard/AnnouncementCard";
+import SocialsCard from "../../components/dashboard/SocialsCard";
+import NeedHelpCard from "../../components/dashboard/NeedHelpCard";
+import RemotePrintCard from "../../components/dashboard/RemotePrintCard";
+import TotalFilamentUsedCard from "../../components/dashboard/TotalFilamentUsedCard";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
@@ -32,8 +32,7 @@ const Dashboard: React.FC = () => {
                     <Col xs={24} lg={16}>
                         <Flex vertical gap={16}>
                             <RemotePrintCard userId={user?.uuid} />
-
-                            <AdminCard />
+                            <NeedHelpCard />
                         </Flex>
                     </Col>
                     <Col xs={24} lg={8}>

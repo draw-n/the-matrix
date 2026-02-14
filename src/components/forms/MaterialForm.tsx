@@ -14,27 +14,23 @@ import {
     message,
     Tooltip,
 } from "antd";
-import { Material, WithMaterial } from "../../types/material";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { useAllCategories } from "../../hooks/category";
-import HelpField from "./HelpField";
-import { useCreateMaterial, useEditMaterialById } from "../../hooks/material";
+import { useAllCategories } from "../../hooks/useCategories";
+import { Material, WithMaterial } from "../../types/material";
 
-const { TextArea } = Input;
+import {
+    useCreateMaterial,
+    useEditMaterialById,
+} from "../../hooks/useMaterials";
+import HelpField from "./components/HelpField";
 
 const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [form] = Form.useForm();
-    const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const { data: categories } = useAllCategories();
     const { mutateAsync: editMaterialById } = useEditMaterialById();
     const { mutateAsync: createMaterial } = useCreateMaterial();
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleOk = async () => {
-        form.submit();
-    };
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
         if (material) {
@@ -49,11 +45,6 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
         setIsModalOpen(false);
     };
 
-    const handleCancel = () => {
-        form.resetFields();
-        setIsModalOpen(false);
-    };
-
     return (
         <>
             <Tooltip title={material ? "Edit Material" : "Add Material"}>
@@ -61,7 +52,7 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                     type="primary"
                     size="middle"
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
-                    onClick={showModal}
+                    onClick={() => setIsModalOpen(true)}
                     iconPosition="end"
                     shape={material ? "circle" : "round"}
                 >
@@ -73,8 +64,11 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                 title={material ? "Edit Material" : "Add Material"}
                 open={isModalOpen}
                 centered
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onOk={() => form.submit()}
+                onCancel={() => {
+                    form.resetFields();
+                    setIsModalOpen(false);
+                }}
                 styles={{
                     body: {
                         overflowY: "auto",
@@ -204,7 +198,7 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                             },
                         ]}
                     >
-                        <TextArea size="small" rows={3} />
+                        <Input.TextArea size="small" rows={3} />
                     </Form.Item>
                     <Form.Item
                         noStyle

@@ -2,24 +2,21 @@
 
 import { Card, Col, Row, Space, Typography } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
+import { useAllEquipment, useEditEquipmentById } from "../../hooks/useEquipment";
 import IssueTable from "../../components/tables/IssueTable";
+import { useAllIssues } from "../../hooks/useIssues";
 
-import HeaderCard from "./HeaderCard";
-import StatusCard from "./StatusCard";
-import { useAllIssues } from "../../hooks/issue";
-import { useAllEquipment, useEditEquipmentById } from "../../hooks/equipment";
-import QueueSystem from "../../components/queueSystem/QueueSystem";
-import AdminCard from "./AdminCard";
-import DescriptionCard from "./DescriptionCard";
-import CameraCard from "./CameraCard";
-import HasAccess from "../../components/rbac/HasAccess";
+import HeaderCard from "./components/HeaderCard";
+import StatusCard from "./components/StatusCard";
+import QueueCard from "../../components/dashboard/QueueCard";
+import AdminCard from "./components/AdminCard";
+import DescriptionCard from "./components/DescriptionCard";
+import CameraCard from "./components/CameraCard";
+import HasAccess from "../../components/routing/HasAccess";
 
-const { Title } = Typography;
-type EquipmentProfileProps = WithEquipment;
-
-const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
+const EquipmentProfile: React.FC<WithEquipment> = ({
     equipment,
-}: EquipmentProfileProps) => {
+}: WithEquipment) => {
     const { refetch: equipmentRefresh } = useAllEquipment();
     const { data: issues, refetch } = useAllIssues(
         equipment ? ["open", "in-progress", "completed"] : undefined,
@@ -82,28 +79,25 @@ const EquipmentProfile: React.FC<EquipmentProfileProps> = ({
                     )}
                     {equipment?.remotePrintAvailable && (
                         <Col span={equipment?.cameraUrl ? 10 : 24}>
-                            <QueueSystem equipmentId={equipment?.uuid} />
+                            <QueueCard equipmentId={equipment?.uuid} />
                         </Col>
                     )}
-
                     <Col span={24}>
                         <Card>
-                            <Title
-                                level={2}
-                            >{`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}</Title>
+                            <Typography.Title level={2}>
+                                {`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}
+                            </Typography.Title>
                             <IssueTable issues={issues} />
                         </Card>
                     </Col>
-                    {
-                        <HasAccess roles={["admin", "moderator"]}>
-                            <Col span={24}>
-                                <AdminCard
-                                    equipment={equipment}
-                                    handleClick={handleEditClick}
-                                />
-                            </Col>
-                        </HasAccess>
-                    }
+                    <HasAccess roles={["admin", "moderator"]}>
+                        <Col span={24}>
+                            <AdminCard
+                                equipment={equipment}
+                                handleClick={handleEditClick}
+                            />
+                        </Col>
+                    </HasAccess>
                 </Row>
             </Space>
         </>
