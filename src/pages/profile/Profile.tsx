@@ -1,6 +1,6 @@
 // Description: Profile page component for displaying and editing user profile information.
 
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -21,9 +21,9 @@ import {
     SaveOutlined,
 } from "@ant-design/icons";
 import { WithUser } from "../../types/user";
-import RemotePrintCard from "../dashboard/RemotePrintCard";
-import TotalFilamentUsedCard from "../dashboard/TotalFilamentUsedCard";
-import { useEditUserById } from "../../hooks/user";
+import RemotePrintCard from "../../components/dashboard/RemotePrintCard";
+import TotalFilamentUsedCard from "../../components/dashboard/TotalFilamentUsedCard";
+import { useEditUserById } from "../../hooks/useUsers";
 
 const Profile: React.FC<WithUser> = ({ user: propUser }) => {
     const { user: currentUser } = useAuth();

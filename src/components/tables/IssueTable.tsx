@@ -13,17 +13,17 @@ import {
     Tooltip,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import AutoAvatar from "../AutoAvatar";
+import AutoAvatar from "../common/AutoAvatar";
 import { geekblue, gold, green, red } from "@ant-design/colors";
 import { useNavigate } from "react-router-dom";
 
 import type { Issue, WithIssues } from "../../types/issue";
-import { checkAccess } from "../rbac/HasAccess";
+import { checkAccess } from "../routing/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
-import { useAllUsers } from "../../hooks/user";
-import { useAllEquipment } from "../../hooks/equipment";
-import { useDeleteIssueById } from "../../hooks/issue";
+import { useAllUsers } from "../../hooks/useUsers";
+import { useAllEquipment } from "../../hooks/useEquipment";
+import { useDeleteIssueById } from "../../hooks/useIssues";
 
 
 const IssueTable: React.FC<WithIssues> = ({

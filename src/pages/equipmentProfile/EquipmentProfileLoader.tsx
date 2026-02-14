@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useAllEquipment } from "../../hooks/equipment";
+import { useAllEquipment } from "../../hooks/useEquipment";
 import EquipmentProfile from "./EquipmentProfile";
-import NotFound from "../../components/NotFound";
+import NotFound from "../../components/routing/NotFound";
 
 const EquipmentProfileLoader: React.FC = () => {
     const { routePath } = useParams();

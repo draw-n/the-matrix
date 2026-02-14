@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useAllUsers } from "../../hooks/user";
+import { useAllUsers } from "../../hooks/useUsers";
 import Profile from "./Profile";
-import NotFound from "../../components/NotFound";
+import NotFound from "../../components/routing/NotFound";
 
 const UserProfileLoader: React.FC = () => {
     const { userId } = useParams();

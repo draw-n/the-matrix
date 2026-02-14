@@ -5,11 +5,10 @@ import { useState } from "react";
 import { Button, Form, FormProps, Input, Modal, Select, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
-import HasAccess from "../rbac/HasAccess";
+import HasAccess from "../routing/HasAccess";
 import { Issue, WithIssue } from "../../types/issue";
-import { useAllUsers } from "../../hooks/user";
-import { useEditIssueById } from "../../hooks/issue";
-const { TextArea } = Input;
+import { useAllUsers } from "../../hooks/useUsers";
+import { useEditIssueById } from "../../hooks/useIssues";
 
 const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
     const [form] = Form.useForm();
@@ -112,7 +111,7 @@ const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
                             },
                         ]}
                     >
-                        <TextArea size="small" rows={6} />
+                        <Input.TextArea size="small" rows={6} />
                     </Form.Item>
                 </Form>
             </Modal>

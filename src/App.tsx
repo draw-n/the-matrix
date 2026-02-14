@@ -2,32 +2,29 @@
 
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 
-import Shell from "./components/Shell";
-import PrivateRoute from "./components/PrivateRoute";
+import Shell from "./components/layout/Shell.tsx";
+import PrivateRoute from "./components/routing/PrivateRoute.tsx";
 
 import Kiosk from "./pages/Kiosk";
 import ReportAnIssue from "./pages/reportIssues/ReportAnIssue";
 import EditUpdates from "./pages/editUpdates/EditUpdates";
-import Login from "./pages/Login";
+import Login from "./pages/login/Login.tsx";
 import UserDirectory from "./pages/userDirectory/UserDirectory";
 import Profile from "./pages/profile/Profile";
 import Makerspace from "./pages/makerspace/Makerspace";
 import Settings from "./pages/settings/Settings";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Equipment } from "./types/equipment";
-import Signup from "./pages/Signup";
+import { useState } from "react";
+import Signup from "./pages/login/Signup.tsx";
 import RemotePrint from "./pages/remotePrint/RemotePrint";
 import Dashboard from "./pages/dashboard/Dashboard";
 
 import "./App.css";
 import FirstTime from "./pages/login/FirstTime";
-import NotFound from "./components/NotFound";
+import NotFound from "./components/routing/NotFound.tsx";
 import { ConfigProvider } from "antd";
-import { AuthProvider, useAuth } from "./hooks/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { lightTheme, darkTheme } from "./theme.ts";
-import { useAllEquipment } from "./hooks/equipment.ts";
 import EquipmentProfileLoader from "./pages/equipmentProfile/EquipmentProfileLoader.tsx";
 import UserProfileLoader from "./pages/profile/UserProfileLoader.tsx";
 

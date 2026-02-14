@@ -18,9 +18,9 @@ import {
 import type { Material, WithMaterials } from "../../types/material";
 import MaterialForm from "../forms/MaterialForm";
 
-import { useDeleteMaterialById } from "../../hooks/material";
-import { checkAccess } from "../rbac/HasAccess";
-import { useAllCategories } from "../../hooks/category";
+import { useDeleteMaterialById } from "../../hooks/useMaterials";
+import { checkAccess } from "../routing/HasAccess";
+import { useAllCategories } from "../../hooks/useCategories";
 
 const MaterialTable: React.FC<WithMaterials> = ({
     materials,

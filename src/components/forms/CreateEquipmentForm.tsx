@@ -1,4 +1,6 @@
 // Description: Form component for creating new equipment entries.
+import { useState } from "react";
+
 
 import {
     Input,
@@ -11,20 +13,21 @@ import {
     Flex,
     Switch,
 } from "antd";
-import { useState } from "react";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
-import { useAllCategories } from "../../hooks/category";
 import { Equipment } from "../../types/equipment";
-import HelpField from "./HelpField";
-import { useCreateEquipment } from "../../hooks/equipment";
+import { useCreateEquipment } from "../../hooks/useEquipment";
+import { useAllCategories } from "../../hooks/useCategories";
 
-const { TextArea } = Input;
+import HelpField from "./components/HelpField";
+
 
 const CreateEquipmentForm: React.FC = () => {
     const [form] = Form.useForm();
-    const { data: categories } = useAllCategories();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    
+    const { data: categories } = useAllCategories();
     const { mutateAsync: createEquipment } = useCreateEquipment();
+    
     const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
         await createEquipment({ newEquipment: values });
         setIsModalOpen(false);
@@ -154,7 +157,7 @@ const CreateEquipmentForm: React.FC = () => {
                             },
                         ]}
                     >
-                        <TextArea size="small" rows={6} />
+                        <Input.TextArea size="small" rows={6} />
                     </Form.Item>
                     <Form.Item<Equipment>
                         style={{ width: "100%" }}

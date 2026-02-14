@@ -1,7 +1,7 @@
 // Description: A table component to display a list of users with their names and email addresses
 
 import { Table, TableProps } from "antd";
-import { useAllUsers } from "../../hooks/user";
+import { useAllUsers } from "../../hooks/useUsers";
 
 const UserTable: React.FC = () => {
     const { data: users } = useAllUsers(["admin", "moderator"]);

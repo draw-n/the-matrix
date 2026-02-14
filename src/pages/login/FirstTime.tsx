@@ -1,13 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+
 import axios from "axios";
 import { useState } from "react";
 
 import { Button, Flex } from "antd";
-import StatusSelection from "./StatusSelection";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import GradYearSelection from "./GradYearSelection";
-import DepartmentSelect from "./DepartmentSelect";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
+
+import StatusSelection from "./components/StatusSelection";
+import GradYearSelection from "./components/GradYearSelection";
+import DepartmentSelect from "./components/DepartmentSelect";
+
 
 const FirstTime: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
