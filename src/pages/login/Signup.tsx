@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
             >
                 <Flex gap="20px">
                     <Form.Item<FieldType>
-                        style={{ width: "50%" }}
+                        style={{ width: "50%", textTransform: "capitalize" }}
                         label="First Name"
                         name="firstName"
                         rules={[

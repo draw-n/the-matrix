@@ -88,8 +88,11 @@ const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
                                 size="small"
                                 mode="multiple"
                                 showSearch
+                                style={{
+                                    textTransform: "capitalize",
+                                    width: "100%",
+                                }}
                                 allowClear
-                                style={{ width: "100%" }}
                                 placeholder="Please select"
                                 options={users?.map((user) => ({
                                     value: user.uuid,

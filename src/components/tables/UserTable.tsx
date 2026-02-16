@@ -12,7 +12,11 @@ const UserTable: React.FC = () => {
             dataIndex: "name",
             key: "name",
             render: (__, record) => {
-                return <p>{`${record.firstName} ${record.lastName}`}</p>;
+                return (
+                    <p
+                        style={{ textTransform: "capitalize" }}
+                    >{`${record.firstName} ${record.lastName}`}</p>
+                );
             },
         },
         {
