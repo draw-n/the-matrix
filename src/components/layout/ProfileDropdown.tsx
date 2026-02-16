@@ -63,6 +63,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 <Button
                     variant="outlined"
                     size="middle"
+                    style={{ textTransform: "capitalize" }}
                     shape="round"
                     iconPosition="end"
                     icon={<CaretDownFilled style={{ marginLeft: "10px" }} />}

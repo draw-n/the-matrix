@@ -82,12 +82,15 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
             label: "First Name",
             children: editMode ? (
                 <Input
+                    style={{ textTransform: "capitalize" }}
                     size="small"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                 />
             ) : (
-                <p>{firstName ? firstName : user?.firstName}</p>
+                <p style={{ textTransform: "capitalize" }}>
+                    {firstName ? firstName : user?.firstName}
+                </p>
             ),
         },
         {

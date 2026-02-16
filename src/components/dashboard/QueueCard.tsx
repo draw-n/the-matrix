@@ -1,7 +1,8 @@
-import { Card, Table, TableProps, Tag, Typography } from "antd";
+import { Button, Card, Flex, Table, TableProps, Tag, Typography } from "antd";
 import { useAllJobs } from "../../hooks/useJobs";
 import { WithEquipmentId } from "../../types/equipment";
 import { geekblueDark } from "@ant-design/colors";
+import { RedoOutlined } from "@ant-design/icons";
 
 const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
     const {
@@ -58,7 +59,16 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
     const numRows = 5;
     return (
         <Card style={{ height: "100%" }}>
-            <Typography.Title level={2}>PRINTING QUEUE</Typography.Title>
+            <Flex justify="space-between" align="center" wrap style={{ marginBottom: "20px" }}>
+                <Typography.Title level={2}>PRINTING QUEUE</Typography.Title>
+                <Button
+                    onClick={() => refetch()}
+                    disabled={isLoading}
+                    type="primary"
+                    shape="circle"
+                    icon={<RedoOutlined />}
+                />
+            </Flex>
             {isLoading ? null : sortedJobs?.length === 0 ? (
                 <Tag color="green" style={{ marginTop: "20px" }}>
                     No jobs in queue! Add a new print job to get started.

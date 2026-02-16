@@ -104,7 +104,7 @@ const IssueTable: React.FC<WithIssues> = ({
                 const info = userMap[userId];
                 const fullName = info?.fullName || "Unknown User";
                 return (
-                    <Tooltip title={fullName}>
+                    <Tooltip style={{ textTransform: "capitalize" }} title={fullName}>
                         <a href={`mailto:${info?.email || ""}`}>
                             <AutoAvatar text={info?.initials || "?"} />
                         </a>
