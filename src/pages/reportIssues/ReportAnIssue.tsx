@@ -14,18 +14,25 @@ import MoreDetails from "./components/MoreDetails";
 import SubmittedIssue from "./components/SubmittedIssue";
 import { useCreateIssue } from "../../hooks/useIssues";
 
+
 const ReportAnIssue: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
     const [equipmentId, setEquipmentId] = useState<string>("");
     const [categoryId, setCategoryId] = useState<string>("");
     const [initialDescription, setInitialDescription] = useState<string>("");
     const [description, setDescription] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     const { mutateAsync: createIssue } = useCreateIssue();
 
     const { user } = useAuth();
 
     const onFinish = async () => {
+        setError("");
+        if (!description.trim()) {
+            setError("Please provide more details before submitting.");
+            return;
+        }
         const newIssue = {
             equipmentId,
             categoryId,
@@ -92,6 +99,9 @@ const ReportAnIssue: React.FC = () => {
             style={{ height: "80vh" }}
         >
             {renderStep()}
+            {error && (
+                <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
+            )}
             <Flex
                 style={{ marginTop: 20 }}
                 justify="center"
@@ -104,7 +114,10 @@ const ReportAnIssue: React.FC = () => {
                         type="primary"
                         icon={<ArrowLeftOutlined />}
                         iconPosition="start"
-                        onClick={() => setStepIndex(Math.max(stepIndex - 1, 0))}
+                        onClick={() => {
+                            setError("");
+                            setStepIndex(Math.max(stepIndex - 1, 0));
+                        }}
                     >
                         Back
                     </Button>
@@ -115,7 +128,38 @@ const ReportAnIssue: React.FC = () => {
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        onClick={() => setStepIndex(Math.min(stepIndex + 1, 5))}
+                        onClick={() => {
+                            setError("");
+                            if (stepIndex === 0) {
+                                // No required field for Description step
+                                setStepIndex(1);
+                                return;
+                            }
+                            if (stepIndex === 1) {
+                                if (!categoryId) {
+                                    setError("Please select a category before continuing.");
+                                    return;
+                                }
+                                setStepIndex(2);
+                                return;
+                            }
+                            if (stepIndex === 2) {
+                                if (!equipmentId) {
+                                    setError("Please select equipment before continuing.");
+                                    return;
+                                }
+                                setStepIndex(3);
+                                return;
+                            }
+                            if (stepIndex === 3) {
+                                if (!initialDescription.trim()) {
+                                    setError("Please provide a short description before continuing.");
+                                    return;
+                                }
+                                setStepIndex(4);
+                                return;
+                            }
+                        }}
                     >
                         Next
                     </Button>

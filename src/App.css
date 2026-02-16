@@ -71,7 +71,7 @@
 .login-background {
     background: -webkit-linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
         url("./assets/images/DF-Banner-2.png");
-    background: rgba(0, 0, 0, 0.5), url("./assets/DF-Banner-2.png");
+    background: rgba(0, 0, 0, 0.5), url("./assets/images/DF-Banner-2.png");
     height: 100vh;
     background-repeat: no-repeat;
     background-position: center;
