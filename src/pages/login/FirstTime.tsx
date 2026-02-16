@@ -11,12 +11,12 @@ import StatusSelection from "./components/StatusSelection";
 import GradYearSelection from "./components/GradYearSelection";
 import DepartmentSelect from "./components/DepartmentSelect";
 
-
 const FirstTime: React.FC = () => {
     const [stepIndex, setStepIndex] = useState(0);
     const [status, setStatus] = useState<string>();
     const [graduationYear, setGraduationYear] = useState<string | undefined>();
     const [departments, setDepartments] = useState<string[]>([]);
+    const [error, setError] = useState<string>("");
 
     const navigate = useNavigate();
 
@@ -26,7 +26,12 @@ const FirstTime: React.FC = () => {
         user &&
         user.status &&
         user.departments &&
-        user.departments.length > 0
+        user.departments.length > 0 &&
+            (
+                (user.status === "undergraduate" || user.status === "graduate")
+                    ? user.graduationDate
+                    : true
+            )
     ) {
         navigate("/");
     }
@@ -81,6 +86,9 @@ const FirstTime: React.FC = () => {
             vertical
         >
             {renderStep()}
+            {error && (
+                <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
+            )}
             <Flex
                 style={{ marginTop: 20 }}
                 justify="center"
@@ -93,7 +101,14 @@ const FirstTime: React.FC = () => {
                         type="primary"
                         icon={<ArrowLeftOutlined />}
                         iconPosition="start"
-                        onClick={() => setStepIndex(Math.max(stepIndex - 1, 0))}
+                        onClick={() => {
+                            setError("");
+                            if (status === "faculty" && stepIndex === 2) {
+                                setStepIndex(0);
+                            } else {
+                                setStepIndex(Math.max(stepIndex - 1, 0));
+                            }
+                        }}
                     >
                         Back
                     </Button>
@@ -104,7 +119,24 @@ const FirstTime: React.FC = () => {
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        onClick={() => setStepIndex(Math.min(stepIndex + 1, 2))}
+                        onClick={() => {
+                            setError("");
+                            if (stepIndex === 0) {
+                                if (!status) {
+                                    setError("Please select a status before continuing.");
+                                    return;
+                                }
+                            }
+                            if (stepIndex === 1) {
+                                if (
+                                    (status === "undergraduate" || status === "graduate") && !graduationYear
+                                ) {
+                                    setError("Please select a graduation year before continuing.");
+                                    return;
+                                }
+                            }
+                            setStepIndex(Math.min(stepIndex + 1, 2));
+                        }}
                     >
                         Next
                     </Button>
@@ -115,7 +147,14 @@ const FirstTime: React.FC = () => {
                         type="primary"
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
-                        onClick={onFinish}
+                        onClick={() => {
+                            setError("");
+                            if (!departments || departments.length === 0) {
+                                setError("Please select at least one department before submitting.");
+                                return;
+                            }
+                            onFinish();
+                        }}
                     >
                         Submit
                     </Button>
