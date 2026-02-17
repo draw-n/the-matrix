@@ -64,6 +64,7 @@ const Review: React.FC<ReviewProps> = ({
                     <Col span={24}>
                         <h3>Temperatures</h3>
                         <Table
+                            style={{ overflow: "auto" }}
                             pagination={false}
                             dataSource={[
                                 {

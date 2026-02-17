@@ -129,6 +129,7 @@ const MaterialTable: React.FC<WithMaterials> = ({
     return (
         <>
             <Table
+                style={{ overflow: "auto" }}
                 pagination={{
                     defaultPageSize: numRows,
                     hideOnSinglePage: true,

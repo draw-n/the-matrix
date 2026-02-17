@@ -70,7 +70,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
                         />
                     </Col>
                     {equipment?.cameraUrl && (
-                        <Col span={equipment?.remotePrintAvailable ? 14 : 24}>
+                        <Col span={24} lg={equipment?.remotePrintAvailable ? 14 : 24}>
                             <CameraCard
                                 equipment={equipment}
                                 handleClick={handleEditClick}
@@ -78,7 +78,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
                         </Col>
                     )}
                     {equipment?.remotePrintAvailable && (
-                        <Col span={equipment?.cameraUrl ? 10 : 24}>
+                        <Col span={24} lg={equipment?.cameraUrl ? 10 : 24}>
                             <QueueCard equipmentId={equipment?.uuid} />
                         </Col>
                     )}

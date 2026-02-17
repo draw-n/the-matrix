@@ -13,6 +13,7 @@ import {
     Spin,
     Radio,
     Empty,
+    Grid,
 } from "antd";
 import {
     Area,
@@ -33,6 +34,9 @@ import { useJobChartData } from "../../hooks/useJobs";
 const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
 
     const [days, setDays] = useState(30);
 
@@ -84,16 +88,16 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                             variant="filled"
                             type="primary"
                             size="middle"
-                            shape="round"
+                            shape={isMobile ? "circle" : "round"}
                             iconPosition="end"
                             icon={<PlusOutlined />}
                             onClick={() => navigate("/upload")}
                         >
-                            New Print
+                            {isMobile ? "" : "New Print"}
                         </Button>
                     )}
                 </Flex>
-                <Flex gap="middle" align="center">
+                <Flex vertical={isMobile} gap="middle" align="center">
                     <ResponsiveContainer width="100%" height={200}>
                         {chartData.length === 0 ? (
                             <Empty
@@ -198,7 +202,7 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                         onChange={(e) => setDays(e.target.value)}
                         value={days}
                     >
-                        <Space direction="vertical">
+                        <Space direction={isMobile ? "horizontal" : "vertical"}>
                             <Radio value={30}>Past Month</Radio>
                             <Radio value={365}>Past Year</Radio>
                             <Radio value={0}>All Time</Radio>

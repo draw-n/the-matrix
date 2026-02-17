@@ -1,0 +1,6 @@
+/* Custom dark mode drawer background to match the Menu */
+.custom-dark-drawer .ant-drawer-content,
+.custom-dark-drawer .ant-drawer-body,
+.custom-dark-drawer .ant-drawer-header {
+  background: #141a1f !important; /* Ant Design dark menu background */
+}

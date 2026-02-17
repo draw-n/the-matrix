@@ -5,7 +5,6 @@ import { useMemo } from "react";
 import {
     Button,
     Flex,
-    message,
     Popconfirm,
     Table,
     TableProps,
@@ -25,10 +24,7 @@ import { useAllUsers } from "../../hooks/useUsers";
 import { useAllEquipment } from "../../hooks/useEquipment";
 import { useDeleteIssueById } from "../../hooks/useIssues";
 
-
-const IssueTable: React.FC<WithIssues> = ({
-    issues,
-}: WithIssues) => {
+const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
     const { data: users } = useAllUsers();
     const { data: equipment } = useAllEquipment();
     const { mutateAsync: deleteIssueById } = useDeleteIssueById();
@@ -104,7 +100,10 @@ const IssueTable: React.FC<WithIssues> = ({
                 const info = userMap[userId];
                 const fullName = info?.fullName || "Unknown User";
                 return (
-                    <Tooltip style={{ textTransform: "capitalize" }} title={fullName}>
+                    <Tooltip
+                        style={{ textTransform: "capitalize" }}
+                        title={fullName}
+                    >
                         <a href={`mailto:${info?.email || ""}`}>
                             <AutoAvatar text={info?.initials || "?"} />
                         </a>
@@ -204,6 +203,7 @@ const IssueTable: React.FC<WithIssues> = ({
     return (
         <>
             <Table
+                style={{ overflow: "auto" }}
                 pagination={{
                     defaultPageSize: numRows,
                     hideOnSinglePage: true,
