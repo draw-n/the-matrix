@@ -32,6 +32,7 @@ const UserTable: React.FC = () => {
     return (
         <>
             <Table
+                style={{ overflow: "auto" }}
                 pagination={{
                     defaultPageSize: numRows,
                     hideOnSinglePage: true,

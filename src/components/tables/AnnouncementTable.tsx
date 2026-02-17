@@ -136,6 +136,7 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
 
     return (
         <Table
+            style={{ overflow: "auto" }}
             rowKey="uuid"
             pagination={{ defaultPageSize: 5, hideOnSinglePage: true }}
             columns={updateColumns}

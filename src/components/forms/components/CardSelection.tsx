@@ -1,6 +1,6 @@
 // Description: A card selection component that allows users to select from multiple options displayed as cards in a carousel format, with a fade-in effect on mount.
 
-import { Card, Carousel, Flex, theme } from "antd";
+import { Card, Carousel, Flex, theme, Grid } from "antd";
 import { useState, useEffect } from "react";
 import { ControlledValueProps } from "../../../types/common";
 
@@ -14,6 +14,10 @@ const CardSelection: React.FC<CardSelectionProps> = ({
     onChange,
 }: CardSelectionProps) => {
 
+    const screens = Grid.useBreakpoint();
+
+    const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
+    const slidesToShow = isMobile ? 1 : Math.min(3, options?.length ?? 0);
     const handleSelect = (value: string) => {
         if (onChange) {
             onChange(value);
@@ -27,6 +31,8 @@ const CardSelection: React.FC<CardSelectionProps> = ({
         return () => clearTimeout(timeout);
     }, []);
 
+
+
     return (
         <div
             style={{
@@ -39,11 +45,11 @@ const CardSelection: React.FC<CardSelectionProps> = ({
         >
             <Carousel
                 className="card-selection"
-                infinite={(options?.length ?? 0) > 3}
+                infinite={(options?.length ?? 0) > slidesToShow}
                 key={options?.length}
                 dots={false}
-                slidesToShow={Math.min(3, options?.length ?? 0)}
-                arrows={(options?.length || 0) > 3}
+                slidesToShow={slidesToShow}
+                arrows={(options?.length || 0) > slidesToShow}
             >
                 {options?.map((opt) => (
                     <Flex

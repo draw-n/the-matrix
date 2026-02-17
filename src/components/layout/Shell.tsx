@@ -34,6 +34,8 @@ import {
 import vandyLogoSmall from "../../assets/images/White_Pinstripe_V.png";
 import { checkAccess } from "../routing/HasAccess";
 
+import "./Shell.css";
+
 const { Header, Content, Sider } = Layout;
 
 interface PageItem {
@@ -171,7 +173,7 @@ const Shell: React.FC<ShellProps> = ({
 
     const { user } = useAuth();
     const screens = Grid.useBreakpoint();
-    const isMobile = !screens?.md; 
+    const isMobile = !screens?.md;
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -297,7 +299,7 @@ const Shell: React.FC<ShellProps> = ({
                                         : setCollapsed(!collapsed)
                                 }
                             />
-                            {title && (
+                            {title && !isMobile && (
                                 <Typography.Title level={1}>
                                     {title}
                                 </Typography.Title>
@@ -345,6 +347,7 @@ const Shell: React.FC<ShellProps> = ({
                     onClose={() => setDrawerOpen(false)}
                     open={drawerOpen}
                     width={260}
+                    className={themeMode === "dark" ? "custom-dark-drawer" : undefined}
                 >
                     <Menu
                         theme={themeMode}
