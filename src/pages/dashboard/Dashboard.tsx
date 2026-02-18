@@ -29,13 +29,13 @@ const Dashboard: React.FC = () => {
                             </h2>
                         </Card>
                     </Col>
-                    <Col xs={24} lg={16}>
+                    <Col xs={24} xl={16}>
                         <Flex vertical gap={16}>
                             <RemotePrintCard userId={user?.uuid} />
                             <NeedHelpCard />
                         </Flex>
                     </Col>
-                    <Col xs={24} lg={8}>
+                    <Col xs={24} xl={8}>
                         <Flex vertical gap={16}>
                             <AnnouncementCard />
 

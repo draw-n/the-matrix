@@ -13,6 +13,7 @@ import {
     FormProps,
     message,
     Tooltip,
+    Grid,
 } from "antd";
 import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/useCategories";
@@ -27,7 +28,8 @@ import HelpField from "./components/HelpField";
 const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
     const { data: categories } = useAllCategories();
     const { mutateAsync: editMaterialById } = useEditMaterialById();
     const { mutateAsync: createMaterial } = useCreateMaterial();
@@ -54,9 +56,9 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
                     iconPosition="end"
-                    shape={material ? "circle" : "round"}
+                    shape={material || isMobile ? "circle" : "round"}
                 >
-                    {material ? null : "Add New Material"}
+                    {material || isMobile ? null : "Add New Material"}
                 </Button>
             </Tooltip>
 

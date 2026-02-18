@@ -1,5 +1,8 @@
 import { CaretRightOutlined } from "@ant-design/icons";
 import { Button, Collapse, CollapseProps, Flex } from "antd";
+import orientation from "../../../assets/images/orientation.svg";
+import infill from "../../../assets/images/infill.svg";
+import featureSize from "../../../assets/images/minimum-feature.svg";
 
 interface IntroductionProps {
     next: () => void;
@@ -10,7 +13,7 @@ const items: CollapseProps["items"] = [
         key: "1",
         label: "Surface Contact & Stability",
         children: (
-            <>
+            <Flex vertical flex={1}>
                 <p>
                     The "floor" of your workspace is the{" "}
                     <span style={{ fontWeight: "bold" }}>Build Plate</span>.
@@ -31,68 +34,65 @@ const items: CollapseProps["items"] = [
                         off the base. If it’s tall and skinny, lay it down.
                     </li>
                 </ul>
-            </>
+                <Flex justify="center">
+                    <img style={{ width: 400 }} src={orientation} alt="Orientation" />
+                </Flex>
+            </Flex>
         ),
     },
-   
     {
         key: "2",
-        label: "Overhangs & Support Optimization",
+        label: "Infill and Cavities",
         children: (
-            <>
-                <p>
-                    Supports can create "scarring" along the bottom of
-                    overhangs, so keep that in mind for your print orientation
-                    and post-processing plans.
-                </p>
-                <ul>
-                    <li>
-                        Self-Supporting Geometry: Try to orient the mesh so that
-                        steep angles face up. The "top" of a print always looks
-                        better than the "bottom" (the side that touched the
-                        supports).
-                    </li>
-                    <li>
-                        Bridging: Modern printers can "bridge" a horizontal gap
-                        between two pillars for a short distance (usually
-                        10–20mm) without support. If your gap is longer than
-                        that, you must orient the part to provide a vertical
-                        path for the plastic.
-                    </li>
-                </ul>
-            </>
+            <Flex vertical flex={1} gap="large">
+                <div>
+                    <p>
+                        If printing a large part use a low infill percent{" "}
+                        {"(<15%)"} to increase the speed of the print and
+                        decrease the material needed.
+                    </p>
+                    <p>
+                        If you are printing a hollow object, ensure there is an
+                        opening. Completely sealed volumes can trap air/heat,
+                        leading to "pillowing" or surface deformities on the top
+                        layers.
+                    </p>
+                </div>
+                <Flex justify="center">
+                    <img
+                        style={{ width: 400 }}
+                        src={infill}
+                        alt="Infill and Cavities"
+                    />
+                </Flex>
+            </Flex>
         ),
     },
     {
         key: "3",
-        label: "Critical Failures to Avoid",
+        label: "Minimum Feature Size",
         children: (
-            <>
-                <ul>
-                    <li>
-                        Manifold Errors: Ensure your mesh is "watertight." If
-                        there are holes in the geometry, the toolpath will skip
-                        those sections, causing structural gaps.
-                    </li>
-                    <li>
-                        Thin-Wall Logic: Avoid geometry thinner than 0.8mm. Most
-                        nozzles are 0.4mm wide; if a wall is too thin, the
-                        slicer may decide it's "too small to print" and delete
-                        that feature entirely.
-                    </li>
-                    <li>
-                        Captive Cavities: If you are printing a hollow object,
-                        ensure there is an opening. Completely sealed volumes
-                        can trap air/heat, leading to "pillowing" or surface
-                        deformities on the top layers.
-                    </li>
-                </ul>
-            </>
+            <Flex vertical flex={1} gap="large">
+                <p>
+                    Avoid geometry thinner than 0.8mm. Most nozzles are 0.6mm
+                    wide; if a wall is too thin, the slicer may decide it's "too
+                    small to print" and delete that feature entirely.
+                </p>
+                <Flex justify="center">
+                    <img
+                        style={{ width: 400 }}
+                        src={featureSize}
+                        alt="Minimum Feature Size"
+                    />
+                </Flex>
+            </Flex>
         ),
     },
 ];
 
-const Introduction: React.FC<IntroductionProps> = ({ next }: IntroductionProps) => {
+const Introduction: React.FC<IntroductionProps> = ({
+    next,
+}: IntroductionProps) => {
     return (
         <>
             <Flex vertical style={{ width: "100%" }} gap="large">
