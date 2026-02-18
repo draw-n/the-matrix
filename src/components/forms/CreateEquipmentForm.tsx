@@ -1,7 +1,6 @@
 // Description: Form component for creating new equipment entries.
 import { useState } from "react";
 
-
 import {
     Input,
     Form,
@@ -12,6 +11,7 @@ import {
     FormProps,
     Flex,
     Switch,
+    Grid,
 } from "antd";
 import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
 import { Equipment } from "../../types/equipment";
@@ -20,14 +20,15 @@ import { useAllCategories } from "../../hooks/useCategories";
 
 import HelpField from "./components/HelpField";
 
-
 const CreateEquipmentForm: React.FC = () => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
+
     const { data: categories } = useAllCategories();
     const { mutateAsync: createEquipment } = useCreateEquipment();
-    
+
     const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
         await createEquipment({ newEquipment: values });
         setIsModalOpen(false);
@@ -43,9 +44,9 @@ const CreateEquipmentForm: React.FC = () => {
                     iconPosition="end"
                     icon={<PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
-                    shape="round"
+                    shape={isMobile ? "circle" : "round"}
                 >
-                    Add New Equipment
+                    {isMobile ? "" : "Add New Equipment"}
                 </Button>
             </Tooltip>
 

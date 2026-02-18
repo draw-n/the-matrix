@@ -1,7 +1,7 @@
 // Description: EditUpdates component with tabs for editing issues and announcements.
 import { useNavigate } from "react-router-dom";
 
-import { Button, Flex, Space, Tabs, TabsProps } from "antd";
+import { Button, Flex, Grid, Space, Tabs, TabsProps } from "antd";
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
 
 import AnnouncementForm from "../../components/forms/AnnouncementForm";
@@ -55,7 +55,8 @@ const AnnouncementTab: React.FC = () => {
 
 const IssueTab: React.FC = () => {
     const {data: issues} = useAllIssues();
-
+    const screens = Grid.useBreakpoint();
+    const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
     const navigate = useNavigate();
 
     return (
@@ -72,9 +73,9 @@ const IssueTab: React.FC = () => {
                     icon={<PlusOutlined />}
                     onClick={() => navigate("/report")}
                     iconPosition="end"
-                    shape={"round"}
+                    shape={isMobile ? "circle" : "round"}
                 >
-                    Add New Issue
+                    {isMobile ? null : "Add New Issue"}
                 </Button>
             </Flex>
             <IssueTable issues={issues} />
