@@ -10,13 +10,8 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
     const [isLoading, setIsLoading] = useState(true);
     const streamUrl = `http://${equipment?.cameraUrl}/stream`;
 
-    const handleRetry = () => {
-        setIsLoading(true);
-        setError(false);
-    };
-
     return (
-        <Card style={{ width: "100%", overflow: "hidden" }}>
+        <Card style={{ height: "100%", width: "100%", overflow: "hidden" }}>
             <Typography.Title level={2} style={{ marginBottom: "16px" }}>
                 LIVE PRINTER FEED
             </Typography.Title>
@@ -25,7 +20,6 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
                 style={{
                     position: "relative",
                     width: "100%",
-                    backgroundColor: "#000",
                     borderRadius: "8px",
                     overflow: "hidden",
                     display: "flex",
@@ -45,12 +39,8 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
                     <Result
                         status="warning"
                         title="Feed Offline"
-                        subTitle="Ensure the Raspberry Pi is powered on."
-                        extra={
-                            <Button type="primary" onClick={handleRetry}>
-                                Reconnect
-                            </Button>
-                        }
+                        subTitle="Try refreshing the page."
+                        
                     />
                 ) : (
                     <img

@@ -14,6 +14,7 @@ import type { UploadFile } from "antd";
 
 import MeshViewer from "../../../components/meshViewer/MeshViewer";
 import { checkAccess } from "../../../components/routing/HasAccess";
+import { or } from "three/tsl";
 const { Dragger } = Upload;
 
 interface UploadFileProps {
@@ -55,7 +56,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     const updatedFile = {
                         ...uploadedFile[0],
                         url: serverFileUrl, // React components prefer 'url'
-                        originFileObj: undefined, // Clear the local blob so viewers are forced to fetch URL
+                        originFileObj: undefined, // Clear the local file object to free memory
                     };
 
                     setUploadedFile([updatedFile]);

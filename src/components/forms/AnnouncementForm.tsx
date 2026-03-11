@@ -12,8 +12,17 @@ import {
     Tooltip,
     FormProps,
     Flex,
+    Upload,
+    UploadFile,
+    UploadProps,
+    message,
 } from "antd";
-import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    CaretDownFilled,
+    EditOutlined,
+    PlusOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
 
 import type {
     Announcement,
@@ -25,8 +34,6 @@ import {
     useCreateAnnouncement,
 } from "../../hooks/useAnnouncements";
 
-
-
 const AnnouncementForm: React.FC<WithAnnouncement> = ({
     announcement,
 }: WithAnnouncement) => {
@@ -35,28 +42,78 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { mutateAsync: editAnnouncementById } = useEditAnnouncementById();
     const { mutateAsync: createAnnouncement } = useCreateAnnouncement();
+    const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
+
     const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
-        if (announcement) {
-            const editedAnnouncement: Announcement = {
-                ...values,
-                lastUpdatedBy: user?.uuid || announcement.createdBy,
-                dateLastUpdated: new Date(),
-            };
-            await editAnnouncementById({
-                announcementId: announcement.uuid,
-                editedAnnouncement: editedAnnouncement,
-            });
-        } else {
-            const announcement = {
-                ...values,
-                createdBy: user?.uuid,
-                dateCreated: new Date(),
-                status: "posted" as AnnouncementStatus,
-            };
-            await createAnnouncement(announcement);
-            form.resetFields();
+        try {
+            if (announcement) {
+                const editedAnnouncement: Announcement = {
+                    ...values,
+                    lastUpdatedBy: user?.uuid || announcement.createdBy,
+                    dateLastUpdated: new Date(),
+                };
+                await editAnnouncementById({
+                    announcementId: announcement.uuid,
+                    updatedAnnouncement: editedAnnouncement,
+                    file: uploadedFile[0]?.originFileObj,
+                });
+            } else {
+                const newAnnouncement = {
+                    ...values,
+                    createdBy: user?.uuid,
+                    dateCreated: new Date(),
+                    status: "posted" as AnnouncementStatus,
+                };
+                await createAnnouncement({
+                    newAnnouncement: newAnnouncement,
+                    file: uploadedFile[0]?.originFileObj,
+                });
+                form.resetFields();
+            }
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error("Failed to submit the announcement.");
         }
-        setIsModalOpen(false);
+    };
+
+    const props: UploadProps = {
+        beforeUpload: (file) => {
+            // 1. Validate File Extension
+            const isValidExtension =
+                file.name.toLowerCase().endsWith(".jpg") ||
+                file.name.toLowerCase().endsWith(".png") ||
+                file.name.toLowerCase().endsWith(".gif") ||
+                file.name.toLowerCase().endsWith(".bmp") ||
+                file.name.toLowerCase().endsWith(".webp") ||
+                file.name.toLowerCase().endsWith(".tiff") ||
+                file.name.toLowerCase().endsWith(".raw") ||
+                file.name.toLowerCase().endsWith(".svg") ||
+                file.name.toLowerCase().endsWith(".jpeg");
+
+            if (!isValidExtension) {
+                message.error("Only image files are supported.");
+                return Upload.LIST_IGNORE;
+            }
+            // 2. Validate File Size (50MB)
+            const isLt50M = file.size / 1024 / 1024 < 50;
+
+            if (!isLt50M) {
+                message.error("File must be smaller than 50MB.");
+                return Upload.LIST_IGNORE;
+            }
+
+            // 3. Update State
+            setUploadedFile([
+                {
+                    uid: file.uid,
+                    name: file.name,
+                    status: "done",
+                    originFileObj: file,
+                },
+            ]);
+
+            return false; // Prevent auto upload
+        },
     };
 
     return (
@@ -154,6 +211,21 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
                         ]}
                     >
                         <Input.TextArea size="small" rows={6} />
+                    </Form.Item>
+                    <Form.Item name="file">
+                        <Upload
+                            {...props}
+                            fileList={uploadedFile}
+                            listType="picture"
+                        >
+                            <Button
+                                shape="round"
+                                type="default"
+                                icon={<UploadOutlined />}
+                            >
+                                Upload Image
+                            </Button>
+                        </Upload>
                     </Form.Item>
                 </Form>
             </Modal>

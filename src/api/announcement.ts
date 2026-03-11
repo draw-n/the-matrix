@@ -16,7 +16,9 @@ export const getAllAnnouncements = async (statuses?: string[]) => {
         return response.data;
     } catch (error: any) {
         console.error("Error fetching announcements:", error);
-        throw new Error(error.response?.data.message || "Failed to retrieve announcements.");
+        throw new Error(
+            error.response?.data.message || "Failed to retrieve announcements.",
+        );
     }
 };
 
@@ -29,19 +31,34 @@ export const getAllAnnouncements = async (statuses?: string[]) => {
 export const editAnnouncementById = async (
     announcementId: string,
     updatedAnnouncement: Partial<Announcement>,
+    file?: File,
 ) => {
     if (announcementId === "") {
         throw new Error("Announcement ID not found.");
     }
     try {
-        const response = await axios.put(
-            `${import.meta.env.VITE_BACKEND_URL}/announcements/${announcementId}`,
-            updatedAnnouncement,
+        const formData = new FormData();
+        Object.keys(updatedAnnouncement).forEach((key) => {
+            formData.append(
+                key,
+                (updatedAnnouncement as Record<string, any>)[key] as string,
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
+
+        const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/announcements`,
+            formData,
         );
         return response.data;
     } catch (error: any) {
         console.error("Error updating announcement:", error);
-        throw new Error(error.response?.data.message || "Failed to update announcement.");
+        throw new Error(
+            error.response?.data.message || "Failed to update announcement.",
+        );
     }
 };
 
@@ -52,16 +69,31 @@ export const editAnnouncementById = async (
  */
 export const createAnnouncement = async (
     newAnnouncement: Partial<Announcement>,
+    file?: File,
 ) => {
     try {
+        const formData = new FormData();
+        Object.keys(newAnnouncement).forEach((key) => {
+            formData.append(
+                key,
+                (newAnnouncement as Record<string, any>)[key] as string,
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
+
         const response = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/announcements`,
-            newAnnouncement,
+            formData,
         );
         return response.data;
     } catch (error: any) {
         console.error("Error creating announcement:", error);
-        throw new Error(error.response?.data.message || "Failed to create announcement.");
+        throw new Error(
+            error.response?.data.message || "Failed to create announcement.",
+        );
     }
 };
 
@@ -81,6 +113,8 @@ export const deleteAnnouncementById = async (announcementId: string) => {
         return response.data;
     } catch (error: any) {
         console.error("Error deleting announcement:", error);
-        throw new Error(error.response?.data.message || "Failed to delete announcement.");
+        throw new Error(
+            error.response?.data.message || "Failed to delete announcement.",
+        );
     }
 };

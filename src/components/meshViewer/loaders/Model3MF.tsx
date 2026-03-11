@@ -29,62 +29,92 @@ const Model3MF = ({
     }, [file]);
 
     const colorPrimary = theme.useToken().token.colorPrimary;
-    const [object, setObject] = useState<THREE.Object3D | null>(null);
 
     useEffect(() => {
         if (!objectUrl) return;
 
         const loader = new ThreeMFLoader();
-        loader.load(
-            objectUrl,
-            (obj: any) => {
-                // --- RESET ROTATION ---
-                // ThreeMFLoader automatically rotates 3MFs to Y-up (rotation.x = -PI/2).
-                // We undo this to match our Z-up world.
-                obj.rotation.set(0, 0, 0);
-                obj.scale.set(1, 1, 1);
-                obj.position.set(0, 0, 0);
-                obj.updateMatrixWorld(true);
-                // ---------------------------
 
-                const merged = mergeAllGeometries(obj);
-                if (!merged) {
-                    console.warn("No geometries found in 3MF");
-                    return;
+        const handleObject = (obj: any) => {
+            // --- RESET ROTATION ---
+            obj.rotation.set(0, 0, 0);
+            obj.scale.set(1, 1, 1);
+            obj.position.set(0, 0, 0);
+            obj.updateMatrixWorld(true);
+
+            const merged = mergeAllGeometries(obj);
+            if (!merged) {
+                console.warn("No geometries found in 3MF");
+                return;
+            }
+            merged.computeVertexNormals();
+            merged.computeBoundingBox();
+            const bbox = merged.boundingBox!;
+
+            // Center X/Y, flush Z to ground
+            const center = bbox.getCenter(new THREE.Vector3());
+            const minZ = bbox.min.z;
+
+            // Bake position into geometry
+            merged.applyMatrix4(
+                new THREE.Matrix4().makeTranslation(
+                    -center.x,
+                    -center.y,
+                    -minZ,
+                ),
+            );
+
+            const mesh = new THREE.Mesh(
+                merged,
+                new THREE.MeshStandardMaterial({ color: colorPrimary, opacity: 1 }),
+            );
+            mesh.position.set(0, 0, 0);
+
+            const edges = new THREE.LineSegments(
+                new THREE.EdgesGeometry(merged),
+                new THREE.LineBasicMaterial({
+                    color: "black",
+                    linewidth: 5,
+                    polygonOffset: true,
+                    polygonOffsetFactor: -1,
+                    polygonOffsetUnits: -1,
+                })
+            );
+            mesh.add(edges);
+
+            onLoad?.(mesh);
+        };
+
+        if (objectUrl.startsWith("http")) {
+            (async () => {
+                try {
+                    const headers: Record<string, string> = {};
+                    const token = localStorage.getItem("authToken");
+                    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                    const resp = await fetch(objectUrl, {
+                        method: "GET",
+                        credentials: "include",
+                        headers,
+                    });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+                    const buffer = await resp.arrayBuffer();
+                    const obj = loader.parse(buffer);
+                    handleObject(obj);
+                } catch (err: any) {
+                    console.error("Error loading 3MF via fetch:", err);
                 }
-                merged.computeVertexNormals();
-                merged.computeBoundingBox();
-                const bbox = merged.boundingBox!;
-                
-                // Center X/Y, flush Z to ground
-                const center = bbox.getCenter(new THREE.Vector3());
-                const minZ = bbox.min.z;
-                
-                // Bake position into geometry
-                merged.applyMatrix4(
-                    new THREE.Matrix4().makeTranslation(
-                        -center.x,
-                        -center.y,
-                        -minZ,
-                    ),
-                );
-                
-                // Use Ant Design's colorPrimary token for 3MF meshes (matches STL)
-                const mesh = new THREE.Mesh(
-                    merged,
-                    new THREE.MeshStandardMaterial({ color: colorPrimary }),
-                );
-                mesh.position.set(0, 0, 0); // Reset position
-                
-                setObject(mesh);
-                onLoad?.(mesh);
-            },
-            undefined,
-            (err: any) => console.error("Error loading 3MF:", err),
-        );
+            })();
+        } else {
+            loader.load(
+                objectUrl,
+                (obj: any) => handleObject(obj),
+                undefined,
+                (err: any) => console.error("Error loading 3MF:", err),
+            );
+        }
 
         return () => {
-            // Only revoke if it was a blob URL we created
             if (objectUrl && objectUrl.startsWith("blob:")) {
                 URL.revokeObjectURL(objectUrl);
             }

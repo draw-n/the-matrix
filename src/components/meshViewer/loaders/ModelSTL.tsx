@@ -39,26 +39,54 @@ const ModelSTL = ({
         if (!objectUrl) return;
 
         const loader = new STLLoader();
-        loader.load(
-            objectUrl,
-            (geo: any) => {
-                geo.computeBoundingBox();
-                const bbox = geo.boundingBox!;
-                // Center X/Y, flush Z to ground
-                const center = bbox.getCenter(new THREE.Vector3());
-                const minZ = bbox.min.z;
 
-                // Move vertices to center
-                geo.translate(-center.x, -center.y, -minZ);
-                
-                setGeometry(geo);
-            },
-            undefined,
-            (err: any) => {
-                console.error("Error loading STL:", err);
-                setGeometry(null);
-            }
-        );
+        const handleGeometry = (geo: any) => {
+            geo.computeBoundingBox();
+            const bbox = geo.boundingBox!;
+            // Center X/Y, flush Z to ground
+            const center = bbox.getCenter(new THREE.Vector3());
+            const minZ = bbox.min.z;
+
+            // Move vertices to center
+            geo.translate(-center.x, -center.y, -minZ);
+
+            setGeometry(geo);
+        };
+
+        // If it's a remote HTTP URL, fetch with credentials so session cookies are sent
+        if (objectUrl.startsWith("http")) {
+            (async () => {
+                try {
+                    const headers: Record<string, string> = {};
+                    const token = localStorage.getItem("authToken");
+                    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                    const resp = await fetch(objectUrl, {
+                        method: "GET",
+                        credentials: "include",
+                        headers,
+                    });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+                    const buffer = await resp.arrayBuffer();
+                    const geo = loader.parse(buffer);
+                    handleGeometry(geo as any);
+                } catch (err: any) {
+                    console.error("Error loading STL via fetch:", err);
+                    setGeometry(null);
+                }
+            })();
+        } else {
+            // Blob URL or local, let the loader handle it
+            loader.load(
+                objectUrl,
+                (geo: any) => handleGeometry(geo),
+                undefined,
+                (err: any) => {
+                    console.error("Error loading STL:", err);
+                    setGeometry(null);
+                },
+            );
+        }
 
         // Clean up ONLY if we created a Blob URL
         return () => {
@@ -76,6 +104,19 @@ const ModelSTL = ({
     }, [geometry, onLoad]);
 
     if (!geometry) return null;
+
+    // Add edges overlay for the loaded STL model
+    const edges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(geometry),
+        new THREE.LineBasicMaterial({
+            color: "black",
+            linewidth: 5, // Increase line width for better visibility
+            polygonOffset: true, // Prevent z-fighting with the mesh
+            polygonOffsetFactor: -1,
+            polygonOffsetUnits: -1,
+        })
+    );
+    meshRef.current?.add(edges);
 
     return (
         <mesh
