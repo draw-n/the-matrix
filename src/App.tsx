@@ -29,10 +29,16 @@ import EquipmentProfileLoader from "./pages/equipmentProfile/EquipmentProfileLoa
 import UserProfileLoader from "./pages/profile/UserProfileLoader.tsx";
 
 const App: React.FC = () => {
-    const [theme, setTheme] = useState<"light" | "dark">("light");
+    const [theme, setTheme] = useState<"light" | "dark">(
+        window.localStorage.getItem("theme") === "dark" ? "dark" : "light",
+    );
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+        window.localStorage.setItem(
+            "theme",
+            theme === "light" ? "dark" : "light",
+        );
     };
 
     return (
@@ -79,9 +85,7 @@ const App: React.FC = () => {
                                                     "moderator",
                                                     "admin",
                                                 ]}
-                                                children={
-                                                    <UserProfileLoader />
-                                                }
+                                                children={<UserProfileLoader />}
                                             />
                                         }
                                     />
@@ -170,9 +174,7 @@ const App: React.FC = () => {
                                                     "admin",
                                                 ]}
                                                 title="User Profile"
-                                                children={
-                                                    <Profile />
-                                                }
+                                                children={<Profile />}
                                             />
                                         }
                                     />

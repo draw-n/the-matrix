@@ -23,6 +23,10 @@ export interface WithJob {
     job?: Job;
 }
 
+export interface WithJobs {
+    jobs?: Job[];
+}
+
 export interface MeshFace {
     id?: number;
     centroid: THREE.Vector3;

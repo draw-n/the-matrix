@@ -1,6 +1,16 @@
 // Description: HeaderCard component for displaying equipment header information.
 import { useState } from "react";
-import { Card, Flex, Tag, theme, Button, Input, Form, Select, Typography } from "antd";
+import {
+    Card,
+    Flex,
+    Tag,
+    theme,
+    Button,
+    Input,
+    Form,
+    Select,
+    Typography,
+} from "antd";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
 import { Equipment, WithEquipment } from "../../../types/equipment";
@@ -17,7 +27,7 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
 }: HeaderCardProps) => {
     const [form] = Form.useForm();
     const {
-        token: { colorPrimary},
+        token: { colorPrimary },
     } = theme.useToken();
     const [editMode, setEditMode] = useState(false);
     const { data: categories } = useAllCategories();
@@ -47,114 +57,127 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                     handleClick(editMode, setEditMode, form.getFieldsValue())
                 }
             >
-                <Flex
-                    style={{ flex: 1 }}
-                    vertical
-                    align="flex-start"
-                    gap="small"
-                >
-                    <Form.Item name="categoryId" noStyle>
-                        {editMode ? (
-                            <Select
-                                size="small"
-                                style={{
-                                    width: "auto",
-                                    minWidth: "fit-content",
-                                    flexShrink: 0,
-                                }}
-                                popupMatchSelectWidth={false}
-                                options={categories?.map((category) => ({
-                                    label: category.name,
-                                    value: category.uuid,
-                                }))}
-                            />
-                        ) : (
-                            <Tag style={{ textTransform: "uppercase" }}>
-                                {
-                                    categories?.find(
-                                        (item) => item.uuid === categoryId,
-                                    )?.name
-                                }
-                            </Tag>
-                        )}
-                    </Form.Item>
-
-                    <Typography.Title
-                        level={1}
-                        style={{
-                            margin: 0,
-                            color: "white",
-                            textTransform: "uppercase",
-                        }}
+                <Flex align="space-between">
+                    <Flex
+                        style={{ flex: 1 }}
+                        vertical
+                        align="space-between"
+                        gap="small"
                     >
-                        <Form.Item
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input the name!",
-                                },
-                            ]}
-                            noStyle
-                        >
-                            {editMode ? (
-                                <Input
-                                    style={{
-                                        color: "white",
-                                        textTransform: "uppercase",
-                                        fontSize: "inherit",
-                                        fontWeight: "inherit",
-                                        background: "transparent",
-                                        borderColor: "white",
-                                    }}
-                                />
-                            ) : (
-                                <span>{name}</span>
-                            )}
-                        </Form.Item>
-                    </Typography.Title>
-                    <Flex style={{ width: "100%" }} vertical>
-                        <p style={{ color: "white" }}>
-                            <Form.Item
-                                name="headline"
-                                noStyle={!editMode}
-                                label={
-                                    <span style={{ color: "white" }}>
-                                        Headline
-                                    </span>
-                                }
+                        <Flex gap="large" align="center">
+                            <Typography.Title
+                                level={1}
+                                style={{
+                                    margin: 0,
+                                    color: "white",
+                                    textTransform: "uppercase",
+                                }}
                             >
+                                <Form.Item
+                                    name="name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please input the name!",
+                                        },
+                                    ]}
+                                    noStyle
+                                >
+                                    {editMode ? (
+                                        <Input
+                                            style={{
+                                                color: "white",
+                                                textTransform: "uppercase",
+                                                fontSize: "inherit",
+                                                fontWeight: "inherit",
+                                                background: "transparent",
+                                                borderColor: "white",
+                                            }}
+                                        />
+                                    ) : (
+                                        <span>{name}</span>
+                                    )}
+                                </Form.Item>
+                            </Typography.Title>
+                            <Form.Item name="categoryId" noStyle>
                                 {editMode ? (
-                                    <Input
+                                    <Select
+                                        size="small"
                                         style={{
-                                            fontSize: "inherit",
-                                            margin: "inherit",
-                                            backgroundColor: "inherit",
-                                            color: "white",
-                                            fontWeight: "inherit",
-                                            borderColor: "white",
+                                            width: "auto",
+                                            minWidth: "fit-content",
+                                            flexShrink: 0,
                                         }}
+                                        popupMatchSelectWidth={false}
+                                        options={categories?.map(
+                                            (category) => ({
+                                                label: category.name,
+                                                value: category.uuid,
+                                            }),
+                                        )}
                                     />
                                 ) : (
-                                    <span>{headline}</span>
+                                    <Tag style={{ textTransform: "uppercase" }}>
+                                        {
+                                            categories?.find(
+                                                (item) =>
+                                                    item.uuid === categoryId,
+                                            )?.name
+                                        }
+                                    </Tag>
                                 )}
                             </Form.Item>
-                        </p>
+                        </Flex>
+                        <Flex style={{ width: "100%" }} vertical>
+                            <p style={{ color: "white" }}>
+                                <Form.Item
+                                    name="headline"
+                                    noStyle={!editMode}
+                                    label={
+                                        <span style={{ color: "white" }}>
+                                            Headline
+                                        </span>
+                                    }
+                                >
+                                    {editMode ? (
+                                        <Input
+                                            style={{
+                                                fontSize: "inherit",
+                                                margin: "inherit",
+                                                backgroundColor: "inherit",
+                                                color: "white",
+                                                fontWeight: "inherit",
+                                                borderColor: "white",
+                                            }}
+                                        />
+                                    ) : (
+                                        <span>{headline}</span>
+                                    )}
+                                </Form.Item>
+                            </p>
+                        </Flex>
                     </Flex>
-                </Flex>
-                <Flex justify="flex-end" align="center">
-                    <HasAccess roles={["admin", "moderator"]}>
-                        <Button
-                            shape="circle"
-                            variant="text"
-                            type="default"
-                            ghost
-                            htmlType="submit"
-                            icon={
-                                editMode ? <SaveOutlined /> : <EditOutlined />
-                            }
-                        />
-                    </HasAccess>
+                    <Flex vertical justify="space-between" gap="middle" align="end">
+                        <HasAccess roles={["admin", "moderator"]}>
+                            <Button
+                                shape="circle"
+                                variant="text"
+                                type="default"
+                                ghost
+                                htmlType="submit"
+                                icon={
+                                    editMode ? (
+                                        <SaveOutlined />
+                                    ) : (
+                                        <EditOutlined />
+                                    )
+                                }
+                            />
+                        </HasAccess>
+                        <Tag style={{ textTransform: "uppercase" }}>
+                            {equipment?.status}
+                        </Tag>
+                    </Flex>
                 </Flex>
             </Form>
         </Card>

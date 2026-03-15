@@ -3,9 +3,9 @@ import { Card, Typography, Button, Result, Spin } from "antd";
 import { Equipment, WithEquipment } from "../../../types/equipment";
 import { EditableComponentProps } from "../../../types/common";
 
-type CameraCardProps = EditableComponentProps<Equipment> & WithEquipment;
+type LiveFeedProps = EditableComponentProps<Equipment> & WithEquipment;
 
-const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
+const LiveFeed: React.FC<LiveFeedProps> = ({ equipment, handleClick }) => {
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const streamUrl = `http://${equipment?.cameraUrl}/stream`;
@@ -66,4 +66,4 @@ const CameraCard: React.FC<CameraCardProps> = ({ equipment, handleClick }) => {
     );
 };
 
-export default CameraCard;
+export default LiveFeed;
