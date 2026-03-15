@@ -103,6 +103,8 @@ const Review: React.FC<ReviewProps> = ({
             ),
         },
     ];
+
+    console.log("Review - Uploaded File:", uploadedFile);
     return (
         <>
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -143,11 +145,9 @@ const Review: React.FC<ReviewProps> = ({
                                     showRemoveIcon: false,
                                     showPreviewIcon: true,
                                 }}
-                                customRequest={({ file, onSuccess }) => {
-                                    // Simulating file upload
-                                }}
+                                customRequest={({ file, onSuccess }) => {}}
                             />
-                            <MeshViewer file={uploadedFile[0]} />
+                            <MeshViewer file={uploadedFile[0]} allowFaceSelection={false} />
                         </Card>
                     </Col>
                 </Row>

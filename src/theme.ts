@@ -54,6 +54,10 @@ const lightTheme: ThemeConfig = {
         Modal: {
             lineWidth: 1,
         },
+        Tag: {
+            borderRadius: 1000,
+            fontWeightStrong: 500,
+        },
     },
 };
 
@@ -63,6 +67,8 @@ const darkTheme: ThemeConfig = {
         colorFillSecondary: geekblue[2],
         colorBgContainer: "#1f2228", // Slightly blue hue added to dark container background
         colorBgBase: "#141a1f", // Slightly blue hue added to dark background
+        borderRadius: 4,
+        borderRadiusSM: 4,
         colorBorder: "#434343",
         colorBorderBg: "#434343",
         colorBorderSecondary: "#595959",
@@ -109,6 +115,10 @@ const darkTheme: ThemeConfig = {
         },
         Modal: {
             lineWidth: 1,
+        },
+        Tag: {
+            borderRadius: 4,
+            fontWeightStrong: 500,
         },
     },
 };

@@ -29,11 +29,13 @@ export const useEditAnnouncementById = () => {
     return useMutation({
         mutationFn: ({
             announcementId,
-            editedAnnouncement,
+            updatedAnnouncement,
+            file,
         }: {
             announcementId: string;
-            editedAnnouncement: Partial<Announcement>;
-        }) => editAnnouncementById(announcementId, editedAnnouncement),
+            updatedAnnouncement: Partial<Announcement>;
+            file?: File;
+        }) => editAnnouncementById(announcementId, updatedAnnouncement, file),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["announcements"],
@@ -53,8 +55,13 @@ export const useEditAnnouncementById = () => {
 export const useCreateAnnouncement = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newAnnouncement: Partial<Announcement>) =>
-            createAnnouncement(newAnnouncement),
+        mutationFn: ({
+            newAnnouncement,
+            file,
+        }: {
+            newAnnouncement: Partial<Announcement>;
+            file?: File;
+        }) => createAnnouncement(newAnnouncement, file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["announcements"] });
             message.success("Announcement created successfully.");

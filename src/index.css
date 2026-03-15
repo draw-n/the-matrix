@@ -27,3 +27,8 @@ input,
 textarea {
     white-space: pre-wrap;
 }
+
+/* Make only Ant Design tags pill-shaped without affecting other components */
+.ant-tag {
+    border-radius: 1000px !important;
+}

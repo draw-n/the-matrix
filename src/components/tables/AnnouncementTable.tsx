@@ -9,6 +9,7 @@ import {
     Tag,
     Tooltip,
     theme,
+    Flex,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { cyan, magenta, purple } from "@ant-design/colors";
@@ -108,26 +109,23 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
                       title: "Actions",
                       key: "action",
                       render: (_: any, record: Announcement) => (
-                          console.log(record.uuid),
-                          (
-                              <Space>
-                                  <AnnouncementForm announcement={record} />
-                                  <Popconfirm
-                                      title="Delete Announcement"
-                                      onConfirm={() =>
-                                          deleteAnnouncementById({
-                                              announcementId: record.uuid || "",
-                                          })
-                                      }
-                                  >
-                                      <Button
-                                          icon={<DeleteOutlined />}
-                                          shape="circle"
-                                          danger
-                                      />
-                                  </Popconfirm>
-                              </Space>
-                          )
+                          <Space>
+                              <AnnouncementForm announcement={record} />
+                              <Popconfirm
+                                  title="Delete Announcement"
+                                  onConfirm={() =>
+                                      deleteAnnouncementById({
+                                          announcementId: record.uuid || "",
+                                      })
+                                  }
+                              >
+                                  <Button
+                                      icon={<DeleteOutlined />}
+                                      shape="circle"
+                                      danger
+                                  />
+                              </Popconfirm>
+                          </Space>
                       ),
                   },
               ]
@@ -144,14 +142,34 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
             size="middle"
             expandable={{
                 expandedRowRender: (record) => (
-                    <div style={{ padding: "8px 24px" }}>
-                        <p>
-                            <b>Title:</b> {record.title}
-                        </p>
-                        <p>
-                            <b>Description:</b>
-                        </p>
-                        <p>{record.description}</p>
+                    <div style={{ padding: "24px" }}>
+                        <Flex justify="space-between">
+                            <Flex vertical gap="small">
+                                <p>
+                                    <b>Title:</b> {record.title}
+                                </p>
+                                <p>
+                                    <b>Description:</b>
+                                </p>
+                                <p>{record.description}</p>
+                            </Flex>
+
+                            {record.imageName && (
+                                <Flex vertical align="center" gap="small">
+                                    <p>
+                                        <b>Image</b>
+                                    </p>
+                                    <img
+                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${record.imageName}`}
+                                        alt={record.title}
+                                        style={{
+                                            maxWidth: "200px",
+                                            height: "auto",
+                                        }}
+                                    />
+                                </Flex>
+                            )}
+                        </Flex>
                     </div>
                 ),
                 rowExpandable: (record) => !!record.description,

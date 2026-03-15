@@ -2,6 +2,7 @@ import { Button, Flex, Result } from "antd";
 import { WithJob } from "../../../types/job";
 import { useAllJobs } from "../../../hooks/useJobs";
 import { useEquipmentById } from "../../../hooks/useEquipment";
+import { formatTime } from "../../../types/common";
 
 const Submitted: React.FC<WithJob> = ({ job }) => {
     const { data } = useAllJobs();
@@ -44,13 +45,6 @@ const Submitted: React.FC<WithJob> = ({ job }) => {
                       0,
                   )
             : job?.estimatedTimeSeconds || 0;
-
-    const formatTime = (totalSeconds: number) => {
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        const s = totalSeconds % 60;
-        return { h, m, s };
-    };
 
     const totalTime = formatTime(totalSeconds);
     const myTime = formatTime(job?.estimatedTimeSeconds || 0);

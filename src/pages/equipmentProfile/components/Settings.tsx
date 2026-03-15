@@ -10,9 +10,9 @@ import { EditableComponentProps } from "../../../types/common";
 import { Equipment, WithEquipment } from "../../../types/equipment";
 import { useDeleteEquipmentById } from "../../../hooks/useEquipment";
 
-type AdminCardProps = WithEquipment & EditableComponentProps<Equipment>;
+type SettingsProps = WithEquipment & EditableComponentProps<Equipment>;
 
-const AdminCard: React.FC<AdminCardProps> = ({ equipment, handleClick }) => {
+const Settings: React.FC<SettingsProps> = ({ equipment, handleClick }) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [editMode, setEditMode] = useState(false);
@@ -126,4 +126,4 @@ const AdminCard: React.FC<AdminCardProps> = ({ equipment, handleClick }) => {
     );
 };
 
-export default AdminCard;
+export default Settings;

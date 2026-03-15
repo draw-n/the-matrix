@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 
 const FocusCameraOnLoad = ({ mesh }: { mesh: THREE.Object3D }) => {
-    const { camera, controls } = useThree() as any;
+    const { camera } = useThree() as any;
 
     useEffect(() => {
         if (!mesh) return;
@@ -15,20 +15,15 @@ const FocusCameraOnLoad = ({ mesh }: { mesh: THREE.Object3D }) => {
         const size = box.getSize(new THREE.Vector3());
 
         const maxDim = Math.max(size.x, size.y, size.z);
-        const fitDistance = maxDim * 1.5;
+        const fitDistance = Math.sqrt(300 * 300 + 300 * 300 + 240 * 240) * 0.5; // Adjust the multiplier as needed
 
-        camera.position.set(center.x, center.y, center.z + fitDistance);
+        camera.position.set(center.x, center.y + fitDistance, center.z + 100);
         camera.up.set(0, 0, 1);
         camera.lookAt(center);
         camera.updateProjectionMatrix();
-
-        if (controls) {
-            controls.target.copy(center);
-            controls.update();
-        }
     }, [mesh]);
 
     return null;
-}
+};
 
 export default FocusCameraOnLoad;

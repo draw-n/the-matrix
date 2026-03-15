@@ -1,27 +1,23 @@
 // Description: EquipmentProfile component for displaying and editing equipment details.
 
-import { Card, Col, Row, Space, Typography } from "antd";
+import { Col, Row, Space, Tabs, TabsProps } from "antd";
 import { Equipment, WithEquipment } from "../../types/equipment";
-import { useAllEquipment, useEditEquipmentById } from "../../hooks/useEquipment";
-import IssueTable from "../../components/tables/IssueTable";
-import { useAllIssues } from "../../hooks/useIssues";
+import {
+    useAllEquipment,
+    useEditEquipmentById,
+} from "../../hooks/useEquipment";
 
 import HeaderCard from "./components/HeaderCard";
-import StatusCard from "./components/StatusCard";
 import QueueCard from "../../components/dashboard/QueueCard";
-import AdminCard from "./components/AdminCard";
-import DescriptionCard from "./components/DescriptionCard";
-import CameraCard from "./components/CameraCard";
-import HasAccess from "../../components/routing/HasAccess";
+import Settings from "./components/Settings";
+import LiveFeed from "./components/LiveFeed";
+import HasAccess, { checkAccess } from "../../components/routing/HasAccess";
+import General from "./components/General";
 
 const EquipmentProfile: React.FC<WithEquipment> = ({
     equipment,
 }: WithEquipment) => {
     const { refetch: equipmentRefresh } = useAllEquipment();
-    const { data: issues, refetch } = useAllIssues(
-        equipment ? ["open", "in-progress", "completed"] : undefined,
-        equipment ? equipment.uuid : undefined,
-    );
 
     const { mutateAsync: editEquipmentById } = useEditEquipmentById();
 
@@ -47,58 +43,57 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
         setEditMode(!editMode);
     };
 
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: "General",
+            children: (
+                <General equipment={equipment} handleClick={handleEditClick} />
+            ),
+        },
+        {
+            key: "2",
+            label: "Print History",
+            children: <QueueCard equipmentId={equipment?.uuid} />,
+        },
+        ...(equipment && equipment?.cameraUrl
+            ? [
+                  {
+                      key: "3",
+                      label: "Live Feed",
+                      children: (
+                          <LiveFeed
+                              equipment={equipment}
+                              handleClick={handleEditClick}
+                          />
+                      ),
+                  },
+              ]
+            : []),
+        ...(checkAccess(["admin", "moderator"])
+            ? [
+                  {
+                      key: "4",
+                      label: "Settings",
+                      children: (
+                          <Settings
+                              equipment={equipment}
+                              handleClick={handleEditClick}
+                          />
+                      ),
+                  },
+              ]
+            : []),
+    ];
+
     return (
         <>
             <Space style={{ width: "100%" }} direction="vertical" size="middle">
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} lg={18}>
-                        <HeaderCard
-                            equipment={equipment}
-                            handleClick={handleEditClick}
-                        />
-                    </Col>
-                    <Col xs={24} lg={6}>
-                        <StatusCard equipment={equipment} />
-                    </Col>
-                </Row>
-
-                <Row gutter={[16, 16]}>
-                    <Col span={24}>
-                        <DescriptionCard
-                            equipment={equipment}
-                            handleClick={handleEditClick}
-                        />
-                    </Col>
-                    {equipment?.cameraUrl && (
-                        <Col span={24} lg={equipment?.remotePrintAvailable ? 14 : 24}>
-                            <CameraCard
-                                equipment={equipment}
-                                handleClick={handleEditClick}
-                            />
-                        </Col>
-                    )}
-                    {equipment?.remotePrintAvailable && (
-                        <Col span={24} lg={equipment?.cameraUrl ? 10 : 24}>
-                            <QueueCard equipmentId={equipment?.uuid} />
-                        </Col>
-                    )}
-                    <Col span={24}>
-                        <Card>
-                            <Typography.Title level={2}>
-                                {`${equipment?.name.toUpperCase()}'S ONGOING ISSUES`}
-                            </Typography.Title>
-                            <IssueTable issues={issues} />
-                        </Card>
-                    </Col>
-                    <HasAccess roles={["admin", "moderator"]}>
-                        <Col span={24}>
-                            <AdminCard
-                                equipment={equipment}
-                                handleClick={handleEditClick}
-                            />
-                        </Col>
-                    </HasAccess>
-                </Row>
+                <HeaderCard
+                    equipment={equipment}
+                    handleClick={handleEditClick}
+                />
+                <Tabs defaultActiveKey="1" items={items} />
             </Space>
         </>
     );

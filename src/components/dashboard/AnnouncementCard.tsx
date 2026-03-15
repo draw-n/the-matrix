@@ -57,13 +57,27 @@ const AnnouncementCard: React.FC = () => {
                 announcements.slice(page, page + 3).map((announcement) => (
                     <div key={announcement.uuid} style={{ marginBottom: 16 }}>
                         <Divider />
-                        <Tag style={{ textTransform: "uppercase" }}>
-                            {announcement.type}
-                        </Tag>
-                        <Typography.Title level={4}>
-                            {announcement.title}
-                        </Typography.Title>
-                        <p>{announcement.description}</p>
+                        <Flex justify="space-between" align="center">
+                            <Flex vertical gap="small">
+                                <Tag style={{ textTransform: "uppercase" }}>
+                                    {announcement.type}
+                                </Tag>
+                                <Typography.Title level={4}>
+                                    {announcement.title}
+                                </Typography.Title>
+                                <p>{announcement.description}</p>
+                            </Flex>
+                            {announcement.imageName && (
+                                <img
+                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
+                                    alt={announcement.title}
+                                    style={{
+                                        maxWidth: "50%",
+                                        height: "auto",
+                                    }}
+                                />
+                            )}
+                        </Flex>
                     </div>
                 ))
             ) : (

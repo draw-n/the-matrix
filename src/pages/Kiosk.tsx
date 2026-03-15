@@ -77,14 +77,27 @@ const AnnouncementCarousel: React.FC = () => {
                                     className="updates-slide"
                                     vertical
                                     gap="8rem"
+                                    align="center"
                                     justify="flex-end"
                                 >
-                                    <div>
-                                        <h2>{announcement.title}</h2>
-                                        <p className="updates-description">
-                                            {announcement.description}
-                                        </p>
-                                    </div>
+                                    <Flex justify="space-between" gap="8rem" align="center">
+                                        <div>
+                                            <h2>{announcement.title}</h2>
+                                            <p className="updates-description">
+                                                {announcement.description}
+                                            </p>
+                                        </div>
+                                        {announcement.imageName && (
+                                            <img
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
+                                                alt={announcement.title}
+                                                style={{
+                                                    maxWidth: "400px",
+                                                    height: "auto",
+                                                }}
+                                            />
+                                        )}
+                                    </Flex>
 
                                     <Flex>
                                         <Tag
