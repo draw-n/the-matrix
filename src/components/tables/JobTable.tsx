@@ -4,24 +4,6 @@ import { WithJobs } from "../../types/job";
 import { formatTime } from "../../types/common";
 
 const JobTable: React.FC<WithJobs> = ({ jobs }) => {
-    const sortedJobs = jobs?.sort((a, b) => {
-        const priority = {
-            printing: 0,
-            ready: 1,
-            queued: 2,
-            completed: 3,
-            failed: 4,
-        };
-        const statusDiff =
-            (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
-        if (statusDiff !== 0) {
-            return statusDiff;
-        }
-        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return dateA - dateB;
-    });
-
     const columns: TableProps["columns"] = [
         {
             title: "Position",
@@ -51,7 +33,7 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                         {text}
                     </span>
                     <span style={{ color: "#a9a9a9" }}>
-                        {`${formatTime(record.estimatedTimeSeconds || 0).h}h ${formatTime(record.estimatedTimeSeconds || 0).m}m ${formatTime(record.estimatedTimeSeconds || 0).s}s • ${Math.round(record.filamentUsedGrams|| 0)}g`}
+                        {`${formatTime(record.estimatedTimeSeconds || 0).h}h ${formatTime(record.estimatedTimeSeconds || 0).m}m ${formatTime(record.estimatedTimeSeconds || 0).s}s • ${Math.round(record.filamentUsedGrams || 0)}g`}
                     </span>
                 </Flex>
             ),
@@ -62,7 +44,7 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
             key: "status",
             render: (_: any, record, index: number) => {
                 return (
-                    <Flex justify="end">
+                    <Flex justify="end" gap="small">
                         <Tag
                             color={
                                 record.status === "completed"
@@ -74,6 +56,13 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                         >
                             {record.status.toUpperCase()}
                         </Tag>
+                        {record.finishedAt && (
+                            <span style={{ color: "#a9a9a9" }}>
+                                {new Date(
+                                    record.finishedAt,
+                                ).toLocaleDateString()}
+                            </span>
+                        )}
                     </Flex>
                 );
             },
@@ -90,7 +79,7 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                 }}
                 columns={columns}
                 showHeader={false}
-                dataSource={sortedJobs}
+                dataSource={jobs}
                 size="middle"
                 style={{
                     borderRadius: "5px",

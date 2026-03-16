@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Flex, Space, Typography } from "antd";
+import { Card, Checkbox, Flex, Space, Typography } from "antd";
 import { useAllJobs } from "../../hooks/useJobs";
 import { WithEquipmentId } from "../../types/equipment";
 import JobTable from "../tables/JobTable";
@@ -15,6 +15,25 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         showMineOnlyActive ? user?.uuid : undefined,
     );
 
+    const sortedActiveJobs = activeJobs?.sort((a, b) => {
+         const priority = {
+            printing: 0,
+            ready: 1,
+            queued: 2,
+            completed: 3,
+            failed: 4,
+        };
+        const statusDiff =
+            (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
+        if (statusDiff !== 0) {
+            return statusDiff;
+        }
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateA - dateB;
+    });
+
+
     const { data: finishedJobs } = useAllJobs(
         ["completed", "failed"],
         equipmentId,
@@ -22,14 +41,14 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
     );
 
     const sortedFinishedJobs = finishedJobs?.sort((a, b) => {
-        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        const dateA = a.finishedAt ? new Date(a.finishedAt).getTime() : 0;
+        const dateB = b.finishedAt ? new Date(b.finishedAt).getTime() : 0;
         return dateB - dateA; // Sort in descending order
     });
 
     return (
         <Card style={{ height: "100%" }}>
-            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+            <Space vertical size="middle" style={{ width: "100%" }}>
                 <Flex justify="space-between" align="center">
                     <Typography.Title level={2}>QUEUE</Typography.Title>
                     <Checkbox
@@ -41,7 +60,7 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
                         Show Mine Only
                     </Checkbox>
                 </Flex>
-                <JobTable jobs={activeJobs || []} />
+                <JobTable jobs={sortedActiveJobs || []} />
                 <Flex justify="space-between" align="center">
                     <Typography.Title level={2}>HISTORY</Typography.Title>
                     <Checkbox

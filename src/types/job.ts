@@ -9,7 +9,8 @@ export interface Job {
     filamentUsedGrams?: number;
     estimatedTimeSeconds?: number;
     createdAt?: Date;
-    updatedAt?: Date;
+    uploadedAt?: Date;
+    finishedAt?: Date;
 }
 
 export type JobStatus =
