@@ -51,7 +51,7 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                         {text}
                     </span>
                     <span style={{ color: "#a9a9a9" }}>
-                        {`${formatTime(record.estimatedTimeSeconds || 0).h}h ${formatTime(record.estimatedTimeSeconds || 0).m}m ${formatTime(record.estimatedTimeSeconds || 0).s}s • ${Math.round(record.totalFilamentGrams || 0)}g`}
+                        {`${formatTime(record.estimatedTimeSeconds || 0).h}h ${formatTime(record.estimatedTimeSeconds || 0).m}m ${formatTime(record.estimatedTimeSeconds || 0).s}s • ${Math.round(record.filamentUsedGrams|| 0)}g`}
                     </span>
                 </Flex>
             ),
