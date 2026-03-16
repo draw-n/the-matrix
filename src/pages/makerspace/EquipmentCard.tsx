@@ -1,45 +1,15 @@
 // Description: EquipmentCard component for displaying equipment information in a card format.
 
 import { Button, Card, Flex, Skeleton, Space, Tag, Typography } from "antd";
-import {
-    CheckCircleOutlined,
-    ClockCircleOutlined,
-    CloseCircleOutlined,
-    EyeOutlined,
-    FrownOutlined,
-    PauseCircleOutlined,
-} from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 
-import { gold, gray, green, purple, red } from "@ant-design/colors";
-import type { EquipmentStatus, WithEquipment } from "../../types/equipment";
+import {
+    type EquipmentStatus,
+    type WithEquipment,
+    equipmentStatusStyles,
+} from "../../types/equipment";
 import { useNavigate } from "react-router-dom";
 import { useCategoryById } from "../../hooks/useCategories";
-
-const statusStyles: Record<
-    EquipmentStatus,
-    { color: string; icon: React.ReactNode }
-> = {
-    available: {
-        color: green[4],
-        icon: <CheckCircleOutlined />,
-    },
-    error: {
-        color: red[4],
-        icon: <CloseCircleOutlined />,
-    },
-    paused: {
-        color: gold[4],
-        icon: <PauseCircleOutlined />,
-    },
-    busy: {
-        color: purple[4],
-        icon: <ClockCircleOutlined />,
-    },
-    offline: {
-        color: gray[2],
-        icon: <FrownOutlined />,
-    },
-};
 
 const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
     const { data: category, isLoading } = useCategoryById(
@@ -47,10 +17,13 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
     );
 
     const navigate = useNavigate();
-
+    const Icon =
+        equipmentStatusStyles[
+            (equipment?.status as EquipmentStatus) || "offline"
+        ].icon;
     return (
         <>
-            <Card  style={{ height: "100%" }}>
+            <Card style={{ height: "100%" }}>
                 {isLoading ? (
                     <Skeleton active />
                 ) : (
@@ -62,12 +35,13 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
                         gap="10px"
                     >
                         <Space
-                            direction="vertical"
+                            vertical
                             style={{ width: "100%", flexGrow: 1 }}
                             size="small"
                         >
                             <Tag
                                 color={category?.color}
+                                variant="solid"
                                 style={{ textTransform: "uppercase" }}
                             >
                                 {category?.name}
@@ -93,20 +67,15 @@ const EquipmentCard: React.FC<WithEquipment> = ({ equipment }) => {
                             style={{ width: "100%" }}
                         >
                             <Tag
-                                style={{ textTransform: "capitalize" }}
+                                style={{ textTransform: "uppercase" }}
+                                variant="outlined"
                                 color={
-                                    statusStyles[
+                                    equipmentStatusStyles[
                                         (equipment?.status as EquipmentStatus) ||
                                             "offline"
                                     ].color
                                 }
-                                bordered
-                                icon={
-                                    statusStyles[
-                                        (equipment?.status as EquipmentStatus) ||
-                                            "offline"
-                                    ].icon
-                                }
+                                icon={<Icon />}
                             >
                                 {equipment?.status}
                             </Tag>

@@ -22,7 +22,7 @@ const TotalFilamentUsedCard: React.FC<WithUserId> = ({ userId }) => {
                     }}
                 >
                     {data !== undefined && data !== null
-                        ? `${data} grams`
+                        ? `${Math.round(data as number)} grams`
                         : "Loading..."}
                 </Typography.Title>
             </Space>

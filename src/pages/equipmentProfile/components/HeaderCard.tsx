@@ -13,7 +13,12 @@ import {
 } from "antd";
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 
-import { Equipment, WithEquipment } from "../../../types/equipment";
+import {
+    Equipment,
+    EquipmentStatus,
+    equipmentStatusStyles,
+    WithEquipment,
+} from "../../../types/equipment";
 
 import HasAccess from "../../../components/routing/HasAccess";
 import { EditableComponentProps } from "../../../types/common";
@@ -35,6 +40,11 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
     const name = Form.useWatch("name", form);
     const headline = Form.useWatch("headline", form);
     const categoryId = Form.useWatch("categoryId", form);
+
+    const Icon =
+        equipmentStatusStyles[
+            (equipment?.status as EquipmentStatus) || "offline"
+        ].icon;
 
     return (
         <Card
@@ -117,7 +127,16 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                                         )}
                                     />
                                 ) : (
-                                    <Tag style={{ textTransform: "uppercase" }}>
+                                    <Tag
+                                        color={
+                                            categories?.find(
+                                                (item) =>
+                                                    item.uuid === categoryId,
+                                            )?.color
+                                        }
+                                        variant="solid"
+                                        style={{ textTransform: "uppercase" }}
+                                    >
                                         {
                                             categories?.find(
                                                 (item) =>
@@ -157,7 +176,12 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                             </p>
                         </Flex>
                     </Flex>
-                    <Flex vertical justify="space-between" gap="middle" align="end">
+                    <Flex
+                        vertical
+                        justify="space-between"
+                        gap="middle"
+                        align="end"
+                    >
                         <HasAccess roles={["admin", "moderator"]}>
                             <Button
                                 shape="circle"
@@ -174,7 +198,21 @@ const HeaderCard: React.FC<HeaderCardProps> = ({
                                 }
                             />
                         </HasAccess>
-                        <Tag style={{ textTransform: "uppercase" }}>
+                        <Tag
+                            className="tag-transparent"
+                            style={{
+                                textTransform: "uppercase",
+                                backgroundColor: "transparent !important",
+                            }}
+                            variant="outlined"
+                            color={
+                                equipmentStatusStyles[
+                                    (equipment?.status as EquipmentStatus) ||
+                                        "offline"
+                                ].color
+                            }
+                            icon={<Icon />}
+                        >
                             {equipment?.status}
                         </Tag>
                     </Flex>
