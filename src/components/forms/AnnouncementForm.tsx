@@ -1,6 +1,6 @@
 // Description: Announcement form component for creating and editing announcements.
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 import {
@@ -33,6 +33,7 @@ import {
     useEditAnnouncementById,
     useCreateAnnouncement,
 } from "../../hooks/useAnnouncements";
+import axios from "axios";
 
 const AnnouncementForm: React.FC<WithAnnouncement> = ({
     announcement,
@@ -44,36 +45,87 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
     const { mutateAsync: createAnnouncement } = useCreateAnnouncement();
     const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
 
-    const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
-        try {
-            if (announcement) {
-                const editedAnnouncement: Announcement = {
-                    ...values,
-                    lastUpdatedBy: user?.uuid || announcement.createdBy,
-                    dateLastUpdated: new Date(),
-                };
-                await editAnnouncementById({
-                    announcementId: announcement.uuid,
-                    updatedAnnouncement: editedAnnouncement,
-                    file: uploadedFile[0]?.originFileObj,
+    // If editing an existing announcement that already has an image on the server,
+    // show it in the Upload component by adding a file entry with `url`.
+    useEffect(() => {
+        if (!announcement || !announcement.imageName) return;
+        const fileName = announcement.imageName;
+        const url = `${import.meta.env.VITE_BACKEND_URL}/images/announcements/${fileName}`;
+
+        let previewUrl: string | null = null;
+        (async () => {
+            try {
+                const response = await axios.get(url, {
+                    responseType: "blob",
+                    withCredentials: true,
                 });
-            } else {
-                const newAnnouncement = {
-                    ...values,
-                    createdBy: user?.uuid,
-                    dateCreated: new Date(),
-                    status: "posted" as AnnouncementStatus,
-                };
-                await createAnnouncement({
-                    newAnnouncement: newAnnouncement,
-                    file: uploadedFile[0]?.originFileObj,
+                if (!response.data)
+                    throw new Error(
+                        `Failed to fetch image: ${response.status}`,
+                    );
+                const blob = await response.data;
+                const file = new File([blob], fileName, {
+                    type: blob.type || "application/octet-stream",
                 });
-                form.resetFields();
+                // create a preview so Upload shows the item as if it were local
+                previewUrl = URL.createObjectURL(file);
+                setUploadedFile([
+                    {
+                        uid: `server-${fileName}`,
+                        name: fileName,
+                        status: "done",
+                        originFileObj: file,
+                        url,
+                        thumbUrl: previewUrl,
+                    } as UploadFile,
+                ]);
+            } catch (err) {
+                // Fallback to URL-only entry if fetching as blob fails
+                setUploadedFile([
+                    {
+                        uid: `server-${fileName}`,
+                        name: fileName,
+                        status: "done",
+                        url,
+                        thumbUrl: url,
+                    } as UploadFile,
+                ]);
             }
-            setIsModalOpen(false);
-        } catch (error) {
-            message.error("Failed to submit the announcement.");
+        })();
+        // cleanup preview URL when announcement changes or component unmounts
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [announcement]);
+
+    const onFinish: FormProps<Announcement>["onFinish"] = async (values) => {
+        if (announcement) {
+            const editedAnnouncement: Announcement = {
+                ...values,
+                lastUpdatedBy: user?.uuid || announcement.createdBy,
+                dateLastUpdated: new Date(),
+            };
+            await editAnnouncementById({
+                announcementId: announcement.uuid,
+                updatedAnnouncement: editedAnnouncement,
+                file: uploadedFile[0]?.originFileObj,
+            });
+        } else {
+            const newAnnouncement = {
+                ...values,
+                createdBy: user?.uuid,
+                dateCreated: new Date(),
+                status: "posted" as AnnouncementStatus,
+            };
+            await createAnnouncement({
+                newAnnouncement: newAnnouncement,
+                file: uploadedFile[0]?.originFileObj,
+            });
+            form.resetFields();
         }
+        setIsModalOpen(false);
     };
 
     const props: UploadProps = {
@@ -113,6 +165,9 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
             ]);
 
             return false; // Prevent auto upload
+        },
+        onChange: ({ fileList }) => {
+            setUploadedFile(fileList as UploadFile[]);
         },
     };
 

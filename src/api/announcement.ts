@@ -49,8 +49,8 @@ export const editAnnouncementById = async (
             formData.append("file", file);
         }
 
-        const response = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/announcements`,
+        const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/announcements/${announcementId}`,
             formData,
         );
         return response.data;
