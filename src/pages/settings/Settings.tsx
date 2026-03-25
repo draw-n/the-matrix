@@ -21,8 +21,8 @@ const Settings: React.FC = () => {
 
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
-                <Tabs tabPosition="left" items={items} />
+            <Space style={{ width: "100%" }} vertical size="middle">
+                <Tabs tabPlacement="start" items={items} />
             </Space>
         </>
     );
