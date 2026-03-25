@@ -102,3 +102,13 @@ export const createJob = async (newJob: {
         throw new Error(error.response?.data.message || "Failed to create job.");
     }
 };
+
+export const deleteJob = async (jobId: string) => {
+    try {
+        const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}`);
+        return response.data;
+    } catch (error: any) {
+        console.error("Error deleting job:", error);
+        throw new Error(error.response?.data.message || "Failed to delete job.");
+    }
+};
