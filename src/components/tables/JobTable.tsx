@@ -15,14 +15,26 @@ import { useAllUsers } from "../../hooks/useUsers";
 import { useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { checkAccess } from "../routing/HasAccess";
-import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
-import { useDeleteJobById, useEditJobById } from "../../hooks/useJobs";
+import {
+    DeleteOutlined,
+    DownOutlined,
+    ReloadOutlined,
+    RetweetOutlined,
+    UpOutlined,
+} from "@ant-design/icons";
+import {
+    useDeleteJobById,
+    useEditJobById,
+    useReprintJobById,
+} from "../../hooks/useJobs";
 
 const JobTable: React.FC<WithJobs> = ({ jobs }) => {
     const { data: users } = useAllUsers();
     const { user } = useAuth();
     const { mutateAsync: deleteJobById } = useDeleteJobById();
     const { mutateAsync: editJobById } = useEditJobById();
+    const { mutateAsync: reprintJobById } = useReprintJobById();
+
     const userMap = useMemo(() => {
         const map: Record<string, any> = {};
         users?.forEach((u) => {
@@ -105,6 +117,25 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                                     {text}
                                 </span>
                                 <Flex align="center" gap="1px">
+                                    {["completed", "failed"].includes(
+                                        record.status,
+                                    ) &&
+                                        (record.userId === user?.uuid ||
+                                            checkAccess(["admin"])) && (
+                                            <Tooltip title="Reprint Job">
+                                                <Button
+                                                    size="small"
+                                                    icon={<ReloadOutlined />}
+                                                    shape="circle"
+                                                    type="text"
+                                                    onClick={() =>
+                                                        reprintJobById({
+                                                            jobId: record.uuid,
+                                                        })
+                                                    }
+                                                />
+                                            </Tooltip>
+                                        )}
                                     {"queued" === record.status &&
                                         checkAccess(["admin"]) && (
                                             <Tooltip title="Move Up in Queue">

@@ -29,6 +29,7 @@ export const runValidation = async (
         const faces = resp.data.faces;
         const detected = faces.map(parseFaceData);
         setDetectedFaces(detected);
+
         setIsAnalyzing(false);
     } catch (err: any) {
         setDetectedFaces([]);
@@ -49,7 +50,6 @@ export const runValidation = async (
             setIsAnalyzing(false);
         }
     }
-
 };
 
 export const exportAndReplace = async (

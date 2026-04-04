@@ -5,6 +5,7 @@ import {
     getAllJobs,
     getFilamentUsedGrams,
     getJobChartData,
+    reprintJobById,
 } from "../api/job";
 import { Job, JobStatus } from "../types/job";
 import { message } from "antd";
@@ -96,6 +97,27 @@ export const useEditJobById = () => {
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to update job.");
+        },
+    });
+};
+
+/**
+ * Hook to reprint a job by its unique identifier. It provides a mutation function that takes the job ID and triggers the reprint action, handling success and error states. On success, it invalidates relevant queries to ensure the UI reflects the updated job state.
+ * @returns - A mutation object that can be used to reprint a job and handle success or error states. 
+ */
+export const useReprintJobById = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey: ["reprintJob"],
+        mutationFn: async ({ jobId }: { jobId: string }) => reprintJobById(jobId),
+        onSuccess: (jobId) => {
+            if (jobId) {
+                queryClient.invalidateQueries({ queryKey: ["job", jobId] });
+            }
+            queryClient.invalidateQueries({ queryKey: ["jobs"] });
+        },
+        onError: (error: any) => {
+            message.error(error.message || "Failed to reprint job.");
         },
     });
 };

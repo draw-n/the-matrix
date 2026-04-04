@@ -152,3 +152,22 @@ export const deleteJobById = async (jobId: string) => {
         );
     }
 };
+
+/**
+ * Reprints a job by its unique identifier. This function sends a request to the backend to create a new job based on the details of an existing job, effectively allowing the user to reprint a previous job without having to go through the entire job creation process again.
+ * @param jobId - The unique identifier of the job to be reprinted.
+ * @returns - A promise that resolves to the newly created Job object that is based on the original job's details. If the job with the specified ID does not exist, it may throw an error or return undefined, depending on the backend implementation.
+ */
+export const reprintJobById = async (jobId: string) => {
+    try {
+        const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}`,
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error reprinting job:", error);
+        throw new Error(
+            error.response?.data.message || "Failed to reprint job.",
+        );
+    }
+}
