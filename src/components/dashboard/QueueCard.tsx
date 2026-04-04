@@ -15,7 +15,7 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         showMineOnlyActive ? user?.uuid : undefined,
     );
 
-    const sortedActiveJobs = activeJobs?.sort((a, b) => {
+    const sortedActiveJobs = activeJobs?.slice().sort((a, b) => {
          const priority = {
             printing: 0,
             ready: 1,
@@ -28,9 +28,11 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         if (statusDiff !== 0) {
             return statusDiff;
         }
+        const orderA = a.order !== undefined ? a.order : Number.MAX_SAFE_INTEGER;
+        const orderB = b.order !== undefined ? b.order : Number.MAX_SAFE_INTEGER;
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return dateA - dateB;
+        return orderA - orderB || dateA - dateB;
     });
 
 
@@ -40,7 +42,7 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         showMineOnlyFinished ? user?.uuid : undefined,
     );
 
-    const sortedFinishedJobs = finishedJobs?.sort((a, b) => {
+    const sortedFinishedJobs = finishedJobs?.slice().sort((a, b) => {
         const dateA = a.finishedAt ? new Date(a.finishedAt).getTime() : 0;
         const dateB = b.finishedAt ? new Date(b.finishedAt).getTime() : 0;
         return dateB - dateA; // Sort in descending order

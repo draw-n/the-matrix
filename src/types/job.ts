@@ -11,6 +11,7 @@ export interface Job {
     createdAt?: Date;
     uploadedAt?: Date;
     finishedAt?: Date;
+    order?: number;
 }
 
 export type JobStatus =

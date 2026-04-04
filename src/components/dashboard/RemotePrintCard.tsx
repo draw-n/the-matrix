@@ -71,7 +71,7 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
     if (isLoading) {
         return (
             <Flex justify="center" align="center" style={{ height: 200 }}>
-                <Spin tip="Loading chart..." />
+                <Spin description="Loading chart..." />
             </Flex>
         );
     }
