@@ -31,6 +31,7 @@ export const runValidation = async (
         setDetectedFaces(detected);
 
         setIsAnalyzing(false);
+        setFile && setFile([{...file, fileName: resp.data.fileName}]);
     } catch (err: any) {
         setDetectedFaces([]);
 
@@ -50,6 +51,7 @@ export const runValidation = async (
             setIsAnalyzing(false);
         }
     }
+
 };
 
 export const exportAndReplace = async (

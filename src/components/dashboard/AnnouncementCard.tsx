@@ -59,7 +59,7 @@ const AnnouncementCard: React.FC = () => {
                         <Divider />
                         <Flex justify="space-between" align="center">
                             <Flex vertical gap="small">
-                                <Tag style={{ textTransform: "uppercase" }}>
+                                <Tag style={{ textTransform: "uppercase", width: "fit-content" }}>
                                     {announcement.type}
                                 </Tag>
                                 <Typography.Title level={4}>
