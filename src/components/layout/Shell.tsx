@@ -362,7 +362,7 @@ const Shell: React.FC<ShellProps> = ({
                 </Drawer>
 
                 <Content>
-                    <div style={{ padding: "30px 50px" }}>
+                    <div className="shell-content">
                         {user &&
                             (checkAccess(contentAccess) ? (
                                 children
