@@ -29,9 +29,7 @@ export const runValidation = async (
         const faces = resp.data.faces;
         const detected = faces.map(parseFaceData);
         setDetectedFaces(detected);
-
         setIsAnalyzing(false);
-        setFile && setFile([{...file, fileName: resp.data.fileName}]);
     } catch (err: any) {
         setDetectedFaces([]);
 
