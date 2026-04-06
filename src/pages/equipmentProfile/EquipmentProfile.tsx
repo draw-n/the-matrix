@@ -56,7 +56,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
                   {
                       key: "2",
                       label: "Print History",
-                      children: <QueueCard equipmentId={equipment?.uuid} />,
+                      children: <QueueCard showMineOnlyToggable equipmentId={equipment?.uuid} />,
                   },
               ]
             : []),

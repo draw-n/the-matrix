@@ -28,7 +28,11 @@ import {
     useReprintJobById,
 } from "../../hooks/useJobs";
 
-const JobTable: React.FC<WithJobs> = ({ jobs }) => {
+interface JobTableProps extends WithJobs {
+    editable?: boolean;
+}
+
+const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
     const { data: users } = useAllUsers();
     const { user } = useAuth();
     const { mutateAsync: deleteJobById } = useDeleteJobById();
@@ -116,100 +120,108 @@ const JobTable: React.FC<WithJobs> = ({ jobs }) => {
                                 >
                                     {text}
                                 </span>
-                                <Flex align="center" gap="1px">
-                                    {["completed", "failed"].includes(
-                                        record.status,
-                                    ) &&
-                                        (record.userId === user?.uuid ||
-                                            checkAccess(["admin"])) && (
-                                            <Tooltip title="Reprint Job">
-                                                <Button
-                                                    size="small"
-                                                    icon={<ReloadOutlined />}
-                                                    shape="circle"
-                                                    type="text"
-                                                    onClick={() =>
-                                                        reprintJobById({
-                                                            jobId: record.uuid,
+                                {editable && (
+                                    <Flex align="center" gap="1px">
+                                        {["completed", "failed"].includes(
+                                            record.status,
+                                        ) &&
+                                            (record.userId === user?.uuid ||
+                                                checkAccess(["admin"])) && (
+                                                <Tooltip title="Reprint Job">
+                                                    <Button
+                                                        size="small"
+                                                        icon={
+                                                            <ReloadOutlined />
+                                                        }
+                                                        shape="circle"
+                                                        type="text"
+                                                        onClick={() =>
+                                                            reprintJobById({
+                                                                jobId: record.uuid,
+                                                            })
+                                                        }
+                                                    />
+                                                </Tooltip>
+                                            )}
+                                        {"queued" === record.status &&
+                                            checkAccess(["admin"]) && (
+                                                <Tooltip title="Move Up in Queue">
+                                                    <Button
+                                                        disabled={
+                                                            queuedJobs.findIndex(
+                                                                (job) =>
+                                                                    job.uuid ===
+                                                                    record.uuid,
+                                                            ) <= 0
+                                                        }
+                                                        size="small"
+                                                        icon={<UpOutlined />}
+                                                        shape="circle"
+                                                        type="text"
+                                                        variant="text"
+                                                        onClick={() =>
+                                                            swapJobPositions(
+                                                                record.uuid,
+                                                                true,
+                                                            )
+                                                        }
+                                                    />
+                                                </Tooltip>
+                                            )}
+                                        {"queued" === record.status &&
+                                            checkAccess(["admin"]) && (
+                                                <Tooltip title="Move Down in Queue">
+                                                    <Button
+                                                        size="small"
+                                                        icon={<DownOutlined />}
+                                                        shape="circle"
+                                                        type="text"
+                                                        disabled={
+                                                            queuedJobs.findIndex(
+                                                                (job) =>
+                                                                    job.uuid ===
+                                                                    record.uuid,
+                                                            ) >=
+                                                            queuedJobs.length -
+                                                                1
+                                                        }
+                                                        variant="text"
+                                                        onClick={() =>
+                                                            swapJobPositions(
+                                                                record.uuid,
+                                                                false,
+                                                            )
+                                                        }
+                                                    />
+                                                </Tooltip>
+                                            )}
+                                        {"queued" === record.status &&
+                                            (record.userId === user?.uuid ||
+                                                checkAccess(["admin"])) && (
+                                                <Popconfirm
+                                                    title="Delete Job"
+                                                    description="Are you sure you want to delete this job? This action cannot be undone."
+                                                    onConfirm={() =>
+                                                        deleteJobById({
+                                                            jobId:
+                                                                record.uuid ||
+                                                                "",
                                                         })
                                                     }
-                                                />
-                                            </Tooltip>
-                                        )}
-                                    {"queued" === record.status &&
-                                        checkAccess(["admin"]) && (
-                                            <Tooltip title="Move Up in Queue">
-                                                <Button
-                                                    disabled={
-                                                        queuedJobs.findIndex(
-                                                            (job) =>
-                                                                job.uuid ===
-                                                                record.uuid,
-                                                        ) <= 0
-                                                    }
-                                                    size="small"
-                                                    icon={<UpOutlined />}
-                                                    shape="circle"
-                                                    type="text"
-                                                    variant="text"
-                                                    onClick={() =>
-                                                        swapJobPositions(
-                                                            record.uuid,
-                                                            true,
-                                                        )
-                                                    }
-                                                />
-                                            </Tooltip>
-                                        )}
-                                    {"queued" === record.status &&
-                                        checkAccess(["admin"]) && (
-                                            <Tooltip title="Move Down in Queue">
-                                                <Button
-                                                    size="small"
-                                                    icon={<DownOutlined />}
-                                                    shape="circle"
-                                                    type="text"
-                                                    disabled={
-                                                        queuedJobs.findIndex(
-                                                            (job) =>
-                                                                job.uuid ===
-                                                                record.uuid,
-                                                        ) >=
-                                                        queuedJobs.length - 1
-                                                    }
-                                                    variant="text"
-                                                    onClick={() =>
-                                                        swapJobPositions(
-                                                            record.uuid,
-                                                            false,
-                                                        )
-                                                    }
-                                                />
-                                            </Tooltip>
-                                        )}
-                                    {"queued" === record.status &&
-                                        (record.userId === user?.uuid ||
-                                            checkAccess(["admin"])) && (
-                                            <Popconfirm
-                                                title="Delete Job"
-                                                description="Are you sure you want to delete this job? This action cannot be undone."
-                                                onConfirm={() =>
-                                                    deleteJobById({
-                                                        jobId:
-                                                            record.uuid || "",
-                                                    })
-                                                }
-                                            >
-                                                <Button
-                                                    size="small"
-                                                    color="red"
-                                                    variant="text"
-                                                    shape="circle"
-                                                    icon={<DeleteOutlined />}
-                                                />
-                                            </Popconfirm>
-                                        )}
-                                </Flex>
+                                                >
+                                                    <Button
+                                                        size="small"
+                                                        color="red"
+                                                        variant="text"
+                                                        shape="circle"
+                                                        icon={
+                                                            <DeleteOutlined />
+                                                        }
+                                                    />
+                                                </Popconfirm>
+                                            )}
+                                    </Flex>
+                                )}
                             </Flex>
                             <span style={{ color: "#a9a9a9" }}>
                                 {`${formatTime(record.estimatedTimeSeconds || 0).h}h ${formatTime(record.estimatedTimeSeconds || 0).m}m ${formatTime(record.estimatedTimeSeconds || 0).s}s • ${Math.round(record.filamentUsedGrams || 0)}g`}

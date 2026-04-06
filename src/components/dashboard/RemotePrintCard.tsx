@@ -78,10 +78,14 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
 
     return (
         <Card>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
+            <Space
+                style={{ width: "100%", height: "100%" }}
+                vertical
+                size="middle"
+            >
                 <Flex justify="space-between" align="center">
                     <Typography.Title level={2} style={{ margin: 0 }}>
-                        REMOTE PRINTING OCCURRENCES
+                        PRINTS THIS MONTH
                     </Typography.Title>
                     {user?.uuid === userId && (
                         <Button
@@ -112,10 +116,10 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                             <AreaChart
                                 data={chartData}
                                 margin={{
-                                    top: 5,
+                                    top: 10,
                                     right: 30,
                                     left: 0,
-                                    bottom: 5,
+                                    bottom: 0,
                                 }}
                             >
                                 <defs>

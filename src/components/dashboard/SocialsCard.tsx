@@ -16,7 +16,7 @@ const socials = [
 
 const SocialsCard: React.FC = () => {
     return (
-        <Card>
+        <Card style={{ height: "100%" }}>
             <Flex vertical gap="middle">
                 <h2>Contact Dr. Florian</h2>
                 <Flex gap="small" justify="center" align="center">
