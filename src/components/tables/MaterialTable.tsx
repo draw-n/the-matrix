@@ -136,6 +136,7 @@ const MaterialTable: React.FC<WithMaterials> = ({
                 }}
                 columns={updateColumns}
                 dataSource={materials}
+                rowKey="uuid"
                 size="middle"
                 expandable={{
                     expandedRowRender: (record) => (

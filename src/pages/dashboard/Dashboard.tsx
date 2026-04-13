@@ -1,7 +1,17 @@
 // Description: Dashboard page displaying user greeting and various dashboard cards.
 import { useAuth } from "../../contexts/AuthContext";
 
-import { Flex, Space, Row, Col, Card, theme, Tabs, TabsProps } from "antd";
+import {
+    Flex,
+    Space,
+    Row,
+    Col,
+    Card,
+    theme,
+    Tabs,
+    TabsProps,
+    Alert,
+} from "antd";
 
 import AnnouncementCard from "../../components/dashboard/AnnouncementCard";
 import SocialsCard from "../../components/dashboard/SocialsCard";
@@ -23,6 +33,26 @@ const Dashboard: React.FC = () => {
             label: "General",
             children: (
                 <Row gutter={[16, 16]}>
+                    <Col span={24}>
+                        <Alert
+                            showIcon
+                            title={
+                                <span>
+                                    <span style={{ fontWeight: "bold" }}>
+                                        Note:
+                                    </span>{" "}
+                                    This website is developed by students, for
+                                    students. As a result, it may contain some
+                                    features that may not be fully functional.
+                                    We appreciate your understanding and
+                                    encourage you to report any issues or
+                                    provide feedback to help us improve the
+                                    platform.
+                                </span>
+                            }
+                            type="info"
+                        />
+                    </Col>
                     <Col span={24}>
                         <AnnouncementCard />
                     </Col>

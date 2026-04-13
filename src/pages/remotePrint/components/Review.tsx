@@ -1,6 +1,7 @@
 // Description: Review component for summarizing and confirming 3D print job details before submission.
 import { CaretLeftOutlined } from "@ant-design/icons";
 import {
+    Alert,
     Button,
     Card,
     Col,
@@ -38,18 +39,18 @@ const Review: React.FC<ReviewProps> = ({
             children: (
                 <Row gutter={[16, 16]}>
                     <Col xs={24} lg={8}>
-                        <h3>Supports</h3>
-                        <p>{settingDetails?.supports}</p>
+                        <h2>Supports</h2>
+                        <p>{settingDetails?.supports ? "Yes" : "No"}</p>
                     </Col>
                     <Col xs={24} lg={8}>
-                        <h3>Vertical Shell</h3>
+                        <h2>Vertical Shell</h2>
                         <p>
                             Perimeters:{" "}
                             {`${settingDetails?.verticalShell.perimeters}`}
                         </p>
                     </Col>
                     <Col xs={24} lg={8}>
-                        <h3>Horizontal Shell</h3>
+                        <h2>Horizontal Shell</h2>
                         <Flex gap="10px">
                             <p>
                                 Top Layers:{" "}
@@ -62,7 +63,7 @@ const Review: React.FC<ReviewProps> = ({
                         </Flex>
                     </Col>
                     <Col span={24}>
-                        <h3>Temperatures</h3>
+                        <h2>Temperatures</h2>
                         <Table
                             style={{ overflow: "auto" }}
                             pagination={false}
@@ -107,27 +108,38 @@ const Review: React.FC<ReviewProps> = ({
     console.log("Review - Uploaded File:", uploadedFile);
     return (
         <>
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <Space vertical size="large" style={{ width: "100%" }}>
+                <Alert
+                    showIcon
+                    title={
+                        <span>
+                            <span style={{ fontWeight: "bold" }}>Note:</span>{" "}
+                            When your print is submitted, it will be added to
+                            the print queue. We plan to eventually automate the
+                            printing process, but for now, a staff member will
+                            need to start your print manually, even if you are
+                            first on the queue. Therefore, please allow some
+                            time for your print to start after submission.
+                        </span>
+                    }
+                    type="info"
+                />
                 <Card>
-                    <Space
-                        direction="vertical"
-                        size="middle"
-                        style={{ width: "100%" }}
-                    >
+                    <Space vertical size="middle" style={{ width: "100%" }}>
                         <Flex style={{ width: "100%" }} justify="space-between">
                             <div>
-                                <h3>Material</h3>
+                                <h2>Material</h2>
                                 <p>
                                     {material &&
                                         `${material.name} (${material.shortName})`}
                                 </p>
                             </div>
                             <div>
-                                <h3>Density (Infill)</h3>
+                                <h2>Density (Infill)</h2>
                                 <p>{`${settingDetails?.infill}%`}</p>
                             </div>
                             <div>
-                                <h3>Detail (Layer Height)</h3>
+                                <h2>Detail (Layer Height)</h2>
                                 <p>{`${settingDetails?.layerHeight} mm`}</p>
                             </div>
                         </Flex>
@@ -138,16 +150,18 @@ const Review: React.FC<ReviewProps> = ({
                 <Row gutter={20}>
                     <Col style={{ height: "100%" }} span={24}>
                         <Card style={{ height: "100%" }}>
-                            <h3>File to be printed</h3>
+                            <h2>File to be printed</h2>
                             <Upload
                                 fileList={uploadedFile}
                                 showUploadList={{
                                     showRemoveIcon: false,
                                     showPreviewIcon: true,
                                 }}
-                                customRequest={({ file, onSuccess }) => {}}
                             />
-                            <MeshViewer file={uploadedFile[0]} allowFaceSelection={false} />
+                            <MeshViewer
+                                file={uploadedFile[0]}
+                                allowFaceSelection={false}
+                            />
                         </Card>
                     </Col>
                 </Row>

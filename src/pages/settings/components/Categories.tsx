@@ -255,20 +255,7 @@ const EditCategory: React.FC<WithCategory> = ({ category }: WithCategory) => {
                     </Flex>
                 </Form.Item>
 
-                <Form.List
-                    name="defaultIssues"
-                    rules={[
-                        {
-                            validator: async (_, names) => {
-                                if (!names || names.length < 2) {
-                                    return Promise.reject(
-                                        new Error("At least 2 passengers"),
-                                    );
-                                }
-                            },
-                        },
-                    ]}
-                >
+                <Form.List name="defaultIssues">
                     {(fields, { add, remove }, { errors }) => (
                         <>
                             {fields.map((field) => (
@@ -313,6 +300,7 @@ const EditCategory: React.FC<WithCategory> = ({ category }: WithCategory) => {
                             <Form.Item>
                                 <Flex justify="center">
                                     <Button
+                                        disabled={!editMode}
                                         type="dashed"
                                         onClick={() => add()}
                                         icon={<PlusOutlined />}
