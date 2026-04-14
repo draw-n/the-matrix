@@ -87,3 +87,20 @@ export const deleteEquipmentById = async (equipmentId: string) => {
         throw new Error(error.response?.data.message || "Failed to delete equipment.");
     }
 };
+
+/**
+ * Pauses a printer by its unique identifier. This function sends a request to the backend to pause the printer associated with the given equipment ID.
+ * @param equipmentId - The unique identifier of the equipment (printer) to pause.
+ * @returns - A promise that resolves when the printer is paused successfully.
+ */
+export const pausePrinterById = async (equipmentId?: string) => {
+    try {
+        const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/equipment/pause/${equipmentId}`,
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error pausing printer", error);
+        throw new Error(error.response?.data.message || "Failed to pause printer.");
+    }
+};

@@ -1,68 +1,26 @@
 import React, { useState } from "react";
-import { Card, Typography, Button, Result, Spin } from "antd";
+import { Card, Typography, Button, Result, Spin, Col, Row } from "antd";
 import { Equipment, WithEquipment } from "../../../types/equipment";
 import { EditableComponentProps } from "../../../types/common";
+import CameraCard from "./CameraCard";
+import PrinterActions from "./PrinterActions";
+import { useAuth } from "../../../contexts/AuthContext";
+import { checkAccess } from "../../../components/routing/HasAccess";
 
 type LiveFeedProps = EditableComponentProps<Equipment> & WithEquipment;
 
 const LiveFeed: React.FC<LiveFeedProps> = ({ equipment, handleClick }) => {
-    const [error, setError] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const streamUrl = `http://${equipment?.cameraUrl}/stream`;
-
     return (
-        <Card style={{ height: "100%", width: "100%", overflow: "hidden" }}>
-            <Typography.Title level={2} style={{ marginBottom: "16px" }}>
-                LIVE PRINTER FEED
-            </Typography.Title>
-
-            <div
-                style={{
-                    position: "relative",
-                    width: "100%",
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                {/* Loading Overlay */}
-                {isLoading && !error && (
-                    <div style={{ position: "absolute", zIndex: 2 }}>
-                        <Spin tip="Connecting to Pi..." />
-                    </div>
-                )}
-
-                {/* Error State */}
-                {error ? (
-                    <Result
-                        status="warning"
-                        title="Feed Offline"
-                        subTitle="Try refreshing the page."
-                        
-                    />
-                ) : (
-                    <img
-                        src={error ? "" : `${streamUrl}?t=${Date.now()}`} // Timestamp prevents cache issues on retry
-                        alt="Printer Feed"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "contain",
-                            display: isLoading ? "none" : "block",
-                        }}
-                        // Use anonymous to avoid CORS issues when doing face detection
-                        crossOrigin="anonymous"
-                        onLoad={() => setIsLoading(false)}
-                        onError={() => {
-                            setError(true);
-                            setIsLoading(false);
-                        }}
-                    />
-                )}
-            </div>
-        </Card>
+        <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+            <Col span={checkAccess(["admin", "moderator"]) ? 16 : 24}>
+                <CameraCard equipment={equipment} handleClick={handleClick} />
+            </Col>
+            {checkAccess(["admin", "moderator"]) && (
+                <Col span={8}>
+                    <PrinterActions equipmentId={equipment?.uuid || ""} />
+                </Col>
+            )}
+        </Row>
     );
 };
 

@@ -81,12 +81,12 @@ const Dashboard: React.FC = () => {
             label: "Resources",
             children: (
                 <Row gutter={[16, 16]}>
-                    <Col span={16}>
+                    <Col span={24}>
                         <NeedHelpCard />
                     </Col>
-                    <Col span={8}>
+                    {/* <Col span={8}>
                         <SocialsCard />
-                    </Col>
+                    </Col> */}
                 </Row>
             ),
         },
