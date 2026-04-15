@@ -97,6 +97,7 @@ const Signup: React.FC = () => {
                 >
                     <Input />
                 </Form.Item>
+
                 <Form.Item<FieldType>
                     label="Password"
                     name="password"
@@ -107,12 +108,12 @@ const Signup: React.FC = () => {
                         },
                     ]}
                 >
-                    <Alert
-                        title="Note: the account you create is not affiliated with the Vanderbilt SSO account you use to log into Brightspace, YES, etc. Please create a new password for this account you will remember."
-                        type="warning"
-                    />
                     <Input.Password />
                 </Form.Item>
+                <Alert
+                    title="Note: the account you create is not affiliated with the Vanderbilt SSO account you use to log into Brightspace, YES, etc. Please create a new password for this account you will remember."
+                    type="warning"
+                />
 
                 <Form.Item<FieldType>
                     label="Access Code"

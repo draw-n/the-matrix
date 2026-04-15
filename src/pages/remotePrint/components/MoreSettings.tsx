@@ -112,7 +112,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         rougher finish.
                     </p>
                     <Slider
-                        min={0.15}
+                        min={0.2}
                         max={0.4}
                         onChange={(value) =>
                             setSettingDetails({
@@ -125,7 +125,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                                 ? settingDetails.layerHeight
                                 : 0.25
                         }
-                        step={0.05}
+                        step={0.01}
                     />
                 </Space>
                 <HasAccess
