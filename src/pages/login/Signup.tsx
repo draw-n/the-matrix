@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Flex, Form, FormProps, Input, message } from "antd";
+import { Alert, Button, Flex, Form, FormProps, Input, message } from "antd";
 
 import AuthenticationShell from "./components/AuthenticationShell";
 
@@ -97,6 +97,7 @@ const Signup: React.FC = () => {
                 >
                     <Input />
                 </Form.Item>
+
                 <Form.Item<FieldType>
                     label="Password"
                     name="password"
@@ -109,6 +110,10 @@ const Signup: React.FC = () => {
                 >
                     <Input.Password />
                 </Form.Item>
+                <Alert
+                    title="Note: the account you create is not affiliated with the Vanderbilt SSO account you use to log into Brightspace, YES, etc. Please create a new password for this account you will remember."
+                    type="warning"
+                />
 
                 <Form.Item<FieldType>
                     label="Access Code"

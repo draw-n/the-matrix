@@ -71,17 +71,21 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
     if (isLoading) {
         return (
             <Flex justify="center" align="center" style={{ height: 200 }}>
-                <Spin tip="Loading chart..." />
+                <Spin description="Loading chart..." />
             </Flex>
         );
     }
 
     return (
         <Card>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
+            <Space
+                style={{ width: "100%", height: "100%" }}
+                vertical
+                size="middle"
+            >
                 <Flex justify="space-between" align="center">
                     <Typography.Title level={2} style={{ margin: 0 }}>
-                        REMOTE PRINTING OCCURRENCES
+                        PRINTS THIS MONTH
                     </Typography.Title>
                     {user?.uuid === userId && (
                         <Button
@@ -89,7 +93,7 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                             type="primary"
                             size="middle"
                             shape={isMobile ? "circle" : "round"}
-                            iconPosition="end"
+                            iconPlacement="end"
                             icon={<PlusOutlined />}
                             onClick={() => navigate("/upload")}
                         >
@@ -112,10 +116,10 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                             <AreaChart
                                 data={chartData}
                                 margin={{
-                                    top: 5,
+                                    top: 10,
                                     right: 30,
                                     left: 0,
-                                    bottom: 5,
+                                    bottom: 0,
                                 }}
                             >
                                 <defs>
@@ -202,7 +206,7 @@ const RemotePrintCard: React.FC<WithUserId> = ({ userId }) => {
                         onChange={(e) => setDays(e.target.value)}
                         value={days}
                     >
-                        <Space direction={isMobile ? "horizontal" : "vertical"}>
+                        <Space vertical={isMobile ? false : true}>
                             <Radio value={30}>Past Month</Radio>
                             <Radio value={365}>Past Year</Radio>
                             <Radio value={0}>All Time</Radio>

@@ -26,7 +26,7 @@ const DownloadEmails: React.FC = () => {
     return (
         <>
             <Button
-                iconPosition="end"
+                iconPlacement="end"
                 icon={<DownloadOutlined />}
                 onClick={handleDownload}
                 shape="round"

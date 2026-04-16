@@ -5,9 +5,28 @@ import JobTable from "../tables/JobTable";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
-    const [showMineOnlyActive, setShowMineOnlyActive] = useState(false);
-    const [showMineOnlyFinished, setShowMineOnlyFinished] = useState(false);
+interface QueueCardProps extends WithEquipmentId {
+    showMineOnly?: boolean;
+    showMineOnlyToggable?: boolean;
+    hideActive?: boolean;
+    hideFinished?: boolean;
+    editable?: boolean;
+}
+
+const QueueCard: React.FC<QueueCardProps> = ({
+    equipmentId,
+    showMineOnly,
+    showMineOnlyToggable,
+    hideActive = false,
+    hideFinished = false,
+    editable = true
+}) => {
+    const [showMineOnlyActive, setShowMineOnlyActive] = useState(
+        showMineOnly ?? false,
+    );
+    const [showMineOnlyFinished, setShowMineOnlyFinished] = useState(
+        showMineOnly ?? false,
+    );
     const { user } = useAuth();
     const { data: activeJobs } = useAllJobs(
         ["queued", "ready", "printing"],
@@ -15,8 +34,8 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         showMineOnlyActive ? user?.uuid : undefined,
     );
 
-    const sortedActiveJobs = activeJobs?.sort((a, b) => {
-         const priority = {
+    const sortedActiveJobs = activeJobs?.slice().sort((a, b) => {
+        const priority = {
             printing: 0,
             ready: 1,
             queued: 2,
@@ -28,11 +47,14 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         if (statusDiff !== 0) {
             return statusDiff;
         }
+        const orderA =
+            a.order !== undefined ? a.order : Number.MAX_SAFE_INTEGER;
+        const orderB =
+            b.order !== undefined ? b.order : Number.MAX_SAFE_INTEGER;
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return dateA - dateB;
+        return orderA - orderB || dateA - dateB;
     });
-
 
     const { data: finishedJobs } = useAllJobs(
         ["completed", "failed"],
@@ -40,7 +62,7 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
         showMineOnlyFinished ? user?.uuid : undefined,
     );
 
-    const sortedFinishedJobs = finishedJobs?.sort((a, b) => {
+    const sortedFinishedJobs = finishedJobs?.slice().sort((a, b) => {
         const dateA = a.finishedAt ? new Date(a.finishedAt).getTime() : 0;
         const dateB = b.finishedAt ? new Date(b.finishedAt).getTime() : 0;
         return dateB - dateA; // Sort in descending order
@@ -49,30 +71,48 @@ const QueueCard: React.FC<WithEquipmentId> = ({ equipmentId }) => {
     return (
         <Card style={{ height: "100%" }}>
             <Space vertical size="middle" style={{ width: "100%" }}>
-                <Flex justify="space-between" align="center">
-                    <Typography.Title level={2}>QUEUE</Typography.Title>
-                    <Checkbox
-                        checked={showMineOnlyActive}
-                        onChange={() =>
-                            setShowMineOnlyActive(!showMineOnlyActive)
-                        }
-                    >
-                        Show Mine Only
-                    </Checkbox>
-                </Flex>
-                <JobTable jobs={sortedActiveJobs || []} />
-                <Flex justify="space-between" align="center">
-                    <Typography.Title level={2}>HISTORY</Typography.Title>
-                    <Checkbox
-                        checked={showMineOnlyFinished}
-                        onChange={() =>
-                            setShowMineOnlyFinished(!showMineOnlyFinished)
-                        }
-                    >
-                        Show Mine Only
-                    </Checkbox>
-                </Flex>
-                <JobTable jobs={sortedFinishedJobs || []} />
+                {!hideActive && (
+                    <>
+                        <Flex justify="space-between" align="center">
+                            <Typography.Title level={2}>QUEUE</Typography.Title>
+                            {showMineOnlyToggable && (
+                                <Checkbox
+                                    checked={showMineOnlyActive}
+                                    onChange={() =>
+                                        setShowMineOnlyActive(
+                                            !showMineOnlyActive,
+                                        )
+                                    }
+                                >
+                                    Show Mine Only
+                                </Checkbox>
+                            )}
+                        </Flex>
+                        <JobTable jobs={sortedActiveJobs || []} editable={editable} />
+                    </>
+                )}
+                {!hideFinished && (
+                    <>
+                        <Flex justify="space-between" align="center">
+                            <Typography.Title level={2}>
+                                HISTORY
+                            </Typography.Title>
+                            {showMineOnlyToggable && (
+                                <Checkbox
+                                    checked={showMineOnlyFinished}
+                                    onChange={() =>
+                                        setShowMineOnlyFinished(
+                                            !showMineOnlyFinished,
+                                        )
+                                    }
+                                >
+                                    Show Mine Only
+                                </Checkbox>
+                            )}
+                        </Flex>
+                        <JobTable jobs={sortedFinishedJobs || []} editable={editable} />
+                    </>
+                )}
             </Space>
         </Card>
     );

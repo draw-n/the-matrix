@@ -100,7 +100,7 @@ const FirstTime: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowLeftOutlined />}
-                        iconPosition="start"
+                        iconPlacement="start"
                         onClick={() => {
                             setError("");
                             if (status === "faculty" && stepIndex === 2) {
@@ -118,7 +118,7 @@ const FirstTime: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={() => {
                             setError("");
                             if (stepIndex === 0) {
@@ -146,7 +146,7 @@ const FirstTime: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={() => {
                             setError("");
                             if (!departments || departments.length === 0) {

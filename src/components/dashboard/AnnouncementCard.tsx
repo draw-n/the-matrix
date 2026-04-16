@@ -22,10 +22,10 @@ const AnnouncementCard: React.FC = () => {
     const [page, setPage] = useState<number>(0);
 
     const navigate = useNavigate();
-
+    const pageSize = 3; // Show one announcement per page
     return (
-        <Card>
-            <Flex justify={"space-between"} align={"center"}>
+        <Card style={{ height: "100%" }}>
+            <Flex style={{ marginBottom: 16 }} justify={"space-between"} align={"center"}>
                 <h2>Announcements</h2>
                 <Flex gap="small">
                     <HasAccess roles={["admin", "moderator"]}>
@@ -54,41 +54,59 @@ const AnnouncementCard: React.FC = () => {
                 </Flex>
             </Flex>
             {announcements && announcements.length > 0 ? (
-                announcements.slice(page, page + 3).map((announcement) => (
-                    <div key={announcement.uuid} style={{ marginBottom: 16 }}>
-                        <Divider />
-                        <Flex justify="space-between" align="center">
-                            <Flex vertical gap="small">
-                                <Tag style={{ textTransform: "uppercase" }}>
-                                    {announcement.type}
-                                </Tag>
-                                <Typography.Title level={4}>
-                                    {announcement.title}
-                                </Typography.Title>
-                                <p>{announcement.description}</p>
+                announcements
+                    .slice(page, page + pageSize)
+                    .map((announcement) => (
+                        <div
+                            key={announcement.uuid}
+                            style={{ marginBottom: 16 }}
+                        >
+                            <Flex gap="small" align="center">
+                                {announcement.imageName && (
+                                    <img
+                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
+                                        alt={announcement.title}
+                                        style={{
+                                            maxWidth: 75,
+                                            height: "auto",
+                                        }}
+                                    />
+                                )}
+                                <Flex
+                                    justify="space-between"
+                                    align="start"
+                                    style={{ width: "100%" }}
+                                >
+                                    <Flex vertical>
+                                        <Typography.Title
+                                            style={{ margin: 0 }}
+                                            level={4}
+                                        >
+                                            {announcement.title}
+                                        </Typography.Title>
+                                        <p>{announcement.description}</p>
+                                    </Flex>
+                                    <Tag
+                                        style={{
+                                            textTransform: "uppercase",
+                                        }}
+                                    >
+                                        {announcement.type}
+                                    </Tag>
+                                </Flex>
                             </Flex>
-                            {announcement.imageName && (
-                                <img
-                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
-                                    alt={announcement.title}
-                                    style={{
-                                        maxWidth: "50%",
-                                        height: "auto",
-                                    }}
-                                />
-                            )}
-                        </Flex>
-                    </div>
-                ))
+                            <Divider />
+                        </div>
+                    ))
             ) : (
                 <p>No announcements available.</p>
             )}
-            {announcements && announcements.length > 3 && (
+            {announcements && announcements.length > pageSize && (
                 <Pagination
                     align="center"
                     defaultCurrent={1}
-                    pageSize={3}
-                    onChange={(page) => setPage((page - 1) * 3)}
+                    pageSize={pageSize}
+                    onChange={(page) => setPage((page - 1) * pageSize)}
                     total={announcements.length}
                 />
             )}

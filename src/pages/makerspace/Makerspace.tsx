@@ -33,7 +33,7 @@ const Makerspace: React.FC = () => {
     ];
 
     return (
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space vertical size="middle" style={{ width: "100%" }}>
             <p>
                 Find all details related to the Digital Fabrication Lab
                 makerspace, including the available equipment and materials we
@@ -58,7 +58,7 @@ const EquipmentTab = () => {
     const { data: equipments, isLoading, refetch } = useAllEquipment(filter);
 
     return (
-        <Space size="middle" direction="vertical" style={{ width: "100%" }}>
+        <Space size="middle" vertical style={{ width: "100%" }}>
             <Flex gap="middle" align="center" justify="space-between">
                 <h2>EQUIPMENT</h2>
                 <Flex gap="middle" align="center">
@@ -101,7 +101,7 @@ const MaterialTab: React.FC = () => {
     const { data: materials } = useAllMaterials();
 
     return (
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space vertical size="middle" style={{ width: "100%" }}>
             <Flex
                 style={{ width: "100%" }}
                 justify="space-between"

@@ -9,6 +9,34 @@
     scrollbargutter: stable;
 }
 
+.shell-content {
+    padding: 30px 50px;
+}
+
+@media (max-width: 1200px) {
+    .shell-content {
+        padding: 30px 40px;
+    }
+}
+
+@media (max-width: 992px) {
+    .shell-content {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .shell-content {
+        padding: 30px 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .shell-content {
+        padding: 20px 5px;
+    }
+}
+
 .card-selection {
     opacity: 0 !important;
     transition: opacity 1s ease;

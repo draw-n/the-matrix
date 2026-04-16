@@ -156,7 +156,7 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
 
     return (
         <>
-            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+            <Space vertical size="middle" style={{ width: "100%" }}>
                 <Card>
                     <h2>{`${user?.firstName} ${user?.lastName}`}</h2>
                     <p style={{ textTransform: "capitalize" }}>
@@ -168,7 +168,7 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
                     <Card hidden={currentUser?.uuid !== user?.uuid}>
                         <Space
                             style={{ width: "100%" }}
-                            direction="vertical"
+                            vertical
                             size="large"
                         >
                             <Alert
@@ -215,7 +215,7 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
                 <Card hidden={currentUser?.uuid !== user?.uuid}>
                     <Space
                         style={{ width: "100%" }}
-                        direction="vertical"
+                        vertical
                         size="middle"
                     >
                         <h2>Change Password</h2>
@@ -231,7 +231,7 @@ const Profile: React.FC<WithUser> = ({ user: propUser }) => {
                         />
                         <Flex justify="end" style={{ width: "100%" }}>
                             <Button
-                                iconPosition="end"
+                                iconPlacement="end"
                                 variant="filled"
                                 type="primary"
                                 icon={<ArrowRightOutlined />}

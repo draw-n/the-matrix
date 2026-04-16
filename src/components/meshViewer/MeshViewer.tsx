@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useState, Suspense, useRef } from "react";
 import { Card, UploadFile, message, Spin } from "antd";
+import { Popover, Button } from "antd";
 import axios from "axios";
 import * as THREE from "three";
 import alignModelToFace from "./faces/alignModelToFace";
@@ -16,6 +17,7 @@ import { GridHelper } from "three";
 import { faceMatches, matricesEqual, parseFaceData } from "./utils/faceData";
 import { exportAndReplace, runValidation } from "./utils/exportAndReplace";
 import { MeshFace } from "../../types/job";
+import { InfoCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 interface MeshViewerProps {
     allowFaceSelection?: boolean;
@@ -48,6 +50,7 @@ const MeshViewer = (props: MeshViewerProps) => {
     const [suppressedFace, setSuppressedFace] = useState<MeshFace | null>(null);
 
     // --- EFFECT: INITIALIZE ANALYSIS ---
+    // Only run validation/fetch & face-detection when face selection is enabled
     useEffect(() => {
         if (!file) return;
 
@@ -56,27 +59,88 @@ const MeshViewer = (props: MeshViewerProps) => {
         setDetectedFaces([]);
         setSuppressUntilMatrix(null);
         setSuppressedFace(null);
-        if (!file.originFileObj) {
+
+        // Skip validation when face selection is disabled (Review mode).
+        if (!allowFaceSelection) {
             setIsAnalyzing(false);
             return;
         }
-        setIsAnalyzing(true);
 
-        runValidation(
-            analysisRequestId,
-            file,
-            setDetectedFaces,
-            setIsAnalyzing,
-            setFile,
-        );
+        // If we have a local file object, run validation normally.
+        if (file.originFileObj) {
+            setIsAnalyzing(true);
+            runValidation(
+                analysisRequestId,
+                file,
+                setDetectedFaces,
+                setIsAnalyzing,
+                setFile,
+            );
+            return;
+        }
+
+        // If we don't have a local file but do have a URL (i.e. we previously
+        // uploaded and replaced the file for server-side use), fetch the file
+        // from the URL and run validation on the fetched blob so faces persist
+        // when navigating back to this step.
+        if (file.url) {
+            setIsAnalyzing(true);
+            const controller = new AbortController();
+
+            (async () => {
+                try {
+                    const resp = await axios.get(file.url as string, {
+                        responseType: "arraybuffer",
+                        signal: controller.signal,
+                    });
+
+                    const blob = new Blob([resp.data]);
+                    const fetchedFile = new File([blob], file.name || "model", {
+                        type: "application/octet-stream",
+                    });
+
+                    // Pass a transient UploadFile-like object to runValidation
+                    const transient = {
+                        ...file,
+                        originFileObj: fetchedFile,
+                    } as any;
+
+                    runValidation(
+                        analysisRequestId,
+                        transient,
+                        setDetectedFaces,
+                        setIsAnalyzing,
+                        setFile,
+                    );
+                } catch (err) {
+                    if (!axios.isCancel(err)) {
+                        console.error(
+                            "Failed to fetch model for validation:",
+                            err,
+                        );
+                        setIsAnalyzing(false);
+                    }
+                }
+            })();
+
+            return () => controller.abort();
+        }
+
+        // No originFileObj and no url — nothing to validate.
+        setIsAnalyzing(false);
     }, [file]);
 
     // --- EFFECT: AUTO ALIGNMENT ---
     useEffect(() => {
+        // Only auto-align when face selection is enabled and we have detection results.
+        if (!allowFaceSelection) return;
         if (mesh && detectedFaces.length > 0) {
             if (!suppressUntilMatrix) {
-               
-                alignModelToFace(mesh, detectedFaces[0].normal, detectedFaces[0].centroid);
+                alignModelToFace(
+                    mesh,
+                    detectedFaces[0].normal,
+                    detectedFaces[0].centroid,
+                );
                 mesh.updateMatrixWorld(true);
                 setSuppressUntilMatrix(mesh.matrixWorld.clone());
                 setSuppressedFace({
@@ -85,7 +149,7 @@ const MeshViewer = (props: MeshViewerProps) => {
                 });
             }
         }
-    }, [mesh, detectedFaces]);
+    }, [mesh, detectedFaces, allowFaceSelection]);
 
     useEffect(() => {
         if (!mesh) return;
@@ -121,7 +185,7 @@ const MeshViewer = (props: MeshViewerProps) => {
 
     return (
         <Card
-            style={{ width: "100%", height: "500px" }}
+            style={{ width: "100%", height: "500px", position: "relative" }}
             bodyStyle={{
                 padding: 0,
                 height: "100%",
@@ -130,6 +194,29 @@ const MeshViewer = (props: MeshViewerProps) => {
                 alignItems: "center",
             }}
         >
+            {/* Top-right hoverable icon */}
+            <div style={{ position: "absolute", top: 8, right: 8, zIndex: 20 }}>
+                <Popover
+                    content={
+                        <div style={{ maxWidth: 260 }}>
+                            Left click and drag to rotate and scroll to zoom.
+                            Right click and drag to pan. Hover faces to preview
+                            selections. Left click a face to align it to the
+                            build plate. It's recommended to align the largest
+                            flat face to the build plate.
+                        </div>
+                    }
+                    trigger="hover"
+                    placement="left"
+                >
+                    <Button
+                        size="large"
+                        shape="circle"
+                        type="text"
+                        icon={<QuestionCircleOutlined />}
+                    />
+                </Popover>
+            </div>
             {isAnalyzing ? (
                 <Spin
                     tip="Validating Geometry & Detecting Faces..."
@@ -154,9 +241,7 @@ const MeshViewer = (props: MeshViewerProps) => {
 
                         {mesh && (
                             <>
-                                <FocusCameraOnLoad
-                                    mesh={mesh}
-                                />
+                                <FocusCameraOnLoad mesh={mesh} />
 
                                 <primitive object={mesh}>
                                     {detectedFaces.length > 0 &&

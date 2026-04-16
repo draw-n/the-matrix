@@ -28,13 +28,13 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
             {isLoading ? (
                 <Skeleton active />
             ) : (
-                <Space direction="vertical" size="large">
+                <Space vertical size="large">
                     <h2>Select Material</h2>
                     {materials?.map((material: Material) => {
                         return (
                             <Flex justify="space-between" gap="5rem" key={material.uuid}>
                                 <Space
-                                    direction="vertical"
+                                    vertical
                                     size="small"
                                     style={{ display: "flex" }}
                                 >
@@ -59,7 +59,7 @@ const SelectMaterial: React.FC<SelectMaterialProps> = ({
                     })}
                     <Flex justify="center" style={{ width: "100%" }}>
                         <Button
-                            iconPosition="start"
+                            iconPlacement="start"
                             icon={<CaretLeftOutlined />}
                             onClick={() => prev()}
                         >

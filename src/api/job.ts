@@ -29,8 +29,10 @@ export const getAllJobs = async (
         return response.data;
     } catch (error: any) {
         console.error("Error fetching jobs:", error);
-        
-        throw new Error(error.response?.data.message || "Failed to fetch jobs.");
+
+        throw new Error(
+            error.response?.data.message || "Failed to fetch jobs.",
+        );
     }
 };
 
@@ -54,7 +56,9 @@ export const getJobChartData = async (userId?: string, days?: number) => {
         return response.data;
     } catch (error: any) {
         console.error("Error fetching job chart data:", error);
-        throw new Error(error.response?.data.message || "Failed to fetch job chart data.");
+        throw new Error(
+            error.response?.data.message || "Failed to fetch job chart data.",
+        );
     }
 };
 
@@ -76,7 +80,10 @@ export const getFilamentUsedGrams = async (userId?: string) => {
         return response.data.totalFilamentUsed;
     } catch (error: any) {
         console.error("Error fetching filament usage data:", error);
-        throw new Error(error.response?.data.message || "Failed to fetch filament usage data.");
+        throw new Error(
+            error.response?.data.message ||
+                "Failed to fetch filament usage data.",
+        );
     }
 };
 
@@ -99,6 +106,68 @@ export const createJob = async (newJob: {
         return response.data;
     } catch (error: any) {
         console.error("Error creating job:", error);
-        throw new Error(error.response?.data.message || "Failed to create job.");
+        throw new Error(
+            error.response?.data.message || "Failed to create job.",
+        );
     }
 };
+
+/**
+ * Edits an existing job by its unique identifier with the provided updates.
+ * @param jobId - The unique identifier of the job to be edited.
+ * @param updates - An object containing the properties of the job that need to be updated. This can include any subset of the Job properties such as status, filamentUsedGrams, estimatedTimeSeconds, etc.
+ * @returns - A promise that resolves to the updated Job object after the changes have been applied. If the job with the specified ID does not exist, it may throw an error or return undefined, depending on the backend implementation.
+ * @throws - Throws an error if the job cannot be edited due to reasons such as the job not existing, validation errors, or server issues. The error message will provide details about the failure.
+ */
+export const editJobById = async (jobId: string, updates: Partial<Job>) => {
+    try {
+        const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}`,
+            updates,
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error editing job:", error);
+        throw new Error(
+            error.response?.data.message || "Failed to edit job.",
+        );
+    }
+};
+
+/**
+ * Deletes a job by its unique identifier.
+ * @param jobId - The unique identifier of the job to be deleted.
+ * @returns - A promise that resolves to a success message or the deleted Job object, depending on the backend implementation. If the job with the specified ID does not exist, it may throw an error or return undefined.
+ */
+export const deleteJobById = async (jobId: string) => {
+    try {
+        const response = await axios.delete(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}`,
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error deleting job:", error);
+        throw new Error(
+            error.response?.data.message || "Failed to delete job.",
+        );
+    }
+};
+
+/**
+ * Reprints a job by its unique identifier. This function sends a request to the backend to create a new job based on the details of an existing job, effectively allowing the user to reprint a previous job without having to go through the entire job creation process again.
+ * @param jobId - The unique identifier of the job to be reprinted.
+ * @returns - A promise that resolves to the newly created Job object that is based on the original job's details. If the job with the specified ID does not exist, it may throw an error or return undefined, depending on the backend implementation.
+ */
+export const reprintJobById = async (jobId: string) => {
+    try {
+        const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}`,
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error("Error reprinting job:", error);
+        throw new Error(
+            error.response?.data.message || "Failed to reprint job.",
+        );
+    }
+}

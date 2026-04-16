@@ -58,7 +58,7 @@ const CreateEquipmentForm: React.FC = () => {
                 <Button
                     type="primary"
                     size="middle"
-                    iconPosition="end"
+                    iconPlacement="end"
                     icon={<PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
                     shape={isMobile ? "circle" : "round"}

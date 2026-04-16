@@ -5,6 +5,7 @@ import {
     editEquipmentById,
     getAllEquipment,
     getEquipmentById,
+    pausePrinterById,
 } from "../api/equipment";
 import { Equipment } from "../types/equipment";
 import { message } from "antd";
@@ -100,6 +101,26 @@ export const useDeleteEquipmentById = () => {
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to delete equipment.");
+        },
+    });
+};
+
+/**
+ * Hook to pause a printer by its unique identifier.
+ * @param equipmentId - The unique identifier of the printer to pause.
+ * @returns - A mutation object that can be used to pause a printer and handle success or error states.
+ */
+export const usePausePrinterById = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ equipmentId }: { equipmentId?: string }) =>
+            pausePrinterById(equipmentId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["equipment"] });
+            message.success("Printer paused successfully.");
+        },
+        onError: (error: any) => {
+            message.error(error.message || "Failed to pause printer.");
         },
     });
 };

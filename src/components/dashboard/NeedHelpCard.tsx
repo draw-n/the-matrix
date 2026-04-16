@@ -4,7 +4,7 @@ import UserTable from "../tables/UserTable";
 
 const NeedHelpCard: React.FC = () => {
     return (
-        <Card>
+        <Card style={{ height: "100%" }}>
             <Flex vertical gap="middle">
                 <h2>Need help?</h2>
                 <UserTable />

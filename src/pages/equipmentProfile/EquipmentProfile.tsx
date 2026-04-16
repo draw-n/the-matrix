@@ -51,11 +51,15 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
                 <General equipment={equipment} handleClick={handleEditClick} />
             ),
         },
-        {
-            key: "2",
-            label: "Print History",
-            children: <QueueCard equipmentId={equipment?.uuid} />,
-        },
+        ...(equipment && equipment?.remotePrintAvailable && equipment?.uuid
+            ? [
+                  {
+                      key: "2",
+                      label: "Print History",
+                      children: <QueueCard showMineOnlyToggable equipmentId={equipment?.uuid} />,
+                  },
+              ]
+            : []),
         ...(equipment && equipment?.cameraUrl
             ? [
                   {
@@ -88,7 +92,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
 
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
+            <Space style={{ width: "100%" }} vertical size="middle">
                 <HeaderCard
                     equipment={equipment}
                     handleClick={handleEditClick}

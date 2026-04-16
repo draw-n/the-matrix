@@ -65,7 +65,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                     size="middle"
                     style={{ textTransform: "capitalize" }}
                     shape="round"
-                    iconPosition="end"
+                    iconPlacement="end"
                     icon={<CaretDownFilled style={{ marginLeft: "10px" }} />}
                 >
                     {user?.firstName + " " + user?.lastName}
