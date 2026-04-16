@@ -92,7 +92,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
 
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
+            <Space style={{ width: "100%" }} vertical size="middle">
                 <HeaderCard
                     equipment={equipment}
                     handleClick={handleEditClick}

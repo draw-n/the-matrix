@@ -37,7 +37,7 @@ const UserCard: React.FC<WithUser> = ({ user: cardUser }) => {
         <>
             <Card style={{ height: "100%" }}>
                 <Space
-                    direction="vertical"
+                    vertical
                     size="small"
                     style={{ width: "100%" }}
                 >

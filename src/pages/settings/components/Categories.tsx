@@ -242,11 +242,18 @@ const EditCategory: React.FC<WithCategory> = ({ category }: WithCategory) => {
                         <Button
                             type="primary"
                             shape="circle"
-                            onClick={() => {
+                            onClick={async () => {
                                 if (editMode) {
-                                    form.submit();
+                                    try {
+                                        await form.validateFields();
+                                        await form.submit();
+                                        setEditMode(false);
+                                    } catch (err) {
+                                        // validation or save error - keep editMode true
+                                    }
+                                } else {
+                                    setEditMode(true);
                                 }
-                                setEditMode(!editMode);
                             }}
                             icon={
                                 editMode ? <SaveOutlined /> : <EditOutlined />
@@ -266,7 +273,7 @@ const EditCategory: React.FC<WithCategory> = ({ category }: WithCategory) => {
                                         gap="small"
                                     >
                                         <Form.Item
-                                            {...field}
+                                            name={[field.name]}
                                             validateTrigger={[
                                                 "onChange",
                                                 "onBlur",
@@ -319,13 +326,13 @@ const EditCategory: React.FC<WithCategory> = ({ category }: WithCategory) => {
             <h3>Equipment</h3>
             <Flex wrap>
                 {equipment?.map((item) => (
-                    <Tag>{item.name}</Tag>
+                    <Tag key={item.uuid || item.name}>{item.name}</Tag>
                 ))}
             </Flex>
             <h3>Materials</h3>
             <Flex wrap>
                 {materials?.map((item) => (
-                    <Tag>{item.name}</Tag>
+                    <Tag key={item.uuid || item.name}>{item.name}</Tag>
                 ))}
             </Flex>
         </Flex>

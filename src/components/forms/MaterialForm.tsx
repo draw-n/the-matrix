@@ -55,7 +55,7 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                     size="middle"
                     icon={material ? <EditOutlined /> : <PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
-                    iconPosition="end"
+                    iconPlacement="end"
                     shape={material || isMobile ? "circle" : "round"}
                 >
                     {material || isMobile ? null : "Add New Material"}

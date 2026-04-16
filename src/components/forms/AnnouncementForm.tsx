@@ -182,7 +182,7 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
                     size="middle"
                     icon={announcement ? <EditOutlined /> : <PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
-                    iconPosition="end"
+                    iconPlacement="end"
                     shape={announcement ? "circle" : "round"}
                 >
                     {announcement ? null : "Add New Announcement"}

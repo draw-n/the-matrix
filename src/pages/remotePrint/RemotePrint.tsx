@@ -189,7 +189,7 @@ const RemotePrint: React.FC = () => {
                 </Flex>
             ) : allowPrint ? (
                 <Space
-                    direction="vertical"
+                    vertical
                     size="large"
                     style={{ width: "100%" }}
                 >

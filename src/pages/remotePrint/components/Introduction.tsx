@@ -132,7 +132,7 @@ const Introduction: React.FC<IntroductionProps> = ({
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={next}
                     >
                         Upload File

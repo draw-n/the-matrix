@@ -9,8 +9,9 @@ const AccessCodes: React.FC = () => {
     const roles = ["novice", "proficient", "expert", "moderator"];
     return (
         <Flex vertical gap="small">
+            <h2>ACCESS CODES</h2>
             {roles.map((role) => (
-                <EditAccessCode role={role} initialEditMode={false} />
+                <EditAccessCode key={role} role={role} initialEditMode={false} />
             ))}
         </Flex>
     );

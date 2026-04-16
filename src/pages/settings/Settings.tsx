@@ -3,6 +3,7 @@
 import { Space, Form, Tabs, TabsProps } from "antd";
 import Categories from "./components/Categories";
 import AccessCodes from "./components/AccessCodes";
+import OfficeHours from "./components/OfficeHours";
 
 const Settings: React.FC = () => {
 
@@ -17,6 +18,11 @@ const Settings: React.FC = () => {
             label: "Categories",
             children: <Categories />,
         },
+        {
+            key: "3",
+            label: "Office Hours",
+            children: <OfficeHours />,
+        }
     ];
 
     return (

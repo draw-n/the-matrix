@@ -16,7 +16,7 @@ const UserDirectory: React.FC = () => {
 
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="middle">
+            <Space style={{ width: "100%" }} vertical size="middle">
                 <Flex
                     style={{ width: "100%" }}
                     justify="space-between"

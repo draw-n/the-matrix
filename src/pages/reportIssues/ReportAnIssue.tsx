@@ -113,7 +113,7 @@ const ReportAnIssue: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowLeftOutlined />}
-                        iconPosition="start"
+                        iconPlacement="start"
                         onClick={() => {
                             setError("");
                             setStepIndex(Math.max(stepIndex - 1, 0));
@@ -127,7 +127,7 @@ const ReportAnIssue: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={() => {
                             setError("");
                             if (stepIndex === 0) {
@@ -169,7 +169,7 @@ const ReportAnIssue: React.FC = () => {
                         variant="filled"
                         type="primary"
                         icon={<ArrowRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={onFinish}
                     >
                         Submit

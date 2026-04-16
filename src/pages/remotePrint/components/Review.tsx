@@ -170,7 +170,7 @@ const Review: React.FC<ReviewProps> = ({
                     <Button
                         onClick={prev}
                         icon={<CaretLeftOutlined />}
-                        iconPosition="start"
+                        iconPlacement="start"
                     >
                         More Settings
                     </Button>

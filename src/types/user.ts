@@ -7,6 +7,11 @@ export interface User {
     status: UserStatus;
     graduationDate?: Date;
     departments: string[];
+    officeHours?: {
+        dayOfWeek: string;
+        startTime: string;
+        endTime: string;
+    }[];
 }
 
 export interface WithUser {

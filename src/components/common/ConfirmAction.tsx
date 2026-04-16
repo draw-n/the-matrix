@@ -49,7 +49,7 @@ const ConfirmAction: React.FC<ConfirmActionProps> = ({
                 title={title}
             >
                 <Space
-                    direction="vertical"
+                    vertical
                     style={{ width: "100%" }}
                     size="small"
                 >

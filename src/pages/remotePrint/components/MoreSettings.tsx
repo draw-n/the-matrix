@@ -60,9 +60,9 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
     ];
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="large">
+            <Space style={{ width: "100%" }} vertical size="large">
                 <h2>MORE SETTINGS</h2>
-                <Space direction="vertical" size="middle">
+                <Space vertical size="middle">
                     <h3>Density (Infill)</h3>
                     <p>
                         Infill refers to the material used to fill the interior
@@ -100,7 +100,7 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                         />
                     </Flex>
                 </Space>
-                <Space direction="vertical" size="middle">
+                <Space vertical size="middle">
                     <h3>Detail (Layer Height)</h3>
                     <p>
                         Layer height refers to the thickness of each individual
@@ -138,14 +138,14 @@ const MoreSettings: React.FC<MoreSettingsProps> = ({
                     <Button
                         onClick={prev}
                         icon={<CaretLeftOutlined />}
-                        iconPosition="start"
+                        iconPlacement="start"
                     >
                         Select Material
                     </Button>
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={next}
                     >
                         Review
@@ -168,7 +168,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
 }: AdvancedSettingsProps) => {
     return (
         <>
-            <Space style={{ width: "100%" }} direction="vertical" size="large">
+            <Space style={{ width: "100%" }} vertical size="large">
                 <Flex gap="25px" align="center" style={{ width: "100%" }}>
                     <h3>Supports</h3>
                     <Switch
@@ -182,7 +182,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                     />
                 </Flex>
                 <Space
-                    direction="vertical"
+                    vertical
                     style={{ width: "100%" }}
                     size="middle"
                 >
@@ -383,7 +383,7 @@ const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
                     </Row>
                 </Space>
                 <Space
-                    direction="vertical"
+                    vertical
                     style={{ width: "100%" }}
                     size="middle"
                 >

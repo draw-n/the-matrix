@@ -37,7 +37,7 @@ const AnnouncementTab: React.FC = () => {
 
 
     return (
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space vertical size="middle" style={{ width: "100%" }}>
             <Flex
                 style={{ width: "100%" }}
                 justify="space-between"
@@ -60,7 +60,7 @@ const IssueTab: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space vertical size="middle" style={{ width: "100%" }}>
             <Flex
                 style={{ width: "100%" }}
                 justify="space-between"
@@ -72,7 +72,7 @@ const IssueTab: React.FC = () => {
                     size="middle"
                     icon={<PlusOutlined />}
                     onClick={() => navigate("/report")}
-                    iconPosition="end"
+                    iconPlacement="end"
                     shape={isMobile ? "circle" : "round"}
                 >
                     {isMobile ? null : "Add New Issue"}

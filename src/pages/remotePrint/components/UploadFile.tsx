@@ -184,7 +184,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 <Flex gap="middle" justify="center" style={{ width: "100%" }}>
                     <Button
                         icon={<CaretLeftOutlined />}
-                        iconPosition="start"
+                        iconPlacement="start"
                         onClick={prev}
                     >
                         Introduction
@@ -192,7 +192,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                     <Button
                         type="primary"
                         icon={<CaretRightOutlined />}
-                        iconPosition="end"
+                        iconPlacement="end"
                         onClick={handleSubmit}
                         loading={isProcessing} // <--- Shows loading state during backend rotation
                     >

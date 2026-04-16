@@ -77,8 +77,8 @@ const Dashboard: React.FC = () => {
             ),
         },
         {
-            key: "resources",
-            label: "Resources",
+            key: "office-hours",
+            label: "Office Hours",
             children: (
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
