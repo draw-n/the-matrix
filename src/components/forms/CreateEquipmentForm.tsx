@@ -12,8 +12,12 @@ import {
     Flex,
     Switch,
     Grid,
+    UploadProps,
+    message,
+    Upload,
+    UploadFile,
 } from "antd";
-import { CaretDownFilled, PlusOutlined } from "@ant-design/icons";
+import { CaretDownFilled, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { Equipment } from "../../types/equipment";
 import { useCreateEquipment } from "../../hooks/useEquipment";
 import { useAllCategories } from "../../hooks/useCategories";
@@ -25,14 +29,27 @@ const CreateEquipmentForm: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const screens = Grid.useBreakpoint();
     const isMobile = !screens.md; // Consider mobile if screen width is less than 768px
+    const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
 
     const { data: categories } = useAllCategories();
     const { mutateAsync: createEquipment } = useCreateEquipment();
 
     const onFinish: FormProps<Equipment>["onFinish"] = async (values) => {
-        await createEquipment({ newEquipment: values });
+        await createEquipment({ newEquipment: values, file: uploadedFile[0]?.originFileObj});
         setIsModalOpen(false);
         form.resetFields();
+    };
+
+    const props: UploadProps = {
+        accept: ".png, .jpg, .gif, .bmp, .webp, .tiff, .raw, .svg, .jpeg",
+        beforeUpload: (file) =>{
+            const is50mb = file.size / 1024 / 1024 < 50;
+
+            if (!is50mb) {
+                message.error("File must be smaller than 50MB.");
+                return Upload.LIST_IGNORE;
+            }
+        }
     };
 
     return (
@@ -183,6 +200,30 @@ const CreateEquipmentForm: React.FC = () => {
                         name="cameraUrl"
                     >
                         <Input size="small" />
+                    </Form.Item>
+                    <Form.Item<Equipment>
+                        style={{ width: "100%" }}
+                        label={
+                            <Flex gap="small" align="center">
+                                Image
+                                <HelpField content="Picture of the equipment" />
+                            </Flex>
+                        }
+                        name="imgSrc"
+                    >
+                        <Upload
+                            {...props}
+                            fileList={uploadedFile}
+                            listType="picture"
+                        >
+                            <Button
+                                shape="round"
+                                type="default"
+                                icon={<UploadOutlined />}
+                            >
+                                Upload Image
+                            </Button>
+                        </Upload>
                     </Form.Item>
                     <Form.Item<Equipment>
                         name="remotePrintAvailable"

@@ -56,7 +56,7 @@ const AnnouncementForm: React.FC<WithAnnouncement> = ({
         (async () => {
             try {
                 const response = await axios.get(url, {
-                    responseType: "blob",
+                    responseType: "blob", //file type 
                     withCredentials: true,
                 });
                 if (!response.data)

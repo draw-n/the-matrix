@@ -24,11 +24,22 @@ export const getAllEquipment = async (categoryId?: string) => {
  * @param newEquipment - An object containing the details of the equipment to be created.
  * @returns - A promise that resolves to the created Equipment object.
  */
-export const createEquipment = async (newEquipment: Partial<Equipment>) => {
+export const createEquipment = async (newEquipment: Partial<Equipment>, file?: File) => {
     try {
+        const formData = new FormData();
+        Object.keys(newEquipment).forEach((key) => {
+            formData.append(
+                key,
+                (newEquipment as Record<string, any>)[key] as string,
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
         const response = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-            newEquipment,
+            formData,
         );
         return response.data;
     } catch (error: any) {
@@ -59,11 +70,24 @@ export const getEquipmentById = async (equipmentId: string) => {
  * @param values - The updated equipment data.
  * @returns - A promise that resolves to the updated Equipment object.
  */
-export const editEquipmentById = async (equipmentId: string, values: Partial<Equipment>) => {
+export const editEquipmentById = async (equipmentId: string, values: Partial<Equipment>, file?: File) => {
     try {
+        const data = new FormData();
+
+        const formData = new FormData();
+        Object.keys(values).forEach((key) => {
+            formData.append(
+                key,
+                (values as Record<string, any>)[key] as string,
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
         const response = await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentId}`,
-            values,
+            formData,
         );
         return response.data;
     } catch (error: any) {
