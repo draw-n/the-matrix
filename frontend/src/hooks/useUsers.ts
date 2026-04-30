@@ -44,10 +44,6 @@ export const useEditUserById = () => {
             userId: string;
             editedUser: Partial<User>;
         }) => editUserById(userId, editedUser),
-
-        onSuccess: () => {
-            message.success("User updated successfully.");
-        },
         onError: (error: any) => {
             message.error(error.message || "Failed to update user.");
         },

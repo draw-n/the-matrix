@@ -19,6 +19,7 @@ import NeedHelpCard from "../../components/dashboard/NeedHelpCard";
 import RemotePrintCard from "../../components/dashboard/RemotePrintCard";
 import TotalFilamentUsedCard from "../../components/dashboard/TotalFilamentUsedCard";
 import QueueCard from "../../components/dashboard/QueueCard";
+import ThisWeekCard from "../../components/dashboard/ThisWeekCard";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
@@ -53,7 +54,10 @@ const Dashboard: React.FC = () => {
                             type="info"
                         />
                     </Col>
-                    <Col span={24}>
+                    <Col span={16}>
+                        <ThisWeekCard />
+                    </Col>
+                    <Col span={8}>
                         <AnnouncementCard />
                     </Col>
                 </Row>

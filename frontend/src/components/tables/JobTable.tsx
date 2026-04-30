@@ -238,17 +238,24 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
             render: (_: any, record, index: number) => {
                 return (
                     <Flex justify="center" align="end" vertical gap="small">
-                        <Tag
-                            color={
-                                record.status === "completed"
-                                    ? "green"
-                                    : record.status === "failed"
-                                      ? "red"
-                                      : "default"
-                            }
-                        >
-                            {record.status.toUpperCase()}
-                        </Tag>
+                        {record.status === "failed" && record.failureReason ? (
+                            <Tooltip
+                                title={`${record.failureReason}`}
+                            >
+                                <Tag color="red">FAILED</Tag>
+                            </Tooltip>
+                        ) : (
+                            <Tag
+                                color={
+                                    record.status === "completed"
+                                        ? "green"
+                                        : "default"
+                                }
+                            >
+                                {record.status.toUpperCase()}
+                            </Tag>
+                        )}
+
                         {record.finishedAt && (
                             <span style={{ color: "#a9a9a9" }}>
                                 {new Date(

@@ -11,6 +11,10 @@ import { useAllAnnouncements } from "../../hooks/useAnnouncements";
 import IssueTable from "../../components/tables/IssueTable";
 import { useAllIssues } from "../../hooks/useIssues";
 
+import EventForm from "../../components/forms/EventForm";
+import EventTable from "../../components/tables/EventTable";
+import { useAllEvents } from "../../hooks/useEvents";
+
 const EditUpdates: React.FC = () => {
     const items: TabsProps["items"] = [
         {
@@ -22,6 +26,11 @@ const EditUpdates: React.FC = () => {
             key: "2",
             label: "Announcements",
             children: <AnnouncementTab />,
+        },
+        {
+            key: "3",
+            label: "Events",
+            children: <EventTab />,
         },
     ];
 
@@ -79,6 +88,25 @@ const IssueTab: React.FC = () => {
                 </Button>
             </Flex>
             <IssueTable issues={issues} />
+        </Space>
+    );
+};
+
+const EventTab: React.FC = () => {
+    const {data: events} = useAllEvents();
+    const navigate = useNavigate();
+
+    return (
+        <Space vertical size="middle" style={{ width: "100%" }}>
+            <Flex
+                style={{ width: "100%" }}
+                justify="space-between"
+                align="center"
+            >
+                <h2>EVENTS</h2>
+                <EventForm />
+            </Flex>
+            <EventTable events={events} />
         </Space>
     );
 };
