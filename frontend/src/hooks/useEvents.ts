@@ -5,18 +5,18 @@ import {
     createEvent,
     deleteEventById,
 } from "../api/event";
-import { Event, EventStatus } from "../types/event";
+import { Event, EventStatus, EventType } from "../types/event";
 import { message } from "antd";
 
 /**
- * Hook to fetch all events, optionally filtered by their statuses.
- * @param statuses - An array of event statuses to filter by (e.g., ["active", "archived"]).
+ * Hook to fetch all events, optionally filtered by their types.
+ * @param types - An array of event types to filter by (e.g., ["office hours", "meeting"]).
  * @returns - A React Query object containing the events data, loading state, and error state.
  */
-export const useAllEvents = (statuses?: EventStatus[]) => {
+export const useAllEvents = (types?: EventType[]) => {
     return useQuery({
-        queryKey: ["events", statuses],
-        queryFn: async () => getAllEvents(statuses),
+        queryKey: ["events", types],
+        queryFn: async () => getAllEvents(types),
     });
 };
 
@@ -40,7 +40,6 @@ export const useEditEventById = () => {
             queryClient.invalidateQueries({
                 queryKey: ["events"],
             });
-            message.success("Event updated successfully.");
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to update event.");
@@ -57,14 +56,12 @@ export const useCreateEvent = () => {
     return useMutation({
         mutationFn: ({
             newEvent,
-            file,
+    
         }: {
             newEvent: Partial<Event>;
-            file?: File;
         }) => createEvent(newEvent),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["events"] });
-            message.success("Event created successfully.");
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to create event.");
@@ -83,7 +80,6 @@ export const useDeleteEventById = () => {
             deleteEventById(eventId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["events"] });
-            message.success("Event deleted successfully.");
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to delete event.");

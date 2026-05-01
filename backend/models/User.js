@@ -70,7 +70,8 @@ const UserSchema = new Schema({
                     enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
                 },
                 startTime: String, // in HH:mm format
-                endTime: String, // in HH:mm format
+                endTime: String, // in HH:mm format,
+                eventId: String, // calendar event id for office hours
             }
         ]
     }

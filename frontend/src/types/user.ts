@@ -11,6 +11,7 @@ export interface User {
         dayOfWeek: string;
         startTime: string;
         endTime: string;
+        eventId: string; // calendar event id for office hours
     }[];
 }
 

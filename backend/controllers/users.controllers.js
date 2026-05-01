@@ -1,5 +1,6 @@
 const User = require("../models/User.js");
 const Access = require("../models/Access.js");
+const Event = require("../models/Event.js");
 const crypto = require("crypto");
 const { ObjectId } = require("mongoose").Types;
 /**
@@ -72,6 +73,14 @@ const deleteUserById = async (req, res) => {
             const user = await User.findOneAndDelete({ uuid: uuid });
             if (!user) {
                 return res.status(404).send({ message: "User not found." });
+            }
+
+            if (user.officeHours && user.officeHours.length > 0) {
+                await Promise.all(
+                    user.officeHours.map((oh) =>
+                        Event.findOneAndDelete({ uuid: oh.eventId }),
+                    ),
+                );
             }
 
             return res

@@ -39,6 +39,9 @@ const MaterialSchema = new Schema({
         type: String, // list of equipment uuids with this material loaded and available for remote printing
         ref: "Equipment",
     }],
+    remotePrintConfigFileName: {
+        type: String, // name of the configuration file used for remote printing with this material (filament only)
+    },
     temperatures: { // special temperatures for printing with this material (filament only)
         extruder: {
             firstLayer: { type: Number },

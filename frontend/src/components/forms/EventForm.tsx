@@ -14,6 +14,7 @@ import {
     Flex,
     TimePicker,
     Checkbox,
+    message,
 } from "antd";
 import {
     CaretDownFilled,
@@ -40,6 +41,13 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
     );
 
     const onFinish: FormProps["onFinish"] = async (values) => {
+        if (!["print session", "lab closed", "other"].includes(values.type)) {
+            message.error(
+                "Only print sessions, lab closures, and other events can be created or edited through this form. Please contact an administrator to manage office hours events.",
+            );
+            return;
+        }
+
         if (event) {
             if (values.createAnnouncement && !event.announcementId) {
                 createAnnouncement({
@@ -218,6 +226,11 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                                         label: "Lab Closed",
                                     },
                                     { value: "other", label: "Other" },
+                                    {
+                                        value: "office hours",
+                                        label: "Office Hours",
+                                        disabled: true,
+                                    },
                                 ]}
                             />
                         </Form.Item>

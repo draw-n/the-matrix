@@ -4,53 +4,117 @@ import {
     PlusOutlined,
     SaveOutlined,
 } from "@ant-design/icons";
-import {
-    Button,
-    Flex,
-    Form,
-    Input,
-    InputNumber,
-    Radio,
-    Select,
-    Space,
-    TimePicker,
-    Typography,
-} from "antd";
+import { Button, Flex, Form, Radio, Select, Space, TimePicker } from "antd";
 import { useState, useEffect } from "react";
-import { message } from "antd";
 import dayjs from "dayjs";
 import { useAllUsers, useEditUserById } from "../../../hooks/useUsers";
+import {
+    useAllEvents,
+    useCreateEvent,
+    useDeleteEventById,
+    useEditEventById,
+} from "../../../hooks/useEvents";
 
 const OfficeHours: React.FC = () => {
     const [form] = Form.useForm();
     const [editMode, setEditMode] = useState(false);
     const { data: users } = useAllUsers(["admin", "moderator"]);
-
+    const { data: events } = useAllEvents(["office hours"]);
+    const { mutateAsync: createEvent } = useCreateEvent();
+    const { mutateAsync: editEventById } = useEditEventById();
+    const { mutateAsync: deleteEventById } = useDeleteEventById();
     const { mutateAsync: editUserById } = useEditUserById();
+
+    const eventMap = new Map((events || []).map((e: any) => [e.uuid, e]));
     const onFinish = async (values: any) => {
+        const newOHs = values.officeHours || [];
+
         for (const user of users || []) {
-            const userOfficeHours = values.officeHours?.filter(
+            const originalOHs = user.officeHours || [];
+
+            const updatedOHs = newOHs.filter(
                 (oh: any) => oh.userId === user.uuid,
             );
-            if (!userOfficeHours || userOfficeHours.length === 0) {
-                editUserById({
-                    userId: user.uuid,
-                    editedUser: {
-                        officeHours: [],
-                    },
-                });
-            } else {
-                editUserById({
-                    userId: user.uuid,
-                    editedUser: {
-                        officeHours: userOfficeHours.map((oh: any) => ({
-                            dayOfWeek: oh.day as string,
-                            startTime: oh.time[0].format("h:mm a"),
-                            endTime: oh.time[1].format("h:mm a"),
-                        })),
-                    },
-                });
+
+            // --- DELETE events (exist before, missing now) ---
+            for (const oldOH of originalOHs) {
+                const stillExists = updatedOHs.find(
+                    (oh: any) => oh.eventId === oldOH.eventId,
+                );
+
+                if (!stillExists && oldOH.eventId) {
+                    await deleteEventById({ eventId: oldOH.eventId });
+                }
             }
+
+            // --- CREATE or UPDATE events ---
+            const finalOfficeHours = [];
+
+            for (const oh of updatedOHs) {
+                const startTime = oh.time[0].format("h:mm a");
+                const endTime = oh.time[1].format("h:mm a");
+
+                if (oh.eventId) {
+                    const existingEvent = eventMap.get(oh.eventId);
+
+                    if (!existingEvent) {
+                        throw new Error(`Missing event ${oh.eventId}`);
+                    }
+                    await editEventById({
+                        eventId: oh.eventId,
+                        updatedEvent: {
+                            ...existingEvent, // ✅ preserve everything
+                            title: `${user.firstName} ${user.lastName}`,
+                            description: `Weekly office hours for ${user.firstName} ${user.lastName}`,
+                            lastUpdatedBy: user.uuid,
+                            dateLastUpdated: new Date(),
+                            dayOfWeek: oh.day,
+                            startTime,
+                            endTime,
+                        },
+                    });
+
+                    finalOfficeHours.push({
+                        dayOfWeek: oh.day,
+                        startTime,
+                        endTime,
+                        eventId: oh.eventId,
+                    });
+                } else {
+                    // CREATE new event
+                    const created = await createEvent({
+                        newEvent: {
+                            title: `${user.firstName} ${user.lastName}`,
+                            type: "office hours",
+                            isRecurring: true,
+                            description: `Weekly office hours for ${user.firstName} ${user.lastName}`,
+                            createdBy: user.uuid,
+                            dateCreated: new Date(),
+                            lastUpdatedBy: user.uuid,
+                            status: "recurring",
+                            dateLastUpdated: new Date(),
+                            dayOfWeek: oh.day,
+                            startTime,
+                            endTime,
+                        },
+                    });
+
+                    finalOfficeHours.push({
+                        dayOfWeek: oh.day,
+                        startTime,
+                        endTime,
+                        eventId: created.uuid, // adjust if your API differs
+                    });
+                }
+            }
+
+            // --- UPDATE USER ---
+            await editUserById({
+                userId: user.uuid,
+                editedUser: {
+                    officeHours: finalOfficeHours,
+                },
+            });
         }
     };
 
@@ -64,6 +128,7 @@ const OfficeHours: React.FC = () => {
                     dayjs(oh.startTime, "h:mm a"),
                     dayjs(oh.endTime, "h:mm a"),
                 ],
+                eventId: oh.eventId,
             })),
         );
 

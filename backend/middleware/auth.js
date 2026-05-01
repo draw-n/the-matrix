@@ -1,5 +1,12 @@
 const Equipment = require("../models/Equipment");
 
+/**
+ * Ensures that the user is authenticated
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @param {*} next - next middleware function
+ * @returns 
+ */
 const ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
