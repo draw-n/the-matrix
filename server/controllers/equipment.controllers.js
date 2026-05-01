@@ -1,0 +1,417 @@
+const Equipment = require("../models/Equipment.js");
+const Issue = require("../models/Issue.js");
+var axios = require("axios");
+var mongoose = require("mongoose");
+const crypto = require("crypto");
+const { validateUniqueField } = require("../utils/mongo.utils.js");
+const { pausePrint } = require("../services/duet.service.js");
+const { ObjectId } = mongoose.Types; // Import ObjectId
+const multer = require("multer");
+const upload = multer({dest: "upload/equipments/"});
+
+/**
+ * Creates new equipment and saves to MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - respones details
+ * @returns - response details (with status)
+ */
+const createEquipment = async (req, res) => {
+    const {
+        name,
+        categoryId,
+        description,
+        routePath,
+        ipUrl,
+        headline,
+        cameraUrl,
+        remotePrintAvailable,
+        piUrl
+    } = req.body;
+
+    try {
+        if (name && categoryId && description && routePath) {
+            if (ipUrl) {
+                const isUnique = await validateUniqueField(
+                    ipUrl,
+                    "ipUrl",
+                    Equipment,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "IP URL must be unique." });
+                }
+            }
+
+            if (cameraUrl) {
+                const isUnique = await validateUniqueField(
+                    cameraUrl,
+                    "cameraUrl",
+                    Equipment,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "Camera URL must be unique." });
+                }
+            }
+
+            if (routePath) {
+                const isUnique = await validateUniqueField(
+                    routePath,
+                    "routePath",
+                    Equipment,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "Route Path must be unique." });
+                }
+            }
+
+            if(piUrl){
+                const isUnique = await validateUniqueField(
+                    piUrl,
+                    "piUrl",
+                    Equipment,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "Route Path must be unique." });
+                }
+            }
+
+            const equipment = new Equipment({
+                _id: new ObjectId(),
+                uuid: crypto.randomUUID(),
+                name,
+                ipUrl,
+                headline,
+                categoryId,
+                routePath,
+                description,
+                cameraUrl,
+                remotePrintAvailable: remotePrintAvailable || false,
+                status: "available",
+                piUrl,
+                key: (piUrl != null && remotePrintAvailable)? crypto.randomBytes(32).toString('hex'): null,
+            });
+            await equipment.save();
+
+            const equipmentObj = equipment.toObject();
+
+            delete equipmentObj._id;
+
+            return res.status(200).json(equipmentObj);
+        } else {
+            return res
+                .status(400)
+                .send({ message: "Missing at least one required field." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when creating new equipment.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Deletes an equipment from MongoDB.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const deleteEquipmentById = async (req, res) => {
+    const uuid = req.params?.uuid;
+
+    try {
+        if (uuid) {
+            const equipment = await Equipment.findOneAndDelete({ uuid: uuid });
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .send({ message: "Equipment not found." });
+            }
+            const issues = await Issue.deleteMany({ equipment: uuid });
+            return res
+                .status(200)
+                .send({ message: "Successfully deleted equipment." });
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID" });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when deleting equipment.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Updates an equipment from MongoDB
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const editEquipmentById = async (req, res) => {
+    const uuid = req.params?.uuid;
+    const { ipUrl, cameraUrl, routePath } = req.body;
+    try {
+        if (uuid) {
+            if (ipUrl) {
+                const isUnique = await validateUniqueField(
+                    ipUrl,
+                    "ipUrl",
+                    Equipment,
+                    uuid,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "IP URL must be unique." });
+                }
+            }
+
+            if (cameraUrl) {
+                const isUnique = await validateUniqueField(
+                    cameraUrl,
+                    "cameraUrl",
+                    Equipment,
+                    uuid,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "Camera URL must be unique." });
+                }
+            }
+
+            if (routePath) {
+                const isUnique = await validateUniqueField(
+                    routePath,
+                    "routePath",
+                    Equipment,
+                    uuid,
+                );
+                if (!isUnique) {
+                    return res
+                        .status(400)
+                        .send({ message: "Route Path must be unique." });
+                }
+            }
+            const equipment = await Equipment.findOneAndUpdate(
+                { uuid: uuid },
+                req.body,
+                { new: true },
+            );
+
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .json({ message: "Equipment not found." });
+            }
+
+            const equipmentObj = equipment.toObject();
+
+            delete equipmentObj._id;
+
+            return res.status(200).json(equipmentObj);
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when updating equipment.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Update equipment status based on retrieval
+ * @param {*} req - request object
+ * @param {*} res - response object
+ * @returns - response object (with status)
+ */
+const updateStatusById = async (req, res) => {
+    const uuid = req.params?.uuid;
+
+    try {
+        if (uuid) {
+            let equipment = await Equipment.findOne({ uuid: uuid });
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .json({ message: "Equipment not found." });
+            }
+
+            if (equipment.ipUrl) {
+                await axios.get(
+                    `http://${equipment.ipUrl}/rr_connect?password=`,
+                );
+                const statusResponse = await axios.get(
+                    `http://${equipment.ipUrl}/rr_model?key=state.status`,
+                );
+                const result = statusResponse.data.result;
+                let finalStatus = "offline";
+
+                switch (result) {
+                    case "disconnected":
+                    case "off":
+                        finalStatus = "offline";
+                        break;
+                    case "pausing":
+                    case "paused":
+                        finalStatus = "paused";
+                    case "busy":
+                    case "cancelling":
+                    case "resuming":
+                    case "updating":
+                    case "starting":
+                    case "simulating":
+                    case "changingTool":
+                    case "processing":
+                        finalStatus = "busy";
+                        break;
+                    case "halted":
+                        finalStatus = "error";
+                        break;
+                    case "idle":
+                        finalStatus = "available";
+                    default:
+                        break;
+                }
+
+                equipment = await Equipment.findOneAndUpdate(
+                    { uuid: uuid },
+                    {
+                        status: finalStatus,
+                    },
+                );
+            }
+            const equipmentObj = equipment.toObject();
+
+            delete equipmentObj._id;
+            return res.status(200).json(equipmentObj);
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when updating equipment.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Pause printer based on retrieval
+ * @param {*} req - request object
+ * @param {*} res - response object
+ * @returns - response object (with status)
+ */
+const pausePrinterById = async (req, res) => {
+    const uuid = req.params?.uuid;
+    try {
+        if (uuid) {
+            const equipment = await Equipment.findOne({ uuid: uuid });
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .json({ message: "Equipment not found." });
+            }
+            if (!equipment.ipUrl) {
+                return res
+                    .status(400)
+                    .json({ message: "Equipment does not have IP URL." });
+            }
+            await pausePrint(equipment.ipUrl);
+            return res
+                .status(200)
+                .json({ message: "Printer paused successfully." });
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when pausing printer.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Retrieves an equipment from MongoDB based on id.
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const getEquipmentById = async (req, res) => {
+    const uuid = req.params?.uuid;
+
+    try {
+        if (uuid) {
+            const equipment = await Equipment.findOne(
+                { uuid: uuid },
+                { projection: { _id: 0 } },
+            );
+            if (!equipment) {
+                return res
+                    .status(404)
+                    .send({ message: "Equipment not found." });
+            }
+            return res.status(200).json(equipment);
+        } else {
+            return res.status(400).send({ message: "Missing Equipment ID." });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving equipment.",
+            error: err.message,
+        });
+    }
+};
+
+/**
+ * Gets all equipment based off a filter
+ * @param {*} req - request details
+ * @param {*} res - response details
+ * @returns - response details (with status)
+ */
+const getAllEquipment = async (req, res) => {
+    const { categoryId } = req.query;
+    try {
+        let filter = {};
+        if (categoryId) {
+            filter.categoryId = categoryId; // It's a string, use it as is
+        }
+        const equipments = await Equipment.find(filter, {
+            projection: { _id: 0 },
+        }).sort({ name: 1 });
+        return res.status(200).json(equipments);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send({
+            message: "Error when retrieving all equipment.",
+            error: err.message,
+        });
+    }
+};
+
+module.exports = {
+    createEquipment,
+    deleteEquipmentById,
+    editEquipmentById,
+    getEquipmentById,
+    getAllEquipment,
+    updateStatusById,
+    pausePrinterById
+};

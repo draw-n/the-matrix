@@ -1,3 +1,5 @@
+import { blue, green, orange, red } from "@ant-design/colors";
+
 export interface Event {
     uuid: string; // unique identifier for the event
     title: string;
@@ -27,3 +29,10 @@ export interface WithEvent {
 export interface WithEvents {
     events?: Event[];
 }
+
+export const eventTypeColors: Record<EventType, string> = {
+    "lab closed": red[5],
+    "print session": blue[5],
+    "office hours": green[5],
+    "other": orange[5],
+};

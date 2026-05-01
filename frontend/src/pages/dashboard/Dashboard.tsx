@@ -14,7 +14,6 @@ import {
 } from "antd";
 
 import AnnouncementCard from "../../components/dashboard/AnnouncementCard";
-import SocialsCard from "../../components/dashboard/SocialsCard";
 import NeedHelpCard from "../../components/dashboard/NeedHelpCard";
 import RemotePrintCard from "../../components/dashboard/RemotePrintCard";
 import TotalFilamentUsedCard from "../../components/dashboard/TotalFilamentUsedCard";
@@ -54,10 +53,10 @@ const Dashboard: React.FC = () => {
                             type="info"
                         />
                     </Col>
-                    <Col span={16}>
+                    <Col lg={16} span={24}>
                         <ThisWeekCard />
                     </Col>
-                    <Col span={8}>
+                    <Col lg={8} span={24}>
                         <AnnouncementCard />
                     </Col>
                 </Row>
@@ -88,9 +87,6 @@ const Dashboard: React.FC = () => {
                     <Col span={24}>
                         <NeedHelpCard />
                     </Col>
-                    {/* <Col span={8}>
-                        <SocialsCard />
-                    </Col> */}
                 </Row>
             ),
         },

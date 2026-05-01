@@ -21,11 +21,12 @@ import {
     PlusOutlined,
     UploadOutlined,
 } from "@ant-design/icons";
+import type { Dayjs } from "dayjs";
 
 import type { Event, EventStatus, WithEvent } from "../../types/event";
 import { useEditEventById, useCreateEvent } from "../../hooks/useEvents";
 import { useCreateAnnouncement } from "../../hooks/useAnnouncements";
-import create from "@ant-design/icons/lib/components/IconFont";
+import dayjs from "dayjs";
 
 const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
     const [form] = Form.useForm();
@@ -33,7 +34,7 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const { mutateAsync: editEventById } = useEditEventById();
     const { mutateAsync: createEvent } = useCreateEvent();
-    const {mutateAsync: createAnnouncement} = useCreateAnnouncement();
+    const { mutateAsync: createAnnouncement } = useCreateAnnouncement();
     const [isRecurring, setIsRecurring] = useState<boolean>(
         event?.isRecurring || false,
     );
@@ -52,7 +53,20 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                 });
             }
             const editedEvent: Event = {
-                ...values,
+                ...event,
+                title: values.title,
+                type: values.type,
+                date: values.date,
+                dayOfWeek: values.dayOfWeek,
+                isRecurring: values.isRecurring,
+                description: values.description,
+                startTime: values.time
+                    ? values.time[0].format("h:mma")
+                    : undefined,
+                endTime: values.time
+                    ? values.time[1].format("h:mma")
+                    : undefined,
+
                 lastUpdatedBy: user?.uuid || event.createdBy,
                 dateLastUpdated: new Date(),
             };
@@ -79,8 +93,12 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                 dayOfWeek: values.dayOfWeek,
                 isRecurring: values.isRecurring,
                 description: values.description,
-                startTime: values.time ? values.time[0].format("HH:mm") : undefined,
-                endTime: values.time ? values.time[1].format("HH:mm") : undefined,
+                startTime: values.time
+                    ? values.time[0].format("h:mma")
+                    : undefined,
+                endTime: values.time
+                    ? values.time[1].format("h:mma")
+                    : undefined,
                 createdBy: user?.uuid,
                 dateCreated: new Date(),
                 status: isRecurring
@@ -143,6 +161,16 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                                   type: event.type,
                                   title: event.title,
                                   description: event.description,
+                                  dayOfWeek: event.dayOfWeek,
+                                  date: event.date,
+                                  time:
+                                      event.startTime && event.endTime
+                                          ? [
+                                                dayjs(event.startTime, "h:mma"),
+                                                dayjs(event.endTime, "h:mma"),
+                                            ]
+                                          : undefined,
+                                  isRecurring: event.isRecurring,
                               }
                             : {
                                   type: null,
@@ -200,7 +228,10 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                             name="isRecurring"
                             valuePropName="checked"
                         >
-                            <Checkbox onChange={onCheckboxChange}>
+                            <Checkbox
+                                checked={isRecurring}
+                                onChange={onCheckboxChange}
+                            >
                                 Recurring Weekly?
                             </Checkbox>
                         </Form.Item>
@@ -222,9 +253,6 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                                     size="small"
                                     suffixIcon={<CaretDownFilled />}
                                     placeholder="Select day of week"
-                                    disabled={
-                                        !form.getFieldValue("isRecurring")
-                                    }
                                     options={[
                                         { value: "Monday", label: "Monday" },
                                         { value: "Tuesday", label: "Tuesday" },

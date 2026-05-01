@@ -1,3 +1,5 @@
+import {green, red, yellow} from "@ant-design/colors";
+
 export interface Issue {
     uuid: string;
     equipmentId: string;
@@ -22,3 +24,9 @@ export interface WithIssueId {
 }
 
 export type IssueStatus = "open" | "in-progress" | "completed";
+
+export const issueStatusColors: Record<IssueStatus, string> = {
+    "open": red[5],
+    "in-progress": yellow[5],
+    "completed": green[5]
+};
