@@ -9,31 +9,51 @@ import { Equipment } from "../types/equipment";
 export const getAllEquipment = async (categoryId?: string) => {
     try {
         const response = await axios.get<Equipment[]>(
-            `${import.meta.env.VITE_BACKEND_URL}/equipment`, { params: { categoryId } },
+            `${import.meta.env.VITE_BACKEND_URL}/equipment`,
+            { params: { categoryId } },
         );
         return response.data;
     } catch (error: any) {
         console.error("Error fetching equipment:", error);
-        
-        throw new Error(error.response?.data.message || "Failed to retrieve equipment.");
+
+        throw new Error(
+            error.response?.data.message || "Failed to retrieve equipment.",
+        );
     }
 };
 
 /**
  * Creates a new piece of equipment with the provided details.
  * @param newEquipment - An object containing the details of the equipment to be created.
+ * @param file - The file to be uploaded along with the equipment details.
  * @returns - A promise that resolves to the created Equipment object.
  */
-export const createEquipment = async (newEquipment: Partial<Equipment>) => {
+export const createEquipment = async (
+    newEquipment: Partial<Equipment>,
+    file?: File,
+) => {
     try {
+        const formData = new FormData();
+        Object.keys(newEquipment).forEach((key) => {
+            formData.append(
+                key,
+                (newEquipment as Record<string, any>)[key] as string,
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
         const response = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-            newEquipment,
+            formData,
         );
         return response.data;
     } catch (error: any) {
         console.error("Error creating equipment:", error);
-        throw new Error(error.response?.data.message || "Failed to create equipment.");
+        throw new Error(
+            error.response?.data.message || "Failed to create equipment.",
+        );
     }
 };
 
@@ -50,7 +70,9 @@ export const getEquipmentById = async (equipmentId: string) => {
         return response.data;
     } catch (error: any) {
         console.error("Error fetching equipment by ID:", error);
-        throw new Error(error.response?.data.message || "Failed to fetch equipment by ID.");
+        throw new Error(
+            error.response?.data.message || "Failed to fetch equipment by ID.",
+        );
     }
 };
 
@@ -59,16 +81,34 @@ export const getEquipmentById = async (equipmentId: string) => {
  * @param values - The updated equipment data.
  * @returns - A promise that resolves to the updated Equipment object.
  */
-export const editEquipmentById = async (equipmentId: string, values: Partial<Equipment>) => {
+export const editEquipmentById = async (
+    equipmentId: string,
+    values: Partial<Equipment>,
+    file?: File,
+) => {
     try {
+        const formData = new FormData();
+        Object.keys(values).forEach((key) => {
+            formData.append(
+                key,
+                (values as Record<string, any>)[key] as string
+            );
+        });
+
+        if (file) {
+            formData.append("file", file);
+        }
+
         const response = await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/equipment/${equipmentId}`,
-            values,
+            formData
         );
         return response.data;
     } catch (error: any) {
         console.error("Error updating equipment", error);
-        throw new Error(error.response?.data.message || "Failed to update equipment.");
+        throw new Error(
+            error.response?.data.message || "Failed to update equipment.",
+        );
     }
 };
 /**
@@ -84,7 +124,9 @@ export const deleteEquipmentById = async (equipmentId: string) => {
         return response.data;
     } catch (error: any) {
         console.error("Error deleting equipment", error);
-        throw new Error(error.response?.data.message || "Failed to delete equipment.");
+        throw new Error(
+            error.response?.data.message || "Failed to delete equipment.",
+        );
     }
 };
 
@@ -101,6 +143,8 @@ export const pausePrinterById = async (equipmentId?: string) => {
         return response.data;
     } catch (error: any) {
         console.error("Error pausing printer", error);
-        throw new Error(error.response?.data.message || "Failed to pause printer.");
+        throw new Error(
+            error.response?.data.message || "Failed to pause printer.",
+        );
     }
 };

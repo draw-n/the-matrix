@@ -44,18 +44,30 @@ const EquipmentSchema = new Schema({
         required: true,
     },
     key: {
-        type: String,
+        type: String, // unique key or identifier for the equipment, used for authentication or access control
     },
     piUrl: {
-        type: String,
-    }
+        type: String, // URL to access the Raspberry Pi or other controller for the equipment
+    },
+    imageName: {
+        type: String, // path to the image associated with the announcement
+    },
 });
 
-EquipmentSchema.pre("save", function (next) {
-    this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1);
-    this.routePath = this.routePath.toLowerCase();
-    this.status = this.status.toLowerCase();
-    next();
+EquipmentSchema.pre("save", function () {
+    if (this.name) {
+        this.name =
+            this.name.charAt(0).toUpperCase() + this.name.slice(1);
+    }
+
+    if (this.routePath) {
+        this.routePath = this.routePath.toLowerCase();
+    }
+
+    if (this.status) {
+        this.status = this.status.toLowerCase();
+    }
+
 });
 
 module.exports = Equipment = mongoose.model("equipment", EquipmentSchema);

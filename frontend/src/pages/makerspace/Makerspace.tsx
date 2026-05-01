@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import type { Equipment } from "../../types/equipment";
 
 import { Flex, Tabs, TabsProps, Row, Col, Empty, Space, Select } from "antd";
-import CreateEquipmentForm from "../../components/forms/CreateEquipmentForm";
+import EquipmentForm from "../../components/forms/EquipmentForm";
 import HasAccess from "../../components/routing/HasAccess";
 
 import EquipmentCard from "./EquipmentCard";
@@ -76,7 +76,7 @@ const EquipmentTab = () => {
                         />
                     )}
                     <HasAccess roles={["admin", "moderator"]}>
-                        <CreateEquipmentForm />
+                        <EquipmentForm />
                     </HasAccess>
                 </Flex>
             </Flex>

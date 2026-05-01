@@ -47,16 +47,19 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
         {
             key: "1",
             label: "General",
-            children: (
-                <General equipment={equipment} handleClick={handleEditClick} />
-            ),
+            children: <General equipment={equipment} />,
         },
         ...(equipment && equipment?.remotePrintAvailable && equipment?.uuid
             ? [
                   {
                       key: "2",
                       label: "Print History",
-                      children: <QueueCard showMineOnlyToggable equipmentId={equipment?.uuid} />,
+                      children: (
+                          <QueueCard
+                              showMineOnlyToggable
+                              equipmentId={equipment?.uuid}
+                          />
+                      ),
                   },
               ]
             : []),
@@ -74,29 +77,12 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
                   },
               ]
             : []),
-        ...(checkAccess(["admin", "moderator"])
-            ? [
-                  {
-                      key: "4",
-                      label: "Settings",
-                      children: (
-                          <Settings
-                              equipment={equipment}
-                              handleClick={handleEditClick}
-                          />
-                      ),
-                  },
-              ]
-            : []),
     ];
 
     return (
         <>
             <Space style={{ width: "100%" }} vertical size="middle">
-                <HeaderCard
-                    equipment={equipment}
-                    handleClick={handleEditClick}
-                />
+                <HeaderCard equipment={equipment} />
                 <Tabs defaultActiveKey="1" items={items} />
             </Space>
         </>

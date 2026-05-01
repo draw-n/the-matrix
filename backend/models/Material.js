@@ -39,7 +39,7 @@ const MaterialSchema = new Schema({
         type: String, // list of equipment uuids with this material loaded and available for remote printing
         ref: "Equipment",
     }],
-    remotePrintConfigFileName: {
+    remotePrintConfigName: {
         type: String, // name of the configuration file used for remote printing with this material (filament only)
     },
     temperatures: { // special temperatures for printing with this material (filament only)
@@ -54,10 +54,9 @@ const MaterialSchema = new Schema({
     },
 });
 
-MaterialSchema.pre("save", function (next) {
+MaterialSchema.pre("save", function () {
     this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1);
     this.shortName = this.shortName.toUpperCase();
-    next();
 });
 
 module.exports = Material = mongoose.model("materials", MaterialSchema);

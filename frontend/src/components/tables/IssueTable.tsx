@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import {
+    Avatar,
     Button,
     Flex,
     Popconfirm,
@@ -13,10 +14,15 @@ import {
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import AutoAvatar from "../common/AutoAvatar";
-import { geekblue, gold, green, red } from "@ant-design/colors";
+import { geekblue } from "@ant-design/colors";
 import { useNavigate } from "react-router-dom";
 
-import type { Issue, WithIssues } from "../../types/issue";
+import {
+    IssueStatus,
+    issueStatusColors,
+    type Issue,
+    type WithIssues,
+} from "../../types/issue";
 import { checkAccess } from "../routing/HasAccess";
 
 import EditIssueForm from "../forms/EditIssueForm";
@@ -54,27 +60,17 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
 
     const navigate = useNavigate();
 
-    const statuses = [
-        {
-            value: "open",
-            color: red[5],
-        },
-        {
-            value: "in progress",
-            color: gold[5],
-        },
-        {
-            value: "completed",
-            color: green[5],
-        },
-    ];
-
     const issueColumns: TableProps["columns"] = [
         {
             title: "Equipment",
             dataIndex: "equipmentId",
             key: "equipment",
-
+            width: "20%",
+            sorter: (a, b) => {
+                const nameA = equipmentMap[a.equipmentId]?.name || "";
+                const nameB = equipmentMap[b.equipmentId]?.name || "";
+                return nameA.localeCompare(nameB);
+            },
             render: (equipmentId) => {
                 const { name, routePath } = equipmentMap[equipmentId] || {
                     name: "Loading...",
@@ -91,6 +87,8 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
             title: "Created By",
             dataIndex: "createdBy",
             key: "createdBy",
+            width: "15%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             sorter: (a, b) => {
                 const nameA = userMap[a.createdBy]?.fullName || "";
                 const nameB = userMap[b.createdBy]?.fullName || "";
@@ -100,14 +98,16 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
                 const info = userMap[userId];
                 const fullName = info?.fullName || "Unknown User";
                 return (
-                    <Tooltip
-                        style={{ textTransform: "capitalize" }}
-                        title={fullName}
-                    >
-                        <a href={`mailto:${info?.email || ""}`}>
-                            <AutoAvatar text={info?.initials || "?"} />
-                        </a>
-                    </Tooltip>
+                    <Flex justify="center" align="center">
+                        <Tooltip
+                            style={{ textTransform: "capitalize" }}
+                            title={fullName}
+                        >
+                            <a href={`mailto:${info?.email || ""}`}>
+                                <AutoAvatar text={info?.initials || "?"} />
+                            </a>
+                        </Tooltip>
+                    </Flex>
                 );
             },
         },
@@ -115,6 +115,8 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
             title: "Date Created",
             dataIndex: "dateCreated",
             key: "dateCreated",
+            width: "25%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             defaultSortOrder: "ascend",
             sorter: {
                 compare: (a, b) =>
@@ -123,11 +125,11 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
                 multiple: 1,
             },
             render: (dateCreated) => (
-                <p>
+                <Flex justify="center" align="center">
                     {new Date(dateCreated).getTime() == new Date(0).getTime()
                         ? ""
                         : new Date(dateCreated).toLocaleString()}
-                </p>
+                </Flex>
             ),
         },
 
@@ -135,6 +137,8 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
             title: "Status",
             key: "status",
             dataIndex: "status",
+            width: "15%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             filters: [
                 {
                     text: "Open",
@@ -152,24 +156,88 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
             onFilter: (value, record) =>
                 record.status.indexOf(value as string) === 0,
             render: (type) => (
-                <Tag
-                    color={
-                        statuses.find((item) => item.value === type)?.color ||
-                        geekblue[5]
-                    }
-                    key={type}
-                >
-                    {type.toUpperCase()}
-                </Tag>
+                <Flex justify="center" align="center">
+                    <Tag
+                        color={
+                            issueStatusColors[type as IssueStatus] ||
+                            geekblue[5]
+                        }
+                        key={type}
+                    >
+                        {type.toUpperCase()}
+                    </Tag>
+                </Flex>
             ),
         },
+
         ...(checkAccess(["admin", "moderator"])
             ? [
                   {
+                      title: "Assigned To",
+                      dataIndex: "assignedTo",
+                      key: "assignedTo",
+                      width: "15%",
+                      onHeaderCell: () => ({
+                          style: { textAlign: "center" as const },
+                      }),
+                      sorter: (a: any, b: any) => {
+                          const nameA = userMap[a.assignedTo]?.fullName || "";
+                          const nameB = userMap[b.assignedTo]?.fullName || "";
+                          return nameA.localeCompare(nameB);
+                      },
+                      render: (assignedTo: string[]) => {
+                          if (!assignedTo || assignedTo.length === 0) {
+                              return (
+                                  <Flex justify="center" align="center">
+                                      <Tag color="default">UNASSIGNED</Tag>
+                                  </Flex>
+                              );
+                          }
+
+                          return (
+                              <Flex justify="center" align="center">
+                                  <Avatar.Group>
+                                      {assignedTo?.map((userId) => {
+                                          const userInfo =
+                                              userMap[userId] || null;
+                                          const userFullName =
+                                              userInfo?.fullName ||
+                                              "Unknown User";
+                                          return (
+                                              <Tooltip
+                                                  style={{
+                                                      textTransform:
+                                                          "capitalize",
+                                                  }}
+                                                  title={userFullName}
+                                              >
+                                                  <a
+                                                      href={`mailto:${userInfo?.email || ""}`}
+                                                  >
+                                                      <AutoAvatar
+                                                          text={
+                                                              userInfo?.initials ||
+                                                              "?"
+                                                          }
+                                                      />
+                                                  </a>
+                                              </Tooltip>
+                                          );
+                                      })}
+                                  </Avatar.Group>
+                              </Flex>
+                          );
+                      },
+                  },
+                  {
                       title: "Actions",
                       key: "action",
+                      width: "15%",
+                      onHeaderCell: () => ({
+                          style: { textAlign: "center" as const },
+                      }),
                       render: (item: Issue) => (
-                          <Flex gap="small">
+                          <Flex gap="small" justify="center" align="center">
                               <EditIssueForm issue={item} />
                               <Tooltip title="Delete">
                                   <Popconfirm
@@ -203,7 +271,6 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
     return (
         <>
             <Table
-                style={{ overflow: "auto" }}
                 pagination={{
                     defaultPageSize: numRows,
                     hideOnSinglePage: true,
@@ -212,11 +279,16 @@ const IssueTable: React.FC<WithIssues> = ({ issues }: WithIssues) => {
                 dataSource={issues}
                 expandable={{
                     expandedRowRender: (record) => (
-                        <p style={{ margin: 0 }}>{record.description}</p>
+                        <Flex justify="space-between">
+                            <Flex vertical gap="small">
+                                <p>{record.description}</p>
+                            </Flex>
+                        </Flex>
                     ),
-                    rowExpandable: (record) => record.description.length > 0,
+                    rowExpandable: (record) => !!record.description,
                 }}
                 size="middle"
+                rowKey="uuid"
             />
         </>
     );

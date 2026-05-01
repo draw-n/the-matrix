@@ -13,6 +13,7 @@ const UserTable: React.FC = () => {
             title: "Name",
             dataIndex: "name",
             key: "name",
+            width: "50%",
             render: (__, record) => {
                 return (
                     <Flex gap="small" align="center" wrap>
@@ -57,7 +58,7 @@ const UserTable: React.FC = () => {
                     return null;
                 }
                 return (
-                    <Flex gap="xsmall" justify="end">
+                    <Flex gap="small" justify="end" wrap>
                         {officeHours.map((oh: any, index: number) => (
                             <Tag key={index} color="blue">
                                 {`${oh.dayOfWeek}, ${oh.startTime} - ${oh.endTime}`}

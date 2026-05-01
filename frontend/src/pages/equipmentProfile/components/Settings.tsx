@@ -104,6 +104,7 @@ const Settings: React.FC<SettingsProps> = ({ equipment, handleClick }) => {
                         <Button
                             disabled={!editMode}
                             danger
+                            shape="round"
                             style={{ width: "100%" }}
                         >
                             {`Delete ${equipment?.name}`} and its associated

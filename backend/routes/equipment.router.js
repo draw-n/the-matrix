@@ -1,6 +1,8 @@
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
+const path = require("path");
+const fs = require("fs");
 
 const {
     createEquipment,
@@ -14,8 +16,26 @@ const {
 
 const { ensureAuthenticated, ensureAccess } = require("../middleware/auth.js");
 
-router.post("/", ensureAuthenticated, ensureAccess(["admin", "moderator"]), createEquipment);
-router.put("/:uuid", ensureAuthenticated, ensureAccess(["admin", "moderator"]), editEquipmentById);
+const storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        const dir = path.join(__dirname, "../files/images/equipment/");
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true }); // Create directory if it doesn't exist
+        }
+        callback(null, dir);
+    },
+    limits: { fileSize: 250 * 1024 * 1024 }, // 250 MB limit
+    filename: (req, file, callback) => {
+        let filename = file.originalname;
+        callback(null, filename);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+
+router.post("/", ensureAuthenticated, ensureAccess(["admin", "moderator"]), upload.single("file"), createEquipment);
+router.put("/:uuid", ensureAuthenticated, ensureAccess(["admin", "moderator"]), upload.single("file"), editEquipmentById);
 router.get("/status/:uuid", ensureAuthenticated, updateStatusById);
 router.get(
     "/pause/:uuid",
