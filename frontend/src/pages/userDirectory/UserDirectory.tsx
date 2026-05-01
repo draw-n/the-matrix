@@ -18,11 +18,12 @@ const UserDirectory: React.FC = () => {
         <>
             <Space style={{ width: "100%" }} vertical size="middle">
                 <Flex
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", marginBottom: "1em" }}
                     justify="space-between"
                     align="center"
                 >
-                    <Flex gap="20px">
+                    <h2 style={{ marginBottom: 0 }}>USER DIRECTORY</h2>
+                    <Flex gap="20px" justify="end" align="center">
                         <DownloadEmails />
                         <Segmented
                             options={[
@@ -66,7 +67,7 @@ const UserDirectory: React.FC = () => {
                     <Row gutter={[16, 16]}>
                         {users?.map((user: User) => {
                             return (
-                                <Col xs={24} lg={8} key={user.uuid}>
+                                <Col xs={24} lg={6} key={user.uuid}>
                                     <UserCard user={user} />
                                 </Col>
                             );

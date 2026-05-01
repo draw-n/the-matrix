@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     deleteUserById,
     editUserById,
@@ -36,6 +36,7 @@ export const useAllDepartments = () => {
  * @returns - A mutation object that can be used to update a user and handle success or error states.
  */
 export const useEditUserById = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({
             userId,
@@ -44,6 +45,11 @@ export const useEditUserById = () => {
             userId: string;
             editedUser: Partial<User>;
         }) => editUserById(userId, editedUser),
+        onSuccess: (userId: string) => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+            queryClient.invalidateQueries({ queryKey: ["user", userId] });
+            message.success("User updated successfully.");
+        },
         onError: (error: any) => {
             message.error(error.message || "Failed to update user.");
         },
@@ -55,9 +61,12 @@ export const useEditUserById = () => {
  * @returns - A mutation object that can be used to delete a user and handle success or error states.
  */
 export const useDeleteUserById = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ userId }: { userId: string }) => deleteUserById(userId),
-        onSuccess: () => {
+        onSuccess: (userId: string) => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+            queryClient.invalidateQueries({ queryKey: ["user", userId] });
             message.success("User deleted successfully.");
         },
         onError: (error: any) => {

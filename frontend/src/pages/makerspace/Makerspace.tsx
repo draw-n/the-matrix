@@ -84,7 +84,12 @@ const EquipmentTab = () => {
                 <Row gutter={[16, 16]}>
                     {equipments.map((equipment: Equipment, index) => {
                         return (
-                            <Col span={24} lg={8} key={index}>
+                            <Col
+                                span={24}
+                                lg={6}
+                                key={index}
+                                style={{ display: "flex", minWidth: 0 }}
+                            >
                                 <EquipmentCard equipment={equipment} />
                             </Col>
                         );

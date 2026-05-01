@@ -34,6 +34,7 @@ const AutoAvatar: React.FC<AutoAvatarProps> = ({
     return (
         <Avatar
             style={{
+                flexShrink: 0,
                 backgroundColor: randomColor({
                     luminosity: "bright",
                     seed: text,

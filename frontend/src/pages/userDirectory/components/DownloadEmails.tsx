@@ -1,15 +1,16 @@
 // Description: DownloadEmails component for downloading user email addresses as a text file.
 
 import { DownloadOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Modal, Form } from "antd";
 import axios from "axios";
 
 const DownloadEmails: React.FC = () => {
+
     const handleDownload = async () => {
         try {
             const response = await axios.get(
                 `${import.meta.env.VITE_BACKEND_URL}/users/emails`,
-                { responseType: "blob" }
+                { responseType: "blob" },
             );
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -27,6 +28,7 @@ const DownloadEmails: React.FC = () => {
         <>
             <Button
                 iconPlacement="end"
+                size="middle"
                 icon={<DownloadOutlined />}
                 onClick={handleDownload}
                 shape="round"
@@ -35,6 +37,7 @@ const DownloadEmails: React.FC = () => {
             >
                 Download Emails
             </Button>
+        
         </>
     );
 };

@@ -193,13 +193,11 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
             size="middle"
             expandable={{
                 expandedRowRender: (record) => (
-                    <div style={{ padding: "24px" }}>
-                        <Flex justify="space-between">
-                            <Flex vertical gap="small">
-                                <p>{record.description}</p>
-                            </Flex>
+                    <Flex justify="space-between">
+                        <Flex vertical gap="small">
+                            <p>{record.description}</p>
                         </Flex>
-                    </div>
+                    </Flex>
                 ),
                 rowExpandable: (record) => !!record.description,
             }}

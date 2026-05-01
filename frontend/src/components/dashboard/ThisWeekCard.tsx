@@ -27,6 +27,9 @@ const ThisWeekCard: React.FC = () => {
         "Sunday",
     ];
 
+    const startOfWeek = dayjs().startOf("week").add(1, "day"); // Monday
+    const endOfWeek = startOfWeek.add(6, "day"); // Sunday
+
     return (
         <Card style={{ height: "100%" }}>
             <Typography.Title level={2}>This Week's Events</Typography.Title>
@@ -68,15 +71,34 @@ const ThisWeekCard: React.FC = () => {
 
                             {/* Events */}
                             {events
-                                ?.filter((e) =>
-                                    e.isRecurring
-                                        ? e.dayOfWeek === day
-                                        : dayjs(e.date).format("dddd") === day,
-                                )
+                                ?.filter((e) => {
+                                    if (e.isRecurring) {
+                                        return e.dayOfWeek === day;
+                                    }
+
+                                    const eventDate = dayjs(e.date);
+
+                                    const isThisWeek =
+                                        eventDate.isAfter(
+                                            startOfWeek.subtract(1, "day"),
+                                        ) &&
+                                        eventDate.isBefore(
+                                            endOfWeek.add(1, "day"),
+                                        );
+
+                                    const isSameDay =
+                                        eventDate.format("dddd") === day;
+
+                                    return isThisWeek && isSameDay;
+                                })
                                 .map((event) => (
                                     <Popover
                                         content={
-                                            <Flex style={{height: "100%"}} align="center" justify="center">
+                                            <Flex
+                                                style={{ height: "100%" }}
+                                                align="center"
+                                                justify="center"
+                                            >
                                                 <p>
                                                     {event.description.trim()}
                                                 </p>

@@ -44,7 +44,12 @@ const EquipmentForm: React.FC<WithEquipment> = ({ equipment }) => {
         if (equipment) {
             const editedEquipment: Equipment = {
                 ...equipment,
-                ...values,
+                remotePrintAvailable: values.remotePrintAvailable || false,
+                name: values.name || equipment.name,
+                routePath: values.routePath || equipment.routePath,
+                categoryId: values.categoryId || equipment.categoryId,
+                description: values.description || "",
+                headline: values.headline || "",
             };
             await editEquipmentById({
                 equipmentId: equipment.uuid,
@@ -53,7 +58,10 @@ const EquipmentForm: React.FC<WithEquipment> = ({ equipment }) => {
             });
         } else {
             await createEquipment({
-                newEquipment: values,
+                newEquipment: {
+                    ...values,
+                    remotePrintAvailable: values.remotePrintAvailable || false,
+                },
                 file: uploadedFile[0]?.originFileObj,
             });
         }
@@ -167,7 +175,6 @@ const EquipmentForm: React.FC<WithEquipment> = ({ equipment }) => {
                     variant="solid"
                     style={{
                         boxShadow: "none",
-                      
                     }}
                     icon={equipment ? <EditOutlined /> : <PlusOutlined />}
                     onClick={() => setIsModalOpen(true)}
