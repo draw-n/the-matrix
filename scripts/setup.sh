@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(pwd)"
+
 echo "Checking for Python3..."
 if ! command -v python3 &> /dev/null
 then
@@ -34,6 +36,8 @@ BINARY_NAME="superslicer"
 echo "[SuperSlicer Installer] Target directory: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 
+sudo apt-get update
+
 # Remove existing SuperSlicer binary if it exists
 if [ -f "$TARGET_DIR/$BINARY_NAME" ]; then
 	echo "[SuperSlicer Installer] Removing existing $BINARY_NAME binary..."
@@ -49,15 +53,24 @@ else
 fi
 
 cd "$SRC_DIR"
+echo "[SuperSlicer Installer] Building Dependencies..."
+cd deps
+mkdir -p build
+cd build
+cmake .. -DDEP_WX_GTK3=ON
+make
+cd ../..
 echo "[SuperSlicer Installer] Building SuperSlicer..."
 mkdir -p build
 cd build
-cmake .. -DSLIC3R_FHS=1 -DSLIC3R_GUI=0 -DSLIC3R_STATIC=1
-make -j$(nproc)
+cmake .. -DSLIC3R_GTK=3 -DSLIC3R_GUI=0 -DSLIC3R_STATIC=1 -DSCLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
+make -j4
+
+cd "$SCRIPT_DIR"
 
 # Find the built binary (may be in bin/ or .)
-if [ -f "bin/$BINARY_NAME" ]; then
-	cp "bin/$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
+if [ -f "src/$BINARY_NAME" ]; then
+	cp "src/$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
 elif [ -f "$BINARY_NAME" ]; then
 	cp "$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
 else
@@ -70,7 +83,7 @@ echo "[SuperSlicer Installer] Done. superslicer binary is in $TARGET_DIR/$BINARY
 
 echo "Setting up nginx configuration..."
 export SERVER_IP=$1
-export APP_ROOT=$2
+export APP_ROOT="$SCRIPT_DIR/../frontend/dist"
 
 envsubst '$SERVER_IP $APP_ROOT' < ../nginx/nginx.template.conf > /etc/nginx/sites-available/matrix.conf
 sudo ln -sf /etc/nginx/sites-available/matrix.conf /etc/nginx/sites-enabled/matrix.conf
