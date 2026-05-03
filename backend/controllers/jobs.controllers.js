@@ -198,6 +198,8 @@ const readyJob = async (req, res) => {
 
         // 2. NO ACTIVE JOB -> pick next queued and set to ready
         if (!job) {
+            equipment.status = "idle";
+            await equipment.save();
             const nextJob = await Job.findOne({
                 equipmentId: equipment.uuid,
                 status: "queued",
@@ -278,6 +280,8 @@ const readyJob = async (req, res) => {
                     console.log("Print started:", starting);
                     job.uploadedAt = new Date();
                     job.status = "printing";
+                    equipment.status = "printing";
+                    await equipment.save();
                     job.lastPrompt = "NONE";
                     await job.save();
 
@@ -332,6 +336,15 @@ const readyJob = async (req, res) => {
         if (job.status === "printing") {
             // Start success check if not already started
             if (job.lastPrompt === "NONE") {
+                if (!job.finishedSnapshotName && equipment.cameraUrl) {
+                    // Fetch the snapshot from the camera
+                    try {
+                        job.finishedSnapshotName = await getCameraSnapshot(equipment.cameraUrl, job.uuid);
+                        await job.save();
+                    } catch (error) {
+                        console.error("Error fetching camera snapshot:", error);
+                    }
+                }
                 job.lastPrompt = "SUCCESS_CHECK";
                 await job.save();
                 // connect only when sending the macro
@@ -654,7 +667,7 @@ const editJobById = async (req, res) => {
     const updateData = req.body;
     try {
         const job = await Job.findOneAndUpdate({ uuid: jobId }, updateData, {
-            new: true,
+            returnDocument: 'after',
         });
         if (!job) {
             return res.status(404).json({ message: "Job not found." });

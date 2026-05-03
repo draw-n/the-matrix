@@ -27,9 +27,9 @@ const CategorySchema = new Schema({
     color: { type: String, required: true }, // color associated with this category
 });
 
-CategorySchema.pre("save", function (next) {
+CategorySchema.pre("save", function () {
     this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1);
-    next();
+
 });
 
 module.exports = Category = mongoose.model("categories", CategorySchema);

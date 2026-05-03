@@ -46,9 +46,8 @@ const IssueSchema = new Schema({
     ],
 });
 
-IssueSchema.pre("save", function (next) {
+IssueSchema.pre("save", function () {
     this.status = this.status.toLowerCase();
-    next();
 });
 
 module.exports = Issue = mongoose.model("issues", IssueSchema);

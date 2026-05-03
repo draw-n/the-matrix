@@ -15,6 +15,7 @@ import {
     TimePicker,
     Checkbox,
     message,
+    DatePicker,
 } from "antd";
 import {
     CaretDownFilled,
@@ -170,7 +171,7 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                                   title: event.title,
                                   description: event.description,
                                   dayOfWeek: event.dayOfWeek,
-                                  date: event.date,
+                                  date: dayjs(event.date),
                                   time:
                                       event.startTime && event.endTime
                                           ? [
@@ -300,7 +301,7 @@ const EventForm: React.FC<WithEvent> = ({ event }: WithEvent) => {
                                     },
                                 ]}
                             >
-                                <Input type="date" size="small" />
+                                <DatePicker size="small" style={{ width: "100%" }} />
                             </Form.Item>
                         )}
                     </Flex>

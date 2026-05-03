@@ -62,23 +62,32 @@ const UserSchema = new Schema({
     departments: {
         type: [String], // if faculty, department, if student, major(s) and minors
     },
-    officeHours: { // only for faculty/TAs
+    officeHours: {
+        // only for faculty/TAs
         type: [
             {
                 dayOfWeek: {
                     type: String,
-                    enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                    enum: [
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                        "Sunday",
+                    ],
                 },
                 startTime: String, // in HH:mm format
                 endTime: String, // in HH:mm format,
                 eventId: String, // calendar event id for office hours
-            }
-        ]
-    }
+            },
+        ],
+    },
 });
 
-UserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+UserSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 
@@ -90,8 +99,6 @@ UserSchema.pre("save", async function (next) {
     this.email = this.email.toLowerCase();
     this.access = this.access.toLowerCase();
     this.status = this.status.toLowerCase();
-
-    next();
 });
 
 UserSchema.methods.comparePassword = async function (password) {

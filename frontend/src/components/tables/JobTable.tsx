@@ -7,15 +7,17 @@ import {
     TableProps,
     Tag,
     Tooltip,
+    Image
 } from "antd";
 import { WithJobs } from "../../types/job";
 import { formatTime } from "../../types/common";
 import AutoAvatar from "../common/AutoAvatar";
 import { useAllUsers } from "../../hooks/useUsers";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { checkAccess } from "../routing/HasAccess";
 import {
+    CameraOutlined,
     DeleteOutlined,
     DownOutlined,
     ReloadOutlined,
@@ -38,6 +40,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
     const { mutateAsync: deleteJobById } = useDeleteJobById();
     const { mutateAsync: editJobById } = useEditJobById();
     const { mutateAsync: reprintJobById } = useReprintJobById();
+    const [open, setOpen] = useState(false);
 
     const userMap = useMemo(() => {
         const map: Record<string, any> = {};
@@ -121,7 +124,44 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
                                     {text}
                                 </span>
                                 {editable && (
-                                    <Flex align="center" gap="1px">
+                                    <Flex justify="start" align="center" gap={1}>
+                                        {["completed", "failed"].includes(
+                                            record.status,
+                                        ) && (
+                                            // record.finishedSnapshotName && (
+                                                <>
+                                                    <Tooltip title="View Snapshot">
+                                                        <Button
+                                                            size="small"
+                                                            icon={
+                                                                <CameraOutlined />
+                                                            }
+                                                            shape="circle"
+                                                            type="text"
+                                                            onClick={() =>
+                                                                setOpen(true)
+                                                            }
+                                                        />
+                                                    </Tooltip>
+                                                    <Image
+                                                        style={{
+                                                            display: "none",
+                                                        }}
+                                                        alt="Job Snapshot"
+                                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`}
+                                                        preview={{
+                                                            open,
+                                                            scaleStep: 0.5,
+                                                            src: `${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`,
+                                                            onOpenChange: (
+                                                                value,
+                                                            ) => {
+                                                                setOpen(value);
+                                                            },
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
                                         {["completed", "failed"].includes(
                                             record.status,
                                         ) &&
@@ -239,9 +279,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
                 return (
                     <Flex justify="center" align="end" vertical gap="small">
                         {record.status === "failed" && record.failureReason ? (
-                            <Tooltip
-                                title={`${record.failureReason}`}
-                            >
+                            <Tooltip title={`${record.failureReason}`}>
                                 <Tag color="red">FAILED</Tag>
                             </Tooltip>
                         ) : (

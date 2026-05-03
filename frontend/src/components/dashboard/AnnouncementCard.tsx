@@ -11,6 +11,7 @@ import {
     Tag,
     Tooltip,
     Typography,
+    Image,
 } from "antd";
 import { EditOutlined, DesktopOutlined } from "@ant-design/icons";
 
@@ -25,7 +26,11 @@ const AnnouncementCard: React.FC = () => {
     const pageSize = 3; // Show one announcement per page
     return (
         <Card style={{ height: "100%" }}>
-            <Flex style={{ marginBottom: 16 }} justify={"space-between"} align={"center"}>
+            <Flex
+                style={{ marginBottom: 16 }}
+                justify={"space-between"}
+                align={"center"}
+            >
                 <h2>Announcements</h2>
                 <Flex gap="small">
                     <HasAccess roles={["admin", "moderator"]}>
@@ -63,14 +68,20 @@ const AnnouncementCard: React.FC = () => {
                         >
                             <Flex gap="small" align="center">
                                 {announcement.imageName && (
-                                    <img
-                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
-                                        alt={announcement.title}
-                                        style={{
-                                            maxWidth: 75,
-                                            height: "auto",
-                                        }}
-                                    />
+                                    <Image.PreviewGroup
+                                        items={[
+                                            `${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`,
+                                        ]}
+                                    >
+                                        <Image
+                                            alt={announcement.title}
+                                            style={{
+                                                maxWidth: 75,
+                                                height: "auto",
+                                            }}
+                                            src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${announcement.imageName}`}
+                                        />
+                                    </Image.PreviewGroup>
                                 )}
                                 <Flex
                                     justify="space-between"

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Event } from "../types/event";
+import { Event, EventType } from "../types/event";
 
 /**
  * Retrieves all events, optionally filtered by status.
@@ -7,11 +7,11 @@ import { Event } from "../types/event";
  * @returns - A promise that resolves to an array of Event objects.
  * @throws - Logs an error if the API request fails.
  */
-export const getAllEvents = async (statuses?: string[]) => {
+export const getAllEvents = async (types?: EventType[], startDate?: Date, endDate?: Date) => {
     try {
         const response = await axios.get<Event[]>(
             `${import.meta.env.VITE_BACKEND_URL}/events`,
-            { params: { status: statuses ? statuses.join(",") : undefined } },
+            { params: { type: types ? types.join(",") : undefined, startDate, endDate } },
         );
         return response.data;
     } catch (error: any) {

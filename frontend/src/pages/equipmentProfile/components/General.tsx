@@ -1,67 +1,33 @@
 import { Row, Col, Card, Button, Flex, Input, Typography } from "antd";
-import { Equipment, WithEquipment } from "../../../types/equipment";
-import { EditableComponentProps } from "../../../types/common";
-import { useState } from "react";
-import { SaveOutlined, EditOutlined } from "@ant-design/icons";
-import HasAccess from "../../../components/routing/HasAccess";
+import { WithEquipment } from "../../../types/equipment";
 import IssueTable from "../../../components/tables/IssueTable";
 import { useAllIssues } from "../../../hooks/useIssues";
+import ImageCard from "./ImageCard";
 
-const General: React.FC<EditableComponentProps<Equipment> & WithEquipment> = ({
-    equipment,
-    handleClick,
-}) => {
-    const [editMode, setEditMode] = useState(false);
-    const [description, setDescription] = useState<string>(
-        equipment?.description || "",
-    );
-
-    const { data: issues, refetch } = useAllIssues(
+const General: React.FC<WithEquipment> = ({ equipment }) => {
+    const { data: issues } = useAllIssues(
         equipment ? ["open", "in-progress", "completed"] : undefined,
         equipment ? equipment.uuid : undefined,
     );
     return (
         <Row gutter={[16, 16]}>
-            <Col span={24}>
-                <Card>
+            {equipment?.imageName && (
+                <Col span={24} lg={8}>
+                    <ImageCard equipment={equipment} height="100%" />
+                </Col>
+            )}
+            <Col span={24} lg={equipment?.imageName ? 16 : 24}>
+                <Card style={{ height: "100%", minHeight: 250 }}>
                     <Flex vertical gap="small">
                         <Flex justify="space-between" align="center">
                             <Typography.Title level={2}>
                                 DESCRIPTION
                             </Typography.Title>
-                            <HasAccess roles={["admin", "moderator"]}>
-                                <Button
-                                    onClick={() =>
-                                        handleClick &&
-                                        handleClick(editMode, setEditMode, {
-                                            description,
-                                        })
-                                    }
-                                    shape="circle"
-                                    variant="outlined"
-                                    type="primary"
-                                    icon={
-                                        editMode ? (
-                                            <SaveOutlined />
-                                        ) : (
-                                            <EditOutlined />
-                                        )
-                                    }
-                                />
-                            </HasAccess>
                         </Flex>
-                        {editMode ? (
-                            <Input.TextArea
-                                size="small"
-                                autoSize
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        ) : (
-                            <Typography.Paragraph>
-                                <p>{description}</p>
-                            </Typography.Paragraph>
-                        )}
+
+                        <Typography.Paragraph>
+                            <p>{equipment?.description}</p>
+                        </Typography.Paragraph>
                     </Flex>
                 </Card>
             </Col>

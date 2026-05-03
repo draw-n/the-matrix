@@ -74,6 +74,7 @@ app.use(
     ensureAuthenticated,
     express.static(path.join(__dirname, "files/images")),
 );
+
 app.use(
     "/meshes",
     ensureAuthenticated,

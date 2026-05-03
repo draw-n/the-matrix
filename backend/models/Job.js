@@ -45,6 +45,7 @@ const JobSchema = new Schema({
     failureReason: { type: String, default: "" }, // if status is failed, this field can contain the reason
     filamentUsedGrams: { type: Number, default: 0 }, // estimated filament used in grams
     estimatedTimeSeconds: { type: Number, default: 0 }, // estimated print time in seconds
+    finishedSnapshotName: { type: String }, // filename of the snapshot taken when the job finished (either completed or failed)
     createdAt: { type: Date, default: Date.now }, // date the job was created
     uploadedAt: { type: Date }, // date the G-code file was uploaded and job was marked ready
     finishedAt: { type: Date }, // date the print completed or failed

@@ -13,23 +13,25 @@ const UserTable: React.FC = () => {
             title: "Name",
             dataIndex: "name",
             key: "name",
+            width: "50%",
             render: (__, record) => {
                 return (
-                    <Flex gap="small" align="center" wrap>
+                    <Flex gap="small" align="center">
                         <AutoAvatar
+                            
                             text={
                                 `${record.firstName?.charAt(0) || ""}${record.lastName?.charAt(0) || ""}` ||
                                 "?"
                             }
                         />
                         <Flex vertical>
-                            <Flex gap="small">
-                                <p style={{ textTransform: "capitalize" }}>
+                            <Flex gap="small" align="center">
+                                <p style={{ textTransform: "capitalize", overflowWrap: "anywhere", marginBottom: 0 }}>
                                     {`${record.firstName} ${record.lastName}`}
                                 </p>
                                 {record.departments &&
                                     record.departments.map((dept: string) => (
-                                        <Tag key={dept}>
+                                        <Tag key={dept} >
                                             {dept.replace(".", "")}
                                         </Tag>
                                     ))}
@@ -57,7 +59,7 @@ const UserTable: React.FC = () => {
                     return null;
                 }
                 return (
-                    <Flex gap="xsmall" justify="end">
+                    <Flex gap="small" justify="end" wrap>
                         {officeHours.map((oh: any, index: number) => (
                             <Tag key={index} color="blue">
                                 {`${oh.dayOfWeek}, ${oh.startTime} - ${oh.endTime}`}

@@ -45,10 +45,12 @@ export const useEditEquipmentById = () => {
         mutationFn: ({
             equipmentId,
             editedEquipment,
+            file
         }: {
             equipmentId: string;
             editedEquipment: Partial<Equipment>;
-        }) => editEquipmentById(equipmentId, editedEquipment),
+            file?: File;
+        }) => editEquipmentById(equipmentId, editedEquipment, file),
         onSuccess: ({ equipmentId }) => {
             queryClient.invalidateQueries({ queryKey: ["equipment"] });
             queryClient.invalidateQueries({
@@ -70,8 +72,8 @@ export const useEditEquipmentById = () => {
 export const useCreateEquipment = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ newEquipment }: { newEquipment: Partial<Equipment> }) =>
-            createEquipment(newEquipment),
+        mutationFn: ({ newEquipment, file }: { newEquipment: Partial<Equipment>; file?: File }) =>
+            createEquipment(newEquipment, file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["equipment"] });
             message.success("Equipment created successfully.");

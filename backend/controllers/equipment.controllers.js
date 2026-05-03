@@ -1,13 +1,13 @@
 const Equipment = require("../models/Equipment.js");
 const Issue = require("../models/Issue.js");
-var axios = require("axios");
-var mongoose = require("mongoose");
+const axios = require("axios");
+const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 const crypto = require("crypto");
 const { validateUniqueField } = require("../utils/mongo.utils.js");
 const { pausePrint } = require("../services/duet.service.js");
 const { ObjectId } = mongoose.Types; // Import ObjectId
-const multer = require("multer");
-const upload = multer({dest: "upload/equipments/"});
 
 /**
  * Creates new equipment and saves to MongoDB.
@@ -25,9 +25,9 @@ const createEquipment = async (req, res) => {
         headline,
         cameraUrl,
         remotePrintAvailable,
-        piUrl
+        piUrl,
     } = req.body;
-
+    const file = req.file;
     try {
         if (name && categoryId && description && routePath) {
             if (ipUrl) {
@@ -69,7 +69,7 @@ const createEquipment = async (req, res) => {
                 }
             }
 
-            if(piUrl){
+            if (piUrl) {
                 const isUnique = await validateUniqueField(
                     piUrl,
                     "piUrl",
@@ -81,6 +81,7 @@ const createEquipment = async (req, res) => {
                         .send({ message: "Route Path must be unique." });
                 }
             }
+            console.log("after validation");
 
             const equipment = new Equipment({
                 _id: new ObjectId(),
@@ -95,8 +96,14 @@ const createEquipment = async (req, res) => {
                 remotePrintAvailable: remotePrintAvailable || false,
                 status: "available",
                 piUrl,
-                key: (piUrl != null && remotePrintAvailable)? crypto.randomBytes(32).toString('hex'): null,
+                key:
+                    piUrl && remotePrintAvailable
+                        ? crypto.randomBytes(32).toString("hex")
+                        : null,
+                imageName: file ? file.filename : null,
             });
+            console.log("before equipment saved!");
+
             await equipment.save();
 
             const equipmentObj = equipment.toObject();
@@ -135,6 +142,15 @@ const deleteEquipmentById = async (req, res) => {
                     .status(404)
                     .send({ message: "Equipment not found." });
             }
+            if (equipment.imageName) {
+                const imagePath = path.join(
+                    "./files/images/equipment/",
+                    equipment.imageName,
+                );
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            }
             const issues = await Issue.deleteMany({ equipment: uuid });
             return res
                 .status(200)
@@ -160,6 +176,7 @@ const deleteEquipmentById = async (req, res) => {
 const editEquipmentById = async (req, res) => {
     const uuid = req.params?.uuid;
     const { ipUrl, cameraUrl, routePath } = req.body;
+    const file = req.file;
     try {
         if (uuid) {
             if (ipUrl) {
@@ -205,8 +222,8 @@ const editEquipmentById = async (req, res) => {
             }
             const equipment = await Equipment.findOneAndUpdate(
                 { uuid: uuid },
-                req.body,
-                { new: true },
+                { ...req.body, imageName: file ? file.filename : null },
+                { returnDocument: 'after' },
             );
 
             if (!equipment) {
@@ -413,5 +430,5 @@ module.exports = {
     getEquipmentById,
     getAllEquipment,
     updateStatusById,
-    pausePrinterById
+    pausePrinterById,
 };

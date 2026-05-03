@@ -12,6 +12,7 @@ lerna-debug.log*
 **dist-ssr/
 *.local
 *.env
+**files/
 notes.txt
 
 # Editor directories and files

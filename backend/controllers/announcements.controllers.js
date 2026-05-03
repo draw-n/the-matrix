@@ -111,7 +111,7 @@ const editAnnouncementById = async (req, res) => {
             const announcement = await Announcement.findOneAndUpdate(
                 { uuid },
                 { ...req.body, imageName: file ? file.filename : null },
-                { new: true, projection: { _id: 0 } },
+                { returnDocument: 'after', projection: { _id: 0 } },
             );
 
             if (!announcement) {

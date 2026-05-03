@@ -22,6 +22,9 @@ export interface Equipment {
     ipUrl?: string;
     remotePrintAvailable?: boolean;
     cameraUrl?: string;
+    key?: string;
+    piUrl?: string;
+    imageName?: string;
 }
 
 export interface WithEquipment {

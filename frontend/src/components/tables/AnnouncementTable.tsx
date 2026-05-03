@@ -10,6 +10,7 @@ import {
     Tooltip,
     theme,
     Flex,
+    Image,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { cyan, magenta, purple } from "@ant-design/colors";
@@ -46,9 +47,19 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
 
     const updateColumns: TableProps<Announcement>["columns"] = [
         {
+            title: "Title",
+            dataIndex: "title",
+            key: "title",
+            width: "20%",
+            sorter: (a, b) =>
+                a?.title?.localeCompare(b?.title?.toString() || "") || 0,
+        },
+        {
             title: "Created By",
             dataIndex: "createdBy",
             key: "createdBy",
+            width: "15%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             sorter: (a, b) => {
                 const nameA = userMap[a.createdBy]?.fullName || "";
                 const nameB = userMap[b.createdBy]?.fullName || "";
@@ -58,14 +69,16 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
                 const info = userMap[userId];
                 const fullName = info?.fullName || "Unknown User";
                 return (
-                    <Tooltip
-                        style={{ textTransform: "capitalize" }}
-                        title={fullName}
-                    >
-                        <a href={`mailto:${info?.email || ""}`}>
-                            <AutoAvatar text={info?.initials || "?"} />
-                        </a>
-                    </Tooltip>
+                    <Flex justify="center" align="center">
+                        <Tooltip
+                            style={{ textTransform: "capitalize" }}
+                            title={fullName}
+                        >
+                            <a href={`mailto:${info?.email || ""}`}>
+                                <AutoAvatar text={info?.initials || "?"} />
+                            </a>
+                        </Tooltip>
+                    </Flex>
                 );
             },
         },
@@ -73,34 +86,69 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
             title: "Date Created",
             dataIndex: "dateCreated",
             key: "dateCreated",
+            width: "25%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             defaultSortOrder: "descend",
             sorter: (a, b) =>
                 new Date(a.dateCreated).getTime() -
                 new Date(b.dateCreated).getTime(),
-            render: (date) =>
-                date && new Date(date).getTime() !== 0
-                    ? new Date(date).toLocaleString()
-                    : "-",
+            render: (date) => (
+                <Flex justify="center" align="center">
+                    {date && new Date(date).getTime() !== 0
+                        ? new Date(date).toLocaleString()
+                        : "-"}
+                </Flex>
+            ),
+        },
+        {
+            title: "Image",
+            dataIndex: "imageName",
+            key: "imageName",
+            width: "15%",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
+            render: (imageName) => (
+                <Flex justify="center" align="center">
+                    {imageName && (
+                        <Flex vertical align="center" gap="small">
+                            <Image.PreviewGroup
+                                items={[
+                                    `${import.meta.env.VITE_BACKEND_URL}/images/announcements/${imageName}`,
+                                ]}
+                            >
+                                <Image
+                                    alt="webp image"
+                                    style={{ maxWidth: 40, height: "auto" }}
+                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${imageName}`}
+                                />
+                            </Image.PreviewGroup>
+                        </Flex>
+                    )}
+                </Flex>
+            ),
         },
         {
             title: "Type",
             key: "type",
             dataIndex: "type",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             filters: [
                 { text: "Event", value: "event" },
                 { text: "Classes", value: "classes" },
                 { text: "Other", value: "other" },
             ],
+            width: "10%",
             onFilter: (value, record) => record.type === value,
             render: (type) => (
-                <Tag
-                    color={
-                        types.find((item) => item.value === type)?.color ||
-                        colorPrimary
-                    }
-                >
-                    {type?.toUpperCase()}
-                </Tag>
+                <Flex justify="center" align="center">
+                    <Tag
+                        color={
+                            types.find((item) => item.value === type)?.color ||
+                            colorPrimary
+                        }
+                    >
+                        {type?.toUpperCase()}
+                    </Tag>
+                </Flex>
             ),
         },
         ...(checkAccess(["admin", "moderator"])
@@ -108,8 +156,12 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
                   {
                       title: "Actions",
                       key: "action",
+                      width: "10%",
+                      onHeaderCell: () => ({
+                          style: { textAlign: "center" as const },
+                      }),
                       render: (_: any, record: Announcement) => (
-                          <Space>
+                          <Flex gap="small" justify="center">
                               <AnnouncementForm announcement={record} />
                               <Popconfirm
                                   title="Delete Announcement"
@@ -125,7 +177,7 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
                                       danger
                                   />
                               </Popconfirm>
-                          </Space>
+                          </Flex>
                       ),
                   },
               ]
@@ -134,7 +186,6 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
 
     return (
         <Table
-            style={{ overflow: "auto" }}
             rowKey="uuid"
             pagination={{ defaultPageSize: 5, hideOnSinglePage: true }}
             columns={updateColumns}
@@ -142,35 +193,11 @@ const AnnouncementTable: React.FC<WithAnnouncements> = ({ announcements }) => {
             size="middle"
             expandable={{
                 expandedRowRender: (record) => (
-                    <div style={{ padding: "24px" }}>
-                        <Flex justify="space-between">
-                            <Flex vertical gap="small">
-                                <p>
-                                    <b>Title:</b> {record.title}
-                                </p>
-                                <p>
-                                    <b>Description:</b>
-                                </p>
-                                <p>{record.description}</p>
-                            </Flex>
-
-                            {record.imageName && (
-                                <Flex vertical align="center" gap="small">
-                                    <p>
-                                        <b>Image</b>
-                                    </p>
-                                    <img
-                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/announcements/${record.imageName}`}
-                                        alt={record.title}
-                                        style={{
-                                            maxWidth: "200px",
-                                            height: "auto",
-                                        }}
-                                    />
-                                </Flex>
-                            )}
+                    <Flex justify="space-between">
+                        <Flex vertical gap="small">
+                            <p>{record.description}</p>
                         </Flex>
-                    </div>
+                    </Flex>
                 ),
                 rowExpandable: (record) => !!record.description,
             }}

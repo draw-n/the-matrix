@@ -1,6 +1,7 @@
 // Description: A React component that renders a table of materials with features such as filtering by category, displaying properties and descriptions in expandable rows, and providing actions for editing and deleting materials based on user access levels. It uses Ant Design components for the UI and integrates with API calls to manage materials.
 import {
     Button,
+    Flex,
     Popconfirm,
     Space,
     Table,
@@ -34,55 +35,65 @@ const MaterialTable: React.FC<WithMaterials> = ({
             dataIndex: "name",
             key: "name",
             responsive: ["md"],
+            width: "30%",
         },
         {
             title: "Short Name",
             dataIndex: "shortName",
             key: "shortName",
+            width: "20%",
         },
         {
             title: "Category",
             key: "categoryId",
             dataIndex: "categoryId",
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
             filters: categories?.map((category) => ({
                 text: category.name,
                 value: category.uuid,
             })),
-
+            width: "20%",
             onFilter: (value, record) =>
                 record.categoryId.indexOf((value as string).toLowerCase()) ===
                 0,
             render: (category) =>
                 category && (
-                    <Tag
-                        style={{ textTransform: "uppercase" }}
-                        color={
-                            categories?.find(
-                                (checkCategory) =>
-                                    checkCategory.uuid === category,
-                            )?.color || "geekblue"
-                        }
-                        key={category}
-                    >
-                        {
-                            categories?.find(
-                                (checkCategory) =>
-                                    checkCategory.uuid === category,
-                            )?.name
-                        }
-                    </Tag>
+                    <Flex justify="center">
+                        <Tag
+                            style={{ textTransform: "uppercase" }}
+                            color={
+                                categories?.find(
+                                    (checkCategory) =>
+                                        checkCategory.uuid === category,
+                                )?.color || "geekblue"
+                            }
+                            key={category}
+                        >
+                            {
+                                categories?.find(
+                                    (checkCategory) =>
+                                        checkCategory.uuid === category,
+                                )?.name
+                            }
+                        </Tag>
+                    </Flex>
                 ),
         },
         {
             title: "Remote Print?",
             dataIndex: "remotePrintAvailable",
             key: "remotePrintAvailable",
-
+            onHeaderCell: () => ({ style: { textAlign: "center" } }),
+            width: "20%",
             render: (remotePrintAvailable) => {
-                return remotePrintAvailable ? (
-                    <CheckOutlined />
-                ) : (
-                    <CloseOutlined />
+                return (
+                    <Flex justify="center">
+                        {remotePrintAvailable ? (
+                            <CheckOutlined />
+                        ) : (
+                            <CloseOutlined />
+                        )}
+                    </Flex>
                 );
             },
         },
@@ -92,9 +103,13 @@ const MaterialTable: React.FC<WithMaterials> = ({
                   {
                       title: "Actions",
                       key: "action",
+                      onHeaderCell: () => ({
+                          style: { textAlign: "center" as const },
+                      }),
+                      width: "20%",
                       render: (material: Material) =>
                           material.uuid && (
-                              <Space>
+                              <Flex justify="center" align="center" gap="small">
                                   <MaterialForm material={material} />
 
                                   <Tooltip title="Delete">
@@ -119,7 +134,7 @@ const MaterialTable: React.FC<WithMaterials> = ({
                                           />
                                       </Popconfirm>
                                   </Tooltip>
-                              </Space>
+                              </Flex>
                           ),
                   },
               ]

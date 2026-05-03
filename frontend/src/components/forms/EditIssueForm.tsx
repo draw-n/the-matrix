@@ -50,6 +50,7 @@ const EditIssueForm: React.FC<WithIssue> = ({ issue }) => {
                     initialValues={{
                         status: issue?.status,
                         description: issue?.description,
+                        assignedTo: issue?.assignedTo,
                     }}
                     autoComplete="off"
                     preserve={false}
