@@ -25,7 +25,15 @@ const createEvent = async (req, res) => {
     } = req.body;
     const file = req.file;
     try {
-        if (type && createdBy && dateCreated && title && status && startTime && endTime) {
+        if (
+            type &&
+            createdBy &&
+            dateCreated &&
+            title &&
+            status &&
+            startTime &&
+            endTime
+        ) {
             let event = new Event({
                 _id: new mongoose.Types.ObjectId(),
                 uuid: crypto.randomUUID(),
@@ -114,7 +122,7 @@ const editEventById = async (req, res) => {
             const event = await Event.findOneAndUpdate(
                 { uuid },
                 { ...req.body, imageName: file ? file.filename : null },
-                { new: true, projection: { _id: 0 } },
+                { returnDocument: "after", projection: { _id: 0 } },
             );
 
             if (!event) {
@@ -177,7 +185,8 @@ const getAllEvents = async (req, res) => {
         createdBy,
         dateCreated,
         lastUpdatedBy,
-        dateLastUpdated,
+        startDate,
+        endDate,
     } = req.query;
     try {
         let filter = {};
@@ -192,6 +201,32 @@ const getAllEvents = async (req, res) => {
 
         if (createdBy) {
             filter.createdBy = new RegExp(createdBy, "i");
+        }
+
+        // Build date condition
+        let dateCondition = {};
+
+        if (startDate) {
+            dateCondition.$gte = new Date(startDate);
+        }
+
+        if (endDate) {
+            dateCondition.$lte = new Date(endDate);
+        }
+
+        // Apply OR logic
+        if (startDate || endDate) {
+            filter.$or = [
+                {
+                    date: {
+                        ...dateCondition,
+                        $exists: true,
+                    },
+                },
+                {
+                    isRecurring: true,
+                },
+            ];
         }
 
         const events = await Event.find(filter, {

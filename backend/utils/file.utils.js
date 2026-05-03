@@ -18,11 +18,11 @@ const checkFileExtensions = (fileName, allowed_extensions) => {
 
 const getFileExtension = (fileName) => {
     return fileName.slice(fileName.lastIndexOf("."));
-}
+};
 
 const readFile = (filePath) => {
     return fs.readFileSync(filePath);
-}
+};
 
 // Helper function to retry async operations
 const retryRequest = async (fn, retries = 3, delayMs = 1000) => {
@@ -38,7 +38,7 @@ const retryRequest = async (fn, retries = 3, delayMs = 1000) => {
         }
     }
     throw lastError;
-}
+};
 
 const moveFile = (oldPath, newPath) => {
     fs.rename(oldPath, newPath, (err) => {
@@ -47,5 +47,25 @@ const moveFile = (oldPath, newPath) => {
     });
 };
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
-module.exports = {retryRequest, checkFileExtensions, moveFile, readFile, delay, getFileExtension };
+const mapImageExtension = (contentType) => {
+    const map = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/gif": "gif",
+        "image/webp": "webp",
+        "image/svg+xml": "svg",
+    };
+    return map[contentType] || "bin";
+}
+
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+module.exports = {
+    retryRequest,
+    checkFileExtensions,
+    moveFile,
+    readFile,
+    delay,
+    getFileExtension,
+    mapImageExtension,
+};

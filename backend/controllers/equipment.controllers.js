@@ -223,7 +223,7 @@ const editEquipmentById = async (req, res) => {
             const equipment = await Equipment.findOneAndUpdate(
                 { uuid: uuid },
                 { ...req.body, imageName: file ? file.filename : null },
-                { new: true },
+                { returnDocument: 'after' },
             );
 
             if (!equipment) {

@@ -97,7 +97,7 @@ const editCategoryById = async (req, res) => {
 
     try {
         if (uuid) {
-            const category = await Category.findOneAndUpdate({ uuid }, req.body, { new: true, projection: { _id: 0 } });
+            const category = await Category.findOneAndUpdate({ uuid }, req.body, { returnDocument: 'after', projection: { _id: 0 } });
             if (!category) {
                 return res.status(404).send({ message: "Category not found." });
             }

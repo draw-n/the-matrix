@@ -16,19 +16,17 @@ import { red } from "@ant-design/colors";
 import { eventTypeColors } from "../../types/event";
 
 const ThisWeekCard: React.FC = () => {
-    const { data: events } = useAllEvents();
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
-
-    const startOfWeek = dayjs().startOf("week").add(1, "day"); // Monday
+    const startOfWeek = dayjs().startOf("day"); // Monday
     const endOfWeek = startOfWeek.add(6, "day"); // Sunday
+
+    const { data: events } = useAllEvents(
+        undefined,
+        startOfWeek.toDate(),
+        endOfWeek.toDate(),
+    );
+    const days = Array.from({ length: 7 }, (_, i) =>
+        dayjs().add(i, "day"),
+    );
 
     return (
         <Card style={{ height: "100%" }}>
@@ -55,7 +53,7 @@ const ThisWeekCard: React.FC = () => {
                                 minWidth: 120, // 🔑 THIS is the fix
                                 padding: "12px 5px", // 👈 creates breathing room
                             }}
-                            key={day}
+                            key={day.format("dddd")}
                         >
                             {/* Day header */}
                             <Typography.Title
@@ -66,30 +64,24 @@ const ThisWeekCard: React.FC = () => {
                                     fontSize: 12,
                                 }}
                             >
-                                {day.slice(0, 3)}
+                                {`${day.format("dddd").slice(0, 3)} - ${day.format("M/DD")}`}
                             </Typography.Title>
 
                             {/* Events */}
                             {events
                                 ?.filter((e) => {
                                     if (e.isRecurring) {
-                                        return e.dayOfWeek === day;
+                                        return e.dayOfWeek === day.format("dddd");
                                     }
 
                                     const eventDate = dayjs(e.date);
 
-                                    const isThisWeek =
-                                        eventDate.isAfter(
-                                            startOfWeek.subtract(1, "day"),
-                                        ) &&
-                                        eventDate.isBefore(
-                                            endOfWeek.add(1, "day"),
-                                        );
+                            
 
                                     const isSameDay =
-                                        eventDate.format("dddd") === day;
+                                        eventDate.format("dddd") === day.format("dddd");
 
-                                    return isThisWeek && isSameDay;
+                                    return isSameDay;
                                 })
                                 .map((event) => (
                                     <Popover

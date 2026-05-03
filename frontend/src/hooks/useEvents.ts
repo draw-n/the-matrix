@@ -13,10 +13,10 @@ import { message } from "antd";
  * @param types - An array of event types to filter by (e.g., ["office hours", "meeting"]).
  * @returns - A React Query object containing the events data, loading state, and error state.
  */
-export const useAllEvents = (types?: EventType[]) => {
+export const useAllEvents = (types?: EventType[], startDate?: Date, endDate?: Date) => {
     return useQuery({
-        queryKey: ["events", types],
-        queryFn: async () => getAllEvents(types),
+        queryKey: ["events", types, startDate, endDate],
+        queryFn: async () => getAllEvents(types, startDate, endDate),
     });
 };
 

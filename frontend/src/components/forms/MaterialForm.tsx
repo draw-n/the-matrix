@@ -33,6 +33,10 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const { data: categories } = useAllCategories();
     const { mutateAsync: editMaterialById } = useEditMaterialById();
     const { mutateAsync: createMaterial } = useCreateMaterial();
+    const [remotePrintAvailable, setRemotePrintAvailable] = useState(
+        material?.remotePrintAvailable || false,
+    );
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
         if (material) {
@@ -372,9 +376,35 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                         name="remotePrintAvailable"
                         label="Will it be available for remote printing?"
                         layout="horizontal"
+                        valuePropName="checked"
                     >
-                        <Switch />
+                        <Switch
+                            onChange={(checked) =>
+                                setRemotePrintAvailable(checked)
+                            }
+                        />
                     </Form.Item>
+                    {remotePrintAvailable && (
+                        <Form.Item
+                            name="remotePrintEquipmentIds"
+                            label="Equipment for Remote Printing"
+                            rules={[
+                                {
+                                    required: true,
+                                    message:
+                                        "Please enter the equipment IDs for remote printing.",
+                                },
+                            ]}
+                        >
+                            <Select />
+                        </Form.Item>
+                    )}
+                    {remotePrintAvailable && (
+                        <Form.Item
+                            name="file"
+                            label="Configuration File"
+                        ></Form.Item>
+                    )}
                 </Form>
             </Modal>
         </>

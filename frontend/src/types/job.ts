@@ -8,6 +8,7 @@ export interface Job {
     gcodeFileName: string;
     filamentUsedGrams?: number;
     estimatedTimeSeconds?: number;
+    finishedSnapshotName?: string;
     createdAt?: Date;
     uploadedAt?: Date;
     finishedAt?: Date;

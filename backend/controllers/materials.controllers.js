@@ -18,7 +18,7 @@ const createMaterial = async (req, res) => {
         description,
         remotePrintAvailable,
     } = req.body;
-
+    const file = req.file;
     try {
         if (
             name &&
@@ -96,7 +96,7 @@ const deleteMaterialById = async (req, res) => {
  */
 const editMaterialById = async (req, res) => {
     const uuid = req.params?.uuid;
-
+    const file = req?.file;
     try {
         if (uuid) {
             const material = await Material.findOneAndUpdate(
