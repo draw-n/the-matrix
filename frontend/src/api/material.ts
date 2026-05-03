@@ -23,8 +23,10 @@ export const getAllMaterials = async (
         return response.data;
     } catch (error: any) {
         console.error("Error fetching issues:", error);
-        
-        throw new Error(error.response?.data.message || "Failed to retrieve materials.");
+
+        throw new Error(
+            error.response?.data.message || "Failed to retrieve materials.",
+        );
     }
 };
 
@@ -41,7 +43,9 @@ export const deleteMaterialById = async (materialId: string) => {
         return response.data;
     } catch (error: any) {
         console.error("Error deleting material:", error);
-        throw new Error(error.response?.data.message || "Failed to delete material.");
+        throw new Error(
+            error.response?.data.message || "Failed to delete material.",
+        );
     }
 };
 
@@ -54,19 +58,50 @@ export const deleteMaterialById = async (materialId: string) => {
 export const editMaterialById = async (
     materialId: string,
     editedMaterial: Partial<Material>,
+    file?: File,
 ) => {
     if (materialId === "") {
         throw new Error("Material ID not found.");
     }
+    const formData = new FormData();
+    Object.entries(editedMaterial).forEach(([key, value]) => {
+        if (value === undefined || value === null) return;
+
+        // handle complex types
+        if (
+            key === "properties" ||
+            key === "temperatures" ||
+            key === "remotePrintEquipmentIds"
+        ) {
+            formData.append(key, JSON.stringify(value));
+        }
+        // handle primitives
+        else if (typeof value === "boolean" || typeof value === "number") {
+            formData.append(key, String(value));
+        } else {
+            formData.append(key, value as string);
+        }
+    });
+
+    if (file) {
+        formData.append("file", file);
+    }
     try {
         const response = await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/materials/${materialId}`,
-            editedMaterial,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            },
         );
         return response.data;
     } catch (error: any) {
         console.error("Error updating material:", error);
-        throw new Error(error.response?.data.message || "Failed to update material.");
+        throw new Error(
+            error.response?.data.message || "Failed to update material.",
+        );
     }
 };
 
@@ -75,16 +110,37 @@ export const editMaterialById = async (
  * @param newMaterial - An object containing the details of the material to be created. This should include properties such as name, shortName, categoryId, properties, description, remotePrintAvailable, and optionally temperatures.
  * @returns - A promise that resolves to the created Material object.
  */
-export const createMaterial = async (newMaterial: Partial<Material>) => {
+export const createMaterial = async (
+    newMaterial: Partial<Material>,
+    file?: File,
+) => {
+    const formData = new FormData();
+    Object.keys(newMaterial).forEach((key) => {
+        formData.append(
+            key,
+            (newMaterial as Record<string, any>)[key] as string,
+        );
+    });
+
+    if (file) {
+        formData.append("file", file);
+    }
 
     try {
         const response = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/materials`,
-            newMaterial,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            },
         );
         return response.data;
     } catch (error: any) {
         console.error("Error creating material:", error);
-        throw new Error(error.response?.data.message || "Failed to create material.");
+        throw new Error(
+            error.response?.data.message || "Failed to create material.",
+        );
     }
 };

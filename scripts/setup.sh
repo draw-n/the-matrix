@@ -33,6 +33,15 @@ TARGET_DIR="../backend/slicer-cli"
 SRC_DIR="$TARGET_DIR/SuperSlicer"
 BINARY_NAME="superslicer"
 
+sudo apt-get install -y \
+git \
+build-essential \
+autoconf \
+cmake \
+libglu1-mesa-dev \
+libgtk-3-dev \
+libdbus-1-dev \
+
 echo "[SuperSlicer Installer] Target directory: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 
@@ -58,19 +67,19 @@ cd deps
 mkdir -p build
 cd build
 cmake .. -DDEP_WX_GTK3=ON
-make
+make -j$(nproc)
 cd ../..
 echo "[SuperSlicer Installer] Building SuperSlicer..."
 mkdir -p build
 cd build
 cmake .. -DSLIC3R_GTK=3 -DSLIC3R_GUI=0 -DSLIC3R_STATIC=1 -DSCLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
-make -j4
+make -j$(nproc)
 
 cd "$SCRIPT_DIR"
 
 # Find the built binary (may be in bin/ or .)
-if [ -f "src/$BINARY_NAME" ]; then
-	cp "src/$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
+if [ -f "./src/$BINARY_NAME" ]; then
+	cp "./src/$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
 elif [ -f "$BINARY_NAME" ]; then
 	cp "$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
 else

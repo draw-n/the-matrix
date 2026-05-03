@@ -6,11 +6,11 @@ import { Equipment } from "../types/equipment";
  * @param categoryId - The unique identifier of the category to filter equipment by.
  * @returns - A promise that resolves to an array of Equipment objects.
  */
-export const getAllEquipment = async (categoryId?: string) => {
+export const getAllEquipment = async (categoryId?: string, remotePrintAvailable?: boolean) => {
     try {
         const response = await axios.get<Equipment[]>(
             `${import.meta.env.VITE_BACKEND_URL}/equipment`,
-            { params: { categoryId } },
+            { params: { categoryId, remotePrintAvailable } },
         );
         return response.data;
     } catch (error: any) {

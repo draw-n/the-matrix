@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Modal,
@@ -14,8 +14,16 @@ import {
     message,
     Tooltip,
     Grid,
+    UploadFile,
+    UploadProps,
+    Upload,
 } from "antd";
-import { CaretDownFilled, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    CaretDownFilled,
+    EditOutlined,
+    PlusOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
 import { useAllCategories } from "../../hooks/useCategories";
 import { Material, WithMaterial } from "../../types/material";
 
@@ -24,6 +32,8 @@ import {
     useEditMaterialById,
 } from "../../hooks/useMaterials";
 import HelpField from "./components/HelpField";
+import axios from "axios";
+import { useAllEquipment } from "../../hooks/useEquipment";
 
 const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [form] = Form.useForm();
@@ -36,16 +46,132 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
     const [remotePrintAvailable, setRemotePrintAvailable] = useState(
         material?.remotePrintAvailable || false,
     );
-    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+    const { data: equipment } = useAllEquipment(
+        undefined,
+        remotePrintAvailable,
+    );
+    const [uploadedFile, setUploadedFile] = useState<UploadFile[]>([]);
+
+    const props: UploadProps = {
+        beforeUpload: (file) => {
+            // 1. Validate File Extension
+            const isValidExtension = file.name.toLowerCase().endsWith(".ini");
+
+            if (!isValidExtension) {
+                message.error("Only .ini files are supported.");
+                return Upload.LIST_IGNORE;
+            }
+            // 2. Validate File Size (50MB)
+            const isLt50M = file.size / 1024 / 1024 < 50;
+
+            if (!isLt50M) {
+                message.error("File must be smaller than 50MB.");
+                return Upload.LIST_IGNORE;
+            }
+
+            // 3. Update State
+            setUploadedFile([
+                {
+                    uid: file.uid,
+                    name: file.name,
+                    status: "done",
+                    originFileObj: file,
+                },
+            ]);
+
+            return false; // Prevent auto upload
+        },
+        onChange: ({ fileList }) => {
+            setUploadedFile(fileList as UploadFile[]);
+        },
+    };
+
+    useEffect(() => {
+        if (!material || !material.remotePrintConfigName) return;
+        const fileName = material.remotePrintConfigName;
+        const url = `${import.meta.env.VITE_BACKEND_URL}/configs/${fileName}`;
+
+        let previewUrl: string | null = null;
+        (async () => {
+            try {
+                const response = await axios.get(url, {
+                    responseType: "blob",
+                    withCredentials: true,
+                });
+                if (!response.data)
+                    throw new Error(
+                        `Failed to fetch config file: ${response.status}`,
+                    );
+                const blob = await response.data;
+                const file = new File([blob], fileName, {
+                    type: blob.type || "application/octet-stream",
+                });
+                // create a preview so Upload shows the item as if it were local
+                previewUrl = URL.createObjectURL(file);
+                setUploadedFile([
+                    {
+                        uid: `server-${fileName}`,
+                        name: fileName,
+                        status: "done",
+                        originFileObj: file,
+                        url,
+                        thumbUrl: previewUrl,
+                    } as UploadFile,
+                ]);
+            } catch (err) {
+                // Fallback to URL-only entry if fetching as blob fails
+                setUploadedFile([
+                    {
+                        uid: `server-${fileName}`,
+                        name: fileName,
+                        status: "done",
+                        url,
+                        thumbUrl: url,
+                    } as UploadFile,
+                ]);
+            }
+        })();
+        // cleanup preview URL when announcement changes or component unmounts
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [material]);
 
     const onFinish: FormProps<Material>["onFinish"] = async (values) => {
         if (material) {
+            const editedMaterial = {
+                ...material,
+                remotePrintAvailable: values.remotePrintAvailable,
+                shortName: values.shortName,
+                name: values.name,
+                categoryId: values.categoryId,
+                description: values.description,
+                properties: values.properties,
+                temperatures: values.temperatures,
+                remotePrintEquipmentIds: values.remotePrintEquipmentIds,
+            };
             await editMaterialById({
                 materialId: material.uuid,
-                editedMaterial: values,
+                editedMaterial: editedMaterial,
+                file: uploadedFile[0]?.originFileObj,
             });
         } else {
-            await createMaterial({ newMaterial: values });
+            const newMaterial = {
+                remotePrintAvailable: values.remotePrintAvailable,
+                shortName: values.shortName,
+                name: values.name,
+                categoryId: values.categoryId,
+                description: values.description,
+                properties: values.properties,
+                temperatures: values.temperatures,
+                remotePrintEquipmentIds: values.remotePrintEquipmentIds,
+            };
+            await createMaterial({
+                newMaterial: newMaterial,
+                file: uploadedFile[0]?.originFileObj,
+            });
             form.resetFields();
         }
         setIsModalOpen(false);
@@ -94,18 +220,38 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                     layout="vertical"
                     form={form}
                     colon={false}
-                    preserve={false}
                     initialValues={
                         material
-                            ? material
+                            ? {
+                                  remotePrintAvailable:
+                                      material.remotePrintAvailable,
+                                  shortName: material.shortName,
+                                  name: material.name,
+                                  categoryId: material.categoryId,
+                                  description: material.description,
+                                  properties: material.properties,
+                                  temperatures: material.temperatures,
+                                  remotePrintEquipmentIds:
+                                      material.remotePrintEquipmentIds,
+                              }
                             : {
                                   name: "",
                                   shortName: "",
                                   categoryId: null,
                                   description: "",
                                   properties: [],
-                                  temperatures: undefined,
+                                  temperatures: {
+                                      extruder: {
+                                          firstLayer: 0,
+                                          otherLayers: 0,
+                                      },
+                                      bed: {
+                                          firstLayer: 0,
+                                          otherLayers: 0,
+                                      },
+                                  },
                                   remotePrintAvailable: false,
+                                  remotePrintEquipmentIds: [],
                               }
                     }
                 >
@@ -220,152 +366,124 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                             return category?.properties?.includes(
                                 "temperature",
                             ) ? (
-                                <Row gutter={[16, 16]}>
-                                    <Col xs={24} lg={4}>
-                                        <p>Extruder</p>
+                                <Row gutter={[8, 8]}>
+                                    <Col span={24}>
+                                        <p style={{ marginBottom: 0 }}>
+                                            Extuder Temperatures
+                                        </p>
                                     </Col>
-                                    <Col xs={24} lg={10}>
-                                        <Flex gap="10px" justify="end">
-                                            <p>First layer:</p>
-                                            <Form.Item<Material>
-                                                name={[
-                                                    "temperatures",
-                                                    "extruder",
-                                                    "firstLayer",
-                                                ]}
-                                                rules={[
-                                                    {
-                                                        required:
-                                                            category?.properties?.includes(
-                                                                "temperature",
-                                                            ),
-                                                        message:
-                                                            "Please add a temperature for the extruder on the first layer.",
-                                                    },
-                                                ]}
-                                            >
-                                                <InputNumber
-                                                    size="small"
-                                                    formatter={(value) =>
-                                                        `${value} °C`
-                                                    }
-                                                    parser={(value) =>
-                                                        value?.replace(
-                                                            " °C",
-                                                            "",
-                                                        ) as unknown as number
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Flex>
+                                    <Col span={12}>
+                                        <Form.Item<Material>
+                                            layout="horizontal"
+                                            label="First layer:"
+                                            required
+                                            name={[
+                                                "temperatures",
+                                                "extruder",
+                                                "firstLayer",
+                                            ]}
+                                            rules={[
+                                                {
+                                                    required:
+                                                        category?.properties?.includes(
+                                                            "temperature",
+                                                        ),
+                                                    message:
+                                                        "Please add a temperature for the extruder on the first layer.",
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                size="small"
+                                                suffix="°C"
+                                            />
+                                        </Form.Item>
                                     </Col>
-                                    <Col xs={24} lg={10}>
-                                        <Flex gap="10px" justify="end">
-                                            <p>Other layers:</p>
-                                            <Form.Item<Material>
-                                                name={[
-                                                    "temperatures",
-                                                    "extruder",
-                                                    "otherLayers",
-                                                ]}
-                                                rules={[
-                                                    {
-                                                        required:
-                                                            category?.properties?.includes(
-                                                                "temperature",
-                                                            ),
-                                                        message:
-                                                            "Please add a temperature for the extruder after the first layer.",
-                                                    },
-                                                ]}
-                                            >
-                                                <InputNumber
-                                                    size="small"
-                                                    formatter={(value) =>
-                                                        `${value} °C`
-                                                    }
-                                                    parser={(value) =>
-                                                        value?.replace(
-                                                            " °C",
-                                                            "",
-                                                        ) as unknown as number
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Flex>
+                                    <Col span={12}>
+                                        <Form.Item<Material>
+                                            required
+                                            layout="horizontal"
+                                            label="Other layers:"
+                                            name={[
+                                                "temperatures",
+                                                "extruder",
+                                                "otherLayers",
+                                            ]}
+                                            rules={[
+                                                {
+                                                    required:
+                                                        category?.properties?.includes(
+                                                            "temperature",
+                                                        ),
+                                                    message:
+                                                        "Please add a temperature for the extruder after the first layer.",
+                                                },
+                                            ]}
+                                        >
+                                             <InputNumber
+                                                size="small"
+                                                suffix="°C"
+                                            />
+                                        </Form.Item>
                                     </Col>
-                                    <Col xs={24} lg={4}>
-                                        <p>Bed</p>
+                                    <Col span={24}>
+                                        <p style={{ marginBottom: 0 }}>
+                                            Bed Temperatures
+                                        </p>
                                     </Col>
-                                    <Col xs={24} lg={10}>
-                                        <Flex gap="10px" justify="end">
-                                            <p>First layer:</p>
-                                            <Form.Item<Material>
-                                                name={[
-                                                    "temperatures",
-                                                    "bed",
-                                                    "firstLayer",
-                                                ]}
-                                                rules={[
-                                                    {
-                                                        required:
-                                                            category?.properties?.includes(
-                                                                "temperature",
-                                                            ),
-                                                        message:
-                                                            "Please add a temperature for the bed on the first layer.",
-                                                    },
-                                                ]}
-                                            >
-                                                <InputNumber
-                                                    size="small"
-                                                    formatter={(value) =>
-                                                        `${value} °C`
-                                                    }
-                                                    parser={(value) =>
-                                                        value?.replace(
-                                                            " °C",
-                                                            "",
-                                                        ) as unknown as number
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Flex>
+                                    <Col span={12}>
+                                        <Form.Item<Material>
+                                            label="First layer:"
+                                            required
+                                            layout="horizontal"
+                                            name={[
+                                                "temperatures",
+                                                "bed",
+                                                "firstLayer",
+                                            ]}
+                                            rules={[
+                                                {
+                                                    required:
+                                                        category?.properties?.includes(
+                                                            "temperature",
+                                                        ),
+                                                    message:
+                                                        "Please add a temperature for the bed on the first layer.",
+                                                },
+                                            ]}
+                                        >
+                                             <InputNumber
+                                                size="small"
+                                                suffix="°C"
+                                            />
+                                        </Form.Item>
                                     </Col>
-                                    <Col xs={24} lg={10}>
-                                        <Flex gap="10px" justify="end">
-                                            <p>Other layers:</p>
-                                            <Form.Item<Material>
-                                                name={[
-                                                    "temperatures",
-                                                    "bed",
-                                                    "otherLayers",
-                                                ]}
-                                                rules={[
-                                                    {
-                                                        required:
-                                                            category?.properties?.includes(
-                                                                "temperature",
-                                                            ),
-                                                        message:
-                                                            "Please add a temperature for the bed after the first layer.",
-                                                    },
-                                                ]}
-                                            >
-                                                <InputNumber
-                                                    size="small"
-                                                    formatter={(value) =>
-                                                        `${value} °C`
-                                                    }
-                                                    parser={(value) =>
-                                                        value?.replace(
-                                                            " °C",
-                                                            "",
-                                                        ) as unknown as number
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Flex>
+                                    <Col span={12}>
+                                        <Form.Item<Material>
+                                            label="Other layers:"
+                                            required
+                                            layout="horizontal"
+                                            name={[
+                                                "temperatures",
+                                                "bed",
+                                                "otherLayers",
+                                            ]}
+                                            rules={[
+                                                {
+                                                    required:
+                                                        category?.properties?.includes(
+                                                            "temperature",
+                                                        ),
+                                                    message:
+                                                        "Please add a temperature for the bed after the first layer.",
+                                                },
+                                            ]}
+                                        >
+                                             <InputNumber
+                                                size="small"
+                                                suffix="°C"
+                                            />
+                                        </Form.Item>
                                     </Col>
                                 </Row>
                             ) : null; // Hide the grid if 'visibility' is not 'show'
@@ -387,7 +505,7 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                     {remotePrintAvailable && (
                         <Form.Item
                             name="remotePrintEquipmentIds"
-                            label="Equipment for Remote Printing"
+                            label={`Equipment(s) for ${material?.shortName} Remote Printing`}
                             rules={[
                                 {
                                     required: true,
@@ -396,14 +514,43 @@ const MaterialForm: React.FC<WithMaterial> = ({ material }: WithMaterial) => {
                                 },
                             ]}
                         >
-                            <Select />
+                            <Select
+                                mode="multiple"
+                                style={{ width: "100%" }}
+                                placeholder="Please select"
+                                options={equipment?.map((item) => ({
+                                    value: item.uuid,
+                                    label: item.name,
+                                }))}
+                            />
                         </Form.Item>
                     )}
                     {remotePrintAvailable && (
                         <Form.Item
                             name="file"
-                            label="Configuration File"
-                        ></Form.Item>
+                            label="Remote Print Config (.ini file)"
+                            rules={[
+                                {
+                                    required: !material?.remotePrintConfigName,
+                                    message:
+                                        "Please upload a remote print config file.",
+                                },
+                            ]}
+                        >
+                            <Upload
+                                {...props}
+                                fileList={uploadedFile}
+                                listType="text"
+                            >
+                                <Button
+                                    shape="round"
+                                    type="default"
+                                    icon={<UploadOutlined />}
+                                >
+                                    Upload Config File
+                                </Button>
+                            </Upload>
+                        </Form.Item>
                     )}
                 </Form>
             </Modal>

@@ -17,6 +17,8 @@ const createMaterial = async (req, res) => {
         properties,
         description,
         remotePrintAvailable,
+        remotePrintEquipmentIds,
+        temperatures,
     } = req.body;
     const file = req.file;
     try {
@@ -35,7 +37,12 @@ const createMaterial = async (req, res) => {
                 shortName,
                 category,
                 description,
-                properties,
+                properties: JSON.parse(properties || "[]"),
+                temperatures: JSON.parse(temperatures || "{}"),
+                remotePrintEquipmentIds: JSON.parse(
+                    remotePrintEquipmentIds || "[]",
+                ),
+                remotePrintConfigName: file ? file.filename : null,
                 remotePrintAvailable,
             });
             await material.save();
@@ -101,15 +108,21 @@ const editMaterialById = async (req, res) => {
         if (uuid) {
             const material = await Material.findOneAndUpdate(
                 { uuid: uuid },
-                req.body
+                {
+                    ...req.body,
+                    remotePrintConfigName: file ? file.filename : undefined,
+                    properties: JSON.parse(req.body.properties || "[]"),
+                    temperatures: JSON.parse(req.body.temperatures || "{}"),
+                    remotePrintEquipmentIds: JSON.parse(
+                        req.body.remotePrintEquipmentIds || "[]",
+                    ),
+                },
+                { returnDocument: "after", projection: { _id: 0 } },
             );
             if (!material) {
                 return res.status(404).send({ message: "Material not found." });
             }
-
-            const materialObj = material.toObject();
-            delete materialObj._id;
-            return res.status(200).json(materialObj);
+            return res.status(200).json(material);
         } else {
             return res.status(400).send({ message: "Missing Material ID" });
         }
@@ -133,7 +146,10 @@ const getMaterialById = async (req, res) => {
 
     try {
         if (uuid) {
-            const material = await Material.findOne({ uuid: uuid }, { projection: { _id: 0 } });
+            const material = await Material.findOne(
+                { uuid: uuid },
+                { projection: { _id: 0 } },
+            );
             if (!material) {
                 return res.status(404).send({ message: "Material not found." });
             }
@@ -170,7 +186,9 @@ const getAllMaterials = async (req, res) => {
             filter.categoryId = categoryId; // It's a string, use it as is
         }
 
-        const material = await Material.find(filter, { projection: { _id: 0 } }).sort({ categoryId: 1 });
+        const material = await Material.find(filter, {
+            projection: { _id: 0 },
+        }).sort({ categoryId: 1 });
         return res.status(200).json(material);
     } catch (err) {
         console.error(err.message);

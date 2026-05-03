@@ -404,11 +404,14 @@ const getEquipmentById = async (req, res) => {
  * @returns - response details (with status)
  */
 const getAllEquipment = async (req, res) => {
-    const { categoryId } = req.query;
+    const { categoryId, remotePrintAvailable} = req.query;
     try {
         let filter = {};
         if (categoryId) {
             filter.categoryId = categoryId; // It's a string, use it as is
+        }
+        if (remotePrintAvailable) {
+            filter.remotePrintAvailable = remotePrintAvailable === "true";
         }
         const equipments = await Equipment.find(filter, {
             projection: { _id: 0 },

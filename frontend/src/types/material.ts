@@ -7,6 +7,8 @@ export interface Material {
     description: string;
     remotePrintAvailable: boolean;
     temperatures?: FilamentTemperatures;
+    remotePrintConfigName?: string;
+    remotePrintEquipmentIds?: string[];
 }
 
 export interface WithMaterial {
