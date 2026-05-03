@@ -15,10 +15,10 @@ import { message } from "antd";
  * @param categoryId - The unique identifier of the category to filter equipment by.
  * @returns - A React Query object containing the equipment data, loading state, and error state.
  */
-export const useAllEquipment = (categoryId?: string) => {
+export const useAllEquipment = (categoryId?: string, remotePrintAvailable?: boolean) => {
     return useQuery({
-        queryKey: ["equipment", categoryId],
-        queryFn: async () => getAllEquipment(categoryId),
+        queryKey: ["equipment", categoryId, remotePrintAvailable],
+        queryFn: async () => getAllEquipment(categoryId, remotePrintAvailable),
     });
 };
 

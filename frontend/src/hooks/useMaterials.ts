@@ -52,10 +52,12 @@ export const useEditMaterialById = () => {
         mutationFn: ({
             materialId,
             editedMaterial,
+            file,
         }: {
             materialId: string;
             editedMaterial: Partial<Material>;
-        }) => editMaterialById(materialId, editedMaterial),
+            file?: File;
+        }) => editMaterialById(materialId, editedMaterial, file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["materials"] });
             message.success("Material updated successfully.");
@@ -73,8 +75,8 @@ export const useEditMaterialById = () => {
 export const useCreateMaterial = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ newMaterial }: { newMaterial: Partial<Material> }) =>
-            createMaterial(newMaterial),
+        mutationFn: ({ newMaterial, file }: { newMaterial: Partial<Material>; file?: File }) =>
+            createMaterial(newMaterial, file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["materials"] });
             message.success("Material created successfully.");

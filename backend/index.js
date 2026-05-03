@@ -70,6 +70,12 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login session
 
 app.use(
+    "/configs",
+    ensureAuthenticated,
+    express.static(path.join(__dirname, "files/configs")),
+);
+
+app.use(
     "/images",
     ensureAuthenticated,
     express.static(path.join(__dirname, "files/images")),
