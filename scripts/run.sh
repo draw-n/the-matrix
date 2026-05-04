@@ -22,3 +22,6 @@ npm run build
 echo "Reloading nginx..."
 sudo nginx -t
 sudo systemctl reload nginx
+
+cd ../scripts
+echo "Setup complete."

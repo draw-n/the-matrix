@@ -12,6 +12,7 @@ lerna-debug.log*
 **dist-ssr/
 *.local
 *.env
+*.venv
 **files/
 notes.txt
 

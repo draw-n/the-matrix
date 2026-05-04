@@ -26,77 +26,8 @@ else
     echo "No requirements.txt found, skipping dependency install."
 fi
 
-echo "Setting up SuperSlicer..."
-
-REPO_URL="https://github.com/supermerill/SuperSlicer.git"
-TARGET_DIR="../backend/slicer-cli"
-SRC_DIR="$TARGET_DIR/SuperSlicer"
-BINARY_NAME="superslicer"
-
-sudo apt-get install -y \
-git \
-build-essential \
-autoconf \
-cmake \
-libglu1-mesa-dev \
-libgtk-3-dev \
-libdbus-1-dev \
-
-echo "[SuperSlicer Installer] Target directory: $TARGET_DIR"
-mkdir -p "$TARGET_DIR"
-
-sudo apt-get update
-
-# Remove existing SuperSlicer binary if it exists
-if [ -f "$TARGET_DIR/$BINARY_NAME" ]; then
-	echo "[SuperSlicer Installer] Removing existing $BINARY_NAME binary..."
-	rm -f "$TARGET_DIR/$BINARY_NAME"
-fi
-
-if [ -d "$SRC_DIR/.git" ]; then
-	echo "[SuperSlicer Installer] Repo exists, pulling latest..."
-	git -C "$SRC_DIR" pull
-else
-	echo "[SuperSlicer Installer] Cloning repo..."
-	git clone "$REPO_URL" "$SRC_DIR"
-fi
-
-cd "$SRC_DIR"
-echo "[SuperSlicer Installer] Building Dependencies..."
-cd deps
-mkdir -p build
-cd build
-cmake .. -DDEP_WX_GTK3=ON
-make -j$(nproc)
-cd ../..
-echo "[SuperSlicer Installer] Building SuperSlicer..."
-mkdir -p build
-cd build
-cmake .. -DSLIC3R_GTK=3 -DSLIC3R_GUI=0 -DSLIC3R_STATIC=1 -DSCLIC3R_PCH=OFF -DCMAKE_PREFIX_PATH=$(pwd)/../deps/build/destdir/usr/local
-make -j$(nproc)
-
-cd "$SCRIPT_DIR"
-
-# Find the built binary (may be in bin/ or .)
-if [ -f "./src/$BINARY_NAME" ]; then
-	cp "./src/$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
-elif [ -f "$BINARY_NAME" ]; then
-	cp "$BINARY_NAME" "$TARGET_DIR/$BINARY_NAME"
-else
-	echo "[SuperSlicer Installer] Build failed: binary not found!"
-	exit 1
-fi
-
-echo "[SuperSlicer Installer] Done. superslicer binary is in $TARGET_DIR/$BINARY_NAME."
-
-
-echo "Setting up nginx configuration..."
-export SERVER_IP=$1
-export APP_ROOT="$SCRIPT_DIR/../frontend/dist"
-
-envsubst '$SERVER_IP $APP_ROOT' < ../nginx/nginx.template.conf > /etc/nginx/sites-available/matrix.conf
-sudo ln -sf /etc/nginx/sites-available/matrix.conf /etc/nginx/sites-enabled/matrix.conf
-echo "Nginx configuration complete. Please reload nginx to apply changes."
+# BUILD_ARGS="-DSLIC3R_GUI=0" setup/superslicer.sh
+sudo setup/nginx.sh $(hostname -I | awk '{print $1}')
 
 cd ../backend
 echo "Installing backend dependencies..."
@@ -107,12 +38,11 @@ echo "Installing frontend dependencies..."
 npm ci
 
 
-
 cd ../scripts
 
 echo "Creating systemd service..."
 
-SERVICE_NAME="matrix-app"
+SERVICE_NAME="matrix"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 WORKING_DIR="$(realpath ../backend)"
 
