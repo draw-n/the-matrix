@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
+sudo apt update
 
+sudo apt install -y \
+  nodejs \
+  npm \
+  python3 \
+  python3-pip \
+  git \
+  sed
+  
 SCRIPT_DIR="$(pwd)"
 
 echo "Checking for Python3..."
