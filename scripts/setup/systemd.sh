@@ -4,7 +4,7 @@ echo "Creating systemd service..."
 
 SERVICE_NAME="matrix"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-WORKING_DIR="$(pwd)"
+WORKING_DIR="$(cd "$(dirname "$0")/../backend" && pwd)"
 USER_NAME="$(whoami)"
 
 if [ -f "$SERVICE_FILE" ]; then
@@ -25,9 +25,9 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=$USER_NAME
-WorkingDirectory=$WORKING_DIR/../backend
+WorkingDirectory=$WORKING_DIR
 
-ExecStart=$(which node) index.js
+ExecStart=$(which node) $WORKING_DIR/index.js
 
 Restart=always
 RestartSec=5
