@@ -7,4 +7,10 @@ export APP_ROOT="$(pwd)/../../frontend/dist"
 envsubst '$SERVER_IP $APP_ROOT' < ../config/nginx.template.conf > /etc/nginx/sites-available/matrix.conf
 sudo ln -sf /etc/nginx/sites-available/matrix.conf /etc/nginx/sites-enabled/matrix.conf
 echo "Nginx configuration complete. Reloading nginx..."
-sudo systemctl reload nginx
+if systemctl is-active --quiet nginx; then
+    sudo systemctl reload nginx
+else
+    echo "Nginx is not running. Starting nginx..."
+    sudo systemctl start nginx
+fi
+
