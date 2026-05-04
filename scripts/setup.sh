@@ -26,8 +26,14 @@ else
     echo "No requirements.txt found, skipping dependency install."
 fi
 
+chmod +x setup/nginx.sh
+chmod +x setup/superslicer.sh
+chmod +x setup/systemd.sh
+chmod +x stop.sh
+chmod +x run.sh
 # BUILD_ARGS="-DSLIC3R_GUI=0" setup/superslicer.sh
 sudo setup/nginx.sh $(hostname -I | awk '{print $1}')
+sudo setup/systemd.sh
 
 cd ../backend
 echo "Installing backend dependencies..."
@@ -37,42 +43,7 @@ cd ../frontend
 echo "Installing frontend dependencies..."
 npm ci
 
-
 cd ../scripts
-
-echo "Creating systemd service..."
-
-SERVICE_NAME="matrix"
-SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-WORKING_DIR="$(realpath ../backend)"
-
-sudo bash -c "cat > $SERVICE_FILE" <<EOF
-[Unit]
-Description=Matrix App Service
-After=network.target
-
-[Service]
-Type=simple
-User=$(whoami)
-WorkingDirectory=$WORKING_DIR
-ExecStart=$APP_ROOT/run.sh
-Restart=always
-Environment=NODE_ENV=production
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-echo "Reloading systemd daemon..."
-sudo systemctl daemon-reload
-
-echo "Enabling service to start on boot..."
-sudo systemctl enable ${SERVICE_NAME}.service
-
-echo "Starting service now..."
-sudo systemctl start ${SERVICE_NAME}.service
-
-echo "Service setup complete: ${SERVICE_NAME}"
 
 echo "Setup complete."
 echo "Don't forget to put the .env files in the frontend and backend directories with the necessary environment variables."
