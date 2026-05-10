@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+    createJob,
     deleteJobById,
     editJobById,
     getAllJobs,
@@ -9,6 +10,7 @@ import {
 } from "../api/job";
 import { Job, JobStatus } from "../types/job";
 import { message } from "antd";
+import { FilamentAdvancedSettings } from "../types/equipment";
 
 /**
  * Hook to fetch all jobs, optionally filtered by their statuses, associated equipment, and user.
@@ -69,6 +71,26 @@ export const useDeleteJobById = () => {
         },
         onError: (error: any) => {
             message.error(error.message || "Failed to delete job.");
+        },
+    });
+};
+
+export const useCreateJob = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationKey: ["createJob"],
+        mutationFn: async (newJob: {
+            fileName: string;
+            materialId: string;
+            options: FilamentAdvancedSettings;
+            userId: string;
+        }) => createJob(newJob),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["jobs"] });
+            message.success("Job created successfully.");
+        },
+        onError: (error: any) => {
+            message.error(error.message || "Failed to create job.");
         },
     });
 };

@@ -3,10 +3,9 @@ const path = require("path");
 const { retryRequest } = require("../utils/file.utils.js");
 const fs = require("fs");
 
-const sliceMeshToGcode = (fileName, filePath, outputFilePath, options) => {
+const sliceMeshToGcode = (fileName, filePath, outputFilePath, options, materialConfigPath) => {
     console.log("Slicing file:", fileName, "with options:", options);
-    const materialFile = "./slicer-cli/configurations/pla_config.ini";
-    const command = `./slicer-cli/superslicer --output "${outputFilePath}" -g "${filePath}" --load "${materialFile}" ${options}`;
+    const command = `./slicer-cli/superslicer --output "${outputFilePath}" -g "${filePath}" --load "${materialConfigPath}" ${options}`;
     return retryRequest(
         () =>
             new Promise((resolve, reject) => {

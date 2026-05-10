@@ -94,7 +94,7 @@ export const getFilamentUsedGrams = async (userId?: string) => {
  */
 export const createJob = async (newJob: {
     fileName: string;
-    material?: Material;
+    materialId: string;
     options: FilamentAdvancedSettings;
     userId: string;
 }) => {
