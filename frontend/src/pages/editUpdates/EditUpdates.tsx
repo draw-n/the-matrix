@@ -14,21 +14,38 @@ import { useAllIssues } from "../../hooks/useIssues";
 import EventForm from "../../components/forms/EventForm";
 import EventTable from "../../components/tables/EventTable";
 import { useAllEvents } from "../../hooks/useEvents";
+import { useEffect, useState } from "react";
 
 const EditUpdates: React.FC = () => {
+     const [activeKey, setActiveKey] = useState("issues");
+    
+        useEffect(() => {
+            const hash = window.location.hash.replace("#", "");
+    
+            if (hash) {
+                setActiveKey(hash);
+            }
+        }, []);
+    
+        const handleChange = (key: string) => {
+            setActiveKey(key);
+    
+            window.history.replaceState(null, "", `#${key}`);
+        };
+
     const items: TabsProps["items"] = [
         {
-            key: "1",
+            key: "issues",
             label: "Issues",
             children: <IssueTab />,
         },
         {
-            key: "2",
+            key: "announcements",
             label: "Announcements",
             children: <AnnouncementTab />,
         },
         {
-            key: "3",
+            key: "events",
             label: "Events",
             children: <EventTab />,
         },
@@ -36,7 +53,11 @@ const EditUpdates: React.FC = () => {
 
     return (
         <>
-            <Tabs defaultActiveKey="1" items={items} />
+            <Tabs
+                activeKey={activeKey}
+                onChange={handleChange}
+                items={items}
+            />
         </>
     );
 };

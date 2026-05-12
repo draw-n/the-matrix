@@ -1,17 +1,7 @@
 // Description: Dashboard page displaying user greeting and various dashboard cards.
 import { useAuth } from "../../contexts/AuthContext";
 
-import {
-    Flex,
-    Space,
-    Row,
-    Col,
-    Card,
-    theme,
-    Tabs,
-    TabsProps,
-    Alert,
-} from "antd";
+import { Space, Row, Col, Card, theme, Tabs, TabsProps, Alert } from "antd";
 
 import AnnouncementCard from "../../components/dashboard/AnnouncementCard";
 import NeedHelpCard from "../../components/dashboard/NeedHelpCard";
@@ -19,9 +9,26 @@ import RemotePrintCard from "../../components/dashboard/RemotePrintCard";
 import TotalFilamentUsedCard from "../../components/dashboard/TotalFilamentUsedCard";
 import QueueCard from "../../components/dashboard/QueueCard";
 import ThisWeekCard from "../../components/dashboard/ThisWeekCard";
+import { useEffect, useState } from "react";
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
+
+    const [activeKey, setActiveKey] = useState("general");
+
+    useEffect(() => {
+        const hash = window.location.hash.replace("#", "");
+
+        if (hash) {
+            setActiveKey(hash);
+        }
+    }, []);
+
+    const handleChange = (key: string) => {
+        setActiveKey(key);
+
+        window.history.replaceState(null, "", `#${key}`);
+    };
 
     const {
         token: { colorPrimary },
@@ -120,7 +127,12 @@ const Dashboard: React.FC = () => {
                         </Card>
                     </Col>
                     <Col span={24}>
-                        <Tabs defaultActiveKey="1" items={items} />
+                        <Tabs
+                            defaultActiveKey="general"
+                            activeKey={activeKey}
+                            onChange={handleChange}
+                            items={items}
+                        />
                     </Col>
                 </Row>
             </Space>

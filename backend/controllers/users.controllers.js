@@ -105,17 +105,30 @@ const deleteUserById = async (req, res) => {
  */
 const updateUserById = async (req, res) => {
     const uuid = req.params?.uuid;
+    const file = req.file;
     try {
         if (uuid) {
-            const user = await User.findOneAndUpdate({ uuid: uuid }, req.body);
+            if (req.body.officeHours) {
+                req.body.officeHours = JSON.parse(req.body.officeHours);
+            }
+            if (req.body.departments) {
+                req.body.departments = JSON.parse(req.body.departments);
+            }
+            const user = await User.findOneAndUpdate(
+                { uuid: uuid },
+                {
+                    ...req.body,
+                    imageName: file ? file.filename : undefined,
+                    officeHours: req.body.officeHours,
+                    departments: req.body.departments,
+                },
+                { returnDocument: "after", projection: { _id: 0 } },
+            );
             if (!user) {
                 return res.status(404).send({ message: "User not found." });
             }
 
-            const userObj = user.toObject();
-            delete userObj._id;
-
-            return res.status(200).json(userObj);
+            return res.status(200).json(user);
         } else {
             return res.status(400).send({ message: "Missing User ID." });
         }
@@ -173,9 +186,9 @@ const getAllUsers = async (req, res) => {
             const accessArray = access.split(",").map((a) => a.trim());
             filter.access = { $in: accessArray };
         }
-        const user = await User.find(filter, {
-            projection: { _id: 0, password: 0 },
-        }).sort({ firstName: 1 });
+        const user = await User.find(filter, { password: 0, _id: 0 }).sort({
+            firstName: 1,
+        });
         return res.status(200).json(user);
     } catch (err) {
         return res.status(500).send({ message: err.message });

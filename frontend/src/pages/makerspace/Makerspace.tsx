@@ -19,14 +19,29 @@ import MaterialTable from "../../components/tables/MaterialTable";
 import { useAllMaterials } from "../../hooks/useMaterials";
 
 const Makerspace: React.FC = () => {
+     const [activeKey, setActiveKey] = useState("equipment");
+
+    useEffect(() => {
+        const hash = window.location.hash.replace("#", "");
+
+        if (hash) {
+            setActiveKey(hash);
+        }
+    }, []);
+
+    const handleChange = (key: string) => {
+        setActiveKey(key);
+
+        window.history.replaceState(null, "", `#${key}`);
+    };
     const items: TabsProps["items"] = [
         {
-            key: "1",
+            key: "equipment",
             label: "Equipment",
             children: <EquipmentTab />,
         },
         {
-            key: "2",
+            key: "materials",
             label: "Materials",
             children: <MaterialTab />,
         },
@@ -39,7 +54,11 @@ const Makerspace: React.FC = () => {
                 makerspace, including the available equipment and materials we
                 carry for all your creative needs!
             </p>
-            <Tabs defaultActiveKey="1" items={items} />
+            <Tabs
+                activeKey={activeKey}
+                onChange={handleChange}
+                items={items}
+            />
         </Space>
     );
 };

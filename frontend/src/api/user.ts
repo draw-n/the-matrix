@@ -49,14 +49,32 @@ export const getAllDepartments = async () => {
 export const editUserById = async (
     userId: string,
     editedUser: Partial<User>,
+    file?: File,
 ) => {
     if (userId === "") {
         throw new Error("User ID not found.");
     }
     try {
+        const formData = new FormData();
+        Object.keys(editedUser).forEach((key) => {
+            const value = (editedUser as Record<string, any>)[key];
+
+            if (
+                typeof value === "object" &&
+                value !== null &&
+                !(value instanceof File)
+            ) {
+                formData.append(key, JSON.stringify(value));
+            } else {
+                formData.append(key, value);
+            }
+        });
+        if (file) {
+            formData.append("file", file);
+        }
         const response = await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/users/${userId}`,
-            editedUser,
+            formData,
         );
         return response.data;
     } catch (error: any) {

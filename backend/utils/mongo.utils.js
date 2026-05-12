@@ -15,9 +15,28 @@ const validateUniqueField = async (value, fieldName, collection, excludeId) => {
     return !existing; // true if unique
 };
 
+const findPrinter = async (equipmentIds) => {
+    const allPrinters = await Equipment.find({ uuid: { $in: equipmentIds } });
+    const jobCountsByPrinter = {};
+    allPrinters.forEach(async (printer) => {
+        jobCountsByPrinter[printer.uuid] = await Job.countDocuments({
+            equipmentId: printer.uuid,
+            status: { $in: ["queued", "ready", "printing"] },
+        }); // Initialize count
+    });
+    allPrinters.sort((a, b) => {
+        const countA = jobCountsByPrinter[a.uuid] || 0;
+        const countB = jobCountsByPrinter[b.uuid] || 0;
+        return countA - countB; // Ascending order
+    });
+    return allPrinters[0] || null; // Return printer with fewest active jobs
+};
+
 const getCameraSnapshot = async (cameraUrl, jobId) => {
     try {
-        const response = await axios.get(`${cameraUrl}/snapshot`, { responseType: "stream" });
+        const response = await axios.get(`${cameraUrl}/snapshot`, {
+            responseType: "stream",
+        });
         const job = await Job.findById(jobId);
         const contentType = response.headers["content-type"];
         const extension = mapImageExtension(contentType);

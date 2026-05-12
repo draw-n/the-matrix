@@ -18,7 +18,7 @@ import Loading from "../../components/routing/Loading";
 import Introduction from "./components/Introduction";
 import Submitted from "./components/Submitted";
 import { Job } from "../../types/job";
-import { createJob } from "../../api/job";
+import { useCreateJob } from "../../hooks/useJobs";
 
 const RemotePrint: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
@@ -51,7 +51,7 @@ const RemotePrint: React.FC = () => {
                 perimeters: 3,
             },
         });
-
+    const { mutateAsync: createJob } = useCreateJob();
     useEffect(() => {
         const handleBeforeUnload = (event: {
             preventDefault: () => void;
@@ -102,7 +102,7 @@ const RemotePrint: React.FC = () => {
 
             const data = await createJob({
                 fileName: uploadedFile[0].name,
-                material,
+                materialId: material?.uuid || "",
                 options: settingDetails,
                 userId: user.uuid,
             });
@@ -188,11 +188,7 @@ const RemotePrint: React.FC = () => {
                     <Loading />
                 </Flex>
             ) : allowPrint ? (
-                <Space
-                    vertical
-                    size="large"
-                    style={{ width: "100%" }}
-                >
+                <Space vertical size="large" style={{ width: "100%" }}>
                     <Steps current={current} items={items} />
                     <div style={{ width: "100%" }}>
                         {steps[current].content}

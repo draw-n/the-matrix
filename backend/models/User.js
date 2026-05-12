@@ -84,6 +84,9 @@ const UserSchema = new Schema({
             },
         ],
     },
+    imageName: {
+        type: String, // filename of the user's profile picture
+    },
 });
 
 UserSchema.pre("save", async function () {

@@ -41,10 +41,12 @@ export const useEditUserById = () => {
         mutationFn: ({
             userId,
             editedUser,
+            file
         }: {
             userId: string;
             editedUser: Partial<User>;
-        }) => editUserById(userId, editedUser),
+            file?: File;
+        }) => editUserById(userId, editedUser, file),
         onSuccess: (userId: string) => {
             queryClient.invalidateQueries({ queryKey: ["users"] });
             queryClient.invalidateQueries({ queryKey: ["user", userId] });

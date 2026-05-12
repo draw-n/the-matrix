@@ -24,10 +24,12 @@ const {
 const path = require("path");
 const fs = require("fs");
 const Equipment = require("../models/Equipment.js");
+const Material = require("../models/Material.js");
 const Job = require("../models/Job.js");
 const crypto = require("crypto");
 const User = require("../models/User.js");
 const { ObjectId } = require("mongoose").Types;
+const {findPrinter} = require("../utils/mongo.utils.js");
 
 /**
  * create a new print job
@@ -37,13 +39,29 @@ const { ObjectId } = require("mongoose").Types;
  */
 const createJob = async (req, res) => {
     // request needs to contain filename, may have options
-    const { fileName, material, options, userId } = req.body;
+    const { fileName, materialId, options, userId } = req.body;
     try {
+        if (!fileName || !userId || !materialId) {
+            return res.status(400).json({
+                message: "Missing required fields.",
+            });
+        }
         const user = await User.findOne({ uuid: userId });
         const existingJobs = await Job.find({
             userId: user.uuid,
             status: { $in: ["queued", "ready"] },
         });
+
+        const material = await Material.findOne({ uuid: materialId });
+        const materialConfigPath = path.resolve(
+            "./files/configs",
+            material.remotePrintConfigName
+        );
+        if (!material || !material.remotePrintAvailable || !material.equipmentIds || material.equipmentIds.length === 0 || !material.remotePrintConfigName) {
+            return res.status(400).json({
+                message: "Invalid material ID.",
+            });
+        }
 
         if (user.access !== "admin" && existingJobs.length >= 3) {
             return res.status(400).json({
@@ -73,11 +91,12 @@ const createJob = async (req, res) => {
                 filePath,
                 gcodeFilePath,
                 processedOptions,
+                materialConfigPath
             );
             console.log("Gcode file created:", gcodeFilePath);
         }
 
-        const printer = await Equipment.findOne({ ipUrl: "10.68.1.176" });
+        const printer = await findPrinter(material.equipmentIds);
 
         await new Promise((resolve) => setTimeout(resolve, 500));
 

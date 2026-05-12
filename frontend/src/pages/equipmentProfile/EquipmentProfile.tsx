@@ -13,6 +13,7 @@ import Settings from "./components/Settings";
 import LiveFeed from "./components/LiveFeed";
 import HasAccess, { checkAccess } from "../../components/routing/HasAccess";
 import General from "./components/General";
+import { useEffect, useState } from "react";
 
 const EquipmentProfile: React.FC<WithEquipment> = ({
     equipment,
@@ -20,6 +21,22 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
     const { refetch: equipmentRefresh } = useAllEquipment();
 
     const { mutateAsync: editEquipmentById } = useEditEquipmentById();
+
+     const [activeKey, setActiveKey] = useState("general");
+    
+        useEffect(() => {
+            const hash = window.location.hash.replace("#", "");
+    
+            if (hash) {
+                setActiveKey(hash);
+            }
+        }, []);
+    
+        const handleChange = (key: string) => {
+            setActiveKey(key);
+    
+            window.history.replaceState(null, "", `#${key}`);
+        };
 
     /**
      * Toggles edit mode and saves changes if exiting edit mode.
@@ -45,14 +62,14 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
 
     const items: TabsProps["items"] = [
         {
-            key: "1",
+            key: "general",
             label: "General",
             children: <General equipment={equipment} />,
         },
         ...(equipment && equipment?.remotePrintAvailable && equipment?.uuid
             ? [
                   {
-                      key: "2",
+                      key: "print-history",
                       label: "Print History",
                       children: (
                           <QueueCard
@@ -66,7 +83,7 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
         ...(equipment && equipment?.cameraUrl
             ? [
                   {
-                      key: "3",
+                      key: "live-feed",
                       label: "Live Feed",
                       children: (
                           <LiveFeed
@@ -83,7 +100,11 @@ const EquipmentProfile: React.FC<WithEquipment> = ({
         <>
             <Space style={{ width: "100%" }} vertical size="middle">
                 <HeaderCard equipment={equipment} />
-                <Tabs defaultActiveKey="1" items={items} />
+                <Tabs
+                    activeKey={activeKey}
+                    onChange={handleChange}
+                    items={items}
+                />
             </Space>
         </>
     );
