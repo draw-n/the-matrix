@@ -1,7 +1,6 @@
 import axios from "axios";
 import { Job, JobStatus } from "../types/job";
 import { FilamentAdvancedSettings } from "../types/equipment";
-import { Material } from "../types/material";
 
 /**
  * Retrieves all jobs, optionally filtered by status, equipment ID, and/or user ID.

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface QueueCardProps extends WithEquipmentId {
+    userId?: string;
     showMineOnly?: boolean;
     showMineOnlyToggable?: boolean;
     hideActive?: boolean;
@@ -15,6 +16,7 @@ interface QueueCardProps extends WithEquipmentId {
 
 const QueueCard: React.FC<QueueCardProps> = ({
     equipmentId,
+    userId,
     showMineOnly,
     showMineOnlyToggable,
     hideActive = false,
@@ -31,7 +33,7 @@ const QueueCard: React.FC<QueueCardProps> = ({
     const { data: activeJobs } = useAllJobs(
         ["queued", "ready", "printing"],
         equipmentId,
-        showMineOnlyActive ? user?.uuid : undefined,
+        userId || (showMineOnlyActive ? user?.uuid : undefined),
     );
 
     const sortedActiveJobs = activeJobs?.slice().sort((a, b) => {
@@ -59,7 +61,7 @@ const QueueCard: React.FC<QueueCardProps> = ({
     const { data: finishedJobs } = useAllJobs(
         ["completed", "failed"],
         equipmentId,
-        showMineOnlyFinished ? user?.uuid : undefined,
+        userId || (showMineOnlyFinished ? user?.uuid : undefined),
     );
 
     const sortedFinishedJobs = finishedJobs?.slice().sort((a, b) => {

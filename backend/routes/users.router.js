@@ -10,16 +10,36 @@ const {
     firstTimeSetup,
     changePassword,
 } = require("../controllers/users.controllers.js");
-
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 const { ensureAuthenticated } = require("../middleware/auth.js");
 const { retrieveDepartments } = require("../utils/department.utils.js");
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        const dir = path.join(__dirname, "../files/images/users/");
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true }); // Create directory if it doesn't exist
+        }
+        callback(null, dir);
+    },
+    limits: { fileSize: 250 * 1024 * 1024 }, // 250 MB limit
+    filename: (req, file, callback) => {
+        let filename = file.originalname;
+        callback(null, filename);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+
 router.post("/", createUser);
 router.put("/first-time", ensureAuthenticated, firstTimeSetup);
 router.put("/change-password", ensureAuthenticated, changePassword);
-router.put("/:uuid", ensureAuthenticated, updateUserById);
+router.put("/:uuid", ensureAuthenticated, upload.single("file"), updateUserById);
 router.get("/", ensureAuthenticated, getAllUsers);
 router.get("/departments", ensureAuthenticated, retrieveDepartments);
 router.get("/me", (req, res) => {

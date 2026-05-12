@@ -7,7 +7,7 @@ import {
     TableProps,
     Tag,
     Tooltip,
-    Image
+    Image,
 } from "antd";
 import { WithJobs } from "../../types/job";
 import { formatTime } from "../../types/common";
@@ -124,44 +124,48 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
                                     {text}
                                 </span>
                                 {editable && (
-                                    <Flex justify="start" align="center" gap={1}>
+                                    <Flex
+                                        justify="start"
+                                        align="center"
+                                        gap={1}
+                                    >
                                         {["completed", "failed"].includes(
                                             record.status,
                                         ) && (
                                             // record.finishedSnapshotName && (
-                                                <>
-                                                    <Tooltip title="View Snapshot">
-                                                        <Button
-                                                            size="small"
-                                                            icon={
-                                                                <CameraOutlined />
-                                                            }
-                                                            shape="circle"
-                                                            type="text"
-                                                            onClick={() =>
-                                                                setOpen(true)
-                                                            }
-                                                        />
-                                                    </Tooltip>
-                                                    <Image
-                                                        style={{
-                                                            display: "none",
-                                                        }}
-                                                        alt="Job Snapshot"
-                                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`}
-                                                        preview={{
-                                                            open,
-                                                            scaleStep: 0.5,
-                                                            src: `${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`,
-                                                            onOpenChange: (
-                                                                value,
-                                                            ) => {
-                                                                setOpen(value);
-                                                            },
-                                                        }}
+                                            <>
+                                                <Tooltip title="View Snapshot">
+                                                    <Button
+                                                        size="small"
+                                                        icon={
+                                                            <CameraOutlined />
+                                                        }
+                                                        shape="circle"
+                                                        type="text"
+                                                        onClick={() =>
+                                                            setOpen(true)
+                                                        }
                                                     />
-                                                </>
-                                            )}
+                                                </Tooltip>
+                                                <Image
+                                                    style={{
+                                                        display: "none",
+                                                    }}
+                                                    alt="Job Snapshot"
+                                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`}
+                                                    preview={{
+                                                        open,
+                                                        scaleStep: 0.5,
+                                                        src: `${import.meta.env.VITE_BACKEND_URL}/images/jobs/${record.finishedSnapshotName}`,
+                                                        onOpenChange: (
+                                                            value,
+                                                        ) => {
+                                                            setOpen(value);
+                                                        },
+                                                    }}
+                                                />
+                                            </>
+                                        )}
                                         {["completed", "failed"].includes(
                                             record.status,
                                         ) &&
@@ -310,26 +314,30 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, editable = true }) => {
     const numRows = 5;
     return (
         <>
-            <Table
-                pagination={{
-                    defaultPageSize: numRows,
-                    hideOnSinglePage: true,
-                }}
-                columns={columns}
-                showHeader={false}
-                dataSource={jobs}
-                size="middle"
-                style={{
-                    borderRadius: "5px",
-                    borderCollapse: "separate",
-                }}
-                rowHoverable={false}
-                onRow={() => ({
-                    style: {
-                        cursor: "default",
-                    },
-                })}
-            />
+            {!jobs || jobs.length === 0 ? (
+                <p>No jobs found.</p>
+            ) : (
+                <Table
+                    pagination={{
+                        defaultPageSize: numRows,
+                        hideOnSinglePage: true,
+                    }}
+                    columns={columns}
+                    showHeader={false}
+                    dataSource={jobs}
+                    size="middle"
+                    style={{
+                        borderRadius: "5px",
+                        borderCollapse: "separate",
+                    }}
+                    rowHoverable={false}
+                    onRow={() => ({
+                        style: {
+                            cursor: "default",
+                        },
+                    })}
+                />
+            )}
         </>
     );
 };

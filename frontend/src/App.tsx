@@ -73,7 +73,7 @@ const App: React.FC = () => {
                             />
 
                             <Route
-                                path={`/users/:userId`}
+                                path={`/directory/:userId`}
                                 element={
                                     <PrivateRoute
                                         element={

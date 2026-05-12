@@ -81,7 +81,6 @@ const createEquipment = async (req, res) => {
                         .send({ message: "Route Path must be unique." });
                 }
             }
-            console.log("after validation");
 
             const equipment = new Equipment({
                 _id: new ObjectId(),
@@ -102,7 +101,6 @@ const createEquipment = async (req, res) => {
                         : null,
                 imageName: file ? file.filename : null,
             });
-            console.log("before equipment saved!");
 
             await equipment.save();
 

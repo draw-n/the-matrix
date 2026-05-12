@@ -127,7 +127,7 @@ const UserCard: React.FC<WithUser> = ({ user: cardUser }) => {
                             icon={<ArrowRightOutlined />}
                             type="text"
                             onClick={() =>
-                                navigate(`/users/${cardUser?.uuid || ""}`)
+                                navigate(`/directory/${cardUser?.uuid || ""}`)
                             }
                         />
                     </Flex>

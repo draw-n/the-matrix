@@ -13,6 +13,7 @@ export interface User {
         endTime: string;
         eventId: string; // calendar event id for office hours
     }[];
+    imageName?: string; // filename of the user's profile picture
 }
 
 export interface WithUser {

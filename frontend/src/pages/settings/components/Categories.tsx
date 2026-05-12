@@ -9,11 +9,9 @@ import {
     FormProps,
     Input,
     List,
-    Popconfirm,
     Space,
     Tabs,
     Tag,
-    Tooltip,
     Typography,
 } from "antd";
 import CategoryForm from "../../../components/forms/CategoryForm";
